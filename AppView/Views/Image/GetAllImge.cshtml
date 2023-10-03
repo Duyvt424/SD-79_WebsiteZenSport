@@ -1,0 +1,126 @@
+﻿@model IEnumerable<AppData.Models.Image>
+
+@{
+    ViewData["Title"] = "GetAllImge";
+    List<string> extensions = new List<string>()
+    {
+        ".png", ".jpg", ".jpeg", ".gif", ".pdf", ".raw", ".bmp", ".tif"
+    };
+}
+
+<h1 style="text-align: center">Image</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image4)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoesDetailsID)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImageID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+                <td>
+                    @{
+                        string a = System.IO.Path.GetExtension(item.Image1);
+                    }
+                    @*   @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image1).Trim()))
+                    {
+                        <img src="/image/@item.Image1" height="100">
+                    }
+                    else
+                    {
+                        <span>Ảnh lỗi rồi =)))</span>
+                    }*@
+
+                        <img src="/image/@item.Image1" height="100">
+                    </td>
+                    <td>
+                    @{
+                        string b = System.IO.Path.GetExtension(item.Image2);
+                    }
+                    @*@if (@extensions.Contains(System.IO.Path.GetExtension(item.Image2).Trim()))
+                    {
+
+                    }
+                    else
+                            {
+                        <span>Ảnh lỗi rồi =)))</span>
+                    }*@
+                        <img src="/image/@item.Image2" height="100">
+                    </td>
+                    <td>
+                    @{
+                        string c = System.IO.Path.GetExtension(item.Image3);
+                    }
+                    @* @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image3).Trim()))
+                    {
+                        <img src="/image/@item.Image3" height="100">
+                    }
+                    else
+                    {
+                        <span>Ảnh lỗi rồi =)))</span>
+                    }*@
+                        <img src="/image/@item.Image3" height="100">
+                    </td>
+                    <td>
+                    @{
+                        string d = System.IO.Path.GetExtension(item.Image4);
+                    }
+                    @*  @if (@extensions.Contains(System.IO.Path.GetExtension(item.Image4).Trim()))
+                    {
+                        <img src="/image/@item.Image4" height="100">
+                    }
+                    else
+                    {
+                        <span>Ảnh lỗi rồi =)))</span>
+                    }*@
+                        <img src="/image/@item.Image4" height="100">
+                    </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShoesDetailsID)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ImageID}) |
+                    @Html.ActionLink("Details", "Details", new {  id = item.ImageID }) |
+                    @Html.ActionLink("Delete", "Delete", new {  id = item.ImageID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

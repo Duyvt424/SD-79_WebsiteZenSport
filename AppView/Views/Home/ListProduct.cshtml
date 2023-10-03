@@ -1,0 +1,255 @@
+﻿@using AppData.Models;
+@model IEnumerable<AppData.Models.ShoesDetails>
+@{
+	ViewData["Title"] = "Sản phẩm";
+	var shoesDetails = ViewBag.shoesList as List<ShoesDetails>;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="~/css/sanpham.css">
+	<link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+	<!-- Google Fonts Roboto -->
+	<link rel="stylesheet"
+		  href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+	<title>Product</title>
+</head>
+
+<body>
+	<section id="sidebar" style="float: left" ;>
+		<div class="border-bottom pb-2 ml-2">
+			<h4 id="burgundy">Bộ lọc</h4>
+		</div>
+		<form asp-controller="Home" asp-action="Filters" method="post">
+			<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Giới tính</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
+				<div class="form-group">
+					<input type="checkbox" name="genders" id="male" value="male">
+					<label for="male" id="male">Nam</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="genders" id="female" value="female">
+					<label for="female" id="female">Nữ</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="genders" id="unisex" value="unisex">
+					<label for="unisex" id="unisex">Unisex</label>
+				</div>
+			</div>
+
+
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Khoảng giá</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
+				<div class="form-group">
+					<input type="checkbox" id="price1" name="minPrice" value="0">
+					<label for="price1">Dưới 1.000.000đ</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price2" name="minPrice" value="1001000">
+					<label for="price2">1.001.00đ-2.700.000</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price3" name="minPrice" value="2701000">
+					<label for="price3">2.701.000-3.999.000</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="price4" name="minPrice" value="4000000">
+					<label for="price4">Trên 4.000.000đ</label>
+				</div>
+			</div>
+
+
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Thương hiệu</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="nike" value="nike">
+					<label for="nike">Nike</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="jordan" value="jordan">
+					<label for="jordan">Jordan</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="mlb" value="mlb">
+					<label for="mlb">MLB</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="adidas" value="adidas">
+					<label for="adidas">Adidas</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="reebok" value="reebok">
+					<label for="reebok">Reebok</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="vans" value="vans">
+					<label for="vans">Vans</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="converse" value="converse">
+					<label for="converse">Converse</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" name="brands" id="puma" value="puma">
+					<label for="puma">Puma</label>
+				</div>
+			</div>
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Phong cách</h6>
+				<div id="orange"><span class="fa fa-minus"></span></div>
+				<div class="form-group">
+					<input type="checkbox" id="name1" name="styles" value="walking">
+					<label for="name1">Walking</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name2" name="styles" value="training">
+					<label for="name3">Training & Gym</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name3" name="styles" value="basketball">
+					<label for="name4">Basketball</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name4" name="styles" value="golf">
+					<label for="name7">Golf</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name5" name="styles" value="tennis">
+					<label for="name8">Tennis</label>
+				</div>
+				<div class="form-group">
+					<input type="checkbox" id="name6" name="styles" value="athletic">
+					<label for="name9">Athletic</label>
+				</div>
+			</div>
+			<hr>
+			<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+				<h6 class="font-weight-bold">Màu sắc</h6>
+				<div id="orange">
+					<span class="fa fa-minus"></span>
+				</div>
+				<div class="" style="float: left;">
+					<button type="button" id="redBtn" name="colors" value="red" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+					<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
+					<input type="checkbox" id="redChk" name="colors" value="red" />
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" id="blackBtn" name="colors" value="black" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Đen</p>
+					<input type="checkbox" id="blackChk" name="colors" value="black" />
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" id="yellowBtn" name="colors" value="yellow" class="color-button color-orange" style="background-color: yellow; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Vàng</p>
+					<input type="checkbox" id="yellowChk" name="colors" value="yellow" />
+				</div>
+				<div class="" style="float: left; padding-left: 10px;">
+					<button type="button" id="pinkBtn" name="colors" value="pink" class="color-button color-violet" style="background-color: pink; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Hồng</p>
+					<input type="checkbox" id="pinkChk" name="colors" value="pink" />
+				</div>
+				<br>
+				<div class="" style="float: right; padding-top: 15px; padding-right: 69px;">
+					<button type="button" id="greenBtn" name="colors" value="green" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Xanh</p>
+					<input type="checkbox" id="greenChk" name="colors" value="green" />
+				</div>
+				<div class="" style="float: right; padding-right: 7px; padding-top: 15px">
+					<button type="button" id="whiteBtn" name="colors" value="white" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Trắng</p>
+					<input type="checkbox" id="whiteChk" name="colors" value="white" />
+				</div>
+				<div class="" style="float: right; padding-right: 8px; padding-top: 15px">
+					<button type="button" id="orangeBtn" name="colors" value="orange" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Cam</p>
+					<input type="checkbox" id="orangeChk" name="colors" value="orange" />
+				</div>
+				<div class="" style="float: right; padding-right: 9px; padding-top: 15px">
+					<button type="button" id="brownBtn" name="colors" value="brown" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+					<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
+					<input type="checkbox" id="brownChk" name="colors" value="brown" />
+				</div>
+				<div class="form-group" style="float: right; padding-right: 9px; padding-top: 15px">
+					<button type="submit">Tìm kiếm</button>
+				</div>
+			</div>
+		</form>
+
+		
+
+
+	</section>
+	<!-- products section -->
+	@*<section id="products" style="float: right">
+		<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
+			<div class="row g-0">
+				@foreach (var item in Model)
+				{
+					<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+						<div class="cards">
+							<div class="first bg-white p-4 text-center">
+								<a href="@Url.Action("DetailsProduct", "Home", new { id = item.ShoesDetailsId })"><img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;"></a>
+								<h5 style="padding-top: 5px;">@ViewBag.NameSP</h5>
+								<p class="line1">@Html.DisplayFor(modelItem => item.Description)</p>
+								<p style="font-size: 13px;">@Html.DisplayFor(modelItem => item.Price)</p>
+								<button class="btnok">Thêm vào giỏ hàng</button>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</section>*@
+
+	<section id="products" style="float: right">
+		<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
+			<div class="row g-0">
+				@foreach (var item in shoesDetails)
+				{
+					<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+						<div class="cards">
+							<div class="first bg-white p-4 text-center">
+								<a href="@Url.Action("DetailsProduct", "Home", new { id = item.ShoesDetailsId })"><img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;"></a>
+								<h5 class="line1" style="padding-top:5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h5>
+								<p class="line1">@Html.DisplayFor(modelItem => item.Description)</p>
+								<p style="font-size: 13px;">@item.Price.ToString("N0")đ</p>
+								<button class="btnok">Thêm vào giỏ hàng</button>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</section>
+	
+	<footer class="footer" style="margin-top: 200px;">
+		<!-- Copyright -->
+		<div class="text-center p-3" style="background-color: white; color: white;">
+			© 2022
+			<a class="text-white" href="#" style="text-decoration: none;">
+				Nike, Inc. All Rights
+				Reserved - PH24890
+			</a>
+		</div>
+		<!-- Copyright -->
+	</footer>
+	<!-- <footer class="footer">My footer</footer> -->
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+﻿@model AppView.Models.ProvinceViewModels
+@{
+    ViewData["Title"] = "Check Out";
+}
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="SubmitInfo" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-floating mb-3">
+                                        <input name="FromDistrictId" type="number" class="form-control" placeholder="UserName" required>
+                                        <label for="floatingInputEmail">Huyện người gửi</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="ToDistrictId" type="number" class="form-control" placeholder="Password" required>
+                                        <label for="floatingInputEmail">Huyện người nhận</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="ToWardCode" type="number" class="form-control" placeholder="Email" required>
+                                        <label for="floatingInputEmail">Xã người nhận</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="InsuranceValue" type="number" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputEmail">Giá trị sản phẩm</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="Weight" type="number" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputEmail">Trọng lượng hàng hóa(gram)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="Length" type="number" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputEmail">Chiều dài(cm)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="Width" type="number" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputEmail">Chiều rộng(cm)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input name="Height" type="number" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputEmail">Chiều cao(cm)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <div class="form-check">
+                                            <input name="ServiceId" type="radio" class="form-check-input" value="53322" id="fastDelivery" required>
+                                            <label class="form-check-label" for="fastDelivery">Giao hàng nhanh</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input name="ServiceId" type="radio" class="form-check-input" value="100039" id="standardDelivery" required>
+                                            <label class="form-check-label" for="standardDelivery">Giao hàng truyền thống</label>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" value="Create"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Tính tiền</p>
+                                        </button>
+                                    </div>
+                                    @if (Model != null)
+                                    {
+                                        <h2 style="padding-top:20px; padding-left:40px;">Thông tin tính tiền giao hàng</h2>
+                                        <div style="float:left; padding-left:40px;">
+                                            <p>Tổng tiền: @Model.Total.ToString("N0")đ</p>
+                                            <p>Phí dịch vụ: @Model.ServiceFee.ToString("N0")đ</p>
+                                            <p>Phí bảo hiểm: @Model.InsuranceFee.ToString("N0")đ</p>
+                                        </div>
+                                    }
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<audio id="backgroundMusic" autoplay loop>
+    <source src="/image/Dreamers.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+    // Tìm đối tượng âm thanh
+    var audio = document.getElementById("backgroundMusic");
+    // Bắt đầu phát nhạc nền
+    audio.play();
+</script>

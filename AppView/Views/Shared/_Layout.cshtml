@@ -1,0 +1,314 @@
+﻿﻿
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	string role = HttpContextAccessor.HttpContext.Session.GetString("role");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link rel="icon" type="image" href="~/image/logo1.png" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.css" rel="stylesheet" />
+	<link href="~/css/css.css" />
+	<link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
+	<link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+</head>
+<body>
+	<header>
+		@if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
+		{
+			<div class="container-fluid">
+				<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
+					<div class="flex flex-no-shrink items-stretch h-12">
+						<img style="width: 25px; height: 35px; padding-top: 10px; margin-left: 30px;" src="~/image/bongchuyen1.png"
+						 alt="">
+						<a style="font-size: 11px; font-weight: bold;"
+					   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
+							Hi: @Html.Raw(userName?.Replace("\"", ""))
+						</a>
+					</div>
+					<div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">
+						<div style="padding-right: 10px;" class="lg:flex lg:items-stretch lg:justify-end ml-auto">
+							<a style="font-size: 11px; font-weight: bold;" href="#gioithieu"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
+						</div>
+					</div>
+					<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="LogOut"
+				    class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Log Out
+					</a>
+				</nav>
+			</div>
+		}
+		else
+		{
+			<div class="container-fluid">
+				<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
+					<div class="flex flex-no-shrink items-stretch h-12">
+						<img style="width: 25px; height: 35px; padding-top: 10px; margin-left: 30px;" src="~/image/bongchuyen1.png"
+						 alt="">
+					</div>
+					<div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">
+						<div style="padding-right: 10px;" class="lg:flex lg:items-stretch lg:justify-end ml-auto">
+							<a style="font-size: 11px; font-weight: bold;" href="#gioithieu"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
+							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="SignUp"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
+								Join
+								Us
+							</a>
+							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="Login"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
+								Sign
+								In
+							</a>
+						</div>
+					</div>
+				</nav>
+			</div>
+		}
+		<div class="container-fluid" style="margin-left: 20px; width: 1480px;">
+			<nav class="navbar navbar-expand-lg bg-body-tertiary">
+				<nav class="navbar bg-body-tertiary">
+					<div class="container-fluid">
+						<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+							<img src="~/image/Logo_NIKE.svg.png" alt="Hi" width=90px height=15px
+								 style="padding-left: 40px;">
+						</a>
+					</div>
+				</nav>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent"
+					 style="padding-left: 380px; font-weight: 600; font-size: 18px">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+						</li>
+						<li class="nav-item" style="padding-left: 15px;">
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Customer" asp-action="GetAllCustomer">Hóa đơn</a>
+						</li>
+						<li class="nav-item" style="padding-left: 15px;">
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="ShoesDetail" asp-action="GetAllShoesDetails">Session</a>
+						</li>
+						<li class="nav-item" style="padding-left: 15px;">
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Cart" asp-action="ViewBill">BillDetails</a>
+						</li>
+						@if(role == "Admin")
+						{
+						<li class="nav-item" style="padding-left: 15px;">
+						<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Role" asp-action="GetAllRole">Role</a>
+						</li>
+						}
+						<li class="nav-item" style="padding-left: 15px;">
+							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
+						</li>
+						@*						<li class="nav-item" style="padding-left: 15px;">
+						<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ShowListFromSession">Lab 5_6</a>
+						</li>*@
+					</ul>
+					<form class="d-flex" role="search" style="padding-right: 30px;" method="get" action="@Url.Action("Search", "Home")">
+						<div class="src-box">
+							<input type="text" placeholder="@ViewBag.Name Search "Search"" id="search-input" name="name" value="@ViewBag.Name">
+							@*<input type="text" placeholder="Search" id="search-input" name="name">*@
+							<button type="submit"></button>
+						</div>
+						<div class="buttonok" style="padding-right: 15px;">
+							<a class="bag" asp-controller="Cart" asp-action="Cart">
+								<img src="~/image/icons8-shopping-bag-32.png" alt="??????"
+									 style="width: 40px; height: 35px; padding-left: 8px; padding-top: 5px;">
+							</a>
+						</div>
+					</form>
+					@*					<form class="d-flex" role="search" style="padding-right: 30px;" method="get" action="@Url.Action("Search", "Products")">
+					<div class="src-box">
+					<input type="text" placeholder="  " id="search-box" name="name">
+					<button type="submit"></button>
+					</div>
+					@*					<div class="box">
+					<form name="search">
+					<input type="text" class="input" name="txt" onmouseout="this.value = ''; this.blur();">
+					</form>
+					<i class="fas fa-search"></i>
+					<button class="btn btn-outline-success" type="submit" style="border-radius: 20px;">Search</button>
+					</div>
+					<div class="buttonok" style="padding-right: 15px;">
+					<a class="bag" href="#giohang">
+					<img src="~/image/icons8-shopping-bag-32.png" alt="https://nroblue.com/"
+					style="width: 40px; height: 35px; padding-left: 8px; padding-top: 5px;">
+					</a>
+					</div>
+					</form>*@
+				</div>
+			</nav>
+		</div>
+		@*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+		<div class="container-fluid">
+		<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Shopping_Appilication</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+		aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+		<ul class="navbar-nav flex-grow-1">
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+		</li>
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+		</li>
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Product">Product</a>
+		</li>
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Redirect">CR7</a>
+		</li>
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Show">Show</a>
+		</li>
+		<li class="nav-item">
+		<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ShowListProduct1">ShowListProduct</a>
+		</li>
+		</ul>
+		</div>
+		</div>
+		</nav>*@
+	</header>
+	<div class="container-fluid">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+	<footer class="bg-dark text-center text-white">
+		<!-- Grid container -->
+		<div class="container p-4">
+			<!-- Section: Social media -->
+			<section class="mb-4">
+				<!-- Facebook -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-facebook-f"></i></a>
+
+				<!-- Twitter -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-twitter"></i></a>
+
+				<!-- Google -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-google"></i></a>
+
+				<!-- Instagram -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-instagram"></i></a>
+
+				<!-- Linkedin -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-linkedin-in"></i></a>
+
+				<!-- Github -->
+				<a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"><i class="fab fa-github"></i></a>
+			</section>
+			<!-- Section: Social media -->
+			<!-- Section: Form -->
+			<section class="">
+				<form action="">
+					<!--Grid row-->
+					<!--Grid row-->
+				</form>
+			</section>
+			<!-- Section: Form -->
+			<!-- Section: Text -->
+			<section class="mb-4">
+				<p>
+					Với triết lý đào tạo “Thực học – Thực nghiệp”, Cao đẳng FPT Polytechnic hướng tới đào tạo nguồn nhân lực chất
+					lượng cao với phương pháp giảng dạy qua dự án thật.
+				</p>
+			</section>
+			<!-- Section: Text -->
+			<!-- Section: Links -->
+			<section class="">
+				<!--Grid row-->
+				<div class="row">
+					<!--Grid column-->
+					<div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+						<h5 class="text-uppercase">FIND A STORE</h5>
+
+						<ul class="list-unstyled mb-0">
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">BECOME A MEMBER</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">SIGN UP FOR EMAIL</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">SEND US FEEDBACK</a>
+							</li>
+						</ul>
+					</div>
+					<!--Grid column-->
+					<!--Grid column-->
+					<div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+						<h5 class="text-uppercase">GET HELP</h5>
+
+						<ul class="list-unstyled mb-0">
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Order Status</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Delivery</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Returns</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Payment Options</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Contact Us</a>
+							</li>
+						</ul>
+					</div>
+					<!--Grid column-->
+					<!--Grid column-->
+					<div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+						<h5 class="text-uppercase">ABOUT NIKE</h5>
+
+						<ul class="list-unstyled mb-0">
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">News</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Careers</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Investors</a>
+							</li>
+							<li>
+								<a href="#!" class="text-white" style="text-decoration: none; font-size: 10px;">Sustainability</a>
+							</li>
+						</ul>
+					</div>
+					<!--Grid column-->
+				</div>
+				<!--Grid row-->
+			</section>
+			<!-- Section: Links -->
+		</div>
+		<!-- Grid container -->
+		<!-- Copyright -->
+		<div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+			© 2022 Nike, Inc. All Rights Reserved - PH24890
+		</div>
+		<!-- Copyright -->
+	</footer>
+	<!-- Footer -->
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+	<script src="~/js/index.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.js"></script>
+</body>
+</html>

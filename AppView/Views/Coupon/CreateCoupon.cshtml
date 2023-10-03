@@ -1,0 +1,90 @@
+﻿@model AppData.Models.Coupon
+
+@{
+    ViewData["Title"] = "CreateCoupon";
+}
+
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                    <form asp-action="CreateCoupon">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                       @* <div class="form-group">
+                                            <label asp-for="CouponID" class="control-label"></label>
+                                            <input asp-for="CouponID" class="form-control" />
+                                            <span asp-validation-for="CouponID" class="text-danger"></span>
+                                        </div>*@
+                                        <div class="form-group">
+                                            <label asp-for="CouponCode" class="control-label"></label>
+                                            <input asp-for="CouponCode" class="form-control" />
+                                            <span asp-validation-for="CouponCode" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="CouponValue" class="control-label"></label>
+                                            <input asp-for="CouponValue" class="form-control" />
+                                            <span asp-validation-for="CouponValue" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="MaxUsage" class="control-label"></label>
+                                            <input asp-for="MaxUsage" class="form-control" />
+                                            <span asp-validation-for="MaxUsage" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="RemainingUsage" class="control-label"></label>
+                                            <input asp-for="RemainingUsage" class="form-control" />
+                                            <span asp-validation-for="RemainingUsage" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="ExpirationDate" class="control-label"></label>
+                                            <input asp-for="ExpirationDate" class="form-control" />
+                                            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Status" class="control-label"></label>
+                                            <input asp-for="Status" class="form-control" />
+                                            <span asp-validation-for="Status" class="text-danger"></span>
+                                        </div>
+                                       @* <div class="form-group">
+                                            <input type="submit" value="Create" class="btn btn-primary" />
+                                        </div>*@
+                                         <div class="d-flex justify-content-center">
+                                            <button type="submit" value="Create"
+                                                    style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                    class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                                <p style="color: white; font-size: 15px; text-decoration: none;">Update</p>
+                                            </button>
+                                        </div>
+                                    </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@*<div>
+    <a asp-action="Index">Back to List</a>
+</div>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

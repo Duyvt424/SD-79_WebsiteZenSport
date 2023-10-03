@@ -1,0 +1,59 @@
+﻿@model IEnumerable<AppData.Models.Sole>
+
+@{
+    ViewData["Title"] = "GetAllSole";
+}
+
+<h1>GetAllSole</h1>
+
+<p>
+    <a asp-action="CreateSole">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SoleID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fabric)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Height)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoleID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fabric)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Height)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditSole", new {  id=item.SoleID  }) |
+                @Html.ActionLink("Details", "DetailsSole", new {  id=item.SoleID  }) |
+                @Html.ActionLink("Delete", "DeleteSole", new {  id=item.SoleID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

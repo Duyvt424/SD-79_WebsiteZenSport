@@ -1,0 +1,117 @@
+﻿@model IEnumerable<AppData.Models.ShoesDetails>
+
+@{
+    ViewData["Title"] = "GetAllShoesDetails";
+}
+
+<h1>GetAllShoesDetails</h1>
+
+<p>
+    <a asp-action="CreateShoesDetails">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoesDetailsId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImportPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvailableQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            
+          <th>
+                @Html.DisplayNameFor(model => model.ColorID)
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductID)
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SizeID)
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoleID)
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StyleID)
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupplierID)
+
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShoesDetailsId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImportPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AvailableQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.ColorID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SizeID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoleID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StyleID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupplierID)
+            </td>
+            
+            <td>
+                
+                @Html.ActionLink("UpdateShoesDetails", "UpdateShoesDetails", new {  id=item.ShoesDetailsId  }) |
+                @Html.ActionLink("Details", "Details", new {  id=item.ShoesDetailsId  }) | 
+                @Html.ActionLink("DeleteShoesDetails", "DeleteShoesDetails", new {  id=item.ShoesDetailsId  })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

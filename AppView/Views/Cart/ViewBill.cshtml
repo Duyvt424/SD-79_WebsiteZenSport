@@ -1,0 +1,64 @@
+﻿@model IEnumerable<AppData.Models.Bill>
+
+@{
+    ViewData["Title"] = "ViewBill";
+}
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Mã HD
+            </th>
+            <th>
+                Ngày tạo
+            </th>
+            <th>
+                Tổng tiền
+            </th>
+            <th>
+                Trạng thái
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BillCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalPrice)
+                    </td>
+                    @if (item.Status == 1)
+                    {
+                        <td>
+                            Đã thanh toán
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Chưa thanh toán
+                        </td>
+                    }
+                     <td>
+               <button class="btn btn-warning"> @Html.ActionLink("Chi Tiết", "BillDetails","BillDetails", new { id=item.BillID })</button>
+            </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <p>No bills found.</p>
+        }
+    </tbody>
+</table>

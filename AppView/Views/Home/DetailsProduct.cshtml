@@ -1,0 +1,256 @@
+﻿@model AppData.Models.ShoesDetails
+@{
+    ViewData["Title"] = "Details";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/detail.css">
+    <link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <title>Detail</title>
+</head>
+
+<body>
+    <div class="container mt-4 d-flex justify-content-center" style="padding-top: 45px;">
+        <div class="row g-0">
+            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+                <div class="cards1">
+                    <div class="first bg-white p-4 text-center">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden1)" alt="Product Image" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+            <!-- src="image/anh11.png" -->
+            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+                <div class="cards1">
+                    <div class=" second bg-white p-4 text-center">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden2)" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+            <!-- src="image/video1.mp4" -->
+            <div class="col-sm-6 col-md-4" style="padding-top: 0;">
+                <div class="product p-4">
+                    <div class="mt-4 mb-3">
+                        <span class="text-uppercase text-muted brand" style="font-size: 11px;">
+                            Sustainable
+                            Materials
+                        </span>
+                        <h5 class="text-uppercase" style="padding-top: 5px;">@ViewBag.nameProduct</h5>
+                        <!-- Nike SuperRep Cycle 2 Next Nature -->
+                        <!-- Indoor Cycling Shoes -->
+                        <p class="line1" style="padding-top: 5px;">@Html.DisplayFor(model => model.Description)</p>
+                        <p style="font-size: 14px; padding-top: 5px;">@Model.Price.ToString("N0")đ</p>
+                        <p style="font-size: 13px; padding-top: 5px;">@Html.DisplayFor(model => model.AvailableQuantity) sản phẩm có sẵn</p>
+                    </div>
+                    <h6 class="text-uppercase" style="font-size: 12px;">Select Size</h6>
+                    <div class="cart mt-4 align-items-center">
+                        <form method="post" action="@Url.Action("AddToCart", "Cart", new { id = Model.ShoesDetailsId })">
+                            <div class="label1" style="padding-top: 5px;">
+                                <label class="radio">
+                                    <input type="radio" name="size" value="34" checked> <span class="span1">34</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="35"> <span class="span1">35</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="36"> <span class="span1">36</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="37"> <span class="span2">37</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="38"> <span class="span2">38</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="39"> <span class="span2">39</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="40"> <span class="span3">40</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="41"> <span class="span3">41</span>
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="size" value="42"> <span class="span3">42</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-danger text mr-2 px-4" style="width: 310px; border-radius: 20px; color: white; margin-top:10px;">Add to cart</button>
+                        </form>
+
+                        @*           <form>
+                        <a href="@Url.Action("AddToCart", "CartDetail", new { id = Model.Id })" class="btn btn-danger text mr-2 px-4" style="width: 310px; border-radius: 20px; color: white;">
+                        Add to cart
+                        </a>
+                        </form>*@
+                    </div>
+                    <div class="chu1" style="width: 310px;">
+                        <p class="about" style="font-size: 11px; margin-top: 5px; text-align: justify;">
+                            The quad-burning
+                            box jumps that bring your "why" into focus. The sweat-soaked super-sets that leave you bent
+                            over double. This is what you live for: the struggle, the moment of truth, the breakthrough,
+                            the transformation. Designed for quick bursts of force, heart-thumping tempo changes and
+                            fast-paced workouts, this shoe helps push you to fresh HIIT heights.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4 d-flex justify-content-center" style="margin-top: 0px;">
+        <div class="row g-0">
+            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+                <div class="cards1">
+                    <div class="first bg-white p-4 text-center">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden3)" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+            <!-- src="image/anh24.png"
+                  src="image/anh23.png" -->
+            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+                <div class="cards1">
+                    <div class=" second bg-white p-4 text-center">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden4)" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="shell">
+        <div class="container">
+            <div class="tieude1" style="padding-bottom: 8px;">
+                <h3>Có thể bạn quan tâm</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="wsk-cp-product">
+                        <div class="wsk-cp-img">
+                            <img src="~/image/anh26.png" alt="Product" class="img-responsive" />
+                        </div>
+                        <div class="wsk-cp-text">
+                            <div class="category">
+                                <span>View</span>
+                            </div>
+                            <div class="title-product">
+                                <h3>Nike ZoomX Vaporfly</h3>
+                            </div>
+                            <div class="description-prod">
+                                <p>Men's Road Racing Shoesk NEXT% 2</p>
+                            </div>
+                            <div class="card-footer" style="padding-left: 38px;">
+                                <div class="wcf-left">
+                                    <span class="price" style="color: red; font-size: 16px;">
+                                        5,617,649đ <del style="color: black; font-size: 16px;"> 6.408.000đ</del>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="wsk-cp-product">
+                        <div class="wsk-cp-img">
+                            <img src="~/image/anh27.png" alt="Product" class="img-responsive" />
+                        </div>
+                        <div class="wsk-cp-text">
+                            <div class="category">
+                                <span>View</span>
+                            </div>
+                            <div class="title-product">
+                                <h3>Nike Pegasus Trail 3</h3>
+                            </div>
+                            <div class="description-prod">
+                                <p>Men's Trail-Running Shoes</p>
+                            </div>
+                            <div class="card-footer" style="padding-left: 38px;">
+                                <div class="wcf-left">
+                                    <span class="price" style="color: red; font-size: 16px;">
+                                        3,829,000đ <del style="color: black; font-size: 16px;"> 4.205.000đ</del>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="wsk-cp-product">
+                        <div class="wsk-cp-img">
+                            <img src="~/image/anh28.png" alt="Product" class="img-responsive" />
+                        </div>
+                        <div class="wsk-cp-text">
+                            <div class="category">
+                                <span>View</span>
+                            </div>
+                            <div class="title-product">
+                                <h3>Nike Heritage</h3>
+                            </div>
+                            <div class="description-prod">
+                                <p>Drawstring Bag (13L)</p>
+                            </div>
+                            <div class="card-footer" style="padding-left: 50px;">
+                                <div class="wcf-left">
+                                    <span class="price" style="color: red; font-size: 16px;">
+                                        509,000đ <del style="color: black; font-size: 16px;"> 699.000đ</del>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="wsk-cp-product">
+                        <div class="wsk-cp-img">
+                            <img src="~/image/anh29.png" alt="Product" class="img-responsive" />
+                        </div>
+                        <div class="wsk-cp-text">
+                            <div class="category">
+                                <span>View</span>
+                            </div>
+                            <div class="title-product">
+                                <h3>Nike React Infinity Run</h3>
+                            </div>
+                            <div class="description-prod">
+                                <p>Men's Road Running Shoes</p>
+                            </div>
+                            <div class="card-footer" style="padding-left: 38px;">
+                                <div class="wcf-left">
+                                    <span class="price" style="color: red; font-size: 16px;">
+                                        3,747,649đ <del style="color: black; font-size: 16px;"> 4.409.000đ</del>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer" style="margin-top: 200px;">
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: white; color: white;">
+            © 2022
+            <a class="text-white" href="#" style="text-decoration: none;">
+                Nike, Inc. All Rights
+                Reserved - PH24890
+            </a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- <footer class="footer">My footer</footer> -->
+</body>
+
+</html>

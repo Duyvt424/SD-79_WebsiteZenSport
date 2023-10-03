@@ -1,0 +1,103 @@
+﻿@model AppData.Models.ShoesDetails
+
+@{
+    ViewData["Title"] = "UpdateShoesDetails";
+}
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="UpdateShoesDetails" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-floating mb-3" style="display:none;">
+                                        <input asp-for="ShoesDetailsId" type="text" class="form-control" placeholder="ShoesDetailsId" required>
+                                        <label for="floatingInputEmail">ShoesDetailsId</label>
+                                        <span asp-validation-for="ShoesDetailsId" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="CreateDate" type="text" class="form-control" placeholder="CreateDate" required>
+                                        <label for="floatingInputEmail">CreateDate</label>
+                                        <span asp-validation-for="CreateDate" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Price" type="text" class="form-control" placeholder="Price" required>
+                                        <label for="floatingInputEmail">Price</label>
+                                        <span asp-validation-for="Price" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="ImportPrice" type="text" class="form-control" placeholder="ImportPrice" required>
+                                        <label for="floatingInputEmail">ImportPrice</label>
+                                        <span asp-validation-for="ImportPrice" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="AvailableQuantity" type="number" class="form-control" placeholder="AvailableQuantity" required>   
+                                        <label for="floatingInputEmail">AvailableQuantity</label>
+                                        <span asp-validation-for="AvailableQuantity" class="text-danger"></span>
+                                    </div>
+                                     <div class="form-floating mb-3">
+                                        <input asp-for="Description" type="text" class="form-control" placeholder="Description" required>
+                                        <label for="floatingInputEmail">Description</label>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Status" required>
+                                        <label for="floatingInputEmail">Status</label>
+                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="ColorID" class="form-control" asp-items="@ViewBag.ColorList"></select>
+                                        <label for="floatingInputEmail">Color</label>
+                                        <span asp-validation-for="Color" class="text-danger"></span>     
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="ProductID" class="form-control" asp-items="@ViewBag.ProductList"></select>
+                                        <label for="floatingInputEmail">Product</label>
+                                        <span asp-validation-for="Product" class="text-danger"></span>     
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="SoleID" class="form-control" asp-items="@ViewBag.SoleList"></select>   
+                                        <label for="floatingInputEmail">Sole</label>
+                                        <span asp-validation-for="Sole" class="text-danger"></span>     
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="StyleID" class="form-control" asp-items="@ViewBag.StyleList"></select>
+                                        <label for="floatingInputEmail">Style</label>
+                                        <span asp-validation-for="Style" class="text-danger"></span>     
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="SupplierID" class="form-control" asp-items="@ViewBag.SupplierList"></select>
+                                        <label for="floatingInputEmail">Supplier</label>
+                                        <span asp-validation-for="Supplier" class="text-danger"></span>              
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" value="Create"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">UPDATE</p>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,134 @@
+﻿@model AppData.Models.Customer
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="~/lib/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/dangky.css">
+    <link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+    <title>Product</title>
+</head>
+<body>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+          <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+              <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                <div class="">
+                  <div class="card-body p-5">
+                    <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 210px;">
+                    <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">YOUR ACCOUNT
+                      FOR EVERYTHING NIKE
+                    </h2>
+                   <form asp-action="Login" style="margin-top:10px;" id="register-form">
+                      <!-- Email input -->
+                      <div class="form-floating mb-3">
+                        <input asp-for="UserName" id="username" type="text" class="form-control" placeholder="UserName" required>
+                        <label for="floatingInputUsername">User Name</label>
+                      </div>
+
+                      <div class="form-floating mb-3">
+                        <input asp-for="Password" id="password" type="password" class="form-control" placeholder="Password" required>
+                        <label for="floatingInputEmail">Password</label>
+                      </div>
+
+                      <!-- 2 column grid layout for inline styling -->
+                      <div class="form-check d-flex justify-content mb-5">
+                        <input style="padding-left: 5px;" class="form-check-input me-2" type="checkbox" value=""
+                          id="form2Example3cg" checked/>
+                        <label class="form-check-label" for="form2Example3g">
+                            Keep me signed in <a asp-controller="Customer" asp-action="ForgotPassword" class="text-body" style="text-decoration: none;">
+                            <u style="padding-left: 120px; text-decoration: none;">Forgotten your
+                              password?</u>
+                          </a>
+                        </label>
+                      </div>
+                      <div class="text1" style="font-size: 12px; text-align: center; padding-bottom: 20px;">
+                        <p class="text-center text-muted mt-5 mb-0">By logging in, you agree to Nike's Privacy Policy and
+                          <br> Terms of Use.</p>
+                      </div>
+                      <div class="d-flex justify-content-center">
+                          <button type="submit"
+                          style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                          class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                          <p style="color: white; font-size: 15px;">Sign In</p>
+                        </button>
+                      </div>
+                                        <p class="text-center text-muted mt-5 mb-0">Not a Member? <a asp-controller="Customer" asp-action="SignUp1" class="text-body"><u>Join Us</u></a></p>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var successMessage = '@TempData["SignUpSuccess"]';
+        if (successMessage) {
+            Swal.fire({
+                title: 'Đăng ký thành công!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var username = '@TempData["UserName"]';
+        var password = '@TempData["Password"]';
+        if (username && password) {
+            $('#username').val(username);
+            $('#password').val(password);
+            // Xóa TempData sau khi điền giá trị vào form
+            '@TempData.Remove("UserName")';
+            '@TempData.Remove("Password")';
+        }
+    });
+</script>
+<script>
+        $("#register-form").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+                url: "/Customer/Login",
+            data: $(this).serialize(),
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = "/Home/Index";
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.message
+                    });
+                }
+            },
+        });
+    });
+</script>
+</body>
+</html>

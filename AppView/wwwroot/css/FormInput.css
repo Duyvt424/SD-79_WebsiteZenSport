@@ -1,0 +1,45 @@
+﻿
+.nav-item {
+    position: relative;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+    .nav-item::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: black;
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+        margin-left: 10px;
+    }
+
+    .nav-item:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+
+.gradient-custom-3 {
+    /* fallback for old browsers */
+    background: white;
+    /* Chrome 10-25, Safari 5.1-6 */
+    /*background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
+        
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    /*background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))*/
+}
+
+.gradient-custom-4 {
+    /* fallback for old browsers */
+    background: white;
+    /* Chrome 10-25, Safari 5.1-6 */
+    /*background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
+        
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    /*background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))*/
+}

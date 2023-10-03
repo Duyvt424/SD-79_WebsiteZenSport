@@ -1,0 +1,22 @@
+﻿@model AppData.Models.Customer
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container">
+    <form asp-action="DangNhap">
+        <div class="form-floating mb-3">
+            <input asp-for="UserName" id="username" type="text" class="form-control" placeholder="UserName" required>
+            <label for="floatingInputUsername">User Name</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Password" id="password" type="password" class="form-control" placeholder="Password" required>
+            <label for="floatingInputEmail">Password</label>
+        </div>
+        <button type="submit">
+            <p>Login</p>
+        </button>
+    </form>
+</div>

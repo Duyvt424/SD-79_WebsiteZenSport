@@ -1,0 +1,135 @@
+﻿@model AppData.Models.Customer
+
+@{
+    ViewData["Title"] = "SignUps";
+}
+
+<link rel="stylesheet" href="~/css/dangky.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 200px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="SignUp" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@*                                    <div class="form-group">
+                                        <label asp-for="UserID" class="control-label"></label>
+                                        <input asp-for="UserID" class="form-control" />
+                                        <span asp-validation-for="UserID" class="text-danger"></span>
+                                    </div>*@
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="UserName" type="text" class="form-control" placeholder="UserName" required>
+                                        <label for="floatingInputEmail">UserName</label>
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Email" type="text" class="form-control" placeholder="Email" required>
+                                        <label for="floatingInputEmail">Email address</label>
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Password" id="Password" type="password" class="form-control" placeholder="Password" required>
+                                        <label for="floatingInputEmail">Password</label>
+                                    </div>
+                                     <div class="form-floating mb-3">
+                                        <input type="password" id="ConfirmPassword" class="form-control" name="ConfirmPassword" placeholder="ConfirmPassword" required>
+                                        <label for="floatingInputEmail">ConfirmPassword</label>
+                                        <div id="divCheckPasswordMatch"></div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input style="display:none;" asp-for="Status" type="number" value="1" name="Status" class="form-control" placeholder="Status" required>
+                                        @*<label for="floatingInputEmail">Status</label>*@
+                                    </div>
+                                    <div class="form-check d-flex justify-content-center mb-5">
+                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" name="AgreeToTerms" checked/>
+                                        <label class="form-check-label" for="form2Example3g">
+                                            I agree all statements in <a href="#gioithieu" class="text-body"><u>Terms of service</u></a>
+                                        </label>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" value="Create"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Join Us</p>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#ConfirmPassword").keyup(checkPasswordMatch);
+        $("#Password").keyup(checkPasswordMatch);
+    });
+
+    function checkPasswordMatch() {
+        var password = $("#Password").val();
+        var confirmPassword = $("#ConfirmPassword").val();
+
+        if (password != confirmPassword)
+            $("#divCheckPasswordMatch").html("Vui lòng điền đúng mật khẩu!");
+        else
+            $("#divCheckPasswordMatch").html("");
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#register-form").submit(function (event) {
+            var password = $("#Password").val();
+            var confirmPassword = $("#ConfirmPassword").val();
+            if (password != confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Vui lòng điền đúng mật khẩu xác nhận!',
+                });
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+<script>
+    $("#register-form").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "/Customer/SignUp",
+            data: $(this).serialize(),
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = "/Customer/Login";
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.message
+                    });
+                }
+            },
+        });
+    });
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

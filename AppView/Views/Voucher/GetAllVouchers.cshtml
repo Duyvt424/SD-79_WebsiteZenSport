@@ -1,0 +1,70 @@
+﻿@model IEnumerable<AppData.Models.Voucher>
+
+@{
+    ViewData["Title"] = "GetAllVouchers";
+}
+
+<h1>GetAllVouchers</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VoucherID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VoucherCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VoucherValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaxUsage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemainingUsage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpirationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.VoucherID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VoucherCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VoucherValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxUsage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemainingUsage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpirationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditVoucher", new { id=item.VoucherID }) |
+                @Html.ActionLink("Delete", "DeleteVoucher", new { id=item.VoucherID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

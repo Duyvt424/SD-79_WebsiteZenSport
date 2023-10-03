@@ -1,0 +1,97 @@
+﻿@model AppData.Models.Image
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="Edit" enctype="multipart/form-data" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group" style="display: none">
+                                        <label asp-for="ImageID" class="control-label"></label>
+                                        <input asp-for="ImageID" class="form-control" />
+                                        <span asp-validation-for="ImageID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Name" class="control-label"></label>
+                                        <input asp-for="Name" class="form-control" />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        @* <label asp-for="Image1" class="control-label"></label>
+                                        <input asp-for="Image1" class="form-control" />
+                                        <span asp-validation-for="Image1" class="text-danger"></span>*@
+                                        <input type="file" name="imageFile1" class="form-control" accept="image/*" />
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        @*<label asp-for="Image2" class="control-label"></label>
+                                        <input asp-for="Image2" class="form-control" />
+                                        <span asp-validation-for="Image2" class="text-danger"></span>*@
+                                        <input type="file" name="imageFile2" class="form-control" />
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        @*   <label asp-for="Image3" class="control-label"></label>
+                                        <input asp-for="Image3" class="form-control" />
+                                        <span asp-validation-for="Image3" class="text-danger"></span>*@
+                                        <input type="file" name="imageFile3" class="form-control" />
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        @*  <label asp-for="Image4" class="control-label"></label>
+                                        <input asp-for="Image4" class="form-control" />
+                                        <span asp-validation-for="Image4" class="text-danger"></span>*@
+                                        <input type="file" name="imageFile4" class="form-control" />
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <label asp-for="Status" class="control-label"></label>
+                                        <input asp-for="Status" class="form-control" />
+                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <label asp-for="ShoesDetailsID" class="control-label"></label>
+                                        <input asp-for="ShoesDetailsID" class="form-control" />
+                                        <span asp-validation-for="ShoesDetailsID" class="text-danger"></span>
+                                    </div>
+                                    <br />
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" value="Save"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Update</p>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+

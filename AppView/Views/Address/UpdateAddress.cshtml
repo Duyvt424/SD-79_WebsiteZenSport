@@ -1,0 +1,78 @@
+﻿@model AppData.Models.Address
+
+@{
+    ViewData["Title"] = "UpdateAddress";
+}
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="UpdateAddress" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-floating mb-3" style="display:none;">
+                                        <input asp-for="AddressID" type="text" class="form-control" placeholder="AddressID" required>
+                                        <label for="floatingInputEmail">AddressID</label>
+                                        <span asp-validation-for="AddressID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Street" type="text" class="form-control" placeholder="Street" required>
+                                        <label for="floatingInputEmail">Thôn (số nhà, số đường)</label>
+                                        <span asp-validation-for="Street" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Commune" type="text" class="form-control" placeholder="Commune" required>
+                                        <label for="floatingInputEmail">Xã</label>
+                                        <span asp-validation-for="Commune" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="District" type="text" class="form-control" placeholder="District" required>
+                                        <label for="floatingInputEmail">Huyện</label>
+                                        <span asp-validation-for="District" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Province" type="text" class="form-control" placeholder="Province" required>
+                                        <label for="floatingInputEmail">Tỉnh</label>
+                                        <span asp-validation-for="Province" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Status" required>
+                                        <label for="floatingInputEmail">Trạng thái</label>
+                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="CumstomerID" class="form-control" asp-items="@ViewBag.CustomerList"></select>
+                                        <label for="floatingInputEmail">Customer</label>
+                                        <span asp-validation-for="Customer" class="text-danger"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="submit" value="Create"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">UPDATE</p>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
