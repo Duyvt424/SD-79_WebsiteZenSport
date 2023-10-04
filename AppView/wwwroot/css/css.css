@@ -491,4 +491,9 @@ body {
         opacity: 0;
         transition: transform 150ms ease-out, opacity 150ms ease-out;
     }
+/* Căn giữa phần tử .aaa trong màn hình */
+.aaa {
+    margin: 0 auto;
+    max-width: 800px; /* Điều này sẽ giới hạn chiều rộng tối đa của .aaa */
+}
 /*<gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"><gwmw style="display:none;"></gwmw><gwmw style="display:none;"></gwmw></gwmw><gwmw style="display:none;"></gwmw></gwmw></gwmw><gwmw style="display:none;"></gwmw></gwmw></gwmw></gwmw><gwmw style="display:none;">

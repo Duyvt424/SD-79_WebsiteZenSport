@@ -76,7 +76,7 @@
 				</nav>
 			</div>
 		}
-		<div class="container-fluid" style="margin-left: 20px; width: 1480px;">
+		<div class="container-fluid" style="margin-left: 14px; width: 98%;">
 			<nav class="navbar navbar-expand-lg bg-body-tertiary">
 				<nav class="navbar bg-body-tertiary">
 					<div class="container-fluid">
@@ -86,69 +86,63 @@
 						</a>
 					</div>
 				</nav>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent"
-					 style="padding-left: 380px; font-weight: 600; font-size: 18px">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-weight: 600; font-size:18px;">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
 						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
-						<li class="nav-item" style="padding-left: 15px;">
+						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Customer" asp-action="GetAllCustomer">Hóa đơn</a>
 						</li>
-						<li class="nav-item" style="padding-left: 15px;">
+						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="ShoesDetail" asp-action="GetAllShoesDetails">Session</a>
 						</li>
-						<li class="nav-item" style="padding-left: 15px;">
+						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Cart" asp-action="ViewBill">BillDetails</a>
 						</li>
-						@if(role == "Admin")
+						@if (role == "Admin")
 						{
-						<li class="nav-item" style="padding-left: 15px;">
-						<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Role" asp-action="GetAllRole">Role</a>
-						</li>
+							<li class="nav-item">
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Role" asp-action="GetAllRole">Role</a>
+							</li>
 						}
-						<li class="nav-item" style="padding-left: 15px;">
+						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
 						</li>
-						@*						<li class="nav-item" style="padding-left: 15px;">
-						<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ShowListFromSession">Lab 5_6</a>
-						</li>*@
 					</ul>
-					<form class="d-flex" role="search" style="padding-right: 30px;" method="get" action="@Url.Action("Search", "Home")">
+					<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
 						<div class="src-box">
-							<input type="text" placeholder="@ViewBag.Name Search "Search"" id="search-input" name="name" value="@ViewBag.Name">
-							@*<input type="text" placeholder="Search" id="search-input" name="name">*@
+							<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
 							<button type="submit"></button>
 						</div>
-						<div class="buttonok" style="padding-right: 15px;">
+						<div class="buttonok" style="margin-right:10px;;">
 							<a class="bag" asp-controller="Cart" asp-action="Cart">
-								<img src="~/image/icons8-shopping-bag-32.png" alt="??????"
-									 style="width: 40px; height: 35px; padding-left: 8px; padding-top: 5px;">
+								<img src="~/image/icons8-shopping-bag-32.png" alt="??????" style="width: 40px; height: 35px;">
 							</a>
 						</div>
 					</form>
-					@*					<form class="d-flex" role="search" style="padding-right: 30px;" method="get" action="@Url.Action("Search", "Products")">
-					<div class="src-box">
-					<input type="text" placeholder="  " id="search-box" name="name">
-					<button type="submit"></button>
-					</div>
-					@*					<div class="box">
-					<form name="search">
-					<input type="text" class="input" name="txt" onmouseout="this.value = ''; this.blur();">
-					</form>
-					<i class="fas fa-search"></i>
-					<button class="btn btn-outline-success" type="submit" style="border-radius: 20px;">Search</button>
-					</div>
-					<div class="buttonok" style="padding-right: 15px;">
-					<a class="bag" href="#giohang">
-					<img src="~/image/icons8-shopping-bag-32.png" alt="https://nroblue.com/"
-					style="width: 40px; height: 35px; padding-left: 8px; padding-top: 5px;">
-					</a>
-					</div>
-					</form>*@
 				</div>
 			</nav>
 		</div>
+		<script>
+			// Thêm sự kiện khi trang tải xong
+			document.addEventListener("DOMContentLoaded", function () {
+				// Lấy menu cần ẩn
+				var topNavbar = document.querySelector(".select-none.bg-grey.lg\\:flex.lg\\:items-stretch.w-full");
+
+				// Lấy nút toggle
+				var toggleButton = document.querySelector(".navbar-toggler");
+
+				// Thêm sự kiện click cho nút toggle
+				toggleButton.addEventListener("click", function () {
+					// Ẩn/hiện menu cần ẩn bằng cách thêm/xóa lớp 'show'
+					topNavbar.classList.toggle('show');
+				});
+			});
+		</script>
 		@*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
 		<div class="container-fluid">
 		<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Shopping_Appilication</a>
