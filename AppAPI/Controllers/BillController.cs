@@ -50,7 +50,6 @@ namespace AppAPI.Controllers
             bill.ShippingCosts = ShippingCosts;
             bill.Note = Note;
             bill.Status = Status;
-            bill.CouponID = CouponID;
             bill.VoucherID = VoucherID;
             bill.EmployeeID = EmployeeID;
             bill.CustomerID = CustomerID;
@@ -78,7 +77,6 @@ namespace AppAPI.Controllers
             bill.ShippingCosts = ShippingCosts;
             bill.Note = Note;
             bill.Status = Status;
-            bill.CouponID = CouponID;
             bill.CustomerID = CustomerID;
             bill.EmployeeID = EmployeeID;
             bill.VoucherID = VoucherID;

@@ -15,11 +15,11 @@ namespace AppData.Configurations
         {
             builder.ToTable("Sole");
             builder.HasKey(c => c.SoleID);
+            builder.Property(c => c.SoleCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(100)");
-            builder.Property(c => c.Fabric).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Height).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
-
 }

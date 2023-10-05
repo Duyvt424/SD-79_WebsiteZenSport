@@ -42,21 +42,21 @@ namespace AppView.Controllers
                 var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
                 if (loggedInUser != null)
                 {
-                    var cartItemList = _dBContext.CartDetails
-                        .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails != null)
-                        .Join(_dBContext.Sizes, cd => cd.ShoesDetails.SizeID, s => s.SizeID, (cd, s) => new CartItemViewModel
-                        {
-                            ShoesDetailsID = cd.ShoesDetailsId,
-                            Quantity = cd.Quantity,
-                            ProductName = _dBContext.Products.FirstOrDefault(p => p.ProductID == cd.ShoesDetails.ProductID).Name,
-                            Price = cd.ShoesDetails.Price,
-                            Description = cd.ShoesDetails.Description,
-                            Size = s.Name, // Lấy tên kích thước từ bảng Size
-                            ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails.ShoesDetailsId).Image1,
-                            MaHD = ""
-                        })
-                        .ToList();
-                    return View(cartItemList);
+                    //var cartItemList = _dBContext.CartDetails
+                    //    .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails != null)
+                    //    .Join(_dBContext.Sizes, cd => cd.ShoesDetails.SizeID, s => s.SizeID, (cd, s) => new CartItemViewModel
+                    //    {
+                    //        ShoesDetailsID = cd.ShoesDetailsId,
+                    //        Quantity = cd.Quantity,
+                    //        ProductName = _dBContext.Products.FirstOrDefault(p => p.ProductID == cd.ShoesDetails.ProductID).Name,
+                    //        Price = cd.ShoesDetails.Price,
+                    //        Description = cd.ShoesDetails.Description,
+                    //        Size = s.Name, // Lấy tên kích thước từ bảng Size
+                    //        ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails.ShoesDetailsId).Image1,
+                    //        MaHD = ""
+                    //    })
+                    //    .ToList();
+                    //return View(cartItemList);
                 }
             }
             // Nếu không có người dùng đăng nhập, lấy giỏ hàng từ session
@@ -100,7 +100,7 @@ namespace AppView.Controllers
                     }
                     // Kiểm tra xem người dùng đã chọn kích thước hay chưa
                     var SizeID = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
-                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID && c.ShoesDetailsId == ShoesDT.ShoesDetailsId && c.ShoesDetails.SizeID == SizeID);
+                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID && c.ShoesDetailsId == ShoesDT.ShoesDetailsId /*&& c.ShoesDetails.SizeID == SizeID*/);
                     if (existingCartItem != null)
                     {
                         // Sản phẩm đã tồn tại trong giỏ hàng, tăng số lượng lên 1
@@ -120,7 +120,7 @@ namespace AppView.Controllers
                         _dBContext.CartDetails.Add(cartDetails);
                     }
                     // Cập nhật kích thước của sản phẩm
-                    ShoesDT.SizeID = SizeID;
+                    //ShoesDT.SizeID = SizeID;
                     _dBContext.Update(ShoesDT);
                     ShoesDT.AvailableQuantity--;
                     _dBContext.SaveChanges();
@@ -232,7 +232,6 @@ namespace AppView.Controllers
                 CancelDate = DateTime.Now,
                 TotalPrice = totalPrice,
                 EmployeeID = Guid.Parse("779ae3d8-6a02-46f1-bde2-960140a0e585"),
-                CouponID = Guid.Parse("2d029610-3101-4703-acc8-79b1ada581d6"),
                 VoucherID = Guid.Parse("9f86a42e-cfbe-4043-8d2d-8ebcea7f8fcd"),
                 PurchaseMethodID = HTThanhToan
             };

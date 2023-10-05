@@ -49,7 +49,7 @@ namespace AppAPI.Controllers
         {
             ShoesDetails shoesdt = new ShoesDetails(); 
             shoesdt.ShoesDetailsId = Guid.NewGuid();
-            shoesdt.CreateDate = DateTime.Parse(createdate);
+            shoesdt.DateCreated = DateTime.Parse(createdate);
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
             shoesdt.AvailableQuantity = availablequantity;
@@ -59,7 +59,6 @@ namespace AppAPI.Controllers
             shoesdt.ProductID = productid;
             shoesdt.SoleID = soleid;
             shoesdt.StyleID = styleid;
-            shoesdt.SupplierID = supplierid;
             //shoesdt.Color.Name = namecolor;
            // shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == colorid).Select(p => p.ColorID).FirstOrDefault();
             //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();
@@ -75,7 +74,7 @@ namespace AppAPI.Controllers
         public bool Put(Guid id, string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid soleid, Guid styleid, Guid supplierid) 
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
-            shoesdt.CreateDate = DateTime.Parse(createdate);
+            shoesdt.DateCreated = DateTime.Parse(createdate);
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
             shoesdt.AvailableQuantity = availablequantity;
@@ -85,7 +84,6 @@ namespace AppAPI.Controllers
             shoesdt.ProductID = productid;
             shoesdt.SoleID = soleid;
             shoesdt.StyleID = styleid;
-            shoesdt.SupplierID = supplierid;
             
             //shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == namecolor).Select(p => p.ColorID).FirstOrDefault();
             //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();

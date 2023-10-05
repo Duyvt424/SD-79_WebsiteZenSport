@@ -71,7 +71,6 @@ namespace AppView.Services
 				x.TotalPrice= i.TotalPrice;
 				x.ShippingCosts=i.ShippingCosts;
 				x.Note = i.Note;
-				x.CouponID= i.CouponID;
 				x.EmployeeID= i.EmployeeID;
 				x.CustomerID = i.CustomerID;
 				x.VoucherID= i.VoucherID;

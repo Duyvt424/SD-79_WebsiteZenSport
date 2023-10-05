@@ -14,6 +14,7 @@ namespace AppData.Models
         public string? District { get; set; } // huyện
         public string? Province { get; set; } // tỉnh
         public int Status { get; set; }
+        public DateTime DateCreated { get; set; }
         public Guid CumstomerID { get; set; }
         public virtual Customer Customer { get; set; }
     }

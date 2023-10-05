@@ -38,7 +38,7 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSole(Sole sole)
         {
-            string apiUrl = $"https://localhost:7036/api/Sole/Create-Sole?name={sole.Name}&fabric={sole.Fabric}&status={sole.Status}&height={sole.Height}";
+            string apiUrl = $"https://localhost:7036/api/Sole/Create-Sole?name={sole.Name}&status={sole.Status}&height={sole.Height}";
             var httpClient = new HttpClient();
             var response = await httpClient.PostAsync(apiUrl,null);
             string apiData = await response.Content.ReadAsStringAsync();
@@ -57,7 +57,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditSole(Sole sole) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Sole/Update-Sole?soleID={sole.SoleID}&name={sole.Name}&fabric={sole.Fabric}&height={sole.Height}&status={sole.Status}";
+            string apiUrl = $"https://localhost:7036/api/Sole/Update-Sole?soleID={sole.SoleID}&name={sole.Name}&height={sole.Height}&status={sole.Status}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllSole");
         }

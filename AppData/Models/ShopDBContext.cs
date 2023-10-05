@@ -24,7 +24,7 @@ namespace AppData.Models
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartDetails> CartDetails { get; set; }
         public DbSet<Color> Colors { get; set; }
-        public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<FavoriteShoes> FavoriteShoes { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Image> Images { get; set; }
@@ -37,10 +37,13 @@ namespace AppData.Models
         public DbSet<Style> Styles { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<Rank> Ranks { get; set; }
+        public DbSet<ShoesDetails_Size> ShoesDetails_Sizes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=NET105_Nhom4_PMBanGiayTT;Persist Security Info=True;User ID=sa;Password=123456");
+            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=SD_79_XDWebsiteBanGiayTTZenSport;Persist Security Info=True;User ID=sa;Password=123456");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -43,7 +43,6 @@ namespace AppView.Controllers
         {
             Sole sl = new Sole();
             sl.Name = name;
-            sl.Fabric = fabric;
             sl.Status = status;
             sl.Height = height;
             sl.SoleID = Guid.NewGuid();
@@ -56,7 +55,6 @@ namespace AppView.Controllers
         {
             var sl = repos.GetAll().First(p => p.SoleID == soleID);
             sl.Name = name;
-            sl.Fabric = fabric;
             sl.Status = status;
             sl.Height = height;
             return repos.EditItem(sl);

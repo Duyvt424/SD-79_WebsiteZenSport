@@ -20,6 +20,7 @@ namespace AppData.Configurations
             builder.Property(c => c.District).HasColumnType("nvarchar(200)");
             builder.Property(c => c.Province).HasColumnType("nvarchar(200)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
             builder.HasOne(c => c.Customer).WithMany(c => c.Addresses).HasForeignKey(c => c.CumstomerID);
         }
     }

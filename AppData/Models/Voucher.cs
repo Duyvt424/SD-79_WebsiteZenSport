@@ -15,6 +15,7 @@ namespace AppData.Models
         public int RemainingUsage { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int Status { get; set; }
+        public DateTime DateCreated { get; set; }
         public virtual List<Bill> Bills { get; set; }
     }
 }

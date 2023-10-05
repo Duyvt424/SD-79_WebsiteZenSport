@@ -129,27 +129,27 @@ namespace AppView.Controllers
 				}
 				ViewBag.NameSP = productNames;
 
-				// Filter giới tính
-				if (genders.Contains("male"))
-				{
-					var sizesList = _size.GetAllSizes().Where(x => x.Status == 1).ToList();
-					List<ShoesDetails> maleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-					AddRangeIfNotExist(combinedShoesList, maleShoesList);
-				}
+				//// Filter giới tính
+				//if (genders.Contains("male"))
+				//{
+				//	var sizesList = _size.GetAllSizes().Where(x => x.Status == 1).ToList();
+				//	List<ShoesDetails> maleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
+				//	AddRangeIfNotExist(combinedShoesList, maleShoesList);
+				//}
 
-				if (genders.Contains("female"))
-				{
-					var sizesList = _size.GetAllSizes().Where(x => x.Status == 2).ToList();
-					List<ShoesDetails> femaleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-					AddRangeIfNotExist(combinedShoesList, femaleShoesList);
-				}
+				//if (genders.Contains("female"))
+				//{
+				//	var sizesList = _size.GetAllSizes().Where(x => x.Status == 2).ToList();
+				//	List<ShoesDetails> femaleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
+				//	AddRangeIfNotExist(combinedShoesList, femaleShoesList);
+				//}
 
-				if (genders.Contains("unisex"))
-				{
-					var sizesList = _size.GetAllSizes().Where(x => x.Status == 0).ToList();
-					List<ShoesDetails> unisexShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-					AddRangeIfNotExist(combinedShoesList, unisexShoesList);
-				}
+				//if (genders.Contains("unisex"))
+				//{
+				//	var sizesList = _size.GetAllSizes().Where(x => x.Status == 0).ToList();
+				//	List<ShoesDetails> unisexShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
+				//	AddRangeIfNotExist(combinedShoesList, unisexShoesList);
+				//}
 
 				//Filter khoảng giá
 				foreach (var price in minPrice)
@@ -180,9 +180,9 @@ namespace AppView.Controllers
 				}
 
 				//Filter hãng
-				var brandList = _supplier.GetAllSuppliers().Where(suppliers => brands.Contains(suppliers.Name.ToLower())).ToList();
-				var filteredBrandsList = comparingShoesList.Where(shoes => brandList.Any(brand => brand.SupplierID == shoes.SupplierID)).ToList();
-				AddRangeIfNotExist(combinedShoesList, (List<ShoesDetails>)filteredBrandsList);
+				//var brandList = _supplier.GetAllSuppliers().Where(suppliers => brands.Contains(suppliers.Name.ToLower())).ToList();
+				//var filteredBrandsList = comparingShoesList.Where(shoes => brandList.Any(brand => brand.SupplierID == shoes.SupplierID)).ToList();
+				//AddRangeIfNotExist(combinedShoesList, (List<ShoesDetails>)filteredBrandsList);
 
 				//Filter style
 				var stylesList = _style.GetAllStyles().Where(s => styles.Contains(s.Name.ToLower())).ToList();

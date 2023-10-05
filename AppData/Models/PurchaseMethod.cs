@@ -11,6 +11,7 @@ namespace AppData.Models
         public Guid PurchaseMethodID { get; set; }
         public string MethodName { get; set; }
         public int Status { get; set; }
+        public DateTime DateCreated { get; set; }
         public virtual List<Bill> Bills { get; set; }
     }
 }

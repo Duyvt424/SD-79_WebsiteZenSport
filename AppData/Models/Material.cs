@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace AppData.Models
 {
-    public class Style
+    public class Material
     {
-        public Guid StyleID { get; set; }
-        public string StyleCode { get; set; }
-        public string? Name { get; set; }
+        public Guid MaterialId { get; set; }
+        public string MaterialCode { get; set; }
+        public string Name { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
-        public virtual List<ShoesDetails> ShoesDetails { get; set; }
+        public virtual List<Product> Products { get; set; }
     }
 }

@@ -15,12 +15,14 @@ namespace AppData.Configurations
         {
             builder.ToTable("Image");
             builder.HasKey(c => c.ImageID);
+            builder.Property(c => c.ImageCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Image1).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Image2).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Image3).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Image4).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
             builder.HasOne(c => c.ShoesDetails).WithMany(c => c.Images).HasForeignKey(c => c.ShoesDetailsID);
         }
     }

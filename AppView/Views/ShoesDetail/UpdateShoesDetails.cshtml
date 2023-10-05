@@ -31,9 +31,9 @@
                                         <span asp-validation-for="ShoesDetailsId" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="CreateDate" type="text" class="form-control" placeholder="CreateDate" required>
+                                        <input asp-for="DateCreated" type="text" class="form-control" placeholder="CreateDate" required>
                                         <label for="floatingInputEmail">CreateDate</label>
-                                        <span asp-validation-for="CreateDate" class="text-danger"></span>
+                                        <span asp-validation-for="DateCreated" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Price" type="text" class="form-control" placeholder="Price" required>
@@ -79,11 +79,6 @@
                                         <select asp-for="StyleID" class="form-control" asp-items="@ViewBag.StyleList"></select>
                                         <label for="floatingInputEmail">Style</label>
                                         <span asp-validation-for="Style" class="text-danger"></span>     
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <select asp-for="SupplierID" class="form-control" asp-items="@ViewBag.SupplierList"></select>
-                                        <label for="floatingInputEmail">Supplier</label>
-                                        <span asp-validation-for="Supplier" class="text-danger"></span>              
                                     </div>
                                     <div class="d-flex justify-content-center">
                                         <button type="submit" value="Create"

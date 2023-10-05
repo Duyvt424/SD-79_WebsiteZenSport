@@ -15,8 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("Size");
             builder.HasKey(c => c.SizeID);
+            builder.Property(c => c.SizeCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
 }

@@ -16,6 +16,7 @@ namespace AppData.Configurations
         {
             builder.ToTable("Customer");
             builder.HasKey(c => c.CumstomerID);
+            builder.Property(c => c.FullName).HasColumnType("nvarchar(100)");
             builder.Property(c => c.UserName).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Password).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Email).HasColumnType("nvarchar(300)");
@@ -23,6 +24,8 @@ namespace AppData.Configurations
             builder.Property(c => c.PhoneNumber).HasColumnType("nvarchar(50)");
             builder.Property(c => c.ResetPassword).HasColumnType("nvarchar(60)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
+            builder.HasOne(c => c.Rank).WithMany(c => c.Customers).HasForeignKey(c => c.RankID).IsRequired(false);
             builder.HasOne(c => c.Cart).WithOne(c => c.Customer).HasForeignKey<Cart>(c => c.CumstomerID);
         }
     }

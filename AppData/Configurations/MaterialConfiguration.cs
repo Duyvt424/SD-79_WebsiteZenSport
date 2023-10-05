@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace AppData.Configurations
 {
-    public class PurchaseMethodConfiguration : IEntityTypeConfiguration<PurchaseMethod>
+    public class MaterialConfiguration : IEntityTypeConfiguration<Material>
     {
-        public void Configure(EntityTypeBuilder<PurchaseMethod> builder)
+        public void Configure(EntityTypeBuilder<Material> builder)
         {
-            builder.ToTable("PurchaseMethod");
-            builder.HasKey(c => c.PurchaseMethodID);
-            builder.Property(c => c.MethodName).HasColumnType("nvarchar(200)");
+            builder.ToTable("Material");
+            builder.HasKey(c => c.MaterialId);
+            builder.Property(c => c.MaterialCode).HasColumnType("nvarchar(50)");
+            builder.Property(c => c.Name).HasColumnType("nvarchar(200)");
             builder.Property(c => c.Status).HasColumnType("int");
             builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }

@@ -15,9 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("Style");
             builder.HasKey(c => c.StyleID);
+            builder.Property(c => c.StyleCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
-
 }

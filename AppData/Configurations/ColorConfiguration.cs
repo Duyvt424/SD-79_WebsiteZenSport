@@ -15,8 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("Color");
             builder.HasKey(c => c.ColorID);
+            builder.Property(c => c.ColorCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
 }

@@ -15,9 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("Supplier");
             builder.HasKey(c => c.SupplierID);
+            builder.Property(c => c.SupplierCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Name).HasColumnType("nvarchar(200)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
-
 }

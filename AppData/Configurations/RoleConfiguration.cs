@@ -15,8 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("Role");
             builder.HasKey(c => c.RoleID);
+            builder.Property(c => c.RoleCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.RoleName).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
 }
