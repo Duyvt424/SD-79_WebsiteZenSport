@@ -39,23 +39,26 @@ namespace AppAPI.Controllers
 
         // POST api/<ColorController1>
         [HttpPost("create-color")]
-        public bool CreateColor(string Name, int Status)
+        public bool CreateColor(string ColorCode, string Name, int Status, DateTime DateCreated)
         {
             Color color = new Color();
+            color.ColorCode = ColorCode;
             color.Name = Name;
             color.Status = Status;
+            color.DateCreated = DateCreated;
             color.ColorID = Guid.NewGuid();
-
            return _repos.AddItem(color);
         }
 
         // PUT api/<ColorController1>/5
         [HttpPut("update-color")]
-        public bool Put(string Name, int Status, Guid ColorID)
+        public bool Put(string ColorCode, string Name, int Status, DateTime DateCreated, Guid ColorID)
         {
             var colo = _repos.GetAll().FirstOrDefault(c => c.ColorID == ColorID);
+            colo.ColorCode = ColorCode;
             colo.Name = Name;
             colo.Status = Status;
+            colo.DateCreated = DateCreated;
             return _repos.EditItem(colo);
           
         }
@@ -66,7 +69,8 @@ namespace AppAPI.Controllers
         public bool Delete(Guid id)
         {
             var colo = _repos.GetAll().First(c => c.ColorID == id);
-            return _repos.RemoveItem(colo);
+            colo.Status = 1;
+            return _repos.EditItem(colo);
         }
     }
 }

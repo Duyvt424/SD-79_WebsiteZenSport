@@ -25,11 +25,6 @@
                                 </p>
                                     <form asp-action="CreateColor">
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                        @*<div class="form-group">
-                                            <label asp-for="ColorID" class="control-label"></label>
-                                            <input asp-for="ColorID" class="form-control" />
-                                            <span asp-validation-for="ColorID" class="text-danger"></span>
-                                        </div>*@
                                         <div class="form-group">
                                             <label asp-for="Name" class="control-label"></label>
                                             <input asp-for="Name" class="form-control" />
@@ -40,14 +35,16 @@
                                             <input asp-for="Status" class="form-control" />
                                             <span asp-validation-for="Status" class="text-danger"></span>
                                         </div>
-                                        @*<div class="form-group">
-                                            <input type="submit" value="Create" class="btn btn-primary" />
-                                        </div>*@
-                                        <div class="d-flex justify-content-center">
+                                        <div class="form-group">
+                                            <label asp-for="DateCreated" class="control-label"></label>
+                                            <input asp-for="DateCreated" type="datetime-local" class="form-control" />
+                                            <span asp-validation-for="DateCreated" class="text-danger"></span>
+                                        </div>
+                                        <div class="d-flex justify-content-center" style="padding-top:5px;">
                                             <button type="submit" value="Create"
                                                     style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
                                                     class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                                <p style="color: white; font-size: 15px; text-decoration: none;">Update</p>
+                                                <p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
                                             </button>
                                          </div>
                                     </form>

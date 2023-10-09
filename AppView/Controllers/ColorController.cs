@@ -10,10 +10,6 @@ namespace AppView.Controllers
     public class ColorController : Controller
     {
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
         private readonly IAllRepositories<Color> _repos;
         private ShopDBContext _dbContext = new ShopDBContext();
         private DbSet<Color> _color;
@@ -23,14 +19,24 @@ namespace AppView.Controllers
             AllRepositories<Color> all = new AllRepositories<Color>(_dbContext, _color);
             _repos = all;
         }  
-       
+        private string GenerateColorCode()
+        {
+            var lastColor = _dbContext.Colors.OrderByDescending(c => c.ColorCode).FirstOrDefault();
+            if (lastColor != null)
+            {
+                var lastNumber = int.Parse(lastColor.ColorCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newColorCode = "CL" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+                return newColorCode;
+            }
+            return "CL001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+        }
         public async Task<IActionResult> GetAllColor()
         {
 
             string apiUrl = "https://localhost:7036/api/Color/get-color";
-            var httpClient = new HttpClient(); // tạo ra để callApi
-            var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-                                                             // Lấy dữ liệu Json trả về từ Api được call dạng string
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
             // Lấy kqua trả về từ API
             // Đọc từ string Json vừa thu được sang List<T>
@@ -46,7 +52,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateColor(Color color)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Color/create-color?Name={color.Name}&Status={color.Status}";
+            string apiUrl = $"https://localhost:7036/api/Color/create-color?ColorCode={GenerateColorCode()}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}";
             var response = await httpClient.PostAsync(apiUrl,null);
             return RedirectToAction("GetAllColor");
         }
@@ -60,14 +66,9 @@ namespace AppView.Controllers
         public  async Task<IActionResult> EditColor(Color color) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Color/update-color?Name={color.Name}&Status={color.Status}&ColorID={color.ColorID}";
+            string apiUrl = $"https://localhost:7036/api/Color/update-color?ColorCode={color.ColorCode}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}&ColorID={color.ColorID}";
             var response = await httpClient.PutAsync(apiUrl,null);
             return RedirectToAction("GetAllColor");
-            //if (_repos.EditItem(color))
-            //{
-            //    return RedirectToAction("GetAllColor");
-            //}
-            //else return BadRequest();
         }
         public async Task<IActionResult> DeleteColor(Guid id)
         {
@@ -76,12 +77,11 @@ namespace AppView.Controllers
             string apiUrl = $"https://localhost:7036/api/Color/delete-color?id={id}";
             var response = await httpClient.DeleteAsync(apiUrl);
             return RedirectToAction("GetAllColor");
-            //var colo = _repos.GetAll().First(c => c.ColorID == id);
-            //if (_repos.RemoveItem(colo))
-            //{
-            //    return RedirectToAction("GetAllColor");
-            //}
-            //else return Content("Error");
+        }
+        public async Task<IActionResult> FindColor(string searchQuery)
+        {
+            var color = _repos.GetAll().Where(c => c.ColorCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
+            return View(color);
         }
     }
 }
