@@ -1,8 +1,9 @@
-﻿@model AppData.Models.Sole
+﻿@model AppData.Models.Product
 
 @{
-    ViewData["Title"] = "CreateSole";
+    ViewData["Title"] = "EditProduct";
 }
+
 
 <link rel="stylesheet" href="~/css/FormInput.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -20,18 +21,25 @@
                                     NIKE MEMBER
                                 </h2>
                                 <p style="text-align: center; font-size: 14px;">
-                                    Create your Nike Member profilfe and
+                                    Create your Nike Member profile and
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="CreateSole" style="margin-top:10px;" id="register-form">
+                                <form asp-action="EditProduct" style="margin-top:10px;" id="register-form">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group" style="display:none;">
+                                        <label asp-for="ProductID" class="control-label"></label>
+                                        <input asp-for="ProductID" class="form-control" />
+                                        <span asp-validation-for="ProductID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group" style="display:none;">
+                                        <label asp-for="ProductCode" class="control-label"></label>
+                                        <input asp-for="ProductCode" class="form-control" />
+                                        <span asp-validation-for="ProductCode" class="text-danger"></span>
+                                    </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Name" type="text" class="form-control" placeholder="Name" required>
                                         <label for="floatingInputUsername">Name</label>
-                                    </div>
-                                     <div class="form-floating mb-3">
-                                        <input asp-for="Height" type="number" class="form-control" placeholder="Height" required>
-                                        <label for="floatingInputUsername">Height</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
@@ -41,11 +49,21 @@
                                         <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
                                         <label for="floatingInputUsername">Ngày tạo</label>
                                     </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="SupplierID" class="form-control" asp-items="@ViewBag.SupplierList"></select>
+                                        <label for="floatingInputEmail">Nhà cung cấp</label>
+                                        <span asp-validation-for="SupplierID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="MaterialId" class="form-control" asp-items="@ViewBag.MaterialList"></select>
+                                        <label for="floatingInputEmail">Chất Liệu</label>
+                                        <span asp-validation-for="MaterialId" class="text-danger"></span>
+                                    </div>
                                     <div class="d-flex justify-content-center" style="padding-top:5px;">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
                                                 class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                            <p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Update</p>
                                         </button>
                                     </div>
                                 </form>

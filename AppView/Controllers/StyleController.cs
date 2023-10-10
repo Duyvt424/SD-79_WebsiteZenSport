@@ -4,6 +4,7 @@ using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace AppView.Controllers
 {
@@ -19,16 +20,25 @@ namespace AppView.Controllers
 			AllRepositories<Style> all = new AllRepositories<Style>(context, style);
 			repos = all;
 		}
+        private string GenerateStyleCode()
+        {
+            var lastStyle = context.Styles.OrderByDescending(c => c.StyleCode).FirstOrDefault();
+            if (lastStyle != null)
+            {
+                var lastNumber = int.Parse(lastStyle.StyleCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newStyleCode = "ST" + nextNumber.ToString("D3");
+                return newStyleCode;
+            }
+            return "ST001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+        }
 
-		public async Task<IActionResult> GetAllStyles()
+        public async Task<IActionResult> GetAllStyles()
 		{
 			string apiUrl = "https://localhost:7036/api/Style/get-style";
-			var httpClient = new HttpClient(); // tạo ra để callApi
-			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-															 // Lấy dữ liệu Json trả về từ Api được call dạng string
+			var httpClient = new HttpClient();
+			var response = await httpClient.GetAsync(apiUrl);
 			string apiData = await response.Content.ReadAsStringAsync();
-			// Lấy kqua trả về từ API
-			// Đọc từ string Json vừa thu được sang List<T>
 			var styles = JsonConvert.DeserializeObject<List<Style>>(apiData);
 			return View(styles);
 		}
@@ -41,41 +51,40 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateStyle(Style style)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-style?name={style.Name}&status={style.Status}";
-			var httpClient = new HttpClient();
-			var response = await httpClient.GetAsync(apiUrl);
-			string apiData = await response.Content.ReadAsStringAsync();
-			// Cập nhật thông tin từ apiData vào đối tượng customer
-			var newStyle = JsonConvert.DeserializeObject<Style>(apiData);
-			repos.AddItem(style);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Style/create-style?StyleCode={GenerateStyleCode()}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated}";
+			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllStyles");
 		}
 
 		[HttpGet]
-		public IActionResult EditStyle(Guid id) // Khi ấn vào Create thì hiển thị View
+		public async Task<IActionResult> EditStyle(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
 			// Lấy Product từ database dựa theo id truyền vào từ route
 			Style style = repos.GetAll().FirstOrDefault(c => c.StyleID == id);
 			return View(style);
 		}
 
-		public IActionResult EditStyle(Style style) // Thực hiện việc Tạo mới
+		public async Task<IActionResult> EditStyle(Style style) // Thực hiện việc Tạo mới
 		{
-			if (repos.EditItem(style))
-			{
-				return RedirectToAction("GetAllStyles");
-			}
-			else return BadRequest();
+            var httpClient = new HttpClient();
+			string apiUrl = $"https://localhost:7036/api/Style/update-style?id={style.StyleID}&StyleCode={style.StyleCode}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated}";
+			var response = await httpClient.PutAsync(apiUrl, null);
+			return RedirectToAction("GetAllStyles");
 		}
 
-		public IActionResult DeleteStyle(Guid id)
+		public async Task<IActionResult> DeleteStyle(Guid id)
 		{
-			var style = repos.GetAll().First(c => c.StyleID == id);
-			if (repos.RemoveItem(style))
-			{
-				return RedirectToAction("GetAllStyles");
-			}
-			else return Content("Error");
-		}
-	}
+            var style = repos.GetAll().First(c => c.StyleID == id);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Style/delete-style?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllStyles");
+        }
+        public async Task<IActionResult> FindStyle(string searchQuery)
+        {
+            var style = repos.GetAll().Where(c => c.StyleCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
+            return View(style);
+        }
+    }
 }

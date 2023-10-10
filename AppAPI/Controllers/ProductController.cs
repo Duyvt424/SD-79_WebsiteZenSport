@@ -22,50 +22,51 @@ namespace AppAPI.Controllers
             AllRepositories<Product> all = new AllRepositories<Product>(context, product);
             repos = all;
         }
-        [HttpGet]
-        public IEnumerable<Product> Get()
+        [HttpGet("get-product")]
+        public IEnumerable<Product> GetProduct()
         {
             return repos.GetAll();
         }
 
-        // GET api/<ImageController>/5
-        [HttpGet("{name}")]
-
-        public IEnumerable<Product> Get(string name) // Tìm theo tên
+        [HttpGet("find-product")]
+        public IEnumerable<Product> FindProduct(string name) // Tìm theo tên
         {
-            return repos.GetAll().Where(p => p.Name.Contains(name));
+            return repos.GetAll().Where(p => p.Name.ToLower().Contains(name.ToLower()));
         }
         // POST api/<ImageController>
-        [HttpPost("Create-Product")]
-        public bool CreateImage(string name, int status)
+        [HttpPost("create-product")]
+        public bool CreateProduct(string productCode, string name, int status, DateTime DateCreated, Guid SupplierID, Guid MaterialId)
         {
             Product product = new Product();
+            product.ProductCode = productCode;
             product.Name = name;
-
             product.Status = status;
+            product.DateCreated = DateCreated;
+            product.SupplierID = SupplierID;
+            product.MaterialId = MaterialId;
             product.ProductID = Guid.NewGuid();
             return repos.AddItem(product);
-
         }
 
-        // PUT api/<ImageController>/5
-        [HttpPut("{Update}")]
-        public bool Put(Guid id, string name, int status)
+        [HttpPut("edit-product")]
+        public bool EditProduct(Guid id, string productCode, string name, int status, DateTime dateCreated, Guid supplierID, Guid materialId)
         {
-            var image = repos.GetAll().FirstOrDefault(c => c.ProductID == id);
-            image.Name = name;
-
-            image.Status = status;
-            return repos.EditItem(image);
+            var product = repos.GetAll().FirstOrDefault(c => c.ProductID == id);
+            product.ProductCode = productCode;
+            product.Name = name;
+            product.Status = status;
+            product.DateCreated = dateCreated;
+            product.SupplierID = supplierID;
+            product.MaterialId = materialId;
+            return repos.EditItem(product);
         }
 
-
-        // DELETE api/<ImageController>/5
-        [HttpDelete("{delete}")]
-        public bool Delete(Guid id)
+        [HttpDelete("delete-product")]
+        public bool DeleteProduct(Guid id)
         {
-            var sp = repos.GetAll().FirstOrDefault(c => c.ProductID == id);
-            return repos.RemoveItem(sp);
+            var product = repos.GetAll().FirstOrDefault(c => c.ProductID == id);
+            product.Status = 1;
+            return repos.EditItem(product);
         }
     }
 }

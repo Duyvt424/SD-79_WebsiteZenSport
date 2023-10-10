@@ -21,17 +21,25 @@ namespace AppView.Controllers
             AllRepositories<Size> all = new AllRepositories<Size>(_dbcontext, _size);
             _repos = all;
         }
+        private string GenerateSizeCode()
+        {
+            var lastSize = _dbcontext.Sizes.OrderByDescending(c => c.SizeCode).FirstOrDefault();
+            if (lastSize != null)
+            {
+                var lastNumber = int.Parse(lastSize.SizeCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newSizeCode = "SZ" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+                return newSizeCode;
+            }
+            return "SZ001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+        }
         public async Task<IActionResult> GetAllSize()
         {
-            string apiUrl = "https://localhost:7036/api/Size/Get-Size";
-            var httpClient = new HttpClient(); // tạo ra để callApi
-            var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-                                                             // Lấy dữ liệu Json trả về từ Api được call dạng string
+            string apiUrl = "https://localhost:7036/api/Size/get-size";
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
-            // Lấy kqua trả về từ API
-            // Đọc từ string Json vừa thu được sang List<T>
             var size = JsonConvert.DeserializeObject<List<Size>>(apiData);
-
             return View(size);
         }
         [HttpGet]
@@ -43,7 +51,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateSize(Size size)
         {   
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Size/Create-size?name={size.Name}&status={size.Status}";
+            string apiUrl = $"https://localhost:7036/api/Size/create-size?SizeCode={GenerateSizeCode()}&Name={size.Name}&Status={size.Status}&DateCreated={size.DateCreated}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllSize");
         }
@@ -57,7 +65,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditSize(Size size) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Size/Update-Size?sizeID={size.SizeID}&name={size.Name}&status={size.Status}";
+            string apiUrl = $"https://localhost:7036/api/Size/update-size?sizeID={size.SizeID}&SizeCode={size.SizeCode}&Name={size.Name}&Status={size.Status}&DateCreated={size.DateCreated}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllSize");
         }
@@ -65,13 +73,15 @@ namespace AppView.Controllers
         {
             var sz = _repos.GetAll().First(c => c.SizeID == id);
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Size/Delete-Size?sizeID={id}";
+            string apiUrl = $"https://localhost:7036/api/Size/delete-size?sizeID={id}";
             var response = await httpClient.DeleteAsync(apiUrl);
             return RedirectToAction("GetAllSize");
 
         }
-       
-
-
+        public async Task<IActionResult> FindSize(string searchQuery)
+        {
+            var size = _repos.GetAll().Where(c => c.SizeCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
+            return View(size);
+        }
     }
 }

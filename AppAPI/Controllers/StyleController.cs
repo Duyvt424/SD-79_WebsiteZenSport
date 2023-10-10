@@ -32,21 +32,25 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-style")]
-		public bool CreateStyle(string name, int status)
+		public bool CreateStyle(string StyleCode, string name, int status, DateTime DateCreated)
 		{
 			Style style = new Style();
 			style.StyleID = Guid.NewGuid();
+			style.StyleCode = StyleCode;
 			style.Name = name;
 			style.Status = status;
+			style.DateCreated = DateCreated;
 			return repos.AddItem(style);
 		}
 
 		[HttpPut("update-style")]
-		public bool UpdateStyle(Guid id, string name, int status)
+		public bool UpdateStyle(Guid id, string StyleCode, string name, int status, DateTime DateCreated)
 		{
 			Style style = repos.GetAll().First(x => x.StyleID == id);
+			style.StyleCode = StyleCode;
 			style.Name = name;
 			style.Status = status;
+			style.DateCreated = DateCreated;
 			return repos.EditItem(style);
 		}
 
@@ -54,7 +58,8 @@ namespace AppAPI.Controllers
 		public bool DeleteStyle(Guid id)
 		{
 			Style sp = repos.GetAll().First(x => x.StyleID == id);
-			return repos.RemoveItem(sp);
+			sp.Status = 1;
+			return repos.EditItem(sp);
 		}
 	}
 }

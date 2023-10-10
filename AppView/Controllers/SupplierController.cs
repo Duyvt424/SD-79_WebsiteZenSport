@@ -19,18 +19,27 @@ namespace AppView.Controllers
 			AllRepositories<Supplier> all = new AllRepositories<Supplier>(context, supplier);
 			repos = all;
 		}
+        private string GenerateSupplierCode()
+        {
+            var lastSupplier = context.Suppliers.OrderByDescending(c => c.SupplierCode).FirstOrDefault();
+            if (lastSupplier != null)
+            {
+                var lastNumber = int.Parse(lastSupplier.SupplierCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newSupplierCode = "SP" + nextNumber.ToString("D3");
+                return newSupplierCode;
+            }
+            return "SP001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+        }
 
-		public async Task<IActionResult> GetAllSuppliers()
+        public async Task<IActionResult> GetAllSuppliers()
 		{
 			string apiUrl = "https://localhost:7036/api/Supplier/get-supplier";
 			var httpClient = new HttpClient(); // tạo ra để callApi
-			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-															 // Lấy dữ liệu Json trả về từ Api được call dạng string
+			var response = await httpClient.GetAsync(apiUrl);
 			string apiData = await response.Content.ReadAsStringAsync();
-			// Lấy kqua trả về từ API
-			// Đọc từ string Json vừa thu được sang List<T>
-			var styles = JsonConvert.DeserializeObject<List<Supplier>>(apiData);
-			return View(styles);
+			var suppliers = JsonConvert.DeserializeObject<List<Supplier>>(apiData);
+			return View(suppliers);
 		}
 
 		public async Task<IActionResult> CreateSupplier()
@@ -41,41 +50,40 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateSupplier(Supplier supplier)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-supplier?name={supplier.Name}&status={supplier.Status}";
-			var httpClient = new HttpClient();
-			var response = await httpClient.GetAsync(apiUrl);
-			string apiData = await response.Content.ReadAsStringAsync();
-			// Cập nhật thông tin từ apiData vào đối tượng customer
-			var newStyle = JsonConvert.DeserializeObject<Supplier>(apiData);
-			repos.AddItem(supplier);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Supplier/create-supplier?supplierCode={GenerateSupplierCode()}&name={supplier.Name}&status={supplier.Status}&dateCreated={supplier.DateCreated}";
+			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllSuppliers");
 		}
 
 		[HttpGet]
-		public IActionResult EditSupplier(Guid id) // Khi ấn vào Create thì hiển thị View
+		public async Task<IActionResult> EditSupplier(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
 			// Lấy Product từ database dựa theo id truyền vào từ route
 			Supplier supplier = repos.GetAll().FirstOrDefault(c => c.SupplierID == id);
 			return View(supplier);
 		}
 
-		public IActionResult EditSupplier(Supplier supplier) // Thực hiện việc Tạo mới
+		public async Task<IActionResult> EditSupplier(Supplier supplier) // Thực hiện việc Tạo mới
 		{
-			if (repos.EditItem(supplier))
-			{
-				return RedirectToAction("GetAllSuppliers");
-			}
-			else return BadRequest();
-		}
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Supplier/update-supplier?id={supplier.SupplierID}&supplierCode={supplier.SupplierCode}&name={supplier.Name}&status={supplier.Status}&dateCreated={supplier.DateCreated}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllSuppliers");
+        }
 
-		public IActionResult DeleteSupplier(Guid id)
+		public async Task<IActionResult> DeleteSupplier(Guid id)
 		{
-			var supplier = repos.GetAll().First(c => c.SupplierID == id);
-			if (repos.RemoveItem(supplier))
-			{
-				return RedirectToAction("GetAllSuppliers");
-			}
-			else return Content("Error");
-		}
-	}
+            var supplier = repos.GetAll().First(c => c.SupplierID == id);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Supplier/delete-supplier?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllSuppliers");
+        }
+        public async Task<IActionResult> FindSupplier(string searchQuery)
+        {
+            var supplier = repos.GetAll().Where(c => c.SupplierCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
+            return View(supplier);
+        }
+    }
 }

@@ -31,25 +31,29 @@
                                         <input asp-for="SoleID" class="form-control" />
                                         <span asp-validation-for="SoleID" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="Name" class="control-label"></label>
-                                        <input asp-for="Name" class="form-control" />
-                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    <div class="form-group" style="display:none;">
+                                        <label asp-for="SoleCode" class="control-label"></label>
+                                        <input asp-for="SoleCode" class="form-control" />
+                                        <span asp-validation-for="SoleCode" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="Height" class="control-label"></label>
-                                        <input asp-for="Height" class="form-control" />
-                                        <span asp-validation-for="Height" class="text-danger"></span>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Name" type="text" class="form-control" placeholder="Name" required>
+                                        <label for="floatingInputUsername">Name</label>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="Status" class="control-label"></label>
-                                        <input asp-for="Status" class="form-control" />
-                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Height" type="number" class="form-control" placeholder="Height" required>
+                                        <label for="floatingInputUsername">Height</label>
                                     </div>
-                                    <br />
-
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit" value="Save"
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
+                                        <label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+                                        <label for="floatingInputUsername">Ngày tạo</label>
+                                    </div>
+                                    <div class="d-flex justify-content-center" style="padding-top:5px;">
+                                        <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
                                                 class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
                                             <p style="color: white; font-size: 15px; text-decoration: none;">Update</p>

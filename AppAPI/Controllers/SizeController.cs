@@ -22,7 +22,7 @@ namespace AppAPI.Controllers
             repos = all;
         }
         // GET: api/<SizeController>
-        [HttpGet("Get-Size")]
+        [HttpGet("get-size")]
         public IEnumerable<Size> Get()
         {
            return repos.GetAll();
@@ -36,32 +36,37 @@ namespace AppAPI.Controllers
         }
 
         // POST api/<SizeController>
-        [HttpPost("Create-size")]
-        public bool CreateSize(string name, int status )
+        [HttpPost("create-size")]
+        public bool CreateSize(string SizeCode, string Name, int Status, DateTime DateCreated)
         {
             Size sz = new Size();
-            sz.Name = name;
-            sz.Status = status;
+            sz.SizeCode = SizeCode;
+            sz.Name = Name;
+            sz.Status = Status;
+            sz.DateCreated = DateCreated;
             sz.SizeID = Guid.NewGuid();
             return repos.AddItem(sz);
         }
 
         // PUT api/<SizeController>/5
-        [HttpPut("Update-Size")]
-        public bool Put(Guid sizeID, string name, int status)
+        [HttpPut("update-size")]
+        public bool Put(Guid sizeID, string SizeCode, string Name, int Status, DateTime DateCreated)
         {
             var sz = repos.GetAll().First(p => p.SizeID == sizeID);
-            sz.Name = name;
-            sz.Status = status;
+            sz.SizeCode = SizeCode;
+            sz.Name = Name;
+            sz.Status = Status;
+            sz.DateCreated = DateCreated;
             return repos.EditItem(sz);
         }
 
         // DELETE api/<SizeController>/5
-        [HttpDelete("Delete-Size")]
+        [HttpDelete("delete-size")]
         public bool Delete(Guid sizeID)
         {
             var sz = repos.GetAll().First(p => p.SizeID == sizeID);
-            return repos.RemoveItem(sz);
+            sz.Status = 1;
+            return repos.EditItem(sz);
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿@model AppData.Models.Sole
+﻿@model AppData.Models.Material
 
 @{
-    ViewData["Title"] = "CreateSole";
+    ViewData["Title"] = "CreateMaterial";
 }
 
 <link rel="stylesheet" href="~/css/FormInput.css">
@@ -14,24 +14,17 @@
                     <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                         <div class="">
                             <div class="card-body p-5">
-                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 200px;">
                                 <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
-                                    BECOME A
-                                    NIKE MEMBER
+                                    CREATE A NEW MATERIAL
                                 </h2>
                                 <p style="text-align: center; font-size: 14px;">
-                                    Create your Nike Member profilfe and
-                                    get first <br> access to the very best of Nike products, inspiration <br> and
-                                    community.
+                                    Welcome to our Create Material page! Expand your network and add new suppliers to enhance your shoe collection with ease. Let's collaborate and elevate your inventory!
                                 </p>
-                                <form asp-action="CreateSole" style="margin-top:10px;" id="register-form">
+                                <form asp-action="CreateMaterial">
                                     <div class="form-floating mb-3">
                                         <input asp-for="Name" type="text" class="form-control" placeholder="Name" required>
                                         <label for="floatingInputUsername">Name</label>
-                                    </div>
-                                     <div class="form-floating mb-3">
-                                        <input asp-for="Height" type="number" class="form-control" placeholder="Height" required>
-                                        <label for="floatingInputUsername">Height</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
@@ -57,3 +50,13 @@
         </div>
     </section>
 </div>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+

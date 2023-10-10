@@ -1,7 +1,7 @@
-﻿@model IEnumerable<AppData.Models.Supplier>
+﻿@model IEnumerable<AppData.Models.Material>
 
 @{
-    ViewData["Title"] = "GetAllSupplier";
+    ViewData["Title"] = "GetAllMaterial";
     var stt = 1;
 }
 <!DOCTYPE html>
@@ -256,8 +256,8 @@
         /* === if you want to do animated border on typing === */
         /* remove input:focus code and uncomment below code */
         /* input:valid ~ .input-border{
-                          width: 100%;
-                        } */
+                                  width: 100%;
+                                } */
     </style>
     <script>
         $(document).ready(function () {
@@ -272,15 +272,15 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2>Danh sách nhà cung cấp</h2>
+                            <h2>Danh sách chất liệu</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a asp-action="CreateSupplier" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Supplier</span></a>
+                            <a asp-action="CreateMaterial" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Material</span></a>
                             @*                        <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>*@
                         </div>
                     </div>
                 </div>
-                <form method="get" action="@Url.Action("FindSupplier")">
+                <form method="get" action="@Url.Action("FindMaterial")">
                     <div class="form">
                         <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
                         <span class="input-border"></span>
@@ -298,13 +298,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.OrderBy(c => c.SupplierCode))
+                        @foreach (var item in Model.OrderBy(c => c.MaterialCode))
                         {
                             @if (item.Status == 0)
                             {
                                 <tr>
                                     <td>@stt</td>
-                                    <td>@Html.DisplayFor(modelItem => item.SupplierCode)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.MaterialCode)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Name)</td>
                                     <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                     <td>
@@ -317,8 +317,8 @@
                                             <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                         }
                                     <td>
-                                        <a href="@Url.Action("EditSupplier", new { id = item.SupplierID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                                        <a href="@Url.Action("DeleteSupplier", new { id = item.SupplierID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                                        <a href="@Url.Action("EditMaterial", new { id = item.MaterialId})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                        <a href="@Url.Action("DeleteMaterial", new { id = item.MaterialId})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                                     </td>
                                 </tr>
                                 stt++;

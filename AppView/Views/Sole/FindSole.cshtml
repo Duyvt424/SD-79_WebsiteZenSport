@@ -1,7 +1,7 @@
-﻿@model IEnumerable<AppData.Models.Supplier>
+﻿@model IEnumerable<AppData.Models.Sole>
 
 @{
-    ViewData["Title"] = "GetAllSupplier";
+    ViewData["Title"] = "GetAllSole";
     var stt = 1;
 }
 <!DOCTYPE html>
@@ -272,60 +272,69 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2>Danh sách nhà cung cấp</h2>
+                            <h2>Danh sách đế giày</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a asp-action="CreateSupplier" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Supplier</span></a>
+                            <a asp-action="CreateSole" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Sole</span></a>
                             @*                        <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>*@
                         </div>
                     </div>
                 </div>
-                <form method="get" action="@Url.Action("FindSupplier")">
+                <form method="get" action="@Url.Action("FindSole")">
                     <div class="form">
                         <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
                         <span class="input-border"></span>
                     </div>
                 </form>
-                <table class="table table-striped table-hover" style="margin-top:15px;">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Mã</th>
-                            <th>Tên</th>
-                            <th>Ngày tạo</th>
-                            <th>Trạng thái</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.OrderBy(c => c.SupplierCode))
-                        {
-                            @if (item.Status == 0)
+                @if (Model.Any())
+                {
+                    <table class="table table-striped table-hover" style="margin-top:15px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Chiều cao đế</th>
+                                <th>Ngày tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderBy(c => c.SoleCode))
                             {
-                                <tr>
-                                    <td>@stt</td>
-                                    <td>@Html.DisplayFor(modelItem => item.SupplierCode)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                                    <td>
-                                        @if (item.Status == 0)
-                                        {
-                                            <p><img src="~/image/icons8-connection-status-on-18.png" /> Đang hoạt động</p>
-                                        }
-                                        else
-                                        {
-                                            <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
-                                        }
-                                    <td>
-                                        <a href="@Url.Action("EditSupplier", new { id = item.SupplierID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                                        <a href="@Url.Action("DeleteSupplier", new { id = item.SupplierID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
-                                    </td>
-                                </tr>
-                                stt++;
+                                @if (item.Status == 0)
+                                {
+                                    <tr>
+                                        <td>@stt</td>
+                                        <td>@Html.DisplayFor(modelItem => item.SoleCode)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Height)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                        <td>
+                                            @if (item.Status == 0)
+                                            {
+                                                <p><img src="~/image/icons8-connection-status-on-18.png" /> Đang hoạt động</p>
+                                            }
+                                            else
+                                            {
+                                                <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
+                                            }
+                                        <td>
+                                            <a href="@Url.Action("EditSole", new { id = item.SoleID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                            <a href="@Url.Action("DeleteSole", new { id = item.SoleID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                                        </td>
+                                    </tr>
+                                    stt++;
+                                }
                             }
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Không tìm thấy đế giày phù hợp.</p>
+                }
                 <div class="clearfix">
                     <div class="hint-text">Showing <b>1</b> out of <b>3</b> list</div>
                     <ul class="pagination">

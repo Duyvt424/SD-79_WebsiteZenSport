@@ -33,21 +33,25 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-supplier")]
-		public bool CreateSupplier(string name, int status)
+		public bool CreateSupplier(string supplierCode, string name, int status, DateTime dateCreated)
 		{
 			Supplier supplier = new Supplier();
 			supplier.SupplierID = Guid.NewGuid();
+			supplier.SupplierCode = supplierCode;
 			supplier.Name = name;
 			supplier.Status = status;
+			supplier.DateCreated = dateCreated;
 			return repos.AddItem(supplier);
 		}
 
 		[HttpPut("update-supplier")]
-		public bool UpdateSupplier(Guid id, string name, int status)
+		public bool UpdateSupplier(Guid id, string supplierCode, string name, int status, DateTime dateCreated)
 		{
 			Supplier supplier = repos.GetAll().First(x => x.SupplierID == id);
+			supplier.SupplierCode = supplierCode;
 			supplier.Name = name;
 			supplier.Status = status;
+			supplier.DateCreated = dateCreated;
 			return repos.EditItem(supplier);
 		}
 
@@ -55,7 +59,8 @@ namespace AppAPI.Controllers
 		public bool DeleteSupplier(Guid id)
 		{
 			Supplier supplier = repos.GetAll().First(x => x.SupplierID == id);
-			return repos.RemoveItem(supplier);
+			supplier.Status = 1;
+			return repos.EditItem(supplier);
 		}
 	}
 }

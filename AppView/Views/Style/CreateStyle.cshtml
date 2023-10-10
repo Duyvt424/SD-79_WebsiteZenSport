@@ -22,22 +22,23 @@
                                     Welcome to our Create Style page! Unleash your creativity and design unique shoe styles with our intuitive interface and wide range of customization options
                                 </p>
                                 <form asp-action="CreateStyle">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <div class="form-group">
-                                        <label asp-for="Name" class="control-label"></label>
-                                        <input asp-for="Name" class="form-control" />
-                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Name" type="text" class="form-control" placeholder="Name" required>
+                                        <label for="floatingInputUsername">Name</label>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="Status" class="control-label"></label>
-                                        <input asp-for="Status" class="form-control" />
-                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
+                                        <label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
                                     </div>
-                                    <div class="d-flex justify-content-center">
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+                                        <label for="floatingInputUsername">Ngày tạo</label>
+                                    </div>
+                                    <div class="d-flex justify-content-center" style="padding-top:5px;">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
                                                 class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                            <p style="color: white; font-size: 15px; text-decoration: none;">Add New</p>
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
                                         </button>
                                     </div>
                                 </form>
