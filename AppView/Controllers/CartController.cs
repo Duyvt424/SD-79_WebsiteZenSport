@@ -100,7 +100,7 @@ namespace AppView.Controllers
                     }
                     // Kiểm tra xem người dùng đã chọn kích thước hay chưa
                     var SizeID = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
-                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID && c.ShoesDetailsId == ShoesDT.ShoesDetailsId /*&& c.ShoesDetails.SizeID == SizeID*/);
+                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID/* && c.ShoesDetailsId == ShoesDT.ShoesDetailsId && c.ShoesDetails.SizeID == SizeID*/);
                     if (existingCartItem != null)
                     {
                         // Sản phẩm đã tồn tại trong giỏ hàng, tăng số lượng lên 1
@@ -114,7 +114,7 @@ namespace AppView.Controllers
                         {
                             CartDetailsId = Guid.NewGuid(),
                             CumstomerID = loggedInUser.CumstomerID,
-                            ShoesDetailsId = ShoesDT.ShoesDetailsId, // Gán ShoesDetailsId để tham chiếu đến thông tin sản phẩm
+                            //ShoesDetailsId = ShoesDT.ShoesDetailsId, // Gán ShoesDetailsId để tham chiếu đến thông tin sản phẩm
                             Quantity = 1
                         };
                         _dBContext.CartDetails.Add(cartDetails);
@@ -122,7 +122,7 @@ namespace AppView.Controllers
                     // Cập nhật kích thước của sản phẩm
                     //ShoesDT.SizeID = SizeID;
                     _dBContext.Update(ShoesDT);
-                    ShoesDT.AvailableQuantity--;
+                    //ShoesDT.AvailableQuantity--;
                     _dBContext.SaveChanges();
                 }
             }
@@ -165,9 +165,9 @@ namespace AppView.Controllers
             var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
             if (CustomerID != Guid.Empty)
             {
-                var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetailsId == id);
-                ShoesDT.AvailableQuantity += cartItem.Quantity;
-                _dBContext.CartDetails.Remove(cartItem);
+                //var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetailsId == id);
+                //ShoesDT.AvailableQuantity += cartItem.Quantity;
+                //_dBContext.CartDetails.Remove(cartItem);
                 _dBContext.SaveChanges();
             }
             else
@@ -207,16 +207,16 @@ namespace AppView.Controllers
             }
 
             // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
-            var cartItems = _dBContext.CartDetails
-                .Where(c => c.CumstomerID == CustomerID)
-                .Include(c => c.ShoesDetails)
-                .ToList();
+            //var cartItems = _dBContext.CartDetails
+            //    .Where(c => c.CumstomerID == CustomerID)
+            //    .Include(c => c.ShoesDetails)
+            //    .ToList();
             // Tính tổng giá tiền cho cả hóa đơn
             decimal totalPrice = 0;
-            foreach (var item in cartItems)
-            {
-                totalPrice += (item.ShoesDetails.Price * item.Quantity) + shippingFee;
-            }
+            //foreach (var item in cartItems)
+            //{
+            //    totalPrice += (item.ShoesDetails.Price * item.Quantity) + shippingFee;
+            //}
             // Tạo đơn hàng
             var bill = new Bill
             {
@@ -237,24 +237,24 @@ namespace AppView.Controllers
             };
             _dBContext.Bills.Add(bill);
 
-            foreach (var item in cartItems)
-            {
-                var billDetail = new BillDetails
-                {
-                    ID = Guid.NewGuid(),
-                    BillID = bill.BillID,
-                    ShoesDetailsId = item.ShoesDetailsId,
-                    Quantity = item.Quantity,
-                    Price = item.ShoesDetails.Price
-                };
-                _dBContext.BillDetails.Add(billDetail);
-            }
+            //foreach (var item in cartItems)
+            //{
+            //    var billDetail = new BillDetails
+            //    {
+            //        ID = Guid.NewGuid(),
+            //        BillID = bill.BillID,
+            //        ShoesDetailsId = item.ShoesDetailsId,
+            //        Quantity = item.Quantity,
+            //        Price = item.ShoesDetails.Price
+            //    };
+            //    _dBContext.BillDetails.Add(billDetail);
+            //}
 
             // Lưu thay đổi vào cơ sở dữ liệu
             _dBContext.SaveChanges();
 
             // Xóa giỏ hàng của người dùng
-            _dBContext.CartDetails.RemoveRange(cartItems);
+            //_dBContext.CartDetails.RemoveRange(cartItems);
             _dBContext.SaveChanges();
 
             return RedirectToAction("ViewBill");
@@ -268,7 +268,7 @@ namespace AppView.Controllers
             var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == CustomerID);
             if (loggedInUser != null)
             {
-                var cartItem = _dBContext.CartDetails.FirstOrDefault(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetailsId == shoesDetailsId);
+                var cartItem = _dBContext.CartDetails.FirstOrDefault(cd => cd.CumstomerID == loggedInUser.CumstomerID/* && cd.ShoesDetailsId == shoesDetailsId*/);
                 if (cartItem != null)
                 {
                     //lưu số lượng trước đó ví dụ 1
@@ -278,7 +278,7 @@ namespace AppView.Controllers
                     _dBContext.SaveChanges();
 
                     //Cập nhật số lượng tồn của sản phẩm: ShoesDT.AvailableQuantity += 1 - 5; (số lượng trước đó - số lượng mới)
-                    ShoesDT.AvailableQuantity += previousQuantity - quantity;
+                    //ShoesDT.AvailableQuantity += previousQuantity - quantity;
                     _dBContext.Update(ShoesDT);
                     _dBContext.SaveChanges();
                 }

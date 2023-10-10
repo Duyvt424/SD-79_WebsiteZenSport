@@ -14,5 +14,6 @@ namespace AppData.Models
         public Guid SizeID { get; set; }
         public virtual ShoesDetails ShoesDetails { get; set; }
         public virtual Size Size { get; set; }
+        public virtual List<CartDetails> CartDetails { get; set; }
     }
 }

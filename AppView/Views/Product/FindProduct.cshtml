@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AppData.Models.Product>
+﻿@model IEnumerable<AppView.Models.ProductViewModel>
 
 @{
     ViewData["Title"] = "GetAllProduct";
@@ -320,11 +320,11 @@
                                             {
                                                 <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                             }
-                                        <td>@ViewBag.NameSupplier</td>
-                                        <td>@ViewBag.NameMaterial</td>
+                                        <td>@item.SupplierName</td>
+                                        <td>@item.MaterialName</td>
                                         <td>
-                                            <a href="@Url.Action("EditSupplier", new { id = item.SupplierID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                                            <a href="@Url.Action("DeleteSupplier", new { id = item.SupplierID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                                            <a href="@Url.Action("EditProduct", new { id = item.ProductID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                            <a href="@Url.Action("DeleteProduct", new { id = item.ProductID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                                         </td>
                                     </tr>
                                     stt++;
@@ -333,9 +333,8 @@
                         </tbody>
                     </table>
                 }
-                else
-                {
-                    <p>Không tìm thấy sản phẩm phù hợp.</p>
+                else{
+                    <p>Không tìm thấy sản phẩm</p>
                 }
                 <div class="clearfix">
                     <div class="hint-text">Showing <b>1</b> out of <b>3</b> list</div>

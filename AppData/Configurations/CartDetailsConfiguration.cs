@@ -17,7 +17,7 @@ namespace AppData.Configurations
             builder.HasKey(c => c.CartDetailsId);
             builder.Property(c => c.Quantity).HasColumnType("int");
             builder.HasOne(c => c.Cart).WithMany(c => c.CartDetails).HasForeignKey(c => c.CumstomerID);
-            builder.HasOne(c => c.ShoesDetails).WithMany(c => c.CartDetails).HasForeignKey(c => c.ShoesDetailsId);
+            builder.HasOne(c => c.ShoesDetails_Size).WithMany(c => c.CartDetails).HasForeignKey(c => c.ShoesDetails_SizeID);
         }
     }
 }

@@ -36,10 +36,10 @@ namespace AppAPI.Controllers
             if (billDT != null)
             {
                 var newQuantity = billDT.Quantity += Quantity;
-                if (newQuantity > shoesDT.AvailableQuantity)
-                {
-                    return "Số lượng sản phẩm đã hết";
-                }
+                //if (newQuantity > shoesDT.AvailableQuantity)
+                //{
+                //    return "Số lượng sản phẩm đã hết";
+                //}
                 billDT.Quantity = newQuantity;
                 billDT.Price += Price;
                 billDT.Status = Status;

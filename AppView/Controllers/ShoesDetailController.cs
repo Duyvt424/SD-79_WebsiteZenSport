@@ -64,7 +64,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?createdate={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?createdate={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}";
            
             var response = await httpClient.PostAsync(apiUrl, null);
             
@@ -103,7 +103,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> UpdateShoesDetails(ShoesDetails shoesdt) // Thực hiện việc Tạo mới
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&createdate={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&availablequantity={shoesdt.AvailableQuantity}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&createdate={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorid={shoesdt.ColorID}&productid={shoesdt.ProductID}&soleid={shoesdt.SoleID}&styleid={shoesdt.StyleID}";
 
            var response = await httpClient.PutAsync(apiUrl, null);
 

@@ -129,7 +129,21 @@ namespace AppView.Controllers
         public async Task<IActionResult> FindProduct(string searchQuery)
         {
             var product = _repos.GetAll().Where(c => c.ProductCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
-            return View(product);
+            var suppliers = supplierRepos.GetAll();
+            var materials = materialRepos.GetAll();
+
+            // Tạo danh sách ProductViewModel với thông tin Supplier và Material
+            var productViewModels = product.Select(product => new ProductViewModel
+            {
+                ProductID = product.ProductID,
+                ProductCode = product.ProductCode,
+                Name = product.Name,
+                DateCreated = product.DateCreated,
+                Status = product.Status,
+                SupplierName = suppliers.FirstOrDefault(s => s.SupplierID == product.SupplierID)?.Name,
+                MaterialName = materials.FirstOrDefault(m => m.MaterialId == product.MaterialId)?.Name
+            }).ToList();
+            return View(productViewModels);
         }
     }
 }

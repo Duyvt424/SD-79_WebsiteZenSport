@@ -15,10 +15,10 @@ namespace AppData.Configurations
         {
             builder.ToTable("ShoesDetails");
             builder.HasKey(c => c.ShoesDetailsId);
+            builder.Property(c => c.ShoesDetailsCode).HasColumnType("nvarchar(100)");
             builder.Property(c => c.DateCreated).HasColumnType("Datetime");
             builder.Property(c => c.Price).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.ImportPrice).HasColumnType("decimal(18, 2)");
-            builder.Property(c => c.AvailableQuantity).HasColumnType("int");
             builder.Property(c => c.Description).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.Status).HasColumnType("int");
             builder.Property(c => c.ImageUrl).HasColumnType("nvarchar(1000)");

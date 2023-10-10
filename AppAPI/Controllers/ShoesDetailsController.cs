@@ -29,16 +29,14 @@ namespace AppAPI.Controllers
             repos = all;
         }
 
-        // GET: api/<ShoesDetailsController>
-        [HttpGet]
-        public IEnumerable<ShoesDetails> Get() 
+        [HttpGet("get-shoesdetails")]
+        public IEnumerable<ShoesDetails> GetAllShoesDetails() 
         {
             return repos.GetAll();
         }
 
-        // GET api/<ShoesDetailsController>/5
-        [HttpGet("{id}")]
-        public IEnumerable<ShoesDetails> Get(Guid id)
+        [HttpGet("find-shoesdetails")]
+        public IEnumerable<ShoesDetails> FindShoesDetails(Guid id)
         {
             return repos.GetAll().Where(p => p.ShoesDetailsId == id);
         }
@@ -52,7 +50,7 @@ namespace AppAPI.Controllers
             shoesdt.DateCreated = DateTime.Parse(createdate);
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
-            shoesdt.AvailableQuantity = availablequantity;
+            //shoesdt.AvailableQuantity = availablequantity;
             shoesdt.Description = description;
             shoesdt.Status = status;
             shoesdt.ColorID = colorid;
@@ -77,7 +75,7 @@ namespace AppAPI.Controllers
             shoesdt.DateCreated = DateTime.Parse(createdate);
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
-            shoesdt.AvailableQuantity = availablequantity;
+            //shoesdt.AvailableQuantity = availablequantity;
             shoesdt.Description = description;
             shoesdt.Status = status;
             shoesdt.ColorID = colorid;
