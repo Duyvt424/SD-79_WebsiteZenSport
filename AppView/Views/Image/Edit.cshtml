@@ -31,49 +31,48 @@
                                         <input asp-for="ImageID" class="form-control" />
                                         <span asp-validation-for="ImageID" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label asp-for="Name" class="control-label"></label>
-                                        <input asp-for="Name" class="form-control" />
-                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    <div class="form-group" style="display: none">
+                                        <label asp-for="ImageCode" class="control-label"></label>
+                                        <input asp-for="ImageCode" class="form-control" />
+                                        <span asp-validation-for="ImageCode" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Name" type="text" class="form-control" placeholder="Name" required>
+                                        <label for="floatingInputUsername">Name</label>
                                     </div>
                                     <br />
                                     <div class="form-group">
-                                        @* <label asp-for="Image1" class="control-label"></label>
-                                        <input asp-for="Image1" class="form-control" />
-                                        <span asp-validation-for="Image1" class="text-danger"></span>*@
                                         <input type="file" name="imageFile1" class="form-control" accept="image/*" />
+
                                     </div>
                                     <br />
                                     <div class="form-group">
-                                        @*<label asp-for="Image2" class="control-label"></label>
-                                        <input asp-for="Image2" class="form-control" />
-                                        <span asp-validation-for="Image2" class="text-danger"></span>*@
                                         <input type="file" name="imageFile2" class="form-control" />
+
                                     </div>
                                     <br />
                                     <div class="form-group">
-                                        @*   <label asp-for="Image3" class="control-label"></label>
-                                        <input asp-for="Image3" class="form-control" />
-                                        <span asp-validation-for="Image3" class="text-danger"></span>*@
                                         <input type="file" name="imageFile3" class="form-control" />
+
                                     </div>
+
                                     <br />
                                     <div class="form-group">
-                                        @*  <label asp-for="Image4" class="control-label"></label>
-                                        <input asp-for="Image4" class="form-control" />
-                                        <span asp-validation-for="Image4" class="text-danger"></span>*@
                                         <input type="file" name="imageFile4" class="form-control" />
+
                                     </div>
                                     <br />
-                                    <div class="form-group">
-                                        <label asp-for="Status" class="control-label"></label>
-                                        <input asp-for="Status" class="form-control" />
-                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
+                                        <label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
                                     </div>
-                                    <br />
-                                    <div class="form-group">
-                                        <label asp-for="ShoesDetailsID" class="control-label"></label>
-                                        <input asp-for="ShoesDetailsID" class="form-control" />
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+                                        <label for="floatingInputUsername">Ngày tạo</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="ShoesDetailsID" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
+                                        <label for="floatingInputEmail">Chọn giày chi tiết</label>
                                         <span asp-validation-for="ShoesDetailsID" class="text-danger"></span>
                                     </div>
                                     <br />

@@ -13,76 +13,66 @@ namespace AppAPI.Controllers
     public class ImageController : ControllerBase 
     {
         private readonly IAllRepositories<Image> repos;
-        private readonly IAllRepositories<ShoesDetails> repos1;
         ShopDBContext context = new ShopDBContext();
         DbSet<Image> image;
-       DbSet<ShoesDetails> shoe;
-        // GET: api/<ImageController>
         public ImageController()
         {
             image = context.Images;
             AllRepositories<Image> all = new AllRepositories<Image>(context, image);
             repos = all;
-            shoe = context.ShoesDetails;
-            AllRepositories<ShoesDetails> all1 = new AllRepositories<ShoesDetails>(context, shoe);
-            repos1 = all1;
-
         }
-        [HttpGet]
-        public IEnumerable<Image> Get()
+        [HttpGet("get-image")]
+        public IEnumerable<Image> GetAllImage()
         {
             return repos.GetAll();
         }
 
-        // GET api/<ImageController>/5
-        [HttpGet("{name}")]
-
-        public IEnumerable<Image> Get(string name) // Tìm theo tên
+        [HttpGet("find-image")]
+        public IEnumerable<Image> FindImage(string name) // Tìm theo tên
         {
-            return repos.GetAll().Where(p => p.Name.Contains(name));
+            return repos.GetAll().Where(p => p.Name.ToLower().Contains(name.ToLower()));
         }
+
         // POST api/<ImageController>
-        [HttpPost("Create-Image")]
-        public bool CreateImage(string name, string ig1, string ig2, string ig3, string ig4, int status, Guid ShoesDetailsid)
+        [HttpPost("create-image")]
+        public bool CreateImage(string imageCode, string name, string image1, string image2, string image3, string image4, int status, DateTime DateCreated, Guid shoesDetailsId)
         {
             Image image = new Image();
-           var shoes = repos1.GetAll().FirstOrDefault(p => p.ShoesDetailsId == ShoesDetailsid);
-            image.Name = name;
-            image.Image1 = ig1;
-            image.Image2 = ig2;
-            image.Image3 = ig3;
-            image.Image4 = ig4;
-            image.Status = status;
-           
             image.ImageID = Guid.NewGuid();
-            image.ShoesDetailsID = shoes.ShoesDetailsId;
+            image.ImageCode = imageCode;
+            image.Name = name;
+            image.Image1 = image1;
+            image.Image2 = image2;
+            image.Image3 = image3;
+            image.Image4 = image4;
+            image.Status = status;
+            image.DateCreated = DateCreated;
+            image.ShoesDetailsID = shoesDetailsId;
             return repos.AddItem(image);
-
         }
 
-        // PUT api/<ImageController>/5
-        [HttpPut("Update-Image")]
-        public bool Put(Guid id, string name, string ig1, string ig2, string ig3, string ig4, int status, Guid ShoesDetailsid)
+        [HttpPut("update-image")]
+        public bool Put(Guid id, string imageCode, string name, string image1, string image2, string image3, string image4, int status, DateTime DateCreated, Guid shoesDetailsId)
         {
-            var image = repos.GetAll().FirstOrDefault(c => c.ImageID == id);
-          //  var shoes = repos1.GetAll().FirstOrDefault(p => p.ShoesDetailsId == ShoesDetailsid);
+            var image = repos.GetAll().First(c => c.ImageID == id);
+            image.ImageCode = imageCode;
             image.Name = name;
-            image.Image1 = ig1;
-            image.Image2 = ig2;
-            image.Image3 = ig3;
-            image.Image4 = ig4;
+            image.Image1 = image1;
+            image.Image2 = image2;
+            image.Image3 = image3;
+            image.Image4 = image4;
             image.Status = status;
-            image.ShoesDetailsID = ShoesDetailsid;
+            image.DateCreated = DateCreated;
+            image.ShoesDetailsID = shoesDetailsId;
             return repos.EditItem(image);
         }
 
-
-        // DELETE api/<ImageController>/5
-        [HttpDelete("{Delete-Image}")]
+        [HttpDelete("delete-image")]
         public bool Delete(Guid id)
         {
-            var sp = repos.GetAll().FirstOrDefault(c => c.ImageID == id);
-            return repos.RemoveItem(sp);
+            var image = repos.GetAll().First(c => c.ImageID == id);
+            image.Status = 1;
+            return repos.EditItem(image);
         }
     }
 }
