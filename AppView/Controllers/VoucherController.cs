@@ -1,4 +1,5 @@
-﻿using AppData.IRepositories;
+﻿using System.Data;
+using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,18 @@ namespace AppView.Controllers
 			AllRepositories<Voucher> all = new AllRepositories<Voucher>(context, voucher);
 			repos = all;
 		}
-
+		private string GenerateVoucherCode()
+		{
+			var last = context.Vouchers.OrderByDescending(c => c.VoucherCode).FirstOrDefault();
+			if (last != null)
+			{
+				var lastNumber = int.Parse(last.VoucherCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+				var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+				var newCode = "VC" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+				return newCode;
+			}
+			return "VC001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+		}
 		public async Task<IActionResult> GetAllVouchers()
 		{
 			string apiUrl = "https://localhost:7036/api/Voucher/get-voucher";
@@ -33,33 +45,36 @@ namespace AppView.Controllers
 			return View(styles);
 		}
 
-		public async Task<IActionResult> CreateVoucher()
+		public async Task<IActionResult> CreateVouchers()
 		{
 			return View();
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateVoucher(Voucher voucher)
+		public async Task<IActionResult> CreateVouchers(Voucher voucher)
 		{
-			string apiUrl = $"https://localhost:7036/api/Customer/create-voucher?code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate}";
-			var httpClient = new HttpClient();
-			var response = await httpClient.GetAsync(apiUrl);
-			string apiData = await response.Content.ReadAsStringAsync();
-			// Cập nhật thông tin từ apiData vào đối tượng customer
-			var newStyle = JsonConvert.DeserializeObject<Voucher>(apiData);
-			repos.AddItem(voucher);
-			return RedirectToAction("GetAllVouchers");
-		}
 
+
+            var httpClient = new HttpClient();
+			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?VoucherCode={GenerateVoucherCode}&VoucherValue={voucher.VoucherValue}&MaxUsage={voucher.MaxUsage}&RemainingUsage={voucher.RemainingUsage}&ExpirationDate={voucher.ExpirationDate}&Status={voucher.Status}&DateCreated={voucher.DateCreated}";
+			var response = await httpClient.PostAsync(apiUrl, null);
+			return RedirectToAction("GetAllVouchers"); 
+            /*if (repos.AddItem(voucher))
+            {
+                return RedirectToAction("GetAllVouchers");
+            }
+            else return BadRequest();*/
+        }
 		[HttpGet]
-		public IActionResult EditVoucher(Guid id) // Khi ấn vào Create thì hiển thị View
+
+		public IActionResult EditVouchers(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
 			// Lấy Product từ database dựa theo id truyền vào từ route
 			Voucher voucher = repos.GetAll().FirstOrDefault(c => c.VoucherID == id);
 			return View(voucher);
 		}
 
-		public IActionResult EditVoucher(Voucher voucher) // Thực hiện việc Tạo mới
+		public IActionResult EditVouchers(Voucher voucher) // Thực hiện việc Tạo mới
 		{
 			if (repos.EditItem(voucher))
 			{
@@ -68,7 +83,7 @@ namespace AppView.Controllers
 			else return BadRequest();
 		}
 
-		public IActionResult DeleteVoucher(Guid id)
+		public IActionResult DeleteVouchers(Guid id)
 		{
 			var voucher = repos.GetAll().First(c => c.VoucherID == id);
 			if (repos.RemoveItem(voucher))
@@ -77,5 +92,10 @@ namespace AppView.Controllers
 			}
 			else return Content("Error");
 		}
+		public async Task<IActionResult> FindVouchers(string searchQuery)
+        {
+            var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));
+            return View(color);
+        }
 	}
 }

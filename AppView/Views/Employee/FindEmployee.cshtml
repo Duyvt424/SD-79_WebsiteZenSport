@@ -256,8 +256,8 @@
         /* === if you want to do animated border on typing === */
         /* remove input:focus code and uncomment below code */
         /* input:valid ~ .input-border{
-                                          width: 100%;
-                                        } */
+                                                  width: 100%;
+                                                } */
     </style>
     <script>
         $(document).ready(function () {
@@ -299,7 +299,7 @@
                             <th>PhoneNumber</th>
                             <th>DateCreated</th>
                             <th>Status</th>
-                           
+
                             <th>RoleName</th>
                             <th>Action</th>
                         </tr>
@@ -331,7 +331,7 @@
                                             <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                         }
                                     <td>@item.RoleName</td>
-                                    
+
                                     <td>
                                         <a href="@Url.Action("EditEmployee", new { id = item.EmployeeID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
                                         <a href="@Url.Action("DeleteEmployee", new { id = item.EmployeeID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>

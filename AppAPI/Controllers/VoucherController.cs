@@ -34,7 +34,7 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-voucher")]
-		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate)
+		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated)
 		{
 			Voucher voucher = new Voucher();
 			voucher.VoucherID = Guid.NewGuid();
@@ -44,11 +44,12 @@ namespace AppAPI.Controllers
 			voucher.MaxUsage = maxUse;
 			voucher.RemainingUsage = remainUse;
 			voucher.ExpirationDate = expireDate;
+			voucher.DateCreated = DateCreated;
 			return repos.AddItem(voucher);
 		}
 
 		[HttpPut("update-voucher")]
-		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime)
+		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated)
 		{
 			Voucher voucher = repos.GetAll().First(x => x.VoucherID == id);
 			voucher.VoucherCode = code;
@@ -57,14 +58,16 @@ namespace AppAPI.Controllers
 			voucher.MaxUsage = maxUse;
 			voucher.RemainingUsage = remainUse;
 			voucher.ExpirationDate = dateTime;
+			voucher.DateCreated = DateCreated;
 			return repos.EditItem(voucher);
 		}
 
 		[HttpDelete("delete-voucher")]
 		public bool DeleteVoucher(Guid id)
 		{
-			Voucher sp = repos.GetAll().First(x => x.VoucherID == id);
-			return repos.RemoveItem(sp);
+			var role = repos.GetAll().First(c => c.VoucherID == id);
+			role.Status = 1;
+			return repos.EditItem(role);
 		}
 	}
 }

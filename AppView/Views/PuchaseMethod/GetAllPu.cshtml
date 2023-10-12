@@ -1,7 +1,7 @@
-﻿@model IEnumerable<AppView.Models.EmployeeViewModel>
+﻿@model IEnumerable<AppData.Models.PurchaseMethod>
 
 @{
-    ViewData["Title"] = "GetAllEmployee";
+    ViewData["Title"] = "GetAllPu";
     var stt = 1;
 }
 <!DOCTYPE html>
@@ -256,8 +256,8 @@
         /* === if you want to do animated border on typing === */
         /* remove input:focus code and uncomment below code */
         /* input:valid ~ .input-border{
-                                          width: 100%;
-                                        } */
+                          width: 100%;
+                        } */
     </style>
     <script>
         $(document).ready(function () {
@@ -272,15 +272,15 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2>Danh sách sản phẩm</h2>
+                            <h2>Danh sách PuchaseMethod</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a asp-action="CreateEmployee" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Product</span></a>
+                            <a asp-action="CreatePu" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Role</span></a>
                             @*                        <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>*@
                         </div>
                     </div>
                 </div>
-                <form method="get" action="@Url.Action("FindEmployee")">
+                <form method="get" action="@Url.Action("FindPu")">
                     <div class="form">
                         <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
                         <span class="input-border"></span>
@@ -290,18 +290,11 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>FullName</th>
-                            <th>UserName</th>
-                            <th>Password</th>
-                            <th>Email</th>
-                            <th>Sex</th>
-                            <th>ResetPassword</th>
-                            <th>PhoneNumber</th>
-                            <th>DateCreated</th>
-                            <th>Status</th>
-                           
-                            <th>RoleName</th>
+                            <th>Tên</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
                             <th>Action</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -311,16 +304,9 @@
                             {
                                 <tr>
                                     <td>@stt</td>
-                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Password)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Sex)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.ResetPassword)</td>
-
-                                    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-
+                                    <td>@Html.DisplayFor(modelItem => item.MethodName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                    
                                     <td>
                                         @if (item.Status == 0)
                                         {
@@ -330,12 +316,12 @@
                                         {
                                             <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                         }
-                                    <td>@item.RoleName</td>
-                                    
                                     <td>
-                                        <a href="@Url.Action("EditEmployee", new { id = item.EmployeeID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                                        <a href="@Url.Action("DeleteEmployee", new { id = item.EmployeeID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+
+                                        <a href="@Url.Action("EditPu", new { id = item.PurchaseMethodID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                        <a href="@Url.Action("DeletePu", new { id = item.PurchaseMethodID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                                     </td>
+                                  
                                 </tr>
                                 stt++;
                             }
