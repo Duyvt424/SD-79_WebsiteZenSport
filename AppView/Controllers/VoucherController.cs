@@ -37,10 +37,7 @@ namespace AppView.Controllers
 			string apiUrl = "https://localhost:7036/api/Voucher/get-voucher";
 			var httpClient = new HttpClient(); // tạo ra để callApi
 			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-															 // Lấy dữ liệu Json trả về từ Api được call dạng string
 			string apiData = await response.Content.ReadAsStringAsync();
-			// Lấy kqua trả về từ API
-			// Đọc từ string Json vừa thu được sang List<T>
 			var styles = JsonConvert.DeserializeObject<List<Voucher>>(apiData);
 			return View(styles);
 		}
@@ -53,45 +50,36 @@ namespace AppView.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateVouchers(Voucher voucher)
 		{
-
-
             var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?VoucherCode={GenerateVoucherCode}&VoucherValue={voucher.VoucherValue}&MaxUsage={voucher.MaxUsage}&RemainingUsage={voucher.RemainingUsage}&ExpirationDate={voucher.ExpirationDate}&Status={voucher.Status}&DateCreated={voucher.DateCreated}";
+			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate}&DateCreated={voucher.DateCreated}";
 			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllVouchers"); 
-            /*if (repos.AddItem(voucher))
-            {
-                return RedirectToAction("GetAllVouchers");
-            }
-            else return BadRequest();*/
         }
-		[HttpGet]
 
-		public IActionResult EditVouchers(Guid id) // Khi ấn vào Create thì hiển thị View
+		[HttpGet]
+		public async Task<IActionResult> EditVouchers(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
 			// Lấy Product từ database dựa theo id truyền vào từ route
 			Voucher voucher = repos.GetAll().FirstOrDefault(c => c.VoucherID == id);
 			return View(voucher);
 		}
 
-		public IActionResult EditVouchers(Voucher voucher) // Thực hiện việc Tạo mới
+		public async Task<IActionResult> EditVouchers(Voucher voucher)
 		{
-			if (repos.EditItem(voucher))
-			{
-				return RedirectToAction("GetAllVouchers");
-			}
-			else return BadRequest();
-		}
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Voucher/update-voucher?id={voucher.VoucherID}&code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&dateTime={voucher.ExpirationDate}&DateCreated={voucher.DateCreated}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllVouchers");
+        }
 
-		public IActionResult DeleteVouchers(Guid id)
+		public async Task<IActionResult> DeleteVouchers(Guid id)
 		{
-			var voucher = repos.GetAll().First(c => c.VoucherID == id);
-			if (repos.RemoveItem(voucher))
-			{
-				return RedirectToAction("GetAllVouchers");
-			}
-			else return Content("Error");
-		}
+            var voucher = repos.GetAll().First(c => c.VoucherID == id);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Voucher/delete-voucher?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllVouchers");
+        }
 		public async Task<IActionResult> FindVouchers(string searchQuery)
         {
             var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));

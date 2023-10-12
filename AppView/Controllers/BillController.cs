@@ -29,10 +29,6 @@ namespace AppView.Controllers
         DbSet<Voucher> _voucher;
         DbSet<PurchaseMethod> _pu;
         DbSet<Bill> _bill;
-      
-
-
-
         public BillController()
         {
             _bill = _dbContext.Bills;
@@ -63,10 +59,10 @@ namespace AppView.Controllers
             {
                 var lastNumber = int.Parse(lastProduct.BillCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
                 var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
-                var newProductCode = "B" + nextNumber.ToString("D3");
+                var newProductCode = "HD" + nextNumber.ToString("D3");
                 return newProductCode;
             }
-            return "B001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+            return "HD001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
         }
         [HttpGet]
         public async Task<IActionResult> GetAllBill() { 
@@ -137,7 +133,6 @@ namespace AppView.Controllers
               var response = await httpClient.PostAsync(apiUrl, null);
               return RedirectToAction("GetAllBill");
           }
-
 
         [HttpGet]
         public async Task<IActionResult> EditBill(Guid id)

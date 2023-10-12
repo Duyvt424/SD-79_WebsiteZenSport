@@ -31,6 +31,11 @@
 										<input asp-for="VoucherID" class="form-control" />
 										<span asp-validation-for="VoucherID" class="text-danger"></span>
 									</div>
+									<div class="form-group" style="display:none;">
+										<label asp-for="VoucherCode" class="control-label"></label>
+										<input asp-for="VoucherCode" class="form-control" />
+										<span asp-validation-for="VoucherCode" class="text-danger"></span>
+									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" required>
 										<label for="floatingInputUsername">VoucherValue</label>

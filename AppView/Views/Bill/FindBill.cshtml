@@ -276,10 +276,10 @@
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-5">
-                            <h2>Danh sách sản phẩm</h2>
+                            <h2>Danh sách hóa đơn</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a asp-action="CreateBill" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Product</span></a>
+                            <a asp-action="CreateBill" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Bill</span></a>
                             @*                        <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>*@
                         </div>
                     </div>
@@ -302,8 +302,6 @@
                             <th>TotalPrice</th>
                             <th>ShippingCosts</th>
                             <th>Note</th>
-
-
                             <th>CustomerName</th>
                             <th>VoucherName</th>
                             <th>EmployeeName</th>
@@ -319,15 +317,14 @@
                             {
                                 <tr>
                                     <td>@stt</td>
+                                    <td>@Html.DisplayFor(modelItem => item.BillCode)</td>
                                     <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
                                     <td>@Html.DisplayFor(modelItem => item.SuccessDate)</td>
                                     <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
                                     <td>@Html.DisplayFor(modelItem => item.CancelDate)</td>
                                     <td>@Html.DisplayFor(modelItem => item.TotalPrice)</td>
                                     <td>@Html.DisplayFor(modelItem => item.ShippingCosts)</td>
-
                                     <td>@Html.DisplayFor(modelItem => item.Note)</td>
-
                                     <td>@item.CustomerName</td>
                                     <td>@item.VoucherName</td>
                                     <td>@item.EmployeeName</td>
@@ -341,8 +338,6 @@
                                         {
                                             <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                         }
-
-
                                     <td>
                                         <a href="@Url.Action("EditBill", new { id = item.BillID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
                                         <a href="@Url.Action("DeleteBill", new { id = item.BillID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>

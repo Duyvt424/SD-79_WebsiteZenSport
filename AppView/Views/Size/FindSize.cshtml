@@ -300,7 +300,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.OrderBy(c => c.SizeCode))
+                            @foreach (var item in Model.OrderBy(c => c.Name))
                             {
                                 @if (item.Status == 0)
                                 {
