@@ -87,7 +87,23 @@ namespace AppView.Controllers
 			return View(ShoesDT);
 		}
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet]
+        public IActionResult GetQuantityForSize(Guid shoesDetailsId, string sizeForm)
+        {
+            // Sử dụng _shoesDetailsSize hoặc dịch vụ tương tự để lấy số lượng tồn từ bảng ShoesDetails_Size.
+            var size = _size.GetAllSizes().FirstOrDefault(c => c.Name == sizeForm);
+            if (size != null)
+            {
+                var shoesDT_Size = _shopDBContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == size.SizeID);
+                if (shoesDT_Size != null)
+                {
+                    return Json(new { quantity = shoesDT_Size.Quantity });
+                }
+            }
+            return Json(new { quantity = 0 }); // Xử lý trường hợp không tìm thấy size hoặc sản phẩm.
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

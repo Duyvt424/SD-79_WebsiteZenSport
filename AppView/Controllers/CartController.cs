@@ -35,28 +35,28 @@ namespace AppView.Controllers
         }
         public IActionResult Cart()
         {
-            var userIdString = HttpContext.Session.GetString("UserId");
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            if (customerId != Guid.Empty)
+            var userIdString = HttpContext.Session.GetString("UserId"); // lấy id khi người dùng đăng nhập
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty; // ép kiểu thành guid
+            if (customerId != Guid.Empty) // nếu ng dùng tồn tại
             {
                 var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
                 if (loggedInUser != null)
                 {
-                    //var cartItemList = _dBContext.CartDetails
-                    //    .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails != null)
-                    //    .Join(_dBContext.Sizes, cd => cd.ShoesDetails.SizeID, s => s.SizeID, (cd, s) => new CartItemViewModel
-                    //    {
-                    //        ShoesDetailsID = cd.ShoesDetailsId,
-                    //        Quantity = cd.Quantity,
-                    //        ProductName = _dBContext.Products.FirstOrDefault(p => p.ProductID == cd.ShoesDetails.ProductID).Name,
-                    //        Price = cd.ShoesDetails.Price,
-                    //        Description = cd.ShoesDetails.Description,
-                    //        Size = s.Name, // Lấy tên kích thước từ bảng Size
-                    //        ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails.ShoesDetailsId).Image1,
-                    //        MaHD = ""
-                    //    })
-                    //    .ToList();
-                    //return View(cartItemList);
+                    var cartItemList = _dBContext.CartDetails
+                        .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_Size != null)
+                        .Select(cd => new CartItemViewModel
+                        {
+                            ShoesDetailsID = cd.ShoesDetails_Size.ShoesDetailsId,
+                            Quantity = cd.Quantity,
+                            ProductName = _dBContext.Products.FirstOrDefault(p => p.ProductID == cd.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                            Price = cd.ShoesDetails_Size.ShoesDetails.Price,
+                            Description = cd.ShoesDetails_Size.ShoesDetails.Description,
+                            Size = cd.ShoesDetails_Size.Size.Name,
+                            ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails_Size.ShoesDetails.ShoesDetailsId).Image1,
+                            MaHD = ""
+                        })
+                        .ToList();
+                    return View(cartItemList);
                 }
             }
             // Nếu không có người dùng đăng nhập, lấy giỏ hàng từ session
@@ -65,24 +65,30 @@ namespace AppView.Controllers
         }
         public IActionResult AddToCart(Guid id, string size)
         {
-            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+            var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID; // tạo 1 biến chọc vào table size để tìm xem có size name nào = size từ trên form chọn
+            var shoesDT_Size = _dBContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == id && c.SizeID == objSize); // tạo biến để chọc vào bảng shoesDetails_Size với đk ShoesDetailsID giống như trên form chọn ++ size id == objsize đã chọn
+            if (shoesDT_Size == null) // nếu chưa tồn tại bản ghi nào thỏa mãn đk thì báo lỗi
+            {
+                return Content("Error");
+            }
+            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id); // biến này chỉ để phục vụ ng dùng chưa đăng nhập
             if (ShoesDT == null)
             {
                 return Content("Sản phẩm không tồn tại");
             }
             // Kiểm tra xem người dùng đã đăng nhập hay chưa
-            var userIdString = HttpContext.Session.GetString("UserId");
-            var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var userIdString = HttpContext.Session.GetString("UserId"); // lấy id customer từ session khi đăng nhập
+            var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty; // nếu ko null or rỗng thì ép kiểu thành Guid
 
-            if (CustomerID != Guid.Empty)
+            if (CustomerID != Guid.Empty) // nếu đã có Guid, tức có ng dùng đăng nhập
             {
-                var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == CustomerID);
+                var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == CustomerID); // kiểm tra trong db table customer xem có cus nào có id bằng id đăng nhập ko
 
-                if (loggedInUser != null)
+                if (loggedInUser != null) // nếu có ng dùng đó tồn tại thật
                 {
-                    var existingCart = _dBContext.Carts.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID);
+                    var existingCart = _dBContext.Carts.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID); // biến để kiểm tra ng dùng đã có giỏ hàng trước đó chưa
 
-                    if (existingCart != null)
+                    if (existingCart != null) // nếu ng dùng đã có giỏ hàng trước rồi
                     {
                         // Bản ghi đã tồn tại, bạn có thể cập nhật nó thay vì thêm mới
                         existingCart.Description = "Updated cart description";
@@ -98,12 +104,10 @@ namespace AppView.Controllers
                         };
                         _dBContext.Carts.Add(cart);
                     }
-                    // Kiểm tra xem người dùng đã chọn kích thước hay chưa
-                    var SizeID = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
-                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID/* && c.ShoesDetailsId == ShoesDT.ShoesDetailsId && c.ShoesDetails.SizeID == SizeID*/);
-                    if (existingCartItem != null)
+                    // Kiểm tra 2 điều kiện: nếu cùng 1 customer và cùng 1 ShoesDetails_Size (tức là đôi giày này + size đã có trong giỏ hàng rôi)
+                    var existingCartItem = _dBContext.CartDetails.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID && c.ShoesDetails_SizeID == shoesDT_Size.ID);
+                    if (existingCartItem != null) // Sản phẩm đã tồn tại trong giỏ hàng, tăng số lượng lên 1
                     {
-                        // Sản phẩm đã tồn tại trong giỏ hàng, tăng số lượng lên 1
                         existingCartItem.Quantity++;
                         _dBContext.CartDetails.Update(existingCartItem);
                     }
@@ -114,19 +118,17 @@ namespace AppView.Controllers
                         {
                             CartDetailsId = Guid.NewGuid(),
                             CumstomerID = loggedInUser.CumstomerID,
-                            //ShoesDetailsId = ShoesDT.ShoesDetailsId, // Gán ShoesDetailsId để tham chiếu đến thông tin sản phẩm
+                            ShoesDetails_SizeID = shoesDT_Size.ID,
                             Quantity = 1
                         };
                         _dBContext.CartDetails.Add(cartDetails);
                     }
-                    // Cập nhật kích thước của sản phẩm
-                    //ShoesDT.SizeID = SizeID;
-                    _dBContext.Update(ShoesDT);
-                    //ShoesDT.AvailableQuantity--;
+                    _dBContext.Update(shoesDT_Size);
+                    shoesDT_Size.Quantity--;
                     _dBContext.SaveChanges();
                 }
             }
-            else
+            else // nếu ng dùng chưa đăng nhập thì lưu bằng session
             {
                 var cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
                 if (cartItems == null)
@@ -158,16 +160,17 @@ namespace AppView.Controllers
             }
             return RedirectToAction("Cart");
         }
-        public IActionResult RemoveCartItem(Guid id, string quantity)
+        public IActionResult RemoveCartItem(Guid id, string sizeName)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+            var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == sizeName)?.SizeID;
+            var ShoesDT_Size = _dBContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == id && c.SizeID == objSize);
             if (CustomerID != Guid.Empty)
             {
-                //var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetailsId == id);
-                //ShoesDT.AvailableQuantity += cartItem.Quantity;
-                //_dBContext.CartDetails.Remove(cartItem);
+                var cartItem = _dBContext.CartDetails.FirstOrDefault(c => c.ShoesDetails_SizeID == ShoesDT_Size.ID);
+                ShoesDT_Size.Quantity += cartItem.Quantity;
+                _dBContext.CartDetails.Remove(cartItem);
                 _dBContext.SaveChanges();
             }
             else
@@ -184,7 +187,7 @@ namespace AppView.Controllers
                     SessionServices.SetObjToSession(HttpContext.Session, "Cart", cartItems);
                 }
             }
-            _dBContext.Update(ShoesDT);
+            _dBContext.Update(ShoesDT_Size);
             _dBContext.SaveChanges();
             return RedirectToAction("Cart");
         }
@@ -260,15 +263,16 @@ namespace AppView.Controllers
             return RedirectToAction("ViewBill");
         }
         [HttpPost]
-        public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity)
+        public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity, string size)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == shoesDetailsId);
+            var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var ShoesDT_Size = _dBContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == objSize);
             var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == CustomerID);
             if (loggedInUser != null)
             {
-                var cartItem = _dBContext.CartDetails.FirstOrDefault(cd => cd.CumstomerID == loggedInUser.CumstomerID/* && cd.ShoesDetailsId == shoesDetailsId*/);
+                var cartItem = _dBContext.CartDetails.FirstOrDefault(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_SizeID == ShoesDT_Size.ID);
                 if (cartItem != null)
                 {
                     //lưu số lượng trước đó ví dụ 1
@@ -278,8 +282,8 @@ namespace AppView.Controllers
                     _dBContext.SaveChanges();
 
                     //Cập nhật số lượng tồn của sản phẩm: ShoesDT.AvailableQuantity += 1 - 5; (số lượng trước đó - số lượng mới)
-                    //ShoesDT.AvailableQuantity += previousQuantity - quantity;
-                    _dBContext.Update(ShoesDT);
+                    ShoesDT_Size.Quantity += previousQuantity - quantity;
+                    _dBContext.Update(ShoesDT_Size);
                     _dBContext.SaveChanges();
                 }
             }

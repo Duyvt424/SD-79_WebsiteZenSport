@@ -52,6 +52,7 @@
                                      <p>Size @item.Size</p>
                                      <form id="removeCartItemForm_@item.ShoesDetailsID" method="post" action="@Url.Action("RemoveCartItem", "Cart")">
                                          <input type="hidden" name="id" value="@item.ShoesDetailsID" />
+                                         <input type="hidden" name="sizeName" value="@item.Size" />
                                      </form>
                                      <!-- Button to remove cart item -->
                                      <button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
@@ -65,7 +66,7 @@
                                      <!-- Quantity -->
                                      <div class="d-flex mb-4" style="max-width: 300px;">
                                          <div class="form-outline" style="margin-left:72px;">
-                                                <input id="quantity_@item.ShoesDetailsID" min="1" max="10" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" onchange="updateCartItemQuantity('@item.ShoesDetailsID', this.value)" />
+                                                <input id="quantity_@item.ShoesDetailsID" min="1" max="10" name="quantity" value="@item.Quantity" type="number" class="form-control quantity" onchange="updateCartItemQuantity('@item.ShoesDetailsID', this.value, '@item.Size')" />
                                          </div>
                                      </div>
                                      <!-- Total Price -->
@@ -79,11 +80,11 @@
                                  </div>
                                  <hr class="my-4" />
                                  <script>
-                                        function updateCartItemQuantity(shoesDetailsId, quantity) {
+                                        function updateCartItemQuantity(shoesDetailsId, quantity, objSize) {
                                             $.ajax({
                                                 url: '@Url.Action("UpdateCartItemQuantity", "Cart")',
                                                 type: 'POST',
-                                                data: { shoesDetailsId: shoesDetailsId, quantity: quantity },
+                                                data: { shoesDetailsId: shoesDetailsId, quantity: quantity, size : objSize },
                                                 success: function (response) {
                                                     // Cập nhật số lượng thành công
                                                 },
