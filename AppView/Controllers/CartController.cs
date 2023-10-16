@@ -63,6 +63,31 @@ namespace AppView.Controllers
             var cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
             return View(cartItems);
         }
+        public IActionResult GetCartItemCount()
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            int itemCount = 0;
+            if (customerId != Guid.Empty)
+            {
+                var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
+                if (loggedInUser != null)
+                {
+                    itemCount = _dBContext.CartDetails
+                        .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID)
+                        .Sum(cd => cd.Quantity);
+                }
+            }
+            else
+            {
+                var cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
+                if (cartItems != null)
+                {
+                    itemCount = cartItems.Sum(item => item.Quantity);
+                }
+            }
+            return Json(new { itemCount });
+        }
         public IActionResult AddToCart(Guid id, string size)
         {
             var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID; // tạo 1 biến chọc vào table size để tìm xem có size name nào = size từ trên form chọn
@@ -290,6 +315,13 @@ namespace AppView.Controllers
             // Các xử lý khác (nếu cần)
             return RedirectToAction("Cart");
         }
+        public int GetMaxQuantityForProduct(Guid shoesDetailsId, string size)
+        {
+            var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var maxQuantity = _dBContext.ShoesDetails_Sizes.FirstOrDefault(p => p.ShoesDetailsId == shoesDetailsId && p.SizeID == objSize)?.Quantity ?? 0;
+            return maxQuantity;
+        }
+
         public IActionResult ViewBill()
         {
             List<Bill> lstBills = _bill.GetAllBills();

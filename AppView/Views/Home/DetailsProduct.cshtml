@@ -56,6 +56,7 @@
                         <p class="line1" style="padding-top: 5px;">@Html.DisplayFor(model => model.Description)</p>
                         <p style="font-size: 14px; padding-top: 5px;">@Model.Price.ToString("N0")đ</p>
                         <p style="font-size: 14px; padding-top: 5px;">Sản phẩm có sẵn: <span style="font-weight:bold;" id="quantity"></span></p>
+                        <p style="font-size: 14px; padding-top: 5px;">Chiều dài chân phù hợp: <span style="font-weight:bold;" id="result"></span></p>
                     </div>
                     <h6 class="text-uppercase" style="font-size: 12px;">Select Size</h6>
                     <div class="cart mt-4 align-items-center">
@@ -91,6 +92,37 @@
                             </div>
                             <button type="submit" id="addToCartButton" class="btn btn-danger text mr-2 px-4" style="width: 310px; border-radius: 20px; color: white; margin-top:10px;">Add to cart</button>
                         </form>
+                        <script>
+                            // Lấy danh sách radio button theo tên "size"
+                            const sizeRadios = document.getElementsByName("size");
+
+                            // Lắng nghe sự kiện click trên radio button
+                            for (let i = 0; i < sizeRadios.length; i++) {
+                                sizeRadios[i].addEventListener("click", function () {
+                                    // Lấy giá trị của radio button đã chọn
+                                    const selectedSize = this.value;
+                                    // Cập nhật nội dung trong phần tử "result"
+                                    const result = document.getElementById("result");
+                                    result.textContent = getFootLength(selectedSize) + " cm";
+                                });
+                            }
+                            // Hàm để lấy chiều dài chân tương ứng với kích thước
+                            function getFootLength(size) {
+                                const footLengths = {
+                                    "34": 21.5,
+                                    "35": 22,
+                                    "36": 23,
+                                    "37": 23.5,
+                                    "38": 24,
+                                    "39": 25,
+                                    "40": 25.5,
+                                    "41": 26,
+                                    "42": 27,
+                                    // Thêm chiều dài chân cho các kích thước khác
+                                };
+                                return footLengths[size] || "Không rõ";
+                            }
+                        </script>
                         <script>
                             var sizeInputs = document.querySelectorAll('input[type="radio"][name="size"]');
                             var addToCartButton = document.getElementById('addToCartButton');

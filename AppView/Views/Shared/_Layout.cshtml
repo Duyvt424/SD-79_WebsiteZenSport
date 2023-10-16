@@ -17,11 +17,26 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.css" rel="stylesheet" />
 	<link href="~/css/css.css" />
+	<link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
 	<link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
 	<link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
 	<link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+	<style>
+		.badge:after {
+			content: attr(value);
+			font-size: 10px;
+			color: #fff;
+			background: black;
+			border-radius: 20%;
+			padding: 0 5px;
+			position: relative;
+			left: -23px;
+			top: 0px;
+			opacity: 0.9;
+		}
+	</style>
 </head>
 <body>
 	<header>
@@ -118,11 +133,30 @@
 							<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
 							<button type="submit"></button>
 						</div>
-						<div class="buttonok" style="margin-right:10px;;">
+						<div class="buttonok" style="margin-right: 10px;">
 							<a class="bag" asp-controller="Cart" asp-action="Cart">
-								<img src="~/image/icons8-shopping-bag-32.png" alt="??????" style="width: 40px; height: 35px;">
+								<i class="fa badge fa-lg" id="cartIcon" style="color: black; font-size: 35px; padding-top: 15px;">&#xf290;</i>
 							</a>
 						</div>
+						<script>
+							function updateCartItemCount() {
+								$.get('@Url.Action("GetCartItemCount", "Cart")', function (data) {
+									var cartIcon = document.getElementById('cartIcon');
+									var itemCount = data.itemCount;
+
+									if (itemCount === 0) {
+										// Ẩn số khi là 0
+										cartIcon.setAttribute('value', '');
+									} else {
+										// Hiển thị số khi lớn hơn 0
+										cartIcon.setAttribute('value', data.itemCount);
+									}
+								});
+							}
+							window.addEventListener('load', function () {
+								updateCartItemCount();
+							});
+						</script>
 					</form>
 				</div>
 			</nav>
@@ -180,7 +214,7 @@
 			@RenderBody()
 		</main>
 	</div>
-	<footer class="bg-dark text-center text-white" style="margin-top: 220px;">
+	<footer class="bg-dark text-center text-white" style="margin-top:440px;">
 		<!-- Grid container -->
 		<div class="container p-4">
 			<!-- Section: Social media -->
