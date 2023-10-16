@@ -10,4 +10,5 @@ namespace AppView.IServices
 		public List<Rank> GetAllRanks();
 		public Rank GetRankById(Guid id);
 	}
+	//abcd
 }
