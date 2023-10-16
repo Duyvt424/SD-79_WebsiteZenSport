@@ -1,11 +1,12 @@
-﻿@model AppData.Models.Role
+﻿@model AppData.Models.ShoesDetails_Size
 
 @{
-    ViewData["Title"] = "CreateShoesDetails";
+    ViewData["Title"] = "CreateShoesDetails_Size";
 }
+
+
 <link rel="stylesheet" href="~/css/FormInput.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <div class="container">
     <section class="vh-100 bg-image">
         <div class="mask d-flex align-items-center h-100 gradient-custom-3">
@@ -24,30 +25,26 @@
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="Create" style="margin-top:10px;" id="register-form">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <form asp-action="CreateShoesDetails_Size" style="margin-top:10px;" id="register-form">
                                     <div class="form-floating mb-3">
-                                        <input asp-for="RoleName" type="text" class="form-control" placeholder="RoleName" required>
-                                        <label for="floatingInputEmail">RoleName</label>
-                                        <span asp-validation-for="RoleName" class="text-danger"></span>
+                                        <input asp-for="Quantity" type="number" class="form-control" placeholder="Quantity" required>
+                                        <label for="floatingInputUsername">Số lượng</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Status" type="password" class="form-control" placeholder="Status" required>
-                                        <label for="floatingInputEmail">Status</label>
-                                        <span asp-validation-for="Status" class="text-danger"></span>
+                                        <select asp-for="ShoesDetailsId" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
+                                        <label for="floatingInputEmail">Mã giày chi tiết</label>
+                                        <span asp-validation-for="ShoesDetailsId" class="text-danger"></span>
                                     </div>
-                                    
-@*                                    <div class="form-check d-flex justify-content-center mb-5">
-                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" name="AgreeToTerms" checked />
-                                        <label class="form-check-label" for="form2Example3g">
-                                            I agree all statements in <a href="#gioithieu" class="text-body"><u>Terms of service</u></a>
-                                        </label>
-                                    </div>*@
-                                    <div class="d-flex justify-content-center">
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="SizeID" class="form-control" asp-items="@ViewBag.SizeList"></select>
+                                        <label for="floatingInputEmail">Kích cỡ</label>
+                                        <span asp-validation-for="SizeID" class="text-danger"></span>
+                                    </div>
+                                    <div class="d-flex justify-content-center" style="padding-top:5px;">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
                                                 class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                            <p style="color: white; font-size: 15px; text-decoration: none;">Add New</p>
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
                                         </button>
                                     </div>
                                 </form>

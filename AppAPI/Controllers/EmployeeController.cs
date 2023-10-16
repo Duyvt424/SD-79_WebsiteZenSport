@@ -12,83 +12,81 @@ namespace AppAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IAllRepositories<Employee> _repos;
-        private ShopDBContext _dbContext = new ShopDBContext();
-        private DbSet<Employee> _employee;
-        public EmployeeController()
-        {
-            _employee = _dbContext.Employees;
-            AllRepositories<Employee> all = new AllRepositories<Employee>(_dbContext, _employee);
-            _repos = all;
-        }
-        // GET: api/<EmployeeController>
-        [HttpGet("get-employee")]
-        public IEnumerable<Employee> GetAll()
-        {
-            return _repos.GetAll();
-        }
+		private readonly IAllRepositories<Employee> _repos;
+		private ShopDBContext _dbContext = new ShopDBContext();
+		private DbSet<Employee> _employees;
+		// GET: api/<ColorController1>
 
-        //// GET api/<EmployeeController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+		public EmployeeController()
+		{
+			_employees = _dbContext.Employees;
+			AllRepositories<Employee> all = new AllRepositories<Employee>(_dbContext, _employees);
+			_repos = all;
+		}
 
-        // POST api/<EmployeeController>
-        [HttpPost("create-employee")]
-        public string CreateEmployee(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid RoleID)
-        {
-            Employee employee = new Employee();
-            employee.FullName = FullName;
-            employee.Password = Password;
-            employee.Email = Email;
-            employee.Sex = Sex;
-            employee.PhoneNumber = PhoneNumber;
-            employee.Status = Status;
-            employee.RoleID = RoleID;
-            if (_repos.AddItem(employee))
-            {
-                return "Thêm thành công";
-            }
-            else
-            {
-                return "Error";
-            }
-        }
+		[HttpGet("get-employee")]
 
-        // PUT api/<EmployeeController>/5
-        [HttpPut("update-employee")]
-        public string UpdateEmployee(Guid id, string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid RoleID)
-        {
-            var employ = _repos.GetAll().First(c => c.EmployeeID == id);
-            employ.FullName = FullName;
-            employ.Password = Password;
-            employ.Email = Email;
-            employ.Sex = Sex;
-            employ.PhoneNumber = PhoneNumber;
-            employ.Status = Status;
-            employ.RoleID = RoleID;
-            if (_repos.EditItem(employ))
-            {
-                return "Sửa thành công";
-            }
-            else
-            {
-                return "Sửa thất bại";
-            }
-        }
+		public IEnumerable<Employee> GetAll()
+		{
+			return _repos.GetAll();
+		}
 
-        // DELETE api/<EmployeeController>/5
-        [HttpDelete("delete-employee")]
-        public string DeleteEmployee(Guid id)
-        {
-            var employ = _repos.GetAll().First(c => c.EmployeeID == id);
-            if (_repos.RemoveItem(employ))
-            {
-                return "Xóa thành công";
-            }
-            return "Xóa thành công";
-        }
-    }
+		// GET api/<ColorController1>/5
+		[HttpGet("find-employee")]
+		public IEnumerable<Employee> GetAll(string name)
+		{
+			return _repos.GetAll().Where(c => c.FullName.ToLower().Contains(name.ToLower())).ToList();
+		}
+
+		// POST api/<ColorController1>
+		[HttpPost("create-employee")]
+		public bool CreateEmployee(string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword,
+			 string PhoneNumber, int Status, DateTime DateCreated, Guid RoleID)
+		{
+			Employee emp = new Employee();
+			emp.FullName = FullName;
+			emp.UserName = UserName;
+			emp.Password = Password;
+			emp.Email = Email;
+			emp.Sex = Sex;
+			emp.ResetPassword = ResetPassword;
+			emp.PhoneNumber = PhoneNumber;
+			emp.Status = Status;
+			emp.DateCreated = DateCreated;
+			emp.RoleID = RoleID;
+			emp.EmployeeID = Guid.NewGuid();
+			return _repos.AddItem(emp);
+		}
+
+
+		// PUT api/<ColorController1>/5
+		[HttpPut("update-employee")]
+		public bool Put(string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword,
+			 string PhoneNumber, int Status, DateTime DateCreated, Guid EmployeeID, Guid RoleID)
+		{
+			var emp = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == EmployeeID);
+			emp.FullName = FullName;
+			emp.UserName = UserName;
+			emp.Password = Password;
+			emp.Email = Email;
+			emp.Sex = Sex;
+			emp.ResetPassword = ResetPassword;
+			emp.PhoneNumber = PhoneNumber;
+			emp.Status = Status;
+			emp.DateCreated = DateCreated;
+			emp.RoleID = RoleID;
+			return _repos.EditItem(emp);
+
+		}
+
+
+		// DELETE api/<ColorController1>/5
+		[HttpDelete("delete-employee")]
+		public bool Delete(Guid id)
+		{
+			var role = _repos.GetAll().First(c => c.EmployeeID == id);
+			role.Status = 1;
+			return _repos.EditItem(role);
+		}
+	}
 }

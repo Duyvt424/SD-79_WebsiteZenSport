@@ -4,7 +4,6 @@ using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AppAPI.Controllers
 {
@@ -13,12 +12,6 @@ namespace AppAPI.Controllers
     public class ShoesDetailsController : ControllerBase
     {
         private readonly IAllRepositories<ShoesDetails> repos;
-        private readonly IAllRepositories<Color> colorrp;
-        private readonly IAllRepositories<Product> productrp;
-        private readonly IAllRepositories<Size> sizerp;
-        private readonly IAllRepositories<Sole> solerp;
-        private readonly IAllRepositories<Style> stylerp;
-        private readonly IAllRepositories<Supplier> supplierrp;
         ShopDBContext context = new ShopDBContext();
         DbSet<ShoesDetails> shoesdt;
 
@@ -36,68 +29,54 @@ namespace AppAPI.Controllers
         }
 
         [HttpGet("find-shoesdetails")]
-        public IEnumerable<ShoesDetails> FindShoesDetails(Guid id)
+        public IEnumerable<ShoesDetails> FindShoesDetails(string shoesDetailsCode)
         {
-            return repos.GetAll().Where(p => p.ShoesDetailsId == id);
+            return repos.GetAll().Where(p => p.ShoesDetailsCode == shoesDetailsCode);
         }
 
         // POST api/<ShoesDetailsController>
         [HttpPost("create-shoesdetail")] 
-        public bool CreateShoesDetail(string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid soleid, Guid styleid, Guid supplierid) 
+        public bool CreateShoesDetail(string shoesdetailsCode, DateTime dateCreated, decimal price, decimal importprice, string description, int status, Guid colorId, Guid productId, Guid soleId, Guid styleId) 
         {
             ShoesDetails shoesdt = new ShoesDetails(); 
             shoesdt.ShoesDetailsId = Guid.NewGuid();
-            shoesdt.DateCreated = DateTime.Parse(createdate);
+            shoesdt.ShoesDetailsCode = shoesdetailsCode;
+            shoesdt.DateCreated = dateCreated;
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
-            //shoesdt.AvailableQuantity = availablequantity;
             shoesdt.Description = description;
             shoesdt.Status = status;
-            shoesdt.ColorID = colorid;
-            shoesdt.ProductID = productid;
-            shoesdt.SoleID = soleid;
-            shoesdt.StyleID = styleid;
-            //shoesdt.Color.Name = namecolor;
-           // shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == colorid).Select(p => p.ColorID).FirstOrDefault();
-            //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();
-            //shoesdt.SizeID = sizerp.GetAll().Where(p => p.Name == namesize).Select(p => p.SizeID).FirstOrDefault();
-            //shoesdt.SoleID = solerp.GetAll().Where(p => p.Name == namesole).Select(p => p.SoleID).FirstOrDefault();
-            //shoesdt.StyleID = stylerp.GetAll().Where(p => p.Name == namestyle).Select(p => p.StyleID).FirstOrDefault();
-            //shoesdt.SupplierID = supplierrp.GetAll().Where(p => p.Name == namesupplier).Select(p => p.SupplierID).FirstOrDefault();
+            shoesdt.ColorID = colorId;
+            shoesdt.ProductID = productId;
+            shoesdt.SoleID = soleId;
+            shoesdt.StyleID = styleId;
             return repos.AddItem(shoesdt);
         }
 
         // PUT api/<ShoesDetailsController>/5
         [HttpPut("edit-shoesdetail")]
-        public bool Put(Guid id, string createdate, decimal price, decimal importprice, int availablequantity, string description, int status, Guid colorid, Guid productid, Guid soleid, Guid styleid, Guid supplierid) 
+        public bool Put(Guid id, string shoesdetailsCode, DateTime dateCreated, decimal price, decimal importprice, string description, int status, Guid colorId, Guid productId, Guid soleId, Guid styleId) 
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
-            shoesdt.DateCreated = DateTime.Parse(createdate);
+            shoesdt.ShoesDetailsCode = shoesdetailsCode;
+            shoesdt.DateCreated = dateCreated;
             shoesdt.Price = price;
             shoesdt.ImportPrice = importprice;
-            //shoesdt.AvailableQuantity = availablequantity;
             shoesdt.Description = description;
             shoesdt.Status = status;
-            shoesdt.ColorID = colorid;
-            shoesdt.ProductID = productid;
-            shoesdt.SoleID = soleid;
-            shoesdt.StyleID = styleid;
-            
-            //shoesdt.ColorID = colorrp.GetAll().Where(p => p.Name == namecolor).Select(p => p.ColorID).FirstOrDefault();
-            //shoesdt.ProductID = productrp.GetAll().Where(p => p.Name == nameproduct).Select(p => p.ProductID).FirstOrDefault();
-            //shoesdt.SizeID = sizerp.GetAll().Where(p => p.Name == namesize).Select(p => p.SizeID).FirstOrDefault();
-            //shoesdt.SoleID = solerp.GetAll().Where(p => p.Name == namesole).Select(p => p.SoleID).FirstOrDefault();
-            //shoesdt.StyleID = stylerp.GetAll().Where(p => p.Name == namestyle).Select(p => p.StyleID).FirstOrDefault();
-            //shoesdt.SupplierID = supplierrp.GetAll().Where(p => p.Name == namesupplier).Select(p => p.SupplierID).FirstOrDefault();
+            shoesdt.ColorID = colorId;
+            shoesdt.ProductID = productId;
+            shoesdt.SoleID = soleId;
+            shoesdt.StyleID = styleId;
             return repos.EditItem(shoesdt);
         }
 
-        // DELETE api/<ShoesDetailsController>/5
         [HttpDelete("delete-shoesdetail")]
         public bool Delete(Guid id)
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
-            return repos.RemoveItem(shoesdt);
+            shoesdt.Status = 1;
+            return repos.EditItem(shoesdt);
         }
     }
 }

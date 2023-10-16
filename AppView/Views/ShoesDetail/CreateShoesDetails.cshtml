@@ -24,58 +24,51 @@
                                     community.
                                 </p>
                                 <form asp-action="CreateShoesDetails" style="margin-top:10px;" id="register-form">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="CreateDate" required>
                                         <label for="floatingInputEmail">CretaeDate</label>
                                         <span asp-validation-for="DateCreated" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Price" type="text" class="form-control" placeholder="Price" required>
-                                        <label for="floatingInputEmail">Price</label>
-                                        <span asp-validation-for="Price" class="text-danger"></span>
+                                        <input asp-for="ImportPrice" type="number" class="form-control" placeholder="ImportPrice" required>
+                                        <label for="floatingInputEmail">Giá nhập</label>
+                                        <span asp-validation-for="ImportPrice" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="ImportPrice" type="text" class="form-control" placeholder="ImportPrice" required>
-                                        <label for="floatingInputEmail">ImportPrice</label>
-                                        <span asp-validation-for="ImportPrice" class="text-danger"></span>
+                                        <input asp-for="Price" type="number" class="form-control" placeholder="Price" required>
+                                        <label for="floatingInputEmail">Giá bán</label>
+                                        <span asp-validation-for="Price" class="text-danger"></span>
                                     </div>
                                      <div class="form-floating mb-3">
                                         <input asp-for="Description" type="text" class="form-control" placeholder="Description" required>
-                                        <label for="floatingInputEmail">Description</label>
+                                        <label for="floatingInputEmail">Mô tả</label>
                                         <span asp-validation-for="Description" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Status" required>
-                                        <label for="floatingInputEmail">Status</label>
+                                        <label for="floatingInputEmail">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
                                         <span asp-validation-for="Status" class="text-danger"></span>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select asp-for="ColorID" class="form-control" asp-items="@ViewBag.ColorList"></select>
-                                        <label for="floatingInputEmail">Color</label>
+                                        <label for="floatingInputEmail">Chọn màu sắc</label>
                                         <span asp-validation-for="Color" class="text-danger"></span>     
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select asp-for="ProductID" class="form-control" asp-items="@ViewBag.ProductList"></select>
-                                        <label for="floatingInputEmail">Product</label>
+                                        <label for="floatingInputEmail">Chon sản phẩm</label>
                                         <span asp-validation-for="Product" class="text-danger"></span>     
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select asp-for="SoleID" class="form-control" asp-items="@ViewBag.SoleList"></select>   
-                                        <label for="floatingInputEmail">Sole</label>
+                                        <label for="floatingInputEmail">Chọn đế giày</label>
                                         <span asp-validation-for="Sole" class="text-danger"></span>     
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select asp-for="StyleID" class="form-control" asp-items="@ViewBag.StyleList"></select>
-                                        <label for="floatingInputEmail">Style</label>
+                                        <label for="floatingInputEmail">Chọn kiểu dáng</label>
                                         <span asp-validation-for="Style" class="text-danger"></span>     
                                     </div>
-@*                                    <div class="form-floating mb-3">
-                                        <select asp-for="SupplierID" class="form-control" asp-items="@ViewBag.SupplierList"></select>
-                                        <label for="floatingInputEmail">Supplier</label>
-                                        <span asp-validation-for="Supplier" class="text-danger"></span>              
-                                    </div>*@
-
                                     <div class="d-flex justify-content-center">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"

@@ -1,0 +1,90 @@
+﻿@model AppData.Models.Voucher
+
+@{
+    ViewData["Title"] = "EditVouchers";
+}
+
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+	<section class="vh-100 bg-image">
+		<div class="mask d-flex align-items-center h-100 gradient-custom-3">
+			<div class="container h-100">
+				<div class="row d-flex justify-content-center align-items-center h-100">
+					<div class="col-12 col-md-9 col-lg-7 col-xl-6">
+						<div class="">
+							<div class="card-body p-5">
+								<img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+								<h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+									BECOME A
+									NIKE MEMBER
+								</h2>
+								<p style="text-align: center; font-size: 14px;">
+									Edit your Nike Member profile and
+									get first <br> access to the very best of Nike products, inspiration <br> and
+									community.
+								</p>
+								<form asp-action="EditVouchers" style="margin-top:10px;" id="register-form">
+									<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+									<div class="form-group" style="display:none;">
+										<label asp-for="VoucherID" class="control-label"></label>
+										<input asp-for="VoucherID" class="form-control" />
+										<span asp-validation-for="VoucherID" class="text-danger"></span>
+									</div>
+									<div class="form-group" style="display:none;">
+										<label asp-for="VoucherCode" class="control-label"></label>
+										<input asp-for="VoucherCode" class="form-control" />
+										<span asp-validation-for="VoucherCode" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" required>
+										<label for="floatingInputUsername">VoucherValue</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" required>
+										<label for="floatingInputUsername">MaxUsage</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" required>
+										<label for="floatingInputUsername">RemainingUsage</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+										<label for="floatingInputUsername">DateCreated</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" required>
+										<label for="floatingInputUsername">ExpirationDate</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
+										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
+									</div>
+
+									<div class="d-flex justify-content-center" style="padding-top:5px;">
+										<button type="submit" value="Create"
+												style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+												class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+											<p style="color: white; font-size: 15px; text-decoration: none;">Update</p>
+										</button>
+									</div>
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+
+@*<div>
+    <a asp-action="Index">Back to List</a>
+</div>*@
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}
