@@ -40,7 +40,7 @@
 </head>
 <body>
 	<header>
-		@if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
+		@if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
 		{
 			<div class="container-fluid">
 				<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
