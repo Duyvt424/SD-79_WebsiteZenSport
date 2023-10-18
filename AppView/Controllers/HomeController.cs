@@ -51,6 +51,8 @@ namespace AppView.Controllers
 
             ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
             Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+            ViewBag.NameStyle = "";
+            Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
             foreach (var shoes in shoesList)
             {
                 var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
@@ -64,7 +66,14 @@ namespace AppView.Controllers
                 {
                     productNames[shoes.ShoesDetailsId] = product.Name;
                 }
+
+                var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
+                if (style != null)
+                {
+                    productStyles[shoes.ShoesDetailsId] = style.Name;
+                }
             }
+            ViewBag.NameStyle = productStyles;
             ViewBag.NameSP = productNames;
             ViewBag.shoesList = shoesList;
 
@@ -75,9 +84,14 @@ namespace AppView.Controllers
         {
             var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
             var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
+            var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
             if (NameProduct != null)
             {
                 ViewBag.nameProduct = NameProduct.Name;
+            }
+            if (StyleProduct != null)
+            {
+                ViewBag.styleProduct = StyleProduct.Name;
             }
             var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
             ViewBag.ImageGolden1 = ImageGoldens.Image1;

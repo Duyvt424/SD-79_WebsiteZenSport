@@ -251,7 +251,7 @@
 							<div class="first bg-white p-4 text-center">
 								<a href="@Url.Action("DetailsProduct", "Home", new { id = item.ShoesDetailsId })"><img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;"></a>
 								<h5 class="line1" style="padding-top:5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h5>
-								<p class="line1">@Html.DisplayFor(modelItem => item.Description)</p>
+								<p class="line1">@ViewBag.NameStyle[item.ShoesDetailsId]</p>
 								<p style="font-size: 13px;">@item.Price.ToString("N0")đ</p>
 								<button class="btnok">Thêm vào giỏ hàng</button>
 							</div>

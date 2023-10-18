@@ -53,8 +53,8 @@
                         <h5 class="text-uppercase" style="padding-top: 5px;">@ViewBag.nameProduct</h5>
                         <!-- Nike SuperRep Cycle 2 Next Nature -->
                         <!-- Indoor Cycling Shoes -->
-                        <p class="line1" style="padding-top: 5px;">@Html.DisplayFor(model => model.Description)</p>
-                        <p style="font-size: 14px; padding-top: 5px;">@Model.Price.ToString("N0")đ</p>
+                        <p class="line1" style="padding-top: 5px; font-weight:bold;">Kiểu dáng: @ViewBag.styleProduct</p>
+                        <p style="font-size: 14px; padding-top: 5px; font-weight:bold;">Giá: @Model.Price.ToString("N0")đ</p>
                         <p style="font-size: 14px; padding-top: 5px;">Sản phẩm có sẵn: <span style="font-weight:bold;" id="quantity"></span></p>
                         <p style="font-size: 14px; padding-top: 5px;">Chiều dài chân phù hợp: <span style="font-weight:bold;" id="result"></span></p>
                     </div>
@@ -148,22 +148,13 @@
                             });
                         </script>
                     </div>
-                    <div class="chu1" style="width: 310px;">
-                        <p class="about" style="font-size: 11px; margin-top: 5px; text-align: justify;">
-                            The quad-burning
-                            box jumps that bring your "why" into focus. The sweat-soaked super-sets that leave you bent
-                            over double. This is what you live for: the struggle, the moment of truth, the breakthrough,
-                            the transformation. Designed for quick bursts of force, heart-thumping tempo changes and
-                            fast-paced workouts, this shoe helps push you to fresh HIIT heights.
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="container mt-4 d-flex justify-content-center" style="margin-top: 0px;">
         <div class="row g-0">
-            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
                 <div class="cards1">
                     <div class="first bg-white p-4 text-center">
                         <img src="@Url.Content("~/image/" + ViewBag.ImageGolden3)" style="width: 100%;">
@@ -172,12 +163,34 @@
             </div>
             <!-- src="image/anh24.png"
                   src="image/anh23.png" -->
-            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
                 <div class="cards1">
                     <div class=" second bg-white p-4 text-center">
                         <img src="@Url.Content("~/image/" + ViewBag.ImageGolden4)" style="width: 100%;">
                     </div>
                 </div>
+            </div>
+            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
+                <div class="chu1">
+                    <hr style="width:78%; margin-left:8%;"/>
+                    <h5 onclick="toggleDescription()" style="margin-left:8%; width:77%;">Thêm thông tin <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
+                    <p class="about" style="font-size: 13px; margin-top: 5px; text-align: justify; display:none; margin-left:8%; width:77%;" id="description">
+                        @Model.Description
+                    </p>
+                </div>
+                <script>
+                    function toggleDescription() {
+                        var description = document.getElementById("description");
+                        var img = document.getElementById("imgMoTa");
+                        if (description.style.display === "none") {
+                            description.style.display = "block";
+                            img.src = "/image/icons8-chevron-up-11.png";
+                        } else {
+                            description.style.display = "none";
+                            img.src = "/image/icons8-chevron-down-11.png";
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
