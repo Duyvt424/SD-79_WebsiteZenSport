@@ -22,29 +22,181 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
     <title>Detail</title>
+    <style>
+        .product-small-img img {
+            height: 92px;
+            margin: 10px 0;
+            cursor: pointer;
+            display: block;
+            opacity: .6;
+            border-radius: 10%;
+        }
+
+            .product-small-img img:hover {
+                opacity: 1;
+            }
+
+        .product-small-img {
+            float: left;
+            margin-left: 27%;
+        }
+
+        .product {
+            position: relative;
+        }
+
+        .img-container img {
+            height: 500px;
+            border-radius: 2%;
+        }
+
+        .img-container {
+            float: right;
+            padding: 10px;
+        }
+
+        .delete-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgb(20, 20, 20);
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+            cursor: pointer;
+            transition-duration: 0.3s;
+            overflow: hidden;
+            position: relative;
+            top: -70px;
+            margin-left: 70%;
+        }
+
+        .delete-svgIcon {
+            width: 15px;
+            transition-duration: 0.3s;
+        }
+
+            .delete-svgIcon path {
+                fill: white;
+            }
+
+        .delete-button-next {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgb(20, 20, 20);
+            border: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+            cursor: pointer;
+            transition-duration: 0.3s;
+            overflow: hidden;
+            position: relative;
+            top: -110px;
+            margin-left: 83%;
+        }
+
+        .delete-svgIcon-next {
+            width: 15px;
+            transition-duration: 0.3s;
+        }
+
+            .delete-svgIcon-next path {
+                fill: white;
+            }
+    </style>
 </head>
 
 <body>
     <div class="container mt-4 d-flex justify-content-center" style="padding-top: 45px;">
         <div class="row g-0">
-            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
-                <div class="cards1">
-                    <div class="first bg-white p-4 text-center">
-                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden1)" alt="Product Image" style="width: 100%;">
-                    </div>
-                </div>
-            </div>
             <!-- src="image/anh11.png" -->
-            <div class="col-sm-6 col-md-4" style="padding-top: 5px;">
-                <div class="cards1">
-                    <div class=" second bg-white p-4 text-center">
-                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden2)" style="width: 100%;">
+            <div class="col-sm-7 col-md-7 mx-auto">
+                <div class="product">
+                    <div class="product-small-img">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden1)" alt="Product Image" style="width: 100%;" onmouseover="hoverThumbnail(this)" onmouseout="resetThumbnailOpacity(this)">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden2)" alt="Product Image" style="width: 100%;" onmouseover="hoverThumbnail(this)" onmouseout="resetThumbnailOpacity(this)">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden3)" alt="Product Image" style="width: 100%;" onmouseover="hoverThumbnail(this)" onmouseout="resetThumbnailOpacity(this)">
+                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden4)" alt="Product Image" style="width: 100%;" onmouseover="hoverThumbnail(this)" onmouseout="resetThumbnailOpacity(this)">
+                    </div>
+                    <div class="img-container">
+                        <img id="imageBox" src="@Url.Content("~/image/" + ViewBag.ImageGolden1)" alt="Product Image" style="width: 100%;">
+                        <button class="delete-button" onclick="previousImage()">
+                            <svg class="delete-svgIcon" viewBox="0 0 20 20">
+                                <path fill="none" d="M8.388,10.049l4.76-4.873c0.303-0.31,0.297-0.804-0.012-1.105c-0.309-0.304-0.803-0.293-1.105,0.012L6.726,9.516c-0.303,0.31-0.296,0.805,0.012,1.105l5.433,5.307c0.152,0.148,0.35,0.223,0.547,0.223c0.203,0,0.406-0.08,0.559-0.236c0.303-0.309,0.295-0.803-0.012-1.104L8.388,10.049z"></path>
+                            </svg>
+                        </button>
+                        <button class="delete-button-next" onclick="nextImage()">
+                            <svg class="delete-svgIcon-next" viewBox="0 0 20 20">
+                                <path fill="none" d="M11.611,10.049l-4.76-4.873c-0.303-0.31-0.297-0.804,0.012-1.105c0.309-0.304,0.803-0.293,1.105,0.012l5.306,5.433c0.304,0.31,0.296,0.805-0.012,1.105L7.83,15.928c-0.152,0.148-0.35,0.223-0.547,0.223c-0.203,0-0.406-0.08-0.559-0.236c-0.303-0.309-0.295-0.803-0.012-1.104L11.611,10.049z"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
+
+            <script>
+                var imageUrls = [
+                    "@Url.Content("~/image/" + ViewBag.ImageGolden1)",
+                    "@Url.Content("~/image/" + ViewBag.ImageGolden2)",
+                    "@Url.Content("~/image/" + ViewBag.ImageGolden3)",
+                    "@Url.Content("~/image/" + ViewBag.ImageGolden4)"
+                ];
+
+                var currentImageIndex = 0;
+
+                function nextImage() {
+                    currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+                    updateImage();
+                    updateThumbnails();
+                }
+
+                function previousImage() {
+                    currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+                    updateImage();
+                    updateThumbnails();
+                }
+
+                function updateImage() {
+                    var fullImg = document.getElementById("imageBox");
+                    fullImg.src = imageUrls[currentImageIndex];
+                }
+
+                function updateThumbnails() {
+                    var thumbnails = document.querySelectorAll(".product-small-img img");
+                    for (var i = 0; i < thumbnails.length; i++) {
+                        if (i === currentImageIndex) {
+                            thumbnails[i].style.opacity = 1;
+                        } else {
+                            thumbnails[i].style.opacity = 0.6;
+                        }
+                    }
+                }
+
+                function hoverThumbnail(thumbnail) {
+                    var fullImg = document.getElementById("imageBox");
+                    var index = Array.from(thumbnail.parentNode.children).indexOf(thumbnail);
+                    fullImg.src = imageUrls[index];
+                    thumbnail.style.opacity = 1;
+                }
+
+                function resetThumbnailOpacity(thumbnail) {
+                    var index = Array.from(thumbnail.parentNode.children).indexOf(thumbnail);
+                    if (index !== currentImageIndex) {
+                        thumbnail.style.opacity = 0.6;
+                    }
+                }
+                updateThumbnails();
+            </script>
             <!-- src="image/video1.mp4" -->
-            <div class="col-sm-6 col-md-4" style="padding-top: 0;">
-                <div class="product p-4">
+            <div class="col-sm-5 col-md-5 mx-auto" style="margin-top:-6%;">
+                <div class="product p-5">
                     <div class="mt-4 mb-3">
                         <span class="text-uppercase text-muted brand" style="font-size: 11px;">
                             Sustainable
@@ -90,23 +242,50 @@
                                     <input type="radio" name="size" value="42"> <span class="span3">42</span>
                                 </label>
                             </div>
-                            <button type="submit" id="addToCartButton" class="btn btn-danger text mr-2 px-4" style="width: 310px; border-radius: 20px; color: white; margin-top:10px;">Add to cart</button>
+                            <button type="submit" id="addToCartButton" class="btn btn-danger text mr-2 px-4" style="width: 79%; border-radius: 20px; color: white; margin-top:10px;">Add to cart</button>
                         </form>
                         <script>
-                            // Lấy danh sách radio button theo tên "size"
-                            const sizeRadios = document.getElementsByName("size");
+                            document.addEventListener("DOMContentLoaded", function () {
+                                // Lấy danh sách radio button theo tên "size"
+                                const sizeRadios = document.getElementsByName("size");
+                                // Lựa chọn size mặc định (ví dụ: size đầu tiên)
+                                const defaultSize = sizeRadios[0].value;
 
-                            // Lắng nghe sự kiện click trên radio button
-                            for (let i = 0; i < sizeRadios.length; i++) {
-                                sizeRadios[i].addEventListener("click", function () {
-                                    // Lấy giá trị của radio button đã chọn
-                                    const selectedSize = this.value;
-                                    // Cập nhật nội dung trong phần tử "result"
+                                // Gọi hàm để cập nhật thông tin số lượng và chiều dài chân ngay khi trang được load
+                                updateQuantityAndFootLength(defaultSize);
+
+                                // Lắng nghe sự kiện click trên radio button
+                                for (let i = 0; i < sizeRadios.length; i++) {
+                                    sizeRadios[i].addEventListener("click", function () {
+                                        const selectedSize = this.value;
+                                        // Gọi hàm để cập nhật thông tin số lượng và chiều dài chân dựa trên size đã chọn
+                                        updateQuantityAndFootLength(selectedSize);
+                                    });
+                                }
+                            });
+
+                            function updateQuantityAndFootLength(size) {
+                                const quantitySpan = document.getElementById('quantity');
+                                const addToCartButton = document.getElementById('addToCartButton');
+
+                                // Gửi yêu cầu Ajax để lấy số lượng và chiều dài chân dựa trên kích thước và ShoesDetailsId
+                                $.get('@Url.Action("GetQuantityForSize", "Home")', { shoesDetailsId: "@Model.ShoesDetailsId", sizeForm: size }, function (data) {
+                                    // Cập nhật nội dung của quantitySpan bằng số lượng tồn từ phản hồi.
+                                    quantitySpan.textContent = data.quantity;
+                                    const soluong = data.quantity;
+                                    if (soluong <= 0) {
+                                        addToCartButton.disabled = true;
+                                        addToCartButton.textContent = "Hết hàng";
+                                    } else {
+                                        addToCartButton.disabled = false;
+                                        addToCartButton.textContent = "Add To Cart";
+                                    }
+
                                     const result = document.getElementById("result");
-                                    result.textContent = getFootLength(selectedSize) + " cm";
+                                    result.textContent = getFootLength(size) + " cm";
                                 });
                             }
-                            // Hàm để lấy chiều dài chân tương ứng với kích thước
+
                             function getFootLength(size) {
                                 const footLengths = {
                                     "34": 21.5,
@@ -118,79 +297,32 @@
                                     "40": 25.5,
                                     "41": 26,
                                     "42": 27,
-                                    // Thêm chiều dài chân cho các kích thước khác
                                 };
                                 return footLengths[size] || "Không rõ";
                             }
                         </script>
-                        <script>
-                            var sizeInputs = document.querySelectorAll('input[type="radio"][name="size"]');
-                            var addToCartButton = document.getElementById('addToCartButton');
-                            var quantitySpan = document.getElementById('quantity');
-                            sizeInputs.forEach(function (input) {
-                                input.addEventListener('change', function () {
-                                    var selectedSize = this.value;
-                                    // Gửi yêu cầu Ajax để lấy số lượng tồn dựa trên kích thước và ShoesDetailsId
-                                    $.get('@Url.Action("GetQuantityForSize", "Home")', { shoesDetailsId: "@Model.ShoesDetailsId", sizeForm: selectedSize }, function (data) {
-                                        // Cập nhật nội dung của quantitySpan bằng số lượng tồn từ phản hồi.
-                                        quantitySpan.textContent = data.quantity;
-                                        var soluong = data.quantity;
-                                        if (soluong <= 0){
-                                            addToCartButton.disabled = true;
-                                            addToCartButton.textContent = "Hết hàng";
-                                        }
-                                        else{
-                                            addToCartButton.disabled = false;
-                                            addToCartButton.textContent = "Add To Cart";
-                                        }
-                                    });
-                                });
-                            });
-                        </script>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container mt-4 d-flex justify-content-center" style="margin-top: 0px;">
-        <div class="row g-0">
-            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
-                <div class="cards1">
-                    <div class="first bg-white p-4 text-center">
-                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden3)" style="width: 100%;">
+                    <div class="chu1">
+                        <hr style="width:78%;" />
+                        <h5 onclick="toggleDescription()" style="width:77%;">Thêm thông tin <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
+                        <p class="about" style="font-size: 13px; margin-top: 5px; text-align: justify; display:none; width:77%;" id="description">
+                            @Model.Description
+                        </p>
                     </div>
-                </div>
-            </div>
-            <!-- src="image/anh24.png"
-                  src="image/anh23.png" -->
-            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
-                <div class="cards1">
-                    <div class=" second bg-white p-4 text-center">
-                        <img src="@Url.Content("~/image/" + ViewBag.ImageGolden4)" style="width: 100%;">
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-4" style="padding-top: 0px;">
-                <div class="chu1">
-                    <hr style="width:78%; margin-left:8%;"/>
-                    <h5 onclick="toggleDescription()" style="margin-left:8%; width:77%;">Thêm thông tin <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
-                    <p class="about" style="font-size: 13px; margin-top: 5px; text-align: justify; display:none; margin-left:8%; width:77%;" id="description">
-                        @Model.Description
-                    </p>
-                </div>
-                <script>
-                    function toggleDescription() {
-                        var description = document.getElementById("description");
-                        var img = document.getElementById("imgMoTa");
-                        if (description.style.display === "none") {
-                            description.style.display = "block";
-                            img.src = "/image/icons8-chevron-up-11.png";
-                        } else {
-                            description.style.display = "none";
-                            img.src = "/image/icons8-chevron-down-11.png";
+                    <script>
+                        function toggleDescription() {
+                            var description = document.getElementById("description");
+                            var img = document.getElementById("imgMoTa");
+                            if (description.style.display === "none") {
+                                description.style.display = "block";
+                                img.src = "/image/icons8-chevron-up-11.png";
+                            } else {
+                                description.style.display = "none";
+                                img.src = "/image/icons8-chevron-down-11.png";
+                            }
                         }
-                    }
-                </script>
+                    </script>
+                </div>
             </div>
         </div>
     </div>

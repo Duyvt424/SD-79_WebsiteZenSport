@@ -50,7 +50,7 @@ namespace AppView.Controllers
                             Quantity = cd.Quantity,
                             ProductName = _dBContext.Products.FirstOrDefault(p => p.ProductID == cd.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                             Price = cd.ShoesDetails_Size.ShoesDetails.Price,
-                            Description = cd.ShoesDetails_Size.ShoesDetails.Description,
+                            Description = _dBContext.Styles.FirstOrDefault(c => c.StyleID == cd.ShoesDetails_Size.ShoesDetails.StyleID).Name,
                             Size = cd.ShoesDetails_Size.Size.Name,
                             ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails_Size.ShoesDetails.ShoesDetailsId).Image1,
                             MaHD = ""
@@ -160,7 +160,7 @@ namespace AppView.Controllers
                 {
                     cartItems = new List<CartItemViewModel>();
                 }
-                var cartItem = cartItems.FirstOrDefault(c => c.ShoesDetailsID == ShoesDT.ShoesDetailsId && c.Size == size);
+                var cartItem = cartItems.FirstOrDefault(c => c.ShoesDetailsID == shoesDT_Size.ShoesDetailsId && c.Size == size);
                 if (cartItem == null)
                 {
                     // Nếu chưa có, thêm sản phẩm vào giỏ hàng với số lượng là 1
@@ -170,7 +170,7 @@ namespace AppView.Controllers
                         Quantity = 1,
                         ProductName = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID)?.Name,
                         Price = ShoesDT.Price,
-                        Description = ShoesDT.Description,
+                        Description = _dBContext.Styles.FirstOrDefault(c => c.StyleID == ShoesDT.StyleID)?.Name,
                         Size = size,
                         ProductImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == ShoesDT.ShoesDetailsId)?.Image1,
                         MaHD = ""
