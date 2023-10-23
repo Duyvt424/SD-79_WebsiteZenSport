@@ -148,6 +148,10 @@ namespace AppView.Controllers
 
             return View(productViewModels);
         }
+        public IActionResult DashBoard()
+        {
+            return View();
+        }
         /*  public IActionResult Login()
           {
               ViewBag.SignUpSuccess = TempData["SignUpSuccess"];
