@@ -52,7 +52,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateColor(Color color)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Color/create-color?ColorCode={GenerateColorCode()}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}";
+            string apiUrl = $"https://localhost:7036/api/Color/create-color?ColorCode={GenerateColorCode()}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var response = await httpClient.PostAsync(apiUrl,null);
             return RedirectToAction("GetAllColor");
         }
@@ -66,7 +66,7 @@ namespace AppView.Controllers
         public  async Task<IActionResult> EditColor(Color color) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Color/update-color?ColorCode={color.ColorCode}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}&ColorID={color.ColorID}";
+            string apiUrl = $"https://localhost:7036/api/Color/update-color?ColorCode={color.ColorCode}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}&ColorID={color.ColorID.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var response = await httpClient.PutAsync(apiUrl,null);
             return RedirectToAction("GetAllColor");
         }

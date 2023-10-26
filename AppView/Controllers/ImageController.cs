@@ -122,7 +122,7 @@ namespace AppView.Controllers
                 image.Image4 = imageFile4.FileName;
             }
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Image/create-image?imageCode={GenerateImageCode()}&name={image.Name}&image1={imageFile1.FileName}&image2={imageFile2.FileName}&image3={imageFile3.FileName}&image4={imageFile4.FileName}&status={image.Status}&DateCreated={image.DateCreated}&shoesDetailsId={image.ShoesDetailsID}";
+            string apiUrl = $"https://localhost:7036/api/Image/create-image?imageCode={GenerateImageCode()}&name={image.Name}&image1={imageFile1.FileName}&image2={imageFile2.FileName}&image3={imageFile3.FileName}&image4={imageFile4.FileName}&status={image.Status}&DateCreated={image.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&shoesDetailsId={image.ShoesDetailsID}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllImge");
         }
@@ -181,7 +181,7 @@ namespace AppView.Controllers
                 image.Image4 = imageFile4.FileName;
             }
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Image/update-image?id={image.ImageID}&imageCode={image.ImageCode}&name={image.Name}&image1={imageFile1.FileName}&image2={imageFile2.FileName}&image3={imageFile3.FileName}&image4={imageFile4.FileName}&status={image.Status}&DateCreated={image.DateCreated}&shoesDetailsId={image.ShoesDetailsID}";
+            string apiUrl = $"https://localhost:7036/api/Image/update-image?id={image.ImageID}&imageCode={image.ImageCode}&name={image.Name}&image1={imageFile1.FileName}&image2={imageFile2.FileName}&image3={imageFile3.FileName}&image4={imageFile4.FileName}&status={image.Status}&DateCreated={image.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&shoesDetailsId={image.ShoesDetailsID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllImge");
         }

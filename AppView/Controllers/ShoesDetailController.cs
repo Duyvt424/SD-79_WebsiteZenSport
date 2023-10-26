@@ -114,7 +114,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?shoesdetailsCode={GenerateShoesDetailsCode()}&dateCreated={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?shoesdetailsCode={GenerateShoesDetailsCode()}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllShoesDetails");
         }
@@ -147,7 +147,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> UpdateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&shoesdetailsCode={shoesdt.ShoesDetailsCode}&dateCreated={shoesdt.DateCreated}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&shoesdetailsCode={shoesdt.ShoesDetailsCode}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllShoesDetails");
         }

@@ -1,5 +1,8 @@
-﻿@{
+﻿@using AppData.Models;
+@model IEnumerable<AppData.Models.ShoesDetails>
+@{
     ViewData["Title"] = "Home";
+    var shoesDetails = ViewBag.shoesList as List<ShoesDetails>;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/owl.carousel.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="~/css/css.css">
     <link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
@@ -19,6 +23,97 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
     <title>Home</title>
     <style>
+        .products-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-height: 100vh;
+            width: 100%;
+            background: rgba(0, 0, 0, .8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .products-preview .preview {
+                padding: 2rem;
+                text-align: center;
+                background: #fff;
+                position: relative;
+                max-width: 35%;
+                width: auto;
+                max-height: 40%;
+            }
+
+                .products-preview .preview.active {
+                    display: inline-block;
+                }
+
+                .products-preview .preview img {
+                    height: 25rem;
+                }
+
+                .products-preview .preview .fa-times {
+                    position: absolute;
+                    top: 0.1rem;
+                    right: 0.5rem;
+                    cursor: pointer;
+                    color: #444;
+                    font-size: 2rem;
+                }
+
+                    .products-preview .preview .fa-times:hover {
+                        transform: rotate(90deg);
+                    }
+
+                .products-preview .preview h3 {
+                    color: #444;
+                    padding: 1.0rem;
+                    font-size: 1.5rem;
+                }
+
+                .products-preview .preview p {
+                    line-height: 1.5;
+                    padding: 0.5rem;
+                    font-size: 1.1rem;
+                    color: #777;
+                }
+
+                .products-preview .preview .price {
+                    padding: 0.5rem 0;
+                    font-size: 1.2rem;
+                    color: black;
+                }
+
+                .products-preview .preview .buttons {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: 1rem;
+                }
+
+                    .products-preview .preview .buttons a {
+                        flex: 1 1 auto;
+                        font-size: 1.4rem;
+                        color: #444;
+                        border: .1rem solid #444;
+                        text-decoration: none;
+                        margin-right: 0.3rem; /* Thêm khoảng cách bên phải ở đây */
+                    }
+
+                        .products-preview .preview .buttons a.cart {
+                            background: #444;
+                            color: #fff;
+                        }
+
+                            .products-preview .preview .buttons a.cart:hover {
+                                background: #111;
+                            }
+
+                        .products-preview .preview .buttons a.buy:hover {
+                            background: #444;
+                            color: #fff;
+                        }
         .image-box {
             position: relative;
             margin: auto;
@@ -46,13 +141,6 @@
             <source src="~/image/Nike. Just Do It. Nike VN8.mp4" type="video/mp4" />
         </video>
     </div>
-    @*    <div id="slideshow1" style="margin-top: 15px;">
-    <div class="slide-wrapper1">
-    <div class="slide1">
-    <img src="~/image/" style="width: 100%; height: 100%;">
-    </div>
-    </div>
-    </div>*@
     <div class="container" style="margin-top: 15px;">
         <div class="row">
             <div class="aaa text-center">
@@ -68,99 +156,119 @@
             </div>
         </div>
     </div>
-@*    <div class="container mt-4">
-        <div class="text-center">
-            <span class="parallax-text" text="NIKE">NIKE</span>
-        </div>
-    </div>
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <img class="anhok img-fluid" src="~/image/anh114.png" alt="Nike sneaker">
-            </div>
-        </div>
-    </div>*@
     <div class="container-fluid" style="padding-top: 60px;">
         <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
         <div class="tieude1">
             <h3>News</h3>
         </div>
         <div class="row">
-            <div class="col-sm-6 col-md-3">
-                <div class="image-box">
-                    <img src="~/image/anhgiay1.png" alt="Generic placeholder thumbnail" style="width: 100%;">
+            @foreach (var item in shoesDetails.Take(4))
+            {
+                <div class="col-sm-6 col-md-3 product-item">
+                    <div class="image-box">
+                        <img src="@Url.Content("~/image/" + item.ImageUrl)" alt="Shoes for you" style="width: 100%;" data-shoes-id="@item.ShoesDetailsId" data-shoes-name="@ViewBag.NameSP[item.ShoesDetailsId]" data-shoes-style="@ViewBag.NameStyle[item.ShoesDetailsId]">
+                    </div>
+                    <div class="caption">
+                        <h6 style="padding-top: 15px;">@ViewBag.NameSP[item.ShoesDetailsId]</h6>
+                        <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">@ViewBag.NameStyle[item.ShoesDetailsId]</p>
+                        <p style="font-size: 13px;">@item.Price.ToString("N0")đ</p>
+                    </div>
                 </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike Air Zoom Alphafly</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Men's Road Racing Shoes</p>
-                    <p style="font-size: 13px;">2.900.000đ <del style="font-size: 13px;">3.400.000đ</del></p>
-                    <!-- <p>
-                      <button class="add" style="background-color: white; border: 1px solid black; border-radius: 5px;">
-                        <img src="image/icons8-add-shopping-cart-32.png" alt="" style="width: 28px; height: 28px;">
-                      </button>
-                    </p> -->
+            }
+
+            @foreach (var item in shoesDetails.Skip(4).Take(3))
+            {
+                <div class="col-sm-6 col-md-4 product-item" style="margin-top:3%;">
+                    <div class="image-box">
+                        <img src="@Url.Content("~/image/" + item.ImageUrl)" alt="Shoes for you" style="width: 100%;" data-shoes-id="@item.ShoesDetailsId" data-shoes-name="@ViewBag.NameSP[item.ShoesDetailsId]" data-shoes-style="@ViewBag.NameStyle[item.ShoesDetailsId]">
+                    </div>
+                    <div class="caption">
+                        <h6 style="padding-top: 15px;">@ViewBag.NameSP[item.ShoesDetailsId]</h6>
+                        <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">@ViewBag.NameStyle[item.ShoesDetailsId]</p>
+                        <p style="font-size: 13px;">@item.Price.ToString("N0")đ</p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="image-box">
-                    <img src="~/image/anhgiay2.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike Dunk Low SE</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Men's Shoes</p>
-                    <p style="font-size: 13px;">2.599.000đ <del style="font-size: 13px;">3.100.000đ</del></p>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="image-box">
-                    <img src="~/image/anhgiay3.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike Dunk Low</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Toddler Shoes</p>
-                    <p style="font-size: 13px;">1,659,000₫ <del style="font-size: 13px;"> 2.499.000đ</del></p>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="image-box">
-                    <img src="~/image/anhgiay4.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">LeBron XX 'Stocking Stuffer'</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Older Kids' Basketball Shoes</p>
-                    <p style="font-size: 13px;">4,079,000₫ <del style="font-size: 13px;"> 6.099.000đ</del></p>
+            }
+
+            <div class="products-preview">
+                <div class="preview">
+                    <i class="fas fa-times"></i>
+                    <img src="" alt="Shoes" class="product-image">
+                    <h3 class="product-name"></h3>
+                    <p class="product-description" style="margin-top:-5%;"></p>
+                    <div class="price product-price" style="margin-top:-3%;"></div>
+                    <div class="buttons">
+                        <a href="#" class="buy">Favourite</a>
+                        <a href="#" class="cart">View Details</a>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-4" style="padding-top: 25px;">
-                <div class="image-box">
-                    <img src="~/image/anhgiay5.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike Run Flow</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Younger Kids' Easy On/Off Shoes</p>
-                    <p style="font-size: 13px;">1,909,000₫</p>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-4" style="padding-top: 25px;">
-                <div class="image-box">
-                    <img src="~/image/anhgiay6.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike Air Max 90</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Women's Shoes</p>
-                    <p style="font-size: 13px;">3,829,000₫</p>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-4" style="padding-top: 25px;">
-                <div class="image-box">
-                    <img src="~/image/anhgiay7.png" alt="Generic placeholder thumbnail" style="width: 100%;">
-                </div>
-                <div class="caption">
-                    <h6 style="padding-top: 15px;">Nike x Kasina Air Max 1 SP</h6>
-                    <p style="text-shadow: 0 0 20px rgba(72, 66, 66, 0.5);">Men's Shoes</p>
-                    <p style="font-size: 13px;">4.699.000đ</p>
-                </div>
-            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const viewDetailsButtons = document.querySelectorAll(".cart");
+                    const productImages = document.querySelectorAll(".image-box img");
+                    const productPreview = document.querySelector(".products-preview");
+                    let hoverTimer;
+
+                    viewDetailsButtons.forEach(button => {
+                        button.addEventListener("click", function (event) {
+                            const shoesDetailsId = this.value;
+                            console.log(shoesDetailsId);
+                            // Điều hướng người dùng đến trang chi tiết bằng cách thay đổi URL
+                            window.location.href = `/Home/DetailsProduct/${shoesDetailsId}`;
+                        });
+                    });
+
+                    productImages.forEach(image => {
+                        image.addEventListener("mouseenter", function () {
+                            const shoesDetailsId = this.getAttribute("data-shoes-id");
+                            console.log(shoesDetailsId);
+                            const shoesDetailsName = this.getAttribute("data-shoes-name");
+                            console.log(shoesDetailsName);
+                            const shoesDetailsStyle = this.getAttribute("data-shoes-style");
+                            console.log(shoesDetailsStyle);
+                            const itemCart = productPreview.querySelector(".cart");
+
+                            // Đặt thời gian trễ trước khi hiển thị popup (ví dụ: 3 giây)
+                            hoverTimer = setTimeout(() => {
+                                // Gửi yêu cầu GET đến endpoint API để lấy thông tin sản phẩm
+                                fetch(`/Home/GetProductInfo?shoesDetailsId=${shoesDetailsId}&shoesDetailsName=${shoesDetailsName}&shoesDetailsStyle=${shoesDetailsStyle}`)
+                                    .then(response => response.json())
+                                    .then(productInfo => {
+                                        // Hiển thị thông tin sản phẩm trong popup
+                                        displayProductInfo(productInfo);
+                                        itemCart.value = shoesDetailsId;
+                                    });
+                            }, 2000); // Đặt thời gian trễ (3 giây) trước khi hiển thị
+
+                            // Hủy thời gian trễ nếu người dùng rời chuột ra khỏi ảnh
+                            image.addEventListener("mouseleave", function () {
+                                clearTimeout(hoverTimer);
+                            });
+                        });
+                    });
+
+                    function displayProductInfo(productInfo) {
+                        const previewImage = productPreview.querySelector(".product-image");
+                        const previewName = productPreview.querySelector(".product-name");
+                        const previewDescription = productPreview.querySelector(".product-description");
+                        const previewPrice = productPreview.querySelector(".product-price");
+
+                        previewImage.src = "/image/" + productInfo.imageUrl;
+                        previewName.textContent = productInfo.name; // Sử dụng "name" từ JSON
+                        previewDescription.textContent = productInfo.description; // Sử dụng "description" từ JSON
+                        previewPrice.textContent = productInfo.price.toLocaleString('vi-VN') + "đ"; // Sử dụng "price" từ JSON
+
+                        productPreview.style.display = "flex";
+                    }
+
+                    // Đóng popup khi nhấp vào nút "Close"
+                    const closePreviewButton = productPreview.querySelector(".fa-times");
+                    closePreviewButton.addEventListener("click", function () {
+                        productPreview.style.display = "none";
+                    });
+                });
+            </script>
             <h1 class="text-center" style="margin-top: 80px;"><b>FOOTBALL AND YOU</b></h1>
             <div class="container">
                 <div class="dalab" style="margin-top: 40px;">
@@ -252,11 +360,6 @@
             </div>
         </div>
     </div>
-    @*    <div class="container-fluid" style="margin-top: 25px;">
-    <video style="margin-top: 15px;" class="w-100" autoplay loop muted>
-    <source src="image/video2.mp4" type="video/mp4" />
-    </video>
-    </div>*@
 </body>
 
 </html>

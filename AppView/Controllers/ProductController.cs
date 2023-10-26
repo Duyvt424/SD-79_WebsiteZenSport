@@ -91,7 +91,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateProduct(Product product)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Product/create-product?productCode={GenerateProductCode()}&name={product.Name}&status={product.Status}&DateCreated={product.DateCreated}&SupplierID={product.SupplierID}&MaterialId={product.MaterialId}";
+            string apiUrl = $"https://localhost:7036/api/Product/create-product?productCode={GenerateProductCode()}&name={product.Name}&status={product.Status}&DateCreated={product.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&SupplierID={product.SupplierID}&MaterialId={product.MaterialId}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllProduct");
         }
@@ -114,7 +114,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditProduct(Product product)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Product/edit-product?id={product.ProductID}&productCode={product.ProductCode}&name={product.Name}&status={product.Status}&dateCreated={product.DateCreated}&supplierID={product.SupplierID}&materialId={product.MaterialId}";
+            string apiUrl = $"https://localhost:7036/api/Product/edit-product?id={product.ProductID}&productCode={product.ProductCode}&name={product.Name}&status={product.Status}&dateCreated={product.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&supplierID={product.SupplierID}&materialId={product.MaterialId}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllProduct");
         }

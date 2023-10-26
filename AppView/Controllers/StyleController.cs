@@ -52,7 +52,7 @@ namespace AppView.Controllers
 		public async Task<IActionResult> CreateStyle(Style style)
 		{
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Style/create-style?StyleCode={GenerateStyleCode()}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated}";
+            string apiUrl = $"https://localhost:7036/api/Style/create-style?StyleCode={GenerateStyleCode()}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllStyles");
 		}
@@ -68,7 +68,7 @@ namespace AppView.Controllers
 		public async Task<IActionResult> EditStyle(Style style) // Thực hiện việc Tạo mới
 		{
             var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Style/update-style?id={style.StyleID}&StyleCode={style.StyleCode}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated}";
+			string apiUrl = $"https://localhost:7036/api/Style/update-style?id={style.StyleID}&StyleCode={style.StyleCode}&name={style.Name}&status={style.Status}&DateCreated={style.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PutAsync(apiUrl, null);
 			return RedirectToAction("GetAllStyles");
 		}

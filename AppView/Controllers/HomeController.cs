@@ -37,12 +37,67 @@ namespace AppView.Controllers
 
         public IActionResult Index()
         {
+            var shoesList = _shoesDT.GetAllShoesDetails();
+
+            ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
+            Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+            ViewBag.NameStyle = "";
+            Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
+            foreach (var shoes in shoesList)
+            {
+                var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+                if (firstImage != null)
+                {
+                    shoes.ImageUrl = firstImage.Image1;
+                }
+
+                var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+                if (product != null)
+                {
+                    productNames[shoes.ShoesDetailsId] = product.Name;
+                }
+
+                var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
+                if (style != null)
+                {
+                    productStyles[shoes.ShoesDetailsId] = style.Name;
+                }
+            }
+            ViewBag.NameStyle = productStyles;
+            ViewBag.NameSP = productNames;
+            ViewBag.shoesList = shoesList;
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult GetProductInfo(Guid shoesDetailsId, string shoesDetailsName, string shoesDetailsStyle)
         {
-            return View();
+            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == shoesDetailsId);
+            var img = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoesDetailsId);
+            var nameSP = _product.GetAllProducts().FirstOrDefault(c => c.Name == shoesDetailsName);
+            var styleSP = _style.GetAllStyles().FirstOrDefault(c => c.Name == shoesDetailsStyle);
+            if (img != null)
+            {
+                ShoesDT.ImageUrl = img.Image2;
+            }
+            if (nameSP != null)
+            {
+                ShoesDT.ProductID = nameSP.ProductID;
+            }
+            if (styleSP != null)
+            {
+                ShoesDT.StyleID = styleSP.StyleID;
+            }
+            // Tìm thông tin sản phẩm dựa trên shoesDetailsId hoặc sử dụng dữ liệu có sẵn.
+            var productInfo = new
+            {
+                ImageUrl = ShoesDT.ImageUrl,
+                Name = nameSP.Name,
+                Description = styleSP.Name,
+                Price = ShoesDT.Price
+            };
+            // Trả về dữ liệu sản phẩm dưới dạng JSON
+            return Json(productInfo);
         }
 
         public IActionResult ListProduct()

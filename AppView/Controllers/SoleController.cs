@@ -47,7 +47,7 @@ namespace AppView.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSole(Sole sole)
         {
-            string apiUrl = $"https://localhost:7036/api/Sole/create-sole?SoleCode={GenerateSoleCode()}&Name={sole.Name}&Status={sole.Status}&Height={sole.Height}&DateCreated={sole.DateCreated}";
+            string apiUrl = $"https://localhost:7036/api/Sole/create-sole?SoleCode={GenerateSoleCode()}&Name={sole.Name}&Status={sole.Status}&Height={sole.Height}&DateCreated={sole.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var httpClient = new HttpClient();
             var response = await httpClient.PostAsync(apiUrl,null);
             string apiData = await response.Content.ReadAsStringAsync();
@@ -63,7 +63,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditSole(Sole sole) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Sole/update-sole?SoleID={sole.SoleID}&SoleCode={sole.SoleCode}&Name={sole.Name}&Height={sole.Height}&Status={sole.Status}&DateCreated={sole.DateCreated}";
+            string apiUrl = $"https://localhost:7036/api/Sole/update-sole?SoleID={sole.SoleID}&SoleCode={sole.SoleCode}&Name={sole.Name}&Height={sole.Height}&Status={sole.Status}&DateCreated={sole.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllSole");
         }
