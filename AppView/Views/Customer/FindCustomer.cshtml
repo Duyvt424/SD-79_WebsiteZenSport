@@ -1,10 +1,9 @@
 ﻿@model IEnumerable<AppData.Models.Customer>
 
 @{
-    ViewData["Title"] = "GetAllCustomer";
+    ViewData["Title"] = "FindCustomer";
     var stt = 1;
 }
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -258,8 +257,8 @@
         /* === if you want to do animated border on typing === */
         /* remove input:focus code and uncomment below code */
         /* input:valid ~ .input-border{
-                                  width: 100%;
-                                } */
+                                          width: 100%;
+                                        } */
     </style>
     <script>
         $(document).ready(function () {
@@ -301,11 +300,11 @@
                             <th>Sex</th>
                             <th>ResetPassword</th>
                             <th>PhoneNumber</th>
-                            
+
                             <th>RankID</th>
                             <th>DateCreated</th>
                             <th>Status</th>
-                         
+
                         </tr>
                     </thead>
                     <tbody>
@@ -324,7 +323,7 @@
                                     <td>@Html.DisplayFor(modelItem => item.ResetPassword)</td>
                                     <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
                                     <td>@Html.DisplayFor(modelItem => item.RankID)</td>
-                                
+
                                     <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                     <td>
                                         @if (item.Status == 0)

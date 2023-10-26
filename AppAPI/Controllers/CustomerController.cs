@@ -25,7 +25,7 @@ namespace AppAPI.Controllers
         [HttpGet("get-customer")]
         public IEnumerable<Customer> GetAll()
         {
-            return _repos.GetAll();
+           return _repos.GetAll();
         }
 
         // GET api/<ValuesController>/5
@@ -37,25 +37,28 @@ namespace AppAPI.Controllers
 
         // POST api/<ValuesController>
         [HttpPost("create-customer")]
-        public bool CreateCustomer(string UserName, string Password, string Email, int Sex, string PhoneNumber, int Status)
+        public bool CreateCustomer(string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword, string PhoneNumber, int Status, Guid RankID, DateTime DateCreated)
         {
-            Customer cus = new Customer();
-            cus.CumstomerID = Guid.NewGuid();
-            cus.UserName = UserName;
-            cus.Password = Password;
-            cus.Email = Email;
-            cus.Sex = Sex;
-            cus.PhoneNumber = PhoneNumber;
-            cus.Status = Status;
-            return _repos.AddItem(cus);
+            Customer customer = new Customer();
+            customer.FullName = FullName;
+            customer.UserName = UserName;
+            customer.Password = Password;
+            customer.Email = Email;
+            customer.Sex = Sex;
+            customer.PhoneNumber = PhoneNumber;
+            customer.Status = Status;
+            customer.RankID = RankID;
+            customer.ResetPassword = ResetPassword;
+            customer.DateCreated = DateCreated;
+            return _repos.AddItem(customer);
         }
 
         // PUT api/<ValuesController>/5
         [HttpPut("update-customer")]
-        public bool UpdateCustomer(Guid id, string UserName, string Password, string Email, int Sex, string PhoneNumber, int Status)
+        public bool UpdateCustomer(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid CumstomerID)
         {
-            var cus = _repos.GetAll().First(c => c.CumstomerID == id);
-            cus.UserName = UserName;
+            var cus = _repos.GetAll().First(c => c.CumstomerID == CumstomerID);
+            cus.FullName = FullName;
             cus.Password = Password;
             cus.Email = Email;
             cus.Sex = Sex;

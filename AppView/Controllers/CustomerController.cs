@@ -22,6 +22,7 @@ namespace AppView.Controllers
             AllRepositories<Customer> all = new AllRepositories<Customer>(_dbContext, _customer);
             _repos = all;
         }
+       
         public async Task<IActionResult> GetAllCustomer()
         {
             string apiUrl = "https://localhost:7036/api/Customer/get-customer";
@@ -43,7 +44,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateCustomer(Customer customer)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}";
+            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllCustomer");
         }
@@ -57,7 +58,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditCustomer(Customer customer) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Customer/update-customer?id={customer.CumstomerID}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}";
+            string apiUrl = $"https://localhost:7036/api/Customer/update-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}&CumstomerID={customer.CumstomerID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllCustomer");
             //if (_repos.EditItem(customer))
@@ -78,6 +79,11 @@ namespace AppView.Controllers
             //    return RedirectToAction("GetAllCustomer");
             //}
             //else return Content("Error");
+        }
+        public async Task<IActionResult> FindCustomer(string searchQuery)
+        {
+            var customer = _repos.GetAll().Where(c =>c.UserName.ToLower().Contains(searchQuery.ToLower()));
+            return View(customer);
         }
 
         public IActionResult Login()
