@@ -34,7 +34,10 @@ namespace AppView.Controllers
             _style = new StyleService();
             _color = new ColorService();
         }
-
+        public IActionResult NotFound()
+        {
+            return View("~/Views/Shared/NotFound.cshtml");
+        }
         public IActionResult Index()
         {
             var shoesList = _shoesDT.GetAllShoesDetails();

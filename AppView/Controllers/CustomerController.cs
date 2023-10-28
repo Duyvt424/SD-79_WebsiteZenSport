@@ -109,34 +109,26 @@ namespace AppView.Controllers
             }
         }
 
-        public IActionResult SignUp()
-        {
-            
+        public async Task<IActionResult> SignUp()
+        {  
             return View();
         }
         [HttpPost]
-        public IActionResult SignUp(Customer customer, string ConfirmPassword)
+        public async Task<IActionResult> SignUp(Customer customer, string ConfirmPassword, string rank, int sex)
         {
+            var RankUser = _dbContext.Ranks.FirstOrDefault(c => c.Name == rank);
             if (customer.Password != ConfirmPassword)
             {
                 return View();
             }
-            else
             if (_repos.GetAll().Any(c => c.UserName == customer.UserName))
             {
-                return Json(new { success = false, message = "Tên đăng nhập đã tồn tại" });
+                return Content("Da ton tai");
             }
-            else
-                customer.PhoneNumber = "000000000";
-            //user.DiaChi = "OK";
-            if (_repos.AddItem(customer))
-            {
-                TempData["UserName"] = customer.UserName;
-                TempData["Password"] = customer.Password;
-                TempData["SignUpSuccess"] = "Đăng ký tài khoản thành công!";
-                return Json(new { success = true, redirectUrl = Url.Action("Login", "Customer") });
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={sex}&ResetPassword={"0000"}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={RankUser.RankID}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+            return RedirectToAction("Login");
         }
         public IActionResult DangNhap()
         {

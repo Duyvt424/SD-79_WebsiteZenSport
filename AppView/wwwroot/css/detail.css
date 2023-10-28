@@ -313,6 +313,11 @@ a.buy-btn {
         color: #fff;
     }
 }
+@media (max-width: 650) {
+    .img-container {
+        width: 100%;
+    }
+}
 
 .src-box input[type=text] {
     font-family: inherit;
