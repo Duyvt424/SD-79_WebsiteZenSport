@@ -16,11 +16,14 @@ namespace AppData.Configurations
         {
             builder.ToTable("Employee");
             builder.HasKey(c => c.EmployeeID);
+            builder.Property(c => c.Image).HasColumnType("nvarchar(1000)");
+            builder.Property(c => c.IdentificationCode).HasColumnType("nvarchar(50)");
             builder.Property(c => c.FullName).HasColumnType("nvarchar(100)");
             builder.Property(c => c.UserName).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Password).HasColumnType("nvarchar(100)");
             builder.Property(c => c.Email).HasColumnType("nvarchar(300)");
             builder.Property(c => c.Sex).HasColumnType("int");
+            builder.Property(c => c.Address).HasColumnType("nvarchar(1000)");
             builder.Property(c => c.ResetPassword).HasColumnType("nvarchar(60)");
             builder.Property(c => c.PhoneNumber).HasColumnType("nvarchar(50)");
             builder.Property(c => c.Status).HasColumnType("int");

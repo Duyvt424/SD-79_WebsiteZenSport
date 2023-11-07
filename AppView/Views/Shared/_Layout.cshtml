@@ -2,7 +2,6 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
 	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
-	string role = HttpContextAccessor.HttpContext.Session.GetString("role");
 }
 
 <!DOCTYPE html>
@@ -36,13 +35,66 @@
 			top: 0px;
 			opacity: 0.9;
 		}
+		.paste-button {
+			position: relative;
+			display: block;
+		}
+		.button {
+			color: #212121;
+			font-weight:bold;
+			padding: 10px 15px;
+			border: 2px solid transparent;
+			border-radius: 15px;
+			cursor: pointer;
+		}
+		.dropdown-content {
+			display: none;
+			font-size: 13px;
+			position: absolute;
+			z-index: 1;
+			min-width: 200px;
+			background-color: #fff;
+			border-radius: 0px 15px 15px 15px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		}
+			.dropdown-content a {
+				padding: 8px 10px;
+				text-decoration: none;
+				display: block;
+				transition: 0.1s;
+				color:black;
+			}
+
+				.dropdown-content a:hover {
+					background-color: lightgray;
+					border-radius: 0px 15px 15px 15px;
+				}
+
+			.dropdown-content #top:hover {
+				border-radius: 0px 13px 0px 0px;
+			}
+
+			.dropdown-content #bottom:hover {
+				border-radius: 0px 0px 13px 13px;
+			}
+
+		.paste-button:hover button {
+			border-radius: 15px 15px 0px 0px;
+		}
+
+		.paste-button:hover .dropdown-content {
+			display: block;
+		}
+
 	</style>
 </head>
 <body>
 	<header>
-		@if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
+		@if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null || HttpContextAccessor.HttpContext.Session.GetString("EmployeeID") != null)
 		{
-			<div class="container-fluid">
+			@if (HttpContextAccessor.HttpContext.Session.GetString("EmployeeID") != null)
+			{
+				<div class="container-fluid">
 				<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
 					<div class="flex flex-no-shrink items-stretch h-12">
 						<img style="width: 25px; height: 35px; padding-top: 10px; margin-left: 30px;" src="~/image/bongchuyen1.png"
@@ -54,15 +106,41 @@
 					</div>
 					<div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">
 						<div style="padding-right: 10px;" class="lg:flex lg:items-stretch lg:justify-end ml-auto">
-							<a style="font-size: 11px; font-weight: bold;" href="#gioithieu"
-						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
+						<a style="font-size: 11px; font-weight: bold;" href="@Url.Action("index", "DashBoard")"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Quản trị</a>
 						</div>
 					</div>
-					<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="LogOut"
+					<a style="font-size: 11px; font-weight: bold;" asp-controller="Employee" asp-action="LogOut"
 				    class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Log Out
 					</a>
 				</nav>
 			</div>
+			}
+			else
+			{
+				<div class="container-fluid">
+					<nav style="background: white; height: 40px;" class="relative select-none bg-grey lg:flex lg:items-stretch w-full">
+						<div class="flex flex-no-shrink items-stretch h-12">
+							<img style="width: 25px; height: 35px; padding-top: 10px; margin-left: 30px;" src="~/image/bongchuyen1.png"
+						 alt="">
+							<a style="font-size: 11px; font-weight: bold;"
+					   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
+								Hi: @Html.Raw(userName?.Replace("\"", ""))
+							</a>
+						</div>
+						<div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">
+							<div style="padding-right: 10px; display:none;" class="lg:flex lg:items-stretch lg:justify-end ml-auto">
+								<a style="font-size: 11px; font-weight: bold;" href="#gioithieu"
+						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
+							</div>
+						</div>
+						<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="LogOut"
+				        class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
+							Log Out
+						</a>
+					</nav>
+				</div>
+			}
 		}
 		else
 		{
@@ -81,11 +159,16 @@
 								Join
 								Us
 							</a>
-							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="Login"
-						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
-								Sign
-								In
-							</a>
+							<div class="paste-button" style="font-size: 11px; font-weight: bold; margin-top: 0.8%;">
+								<button class="button">
+									Sign
+									In
+								</button>
+								<div class="dropdown-content">
+									<a id="top" href="@Url.Action("Login", "Customer")">Khách hàng</a>
+									<a id="middle" href="@Url.Action("Login", "Employee")">Nhân viên</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</nav>
@@ -104,61 +187,71 @@
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-weight: 600; font-size:18px;">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Customer" asp-action="GetAllCustomer">Hóa đơn</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="DashBoard" asp-action="index">Quản trị</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Cart" asp-action="ViewBill">BillDetails</a>
-						</li>
-						@if (role == "Admin")
-						{
+				@if (HttpContextAccessor.HttpContext.Session.GetString("EmployeeID") != null) 
+				{
+					<div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-weight: 600; font-size:18px;">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
 							<li class="nav-item">
-								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Role" asp-action="GetAllRole">Role</a>
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 							</li>
-						}
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
-						</li>
-					</ul>
-					<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
-						<div class="src-box">
-							<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
-							<button type="submit"></button>
-						</div>
-						<div class="buttonok" style="margin-right: 10px;">
-							<a class="bag" asp-controller="Cart" asp-action="Cart">
-								<i class="fa badge fa-lg" id="cartIcon" style="color: black; font-size: 35px; padding-top: 15px;">&#xf290;</i>
-							</a>
-						</div>
-						<script>
-							function updateCartItemCount() {
-								$.get('@Url.Action("GetCartItemCount", "Cart")', function (data) {
-									var cartIcon = document.getElementById('cartIcon');
-									var itemCount = data.itemCount;
+							<li class="nav-item">
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
+							</li>
+						</ul>
+						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
+							<div class="src-box">
+								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
+								<button type="submit"></button>
+							</div>
+						</form>
+					</div>
+				}
+				else
+				{
+					<div class="collapse navbar-collapse text-center" id="navbarSupportedContent" style="font-weight: 600; font-size:18px;">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0 mx-auto">
+							<li class="nav-item">
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Customer" asp-action="GetAllCustomer">Đơn hàng</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
+							</li>
+						</ul>
+						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
+							<div class="src-box">
+								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
+								<button type="submit"></button>
+							</div>
+							<div class="buttonok" style="margin-right: 10px;">
+								<a class="bag" asp-controller="Cart" asp-action="Cart">
+									<i class="fa badge fa-lg" id="cartIcon" style="color: black; font-size: 35px; padding-top: 15px;">&#xf290;</i>
+								</a>
+							</div>
+							<script>
+								function updateCartItemCount() {
+									$.get('@Url.Action("GetCartItemCount", "Cart")', function (data) {
+										var cartIcon = document.getElementById('cartIcon');
+										var itemCount = data.itemCount;
 
-									if (itemCount === 0) {
-										// Ẩn số khi là 0
-										cartIcon.setAttribute('value', '');
-									} else {
-										// Hiển thị số khi lớn hơn 0
-										cartIcon.setAttribute('value', data.itemCount);
-									}
+										if (itemCount === 0) {
+											// Ẩn số khi là 0
+											cartIcon.setAttribute('value', '');
+										} else {
+											// Hiển thị số khi lớn hơn 0
+											cartIcon.setAttribute('value', data.itemCount);
+										}
+									});
+								}
+								window.addEventListener('load', function () {
+									updateCartItemCount();
 								});
-							}
-							window.addEventListener('load', function () {
-								updateCartItemCount();
-							});
-						</script>
-					</form>
-				</div>
+							</script>
+						</form>
+					</div>
+				}
 			</nav>
 		</div>
 		<script>

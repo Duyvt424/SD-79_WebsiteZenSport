@@ -1,5 +1,4 @@
-﻿
-.nav-item {
+﻿.nav-item {
     position: relative;
     color: #ffffff;
     text-decoration: none;
@@ -19,27 +18,24 @@
         margin-left: 10px;
     }
 
-    .nav-item:hover::after {
-        transform: scaleX(1);
-        transform-origin: bottom left;
+.btn-danger:hover {
+    background-color: rgb(146, 135, 135) !important;
+    border-color: rgb(133, 123, 123) !important
+}
+
+.nav-item:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.btn {
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: #fff;
+    color: black;
+}
+
+    .btn:hover {
+        color: white;
+        background-color: black;
     }
-
-.gradient-custom-3 {
-    /* fallback for old browsers */
-    background: white;
-    /* Chrome 10-25, Safari 5.1-6 */
-    /*background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5));
-        
-        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    /*background: linear-gradient(to right, rgba(132, 250, 176, 0.5), rgba(143, 211, 244, 0.5))*/
-}
-
-.gradient-custom-4 {
-    /* fallback for old browsers */
-    background: white;
-    /* Chrome 10-25, Safari 5.1-6 */
-    /*background: -webkit-linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1));
-        
-        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    /*background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244, 1))*/
-}

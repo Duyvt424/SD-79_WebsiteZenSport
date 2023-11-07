@@ -42,13 +42,13 @@
                    <form asp-action="Login" style="margin-top:10px;" id="register-form">
                       <!-- Email input -->
                       <div class="form-floating mb-3">
-                        <input asp-for="FullName" id="fullname" type="text" class="form-control" placeholder="FullName" required>
-                        <label for="floatingInputUserName">FullName</label>
+                        <input asp-for="UserName" id="fullname" type="text" class="form-control" placeholder="UserName" required>
+                        <label for="floatingInputUserName">Tên đăng nhập</label>
                       </div>
 
                       <div class="form-floating mb-3">
                         <input asp-for="Password" id="password" type="password" class="form-control" placeholder="Password" required>
-                        <label for="floatingInputEmail">Password</label>
+                        <label for="floatingInputEmail">Mật khẩu</label>
                       </div>
 
                       <!-- 2 column grid layout for inline styling -->
@@ -84,18 +84,6 @@
     </section>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var successMessage = '@TempData["SignUpSuccess"]';
-        if (successMessage) {
-            Swal.fire({
-                title: 'Đăng ký thành công!',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-</script>
 <script>
     $(document).ready(function () {
         var fullname = '@TempData["FullName"]';
