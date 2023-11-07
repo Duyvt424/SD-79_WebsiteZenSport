@@ -26,15 +26,17 @@
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="EditEmployee" style="margin-top:10px;" id="register-form">
+                                <form asp-action="EditEmployee" enctype="multipart/form-data" style="margin-top:10px;" id="register-form">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="form-group" style="display:none;">
                                         <label asp-for="EmployeeID" class="control-label"></label>
                                         <input asp-for="EmployeeID" class="form-control" />
                                         <span asp-validation-for="EmployeeID" class="text-danger"></span>
                                     </div>
-
-                                    <div class="form-floating mb-3">
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                                    </div>
+                                    <div class="form-floating mb-3" style="margin-top:3%;">
                                         <input asp-for="FullName" type="text" class="form-control" placeholder="FullName" required>
                                         <label for="floatingInputUsername">FullName</label>
                                     </div>
@@ -43,7 +45,7 @@
                                         <label for="floatingInputUsername">UserName</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Password" type="text" class="form-control" placeholder="Password" required>
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
                                         <label for="floatingInputUsername">Password</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -53,6 +55,14 @@
                                     <div class="form-floating mb-3">
                                         <input asp-for="Sex" type="text" class="form-control" placeholder="Sex" required>
                                         <label for="floatingInputUsername">Sex</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="IdentificationCode" type="text" class="form-control" placeholder="IdentificationCode" required>
+                                        <label for="floatingInputUsername">Số CCCD</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Address" type="text" class="form-control" placeholder="Address" required>
+                                        <label for="floatingInputUsername">Địa chỉ</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="ResetPassword" type="text" class="form-control" placeholder="ResetPassword" required>

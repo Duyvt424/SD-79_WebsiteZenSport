@@ -45,11 +45,14 @@ namespace AppView.Controllers
             var productViewModels = employees.Select(employee => new EmployeeViewModel
             {
                 EmployeeID = employee.EmployeeID,
+                Image = employee.Image,
                 FullName = employee.FullName,
                 UserName = employee.UserName,
                 Password = employee.Password,
                 Email= employee.Email,
                 Sex = employee.Sex,
+                IdentificationCode = employee.IdentificationCode,
+                Address = employee.Address,
                 ResetPassword = employee.ResetPassword,
                 PhoneNumber = employee.PhoneNumber,
                 Status = employee.Status,
@@ -68,15 +71,22 @@ namespace AppView.Controllers
                 var role = dBContext.Roles.Where(c => c.Status == 0).ToList();
                 SelectList selectListRole = new SelectList(role, "RoleID", "RoleName");
                 ViewBag.RoleList = selectListRole;
-
-               
             }
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployee(Employee employee)
+        public async Task<IActionResult> CreateEmployee(Employee employee, [Bind(Prefix = "imageFile1")] IFormFile imageFile1)
         {
+            if (imageFile1 != null && imageFile1.Length > 0) // Kiểm tra tệp tin ảnh 1
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile1.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile1.CopyToAsync(stream);
+                }
+                employee.Image = imageFile1.FileName;
+            }
             if (_repos.AddItem(employee))
             {
                 return RedirectToAction("GetAllEmployee");
@@ -97,9 +107,18 @@ namespace AppView.Controllers
             }
             return View(employee);
         }
-		public async Task<IActionResult> EditEmployee(Employee employee)
+		public async Task<IActionResult> EditEmployee(Employee employee, [Bind(Prefix = "imageFile")] IFormFile imageFile)
 		{
-			if (_repos.EditItem(employee))
+            if (imageFile != null && imageFile.Length > 0) // Kiểm tra tệp tin ảnh
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                employee.Image = imageFile.FileName;
+            }
+            if (_repos.EditItem(employee))
 			{
 				return RedirectToAction("GetAllEmployee");
 			}
@@ -152,6 +171,8 @@ namespace AppView.Controllers
             {
                 HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInAdmin.EmployeeID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInAdmin.UserName));
+                HttpContext.Session.SetString("UserImage", JsonConvert.SerializeObject(loggedInAdmin.Image));
+                HttpContext.Session.SetString("UserEmail", JsonConvert.SerializeObject(loggedInAdmin.Email));
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
@@ -171,8 +192,17 @@ namespace AppView.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SignUp(Employee employee, string ConfirmPassword)
+        public async Task<IActionResult> SignUp(Employee employee, string ConfirmPassword, [Bind(Prefix = "imageFile")] IFormFile imageFile)
         {
+            if (imageFile != null && imageFile.Length > 0) // Kiểm tra tệp tin ảnh
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", imageFile.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                employee.Image = imageFile.FileName;
+            }
             if (employee.Password != ConfirmPassword)
             {
                 return View();
@@ -183,8 +213,6 @@ namespace AppView.Controllers
                 return Json(new { success = false, message = "Tên đăng nhập đã tồn tại" });
             }
             else
-                employee.PhoneNumber = "000000000";
-            //user.DiaChi = "OK";
             if (_repos.AddItem(employee))
             {
                 TempData["UserName"] = employee.FullName;

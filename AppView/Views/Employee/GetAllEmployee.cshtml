@@ -275,7 +275,7 @@
                             <h2>Danh sách sản phẩm</h2>
                         </div>
                         <div class="col-sm-7">
-                            <a asp-action="CreateEmployee" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Product</span></a>
+                            <a asp-action="CreateEmployee" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Add New Employee</span></a>
                             @*                        <a href="#" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>*@
                         </div>
                     </div>
@@ -290,17 +290,18 @@
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Ảnh</th>
                             <th>FullName</th>
                             <th>UserName</th>
                             <th>Password</th>
                             <th>Email</th>
                             <th>Sex</th>
-                            <th>ResetPassword</th>
+                            <th>Số CCCD</th>
+                            <th>Địa chỉ</th>
                             <th>PhoneNumber</th>
                             <th>DateCreated</th>
-                            <th>Status</th>
-                           
-                            <th>RoleName</th>
+                            <th>Status</th>             
+                            <th>Chức vụ</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -311,15 +312,24 @@
                             {
                                 <tr>
                                     <td>@stt</td>
+                                    <td><img src="/image/@item.Image" style="border-radius:40%; max-width:150%;"></td>
                                     <td>@Html.DisplayFor(modelItem => item.FullName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Password)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.Sex)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.ResetPassword)</td>
-
+                                    <td>
+                                        @if (item.Sex == 0)
+                                        {
+                                            <p>Nam</p>
+                                        }
+                                        else
+                                        {
+                                            <p>Nữ</p>
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.IdentificationCode)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
                                     <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-
                                     <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                     <td>
                                         @if (item.Status == 0)

@@ -41,7 +41,7 @@ namespace AppAPI.Controllers
 		// POST api/<ColorController1>
 		[HttpPost("create-employee")]
 		public bool CreateEmployee(string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword,
-			 string PhoneNumber, int Status, DateTime DateCreated, Guid RoleID)
+			 string PhoneNumber, int Status, DateTime DateCreated, Guid RoleID, string Image, string IdentificationCode, string Address)
 		{
 			Employee emp = new Employee();
 			emp.FullName = FullName;
@@ -54,6 +54,9 @@ namespace AppAPI.Controllers
 			emp.Status = Status;
 			emp.DateCreated = DateCreated;
 			emp.RoleID = RoleID;
+			emp.Image = Image;
+			emp.IdentificationCode = IdentificationCode;
+			emp.Address = Address;
 			emp.EmployeeID = Guid.NewGuid();
 			return _repos.AddItem(emp);
 		}
@@ -62,7 +65,7 @@ namespace AppAPI.Controllers
 		// PUT api/<ColorController1>/5
 		[HttpPut("update-employee")]
 		public bool Put(string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword,
-			 string PhoneNumber, int Status, DateTime DateCreated, Guid EmployeeID, Guid RoleID)
+			 string PhoneNumber, int Status, DateTime DateCreated, Guid EmployeeID, Guid RoleID, string Image, string IdentificationCode, string Address)
 		{
 			var emp = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == EmployeeID);
 			emp.FullName = FullName;
@@ -75,7 +78,10 @@ namespace AppAPI.Controllers
 			emp.Status = Status;
 			emp.DateCreated = DateCreated;
 			emp.RoleID = RoleID;
-			return _repos.EditItem(emp);
+            emp.Image = Image;
+            emp.IdentificationCode = IdentificationCode;
+            emp.Address = Address;
+            return _repos.EditItem(emp);
 
 		}
 

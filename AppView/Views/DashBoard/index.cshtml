@@ -2,6 +2,13 @@
 
     Layout = null;
 }
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	var objAdmin = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
+	var objAdminName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	var objAdminImg = HttpContextAccessor.HttpContext.Session.GetString("UserImage");
+	var objAdminEmail = HttpContextAccessor.HttpContext.Session.GetString("UserEmail");
+}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -397,10 +404,10 @@
                     <div class="profile-info">
                       <div class="info">
                         <div class="image">
-                          <img src="~/assets/images/profile/profile-image.png" alt="" />
+                          <img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;"/>
                         </div>
                         <div>
-                          <h6 class="fw-500">Adam Joe</h6>
+                          <h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
                           <p>Admin</p>
                         </div>
                       </div>
@@ -410,11 +417,11 @@
                     <li>
                       <div class="author-info flex items-center !p-1">
                         <div class="image">
-                          <img src="assets/images/profile/profile-image.png" alt="image">
+                          <img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="image">
                         </div>
                         <div class="content">
-                          <h4 class="text-sm">Adam Joe</h4>
-                          <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">Email@gmail.com</a>
+                          <h4 class="text-sm">@Html.Raw(objAdminName?.Replace("\"", ""))</h4>
+                          <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">@Html.Raw(objAdminEmail?.Replace("\"", ""))</a>
                         </div>
                       </div>
                     </li>

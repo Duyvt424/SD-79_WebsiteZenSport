@@ -25,8 +25,11 @@
                                     get first <br> access to the very best of Nike products, inspiration <br> and
                                     community.
                                 </p>
-                                <form asp-action="CreateEmployee" style="margin-top:10px;" id="register-form">
-                                    <div class="form-floating mb-3">
+                                <form asp-action="CreateEmployee" enctype="multipart/form-data" style="margin-top:10px;" id="register-form">
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile1" class="form-control" accept="image/*" />
+                                    </div>
+                                    <div class="form-floating mb-3" style="margin-top:3%;">
                                         <input asp-for="FullName" type="text" class="form-control" placeholder="FullName" required>
                                         <label for="floatingInputUsername">FullName</label>
                                     </div>
@@ -35,7 +38,7 @@
                                         <label for="floatingInputUsername">UserName</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input asp-for="Password" type="text" class="form-control" placeholder="Password" required>
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
                                         <label for="floatingInputUsername">Password</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -54,7 +57,14 @@
                                         <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="PhoneNumber" required>
                                         <label for="floatingInputUsername">PhoneNumber</label>
                                     </div>
-                                    
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="IdentificationCode" type="text" class="form-control" placeholder="IdentificationCode" required>
+                                        <label for="floatingInputUsername">Số CCCD</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Address" type="text" class="form-control" placeholder="Address" required>
+                                        <label for="floatingInputUsername">Địa chỉ</label>
+                                    </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
                                         <label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
