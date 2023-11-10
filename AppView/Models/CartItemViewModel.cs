@@ -1,6 +1,4 @@
-﻿using AppData.Models;
-
-namespace AppView.Models
+﻿namespace AppView.Models
 {
     public class CartItemViewModel
     {
@@ -12,10 +10,12 @@ namespace AppView.Models
         public string? Description { get; set; }
         public string Size { get; set; }
         public string? ProductImage { get; set; }
-        public string MaHD { get; set; }
-
-
-
-	
-	}
+        public string? MaHD { get; set; }
+        public string? FullNameCus { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Street { get; set; }
+        public string? Ward { get; set; }
+        public string? District { get; set; }
+        public string? Province { get; set; }
+    }
 }

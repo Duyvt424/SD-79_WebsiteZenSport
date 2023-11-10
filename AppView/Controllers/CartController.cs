@@ -35,18 +35,31 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> Cart()
         {
-            var userIdString = HttpContext.Session.GetString("UserId"); // lấy id khi người dùng đăng nhập
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty; // ép kiểu thành guid
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+
             string apiUrl = "https://localhost:7036/api/Voucher/get-voucher";
-            var httpClient = new HttpClient(); // tạo ra để callApi
-            var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
             var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
-            if (customerId != Guid.Empty) // nếu ng dùng tồn tại
+
+            if (customerId != Guid.Empty)
             {
                 var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
                 if (loggedInUser != null)
                 {
+                    var address = _dBContext.Addresses.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID);
+                    if (address != null)
+                    {
+                        ViewBag.FullNameCus = loggedInUser.FullName;
+                        ViewBag.PhoneNumber = loggedInUser.PhoneNumber;
+                        ViewBag.Street = address.Street;
+                        ViewBag.Ward = address.Commune;
+                        ViewBag.District = address.District;
+                        ViewBag.Province = address.Province;
+                    }
+
                     var cartItemList = _dBContext.CartDetails
                         .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_Size != null)
                         .Select(cd => new CartItemViewModel
@@ -58,20 +71,35 @@ namespace AppView.Controllers
                             Description = _dBContext.Styles.FirstOrDefault(c => c.StyleID == cd.ShoesDetails_Size.ShoesDetails.StyleID).Name,
                             Size = cd.ShoesDetails_Size.Size.Name,
                             ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails_Size.ShoesDetails.ShoesDetailsId).Image1,
-                            MaHD = ""
+                            MaHD = "",
+                            FullNameCus = _dBContext.Customers.First(c => c.CumstomerID == cd.CumstomerID).FullName,
+                            PhoneNumber = _dBContext.Customers.First(c => c.CumstomerID == cd.CumstomerID).PhoneNumber,
+                            Street = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Street,
+                            Ward = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Commune,
+                            District = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).District,
+                            Province = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Province
                         })
                         .ToList();
-                    return View(cartItemList);
+
+                    ShoppingCartViewModel model = new ShoppingCartViewModel
+                    {
+                        CartItems = cartItemList,
+                        Vouchers = styles
+                    };
+
+                    return View(model);
                 }
             }
+
             // Nếu không có người dùng đăng nhập, lấy giỏ hàng từ session
             var cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
-			ShoppingCartViewModel s = new ShoppingCartViewModel();
-			s.CartItems = cartItems.ToList();
-            s.Vouchers = styles.ToList();
+            ShoppingCartViewModel s = new ShoppingCartViewModel
+            {
+                CartItems = cartItems,
+                Vouchers = styles
+            };
 
             return View(s);
-			//return View(cartItems);
         }
         public IActionResult GetCartItemCount()
         {

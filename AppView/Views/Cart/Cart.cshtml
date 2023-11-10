@@ -35,6 +35,52 @@
 			#apply-voucher-btn:hover {
 				background-color: #45a049; /* Darker green color on hover */
 			}
+
+		.btn-container {
+			display: flex;
+		}
+
+		.btn-address {
+			--color: black;
+			font-family: inherit;
+			display: inline-block;
+			width: 6em;
+			height: 2.6em;
+			line-height: 2.5em;
+			overflow: hidden;
+			margin-left: 2%;
+			font-size: 15px;
+			z-index: 1;
+			color: var(--color);
+			border: 2px solid var(--color);
+			border-radius: 6px;
+			position: relative;
+		}
+
+			.btn-address::before {
+				position: absolute;
+				content: "";
+				background: var(--color);
+				width: 150px;
+				height: 200px;
+				z-index: -1;
+				border-radius: 50%;
+			}
+
+			.btn-address:hover {
+				color: white;
+			}
+
+			.btn-address:before {
+				top: 100%;
+				left: 100%;
+				transition: .3s all;
+			}
+
+			.btn-address:hover::before {
+				top: -30px;
+				left: -30px;
+			}
 	</style>
 </head>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -100,7 +146,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -140,25 +186,7 @@
 
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
-													});
-
-													// Gửi yêu cầu AJAX để lấy số lượng từ máy chủ cho sản phẩm
-													$.ajax({
-														url: '@Url.Action("GetQuantityFromServer", "Cart")',
-														type: 'GET',
-														data: { shoesDetailsId: shoesDetailsId, size: size },
-														success: function (response) {
-															// Cập nhật số lượng từ phản hồi
-															input.value = response.quantity;
-															// Cập nhật giá tiền tương ứng
-															const price = parseFloat(input.getAttribute('data-price'));
-															const totalElement = document.querySelector(`.total-price-span[data-shoesdetailsid="${shoesDetailsId}"][data-size="${size}"]`);
-															totalElement.textContent = (price * response.quantity).toLocaleString() + "đ";
-														},
-														error: function (xhr, textStatus, errorThrown) {
-															// Xử lý lỗi (nếu có)
-														}
-													});
+													});												
 												});
 											});
 
@@ -196,6 +224,19 @@
 								<h5 class="mb-0">Địa chỉ nhận hàng</h5>
 							</div>
 							<div class="card-body">
+								<p style="font-weight:bold; font-size:17px;">@ViewBag.FullNameCus</p>
+								<p>@ViewBag.PhoneNumber</p>
+								<p>@ViewBag.Street, @ViewBag.Ward, @ViewBag.District, @ViewBag.Province</p>
+							</div>
+							<div class="btn-container">
+								<button class="btn-address">
+									Chọn địa chỉ
+								</button>
+								<button class="btn-address">
+									Thêm mới
+								</button>
+							</div>
+							<div class="card-body">
 								<form>
 									<div class="form-floating mb-3">
 										<input type="text" class="form-control" placeholder="Họ và tên" required>
@@ -209,15 +250,15 @@
 										<div class="col">
 											<div class="form-floating mb-3">
 												<select class="form-control" id="ListTinh" onchange="fetchDistricts(this.value)">
-													<option value="" disabled selected></option>
+													<option value="" disabled selected>Chọn tỉnh / thành</option>
 												</select>
 												<label for="floatingInputEmail">Tỉnh/Thành Phố</label>
 											</div>
 										</div>
 										<div class="col">
 											<div class="form-floating mb-3">
-												<select class="form-control" id="ListQuanHuyen" onchange="calculateShippingFee(document.getElementById('ListPhuongXa').value, this.value); fetchWards(this.value)">
-													<option value="" disabled selected></option>
+												<select class="form-control" id="ListQuanHuyen" onchange="updateDistrictAndFetchWards()">
+													<option value="" disabled selected>Chọn quận / huyện</option>
 												</select>
 												<label for="floatingInputEmail">Quận/Huyện</label>
 											</div>
@@ -225,9 +266,9 @@
 										<div class="col">
 											<div class="form-floating mb-3">
 												<select class="form-control" id="ListPhuongXa" onchange="calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
-													<option value="" disabled selected></option>
+													<option value="" disabled selected>Chọn xã / phường</option>
 												</select>
-												<label for="select3">Xã/Phường</label>
+												<label for="floatingInputEmail">Xã/Phường</label>
 											</div>
 										</div>
 									</div>
@@ -291,6 +332,13 @@
 				});
 			</script>
 			<script>
+				function updateDistrictAndFetchWards() {
+					const selectedDistrict = document.getElementById('ListQuanHuyen').value;
+					fetchWards(selectedDistrict);
+					calculateShippingFee(document.getElementById('ListPhuongXa').value, selectedDistrict);
+				}
+			</script>
+			<script>
 				// Function to fetch province data from API and populate the select element
 				function fetchProvinces() {
 					// API endpoint URL
@@ -315,9 +363,6 @@
 
 								// Get the select element
 								const selectElement = document.getElementById("ListTinh");
-
-								// Clear any existing options
-								selectElement.innerHTML = "";
 
 								// Create and append option elements for each province
 								provinces.forEach(province => {
@@ -350,14 +395,6 @@
 						.then(response => response.json())
 						.then(data => {
 							const districtSelect = document.getElementById('ListQuanHuyen');
-							districtSelect.innerHTML = ''; // Clear previous options
-
-							// Add default option
-							const defaultOption = document.createElement('option');
-							defaultOption.value = '';
-							defaultOption.disabled = true;
-							defaultOption.selected = true;
-							districtSelect.appendChild(defaultOption);
 
 							// Add districts to the dropdown list
 							data.data.forEach(district => {
@@ -386,14 +423,6 @@
 						.then(response => response.json())
 						.then(data => {
 							const wardSelect = document.getElementById('ListPhuongXa');
-							wardSelect.innerHTML = ''; // Clear previous options
-
-							// Add default option
-							const defaultOption = document.createElement('option');
-							defaultOption.value = '';
-							defaultOption.disabled = true;
-							defaultOption.selected = true;
-							wardSelect.appendChild(defaultOption);
 
 							// Add wards to the dropdown list
 							data.data.forEach(ward => {
@@ -620,10 +649,6 @@
 									<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Giao Hàng">
 									<label for="not-paid">Giao hàng</label>
 								</div>
-								<div class="form-group" style="margin-top:10px;">
-									<label for="date">Ngày tạo đơn hàng:</label>
-									<input type="date" class="form-control" id="dateCreate" name="date" required>
-								</div>
 								<button class="btn1 btn-danger text mr-2 px-4" type="submit"
 										style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
 									Xác Nhận Đặt Hàng
@@ -633,15 +658,6 @@
 					</div>
 				</div>
 			</div>
-			<script>
-				$(document).ready(function () {
-					// Lấy ngày hiện tại
-					const today = new Date().toISOString().substr(0, 10);
-
-					// Gán ngày hiện tại vào trường Ngày tạo và disable trường
-					$("#dateCreate").val(today).prop('disabled', true);
-				});
-			</script>
 			<script>
 				$(document).ready(function () {
 					// Lắng nghe sự kiện khi radio button thay đổi
