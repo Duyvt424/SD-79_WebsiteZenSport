@@ -1,5 +1,6 @@
-﻿@model IEnumerable<AppData.Models.Voucher>
-
+﻿@*@model IEnumerable<AppData.Models.Voucher>
+*@
+@model IEnumerable<AppView.Models.VoucherViewModel>
 @{
     ViewData["Title"] = "GetAllVouchers";
     var stt = 1;
@@ -324,8 +325,16 @@
                                                         <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                         }
                                             <td>
-                                        <a href="@Url.Action("EditVouchers", new { id = item.VoucherID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                                        <a href="@Url.Action("DeleteVouchers", new { id = item.VoucherID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                                            @if (item.RemainingUsage > 0 && item.ExpirationDate >= DateTime.Now)
+                                            {
+                                            <a href="@Url.Action("EditVouchers", new { id = item.VoucherID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                            <a href="@Url.Action("DeleteVouchers", new { id = item.VoucherID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                                            }
+                                            else
+                                            {
+                                            <span>Not available</span>
+                                            }
+                                       
                                             </td>
                                         </tr>
                                 stt++;

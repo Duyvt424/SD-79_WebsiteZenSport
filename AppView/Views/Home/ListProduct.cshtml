@@ -31,7 +31,7 @@
 		<div class="border-bottom pb-2 ml-2">
 			<h4 id="burgundy">Bộ lọc</h4>
 		</div>
-		<form asp-controller="Home" asp-action="Filters" method="post">
+		<form asp-controller="Home" asp-action="ListProduct1" method="post">
 			<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
 				<h6 class="font-weight-bold">Giới tính</h6>
 				<div id="orange"><span class="fa fa-minus"></span></div>
@@ -147,38 +147,53 @@
 				<div class="" style="float: left;">
 					<button type="button" id="redBtn" name="colors" value="red" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
 					<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
+					<input type="checkbox" id="redChk" name="colors" value="red" />
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
 					<button type="button" id="blackBtn" name="colors" value="black" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Đen</p>
+					<input type="checkbox" id="blackChk" name="colors" value="black" />
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
 					<button type="button" id="yellowBtn" name="colors" value="yellow" class="color-button color-orange" style="background-color: yellow; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Vàng</p>
+					<input type="checkbox" id="yellowChk" name="colors" value="yellow" />
 				</div>
 				<div class="" style="float: left; padding-left: 10px;">
 					<button type="button" id="pinkBtn" name="colors" value="pink" class="color-button color-violet" style="background-color: pink; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Hồng</p>
+					<input type="checkbox" id="pinkChk" name="colors" value="pink" />
 				</div>
 				<br>
 				<div class="" style="float: right; padding-top: 15px; padding-right: 69px;">
 					<button type="button" id="greenBtn" name="colors" value="green" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Xanh</p>
+					<input type="checkbox" id="greenChk" name="colors" value="green" />
 				</div>
 				<div class="" style="float: right; padding-right: 7px; padding-top: 15px">
 					<button type="button" id="whiteBtn" name="colors" value="white" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Trắng</p>
+					<input type="checkbox" id="whiteChk" name="colors" value="white" />
 				</div>
 				<div class="" style="float: right; padding-right: 8px; padding-top: 15px">
 					<button type="button" id="orangeBtn" name="colors" value="orange" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Cam</p>
+					<input type="checkbox" id="orangeChk" name="colors" value="orange" />
 				</div>
 				<div class="" style="float: right; padding-right: 9px; padding-top: 15px">
 					<button type="button" id="brownBtn" name="colors" value="brown" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
 					<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
+					<input type="checkbox" id="brownChk" name="colors" value="brown" />
+				</div>
+				<div class="form-group" style="float: right; padding-right: 9px; padding-top: 15px">
+					<button type="submit">Tìm kiếm</button>
 				</div>
 			</div>
 		</form>
+
+
+
+
 	</section>
 	<div id="filtered-products">
 		<!-- Dữ liệu sản phẩm lọc sẽ được hiển thị ở đây -->
@@ -188,64 +203,7 @@
 			<div class="row g-0">
 				@foreach (var item in shoesDetails)
 				{
-					<script>
-						document.addEventListener("DOMContentLoaded", function () {
-							const checkboxes = document.querySelectorAll("input[type=checkbox]");
-							const filteredProducts = document.getElementById("filtered-products");
-
-							// Sử dụng một hàm để lọc sản phẩm dựa trên khoảng giá
-							function filterProductsByPrice() {
-								// Lấy danh sách các giá trị đã chọn từ các checkbox
-								const selectedPrices = Array.from(checkboxes)
-									.filter(checkbox => checkbox.checked)
-									.map(checkbox => parseInt(checkbox.value, 10));
-
-								// Lọc sản phẩm dựa trên khoảng giá đã chọn
-								const filteredProductsData = shoesDetails.filter(item => {
-									for (const price of selectedPrices) {
-										if (price === 0 && item.Price < 1000000) {
-											return true;
-										}
-										if (price === 1001000 && item.Price >= 1001000 && item.Price <= 2700000) {
-											return true;
-										}
-										if (price === 2701000 && item.Price >= 2701000 && item.Price <= 3999000) {
-											return true;
-										}
-										if (price === 4000000 && item.Price > 4000000) {
-											return true;
-										}
-									}
-									return false;
-								});
-
-								// Hiển thị sản phẩm đã lọc trong phần tử filteredProducts
-								renderFilteredProducts(filteredProductsData);
-							}
-
-							// Sử dụng sự kiện "change" để theo dõi thay đổi trạng thái checkbox
-							checkboxes.forEach(checkbox => {
-								checkbox.addEventListener("change", filterProductsByPrice);
-							});
-
-							// Hàm để hiển thị sản phẩm đã lọc
-							function renderFilteredProducts(data) {
-								filteredProducts.innerHTML = ""; // Xóa danh sách sản phẩm hiện tại
-
-								data.forEach(item => {
-									const productDiv = document.createElement("div");
-									productDiv.classList.add("col-sm-6", "col-md-4");
-									// Tạo cấu trúc HTML cho sản phẩm, tương tự như bạn đã làm trước đó
-									// ...
-
-									filteredProducts.appendChild(productDiv);
-								});
-							}
-
-							// Ban đầu, hiển thị toàn bộ sản phẩm
-							renderFilteredProducts(shoesDetails);
-						});
-					</script>
+					
 					<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
 						<div class="cards">
 							<div class="first bg-white p-4 text-center">

@@ -1,4 +1,6 @@
-﻿namespace AppView.Models
+﻿using AppData.Models;
+
+namespace AppView.Models
 {
     public class CartItemViewModel
     {
@@ -11,5 +13,9 @@
         public string Size { get; set; }
         public string? ProductImage { get; set; }
         public string MaHD { get; set; }
-    }
+
+
+
+	
+	}
 }

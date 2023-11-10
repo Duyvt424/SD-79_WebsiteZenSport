@@ -1,6 +1,128 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
+﻿﻿@{
+    ViewData["Title"] = "Home Page";
 }
-<h1>@ViewData["Title"]</h1>
+<style>
+    /*.container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+    }
 
-<p>Use this page to detail your site's privacy policy.</p>
+    .row {
+        margin-bottom: 10px;
+    }
+
+    .col-2,
+    .col-4,
+    .col-6,
+    .col-12 {
+        padding: 5px;
+    }
+
+    input[type="text"],
+    input[type="button"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    input[type="button"] {
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+    #messagesList {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        #messagesList li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 20px 0;
+    }*/
+
+    #chat2 .form-control {
+        border-color: transparent;
+    }
+
+        #chat2 .form-control:focus {
+            border-color: transparent;
+            box-shadow: inset 0px 0px 0px 1px transparent;
+        }
+
+    .divider:after,
+    .divider:before {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+</style>
+
+
+
+<section style="background-color: white; min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div class="container" >
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="card" id="chat2">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3">
+                        <h5 class="mb-0">Chat</h5>
+                        <button type="button" class="btn btn-primary btn-sm" data-mdb-ripple-color="dark">
+                            Let's Chat App
+                        </button>
+                    </div>
+                    <div class="card-body" data-mdb-perfect-scrollbar="true" style="max-height: 400px; overflow-y: scroll;">
+                        <ul id="messagesList"></ul>
+                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-between align-items-center p-3">
+                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                             alt="avatar 3" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <input type="text" class="form-control form-control-lg" id="userInput" placeholder="Your Name">
+                        <input type="text" class="form-control form-control-lg" id="messageInput" placeholder="Type message">
+                        <a class="ms-1 text-muted" href="@ViewBag.ProductUrl"><i class="fas fa-paperclip"></i></a>
+                        <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                        <a class="ms-3" href="#!"><i class="fas fa-paper-plane" id="sendButton"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+    
+    <div class="row" style="display: none">
+        <div class="col-6"><input type="text" id="userInput" /></div>
+        <div class="col-6"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row" style="display: none">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+<script src="~/js/clienthub.js"></script>

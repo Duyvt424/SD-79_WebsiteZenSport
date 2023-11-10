@@ -1,16 +1,42 @@
-﻿@model List<CartItemViewModel>
+﻿@*@model List<CartItemViewModel>*@
+@model ShoppingCartViewModel
 @{
 	ViewData["Title"] = "Giỏ hàng";
 	// Tính toán tổng giá tiền
 	decimal totalPrice = 0;
 	var totalWeight = 0;
-	foreach (var item in Model)
+	foreach (var item in Model.CartItems)
 	{
 		totalPrice += item.Price * item.Quantity;
 	}
 	var shippingFee = 0;
 	var selectedShippingMethodID = 0;
 }
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Your Page Title</title>
+	<style>
+		#apply-voucher-btn {
+			background-color: #4CAF50; /* Green background color */
+			color: white; /* White text color */
+			border: none; /* Remove borders */
+			padding: 10px 20px; /* Add padding */
+			text-align: center; /* Center text */
+			text-decoration: none; /* Remove underline */
+			display: inline-block;
+			margin: 4px 2px; /* Add some margin */
+			cursor: pointer; /* Add a pointer cursor on hover */
+			border-radius: 4px; /* Rounded corners */
+			font-weight: 200;
+			font-size: 12px;
+		}
+
+			#apply-voucher-btn:hover {
+				background-color: #45a049; /* Darker green color on hover */
+			}
+	</style>
+</head>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="~/css/giohang.css">
 <section class="h-100 gradient-custom">
@@ -21,7 +47,7 @@
 					<div class="card-header py-3">
 						<h5 class="mb-0">Cart</h5>
 					</div>
-					@if (!Model.Any())
+					@if (!Model.CartItems.Any())
 					{
 						<h6 style="margin-top:10px; margin-left:15px;">There are no items in your cart.</h6>
 					}
@@ -30,7 +56,7 @@
 						<div class="card-body">
 							<!-- Single item -->
 							<div class="row">
-								@foreach (var item in Model)
+								@foreach (var item in Model.CartItems)
 								{
 									var defaultWeight = 500; // Khối lượng mặc định cho mỗi sản phẩm
 									var productWeight = defaultWeight * item.Quantity; // Khối lượng của sản phẩm
@@ -74,7 +100,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -114,7 +140,25 @@
 
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
-													});										
+													});
+
+													// Gửi yêu cầu AJAX để lấy số lượng từ máy chủ cho sản phẩm
+													$.ajax({
+														url: '@Url.Action("GetQuantityFromServer", "Cart")',
+														type: 'GET',
+														data: { shoesDetailsId: shoesDetailsId, size: size },
+														success: function (response) {
+															// Cập nhật số lượng từ phản hồi
+															input.value = response.quantity;
+															// Cập nhật giá tiền tương ứng
+															const price = parseFloat(input.getAttribute('data-price'));
+															const totalElement = document.querySelector(`.total-price-span[data-shoesdetailsid="${shoesDetailsId}"][data-size="${size}"]`);
+															totalElement.textContent = (price * response.quantity).toLocaleString() + "đ";
+														},
+														error: function (xhr, textStatus, errorThrown) {
+															// Xử lý lỗi (nếu có)
+														}
+													});
 												});
 											});
 
@@ -500,7 +544,7 @@
 			<div class="col-md-4">
 				<div class="card mb-4" style="border: 1px solid white;">
 					<div class="card-header py-3">
-						<h5 class="mb-0">Thông Tin Thanh Toán</h5>
+						<h5 class="mb-0">Summary</h5>
 					</div>
 					<div class="card-body" style="border: 1px solid white;">
 						<div id="total-price">
@@ -512,6 +556,44 @@
 									</div>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
+									Chọn voucher:
+									<select id="voucher-select">
+										@foreach (var voucher in Model.Vouchers)
+										{
+											<option value="@voucher.VoucherCode">@voucher.VoucherCode - @voucher.VoucherValue đ</option>
+										}
+									</select>
+									<button id="apply-voucher-btn">Áp dụng</button>
+								</li>
+
+
+								<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+								<script>
+									$(document).ready(function () {
+										$("#apply-voucher-btn").click(function () {
+											// Lấy giá trị được chọn từ dropdown
+											var selectedVoucherCode = $("#voucher-select").val();
+
+											// Gửi yêu cầu đến server để xử lý áp dụng voucher
+											$.ajax({
+												type: "GET",
+												url: "https://localhost:7036/api/Voucher/find-voucher", // Thay thế đường dẫn và tên controller phù hợp
+												data: { code: selectedVoucherCode },
+												success: function (result) {
+													console.log(@totalPrice);
+													var total = (@totalPrice - result[0].voucherValue);
+													document.getElementById('total-price-payment').innerText = total;
+													console.log(total);
+												},
+												error: function (error) {
+													console.log("Error:", error);
+												}
+											});
+										});
+									});
+								</script>
+
+								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
 									Phí vận chuyển
 									<span id="phivanchuyen">@Html.Raw(shippingFee)</span>
 								</li>
@@ -520,7 +602,7 @@
 										<strong>Tổng</strong>
 									</div>
 									<div id="cart-total-container">
-										<span name="TongTien" class="cart-total-all" style="font-weight:bold;"></span>
+										<span name="TongTien" id="total-price-payment" class="cart-total-all" style="font-weight:bold;"></span>
 									</div>
 								</li>
 							</ul>
@@ -538,6 +620,10 @@
 									<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Giao Hàng">
 									<label for="not-paid">Giao hàng</label>
 								</div>
+								<div class="form-group" style="margin-top:10px;">
+									<label for="date">Ngày tạo đơn hàng:</label>
+									<input type="date" class="form-control" id="dateCreate" name="date" required>
+								</div>
 								<button class="btn1 btn-danger text mr-2 px-4" type="submit"
 										style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
 									Xác Nhận Đặt Hàng
@@ -547,6 +633,15 @@
 					</div>
 				</div>
 			</div>
+			<script>
+				$(document).ready(function () {
+					// Lấy ngày hiện tại
+					const today = new Date().toISOString().substr(0, 10);
+
+					// Gán ngày hiện tại vào trường Ngày tạo và disable trường
+					$("#dateCreate").val(today).prop('disabled', true);
+				});
+			</script>
 			<script>
 				$(document).ready(function () {
 					// Lắng nghe sự kiện khi radio button thay đổi

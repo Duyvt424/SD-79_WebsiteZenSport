@@ -1,6 +1,7 @@
 ﻿using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,13 +25,14 @@ namespace AppAPI.Controllers
 		[HttpGet("get-voucher")]
 		public IEnumerable<Voucher> GetAll()
 		{
-			return repos.GetAll();
+			return repos.GetAll().Where(x => x.ExpirationDate > DateTime.Now);
 		}
 
 		[HttpGet("find-voucher")]
 		public IEnumerable<Voucher> GetVoucher(string code)
 		{
-			return repos.GetAll().Where(x => x.VoucherCode == code);
+			var voucher = repos.GetAll().Where(x => x.VoucherCode == code);
+			return voucher;
 		}
 
 		[HttpPost("create-voucher")]

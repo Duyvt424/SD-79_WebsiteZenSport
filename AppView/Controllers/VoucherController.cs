@@ -2,6 +2,7 @@
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using AppView.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -38,9 +39,14 @@ namespace AppView.Controllers
 			var httpClient = new HttpClient(); // tạo ra để callApi
 			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
 			string apiData = await response.Content.ReadAsStringAsync();
-			var styles = JsonConvert.DeserializeObject<List<Voucher>>(apiData);
+			var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
+			/*ShoppingCartViewModel s = new ShoppingCartViewModel();
+			s.Vouchers = styles.ToList();*/
+		
+
 			return View(styles);
-		}
+       
+        }
 
 		public async Task<IActionResult> CreateVouchers()
 		{
@@ -85,5 +91,63 @@ namespace AppView.Controllers
             var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));
             return View(color);
         }
+
+		public IActionResult UseVoucher(string voucherCode)
+		{
+			var voucher = context.Vouchers.FirstOrDefault(v => v.VoucherCode == voucherCode);
+
+			if (voucher == null)
+			{
+				// Voucher không tồn tại
+				return RedirectToAction("InvalidVoucher");
+			}
+
+			if (voucher.ExpirationDate < DateTime.Now)
+			{
+				// Voucher đã hết hạn
+				return RedirectToAction("ExpiredVoucher");
+			}
+
+			if (voucher.RemainingUsage <= 0)
+			{
+				// Voucher đã hết lượt sử dụng
+				return RedirectToAction("MaxUsageReached");
+			}
+
+			// Giảm số lượt sử dụng còn lại của voucher
+			voucher.RemainingUsage -= 1;
+
+			// Lưu các thay đổi vào cơ sở dữ liệu
+			context.SaveChanges();
+
+			// Chuyển hướng tới trang thành công
+			return RedirectToAction("VoucherUsed");
+		}
+
+		public IActionResult InvalidVoucher()
+		{
+			// Xử lý khi voucher không tồn tại
+			return View();
+		}
+
+		public IActionResult ExpiredVoucher()
+		{
+			// Xử lý khi voucher đã hết hạn
+			return View();
+		}
+
+		public IActionResult MaxUsageReached()
+		{
+			// Xử lý khi voucher đã hết lượt sử dụng
+			return View();
+		}
+
+		public IActionResult VoucherUsed()
+		{
+			// Xử lý khi voucher đã được sử dụng thành công
+			return View();
+		}
+
+
 	}
 }
