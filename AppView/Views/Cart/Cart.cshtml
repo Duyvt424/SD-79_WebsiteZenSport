@@ -49,6 +49,8 @@
 			line-height: 2.5em;
 			overflow: hidden;
 			margin-left: 2%;
+			margin-top: 2%;
+			margin-bottom: 2%;
 			font-size: 15px;
 			z-index: 1;
 			color: var(--color);
@@ -146,7 +148,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+															<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -223,59 +225,65 @@
 							<div class="card-header py-3">
 								<h5 class="mb-0">Địa chỉ nhận hàng</h5>
 							</div>
-							<div class="card-body">
+							<div class="card-body" id="existingAddress">
 								<p style="font-weight:bold; font-size:17px;">@ViewBag.FullNameCus</p>
 								<p>@ViewBag.PhoneNumber</p>
 								<p>@ViewBag.Street, @ViewBag.Ward, @ViewBag.District, @ViewBag.Province</p>
 							</div>
 							<div class="btn-container">
-								<button class="btn-address">
+								<button class="btn-address" onclick="showExistingAddress()">
 									Chọn địa chỉ
 								</button>
-								<button class="btn-address">
+								<button class="btn-address" onclick="showNewAddressForm()">
 									Thêm mới
 								</button>
 							</div>
-							<div class="card-body">
-								<form>
+							<div class="card-body" id="newAddressForm" style="display:none;">
+								<form method="post" action="@Url.Action("AddAddress", "Cart")">
 									<div class="form-floating mb-3">
-										<input type="text" class="form-control" placeholder="Họ và tên" required>
+										<input type="text" class="form-control" name="nameUser" placeholder="Họ và tên" required>
 										<label for="floatingInputEmail">Họ và tên</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input type="text" class="form-control" placeholder="Số điện thoại" required>
+										<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
 										<label for="floatingInputEmail">Số điện thoại</label>
 									</div>
 									<div class="row mb-4">
 										<div class="col">
 											<div class="form-floating mb-3">
-												<select class="form-control" id="ListTinh" onchange="fetchDistricts(this.value)">
+												<select class="form-control" id="ListTinh" onchange="updateProvinceValue(this); fetchDistricts(this.value)">
 													<option value="" disabled selected>Chọn tỉnh / thành</option>
 												</select>
 												<label for="floatingInputEmail">Tỉnh/Thành Phố</label>
 											</div>
+											<input type="hidden" id="ProvinceName" name="provinceName" />
 										</div>
 										<div class="col">
 											<div class="form-floating mb-3">
-												<select class="form-control" id="ListQuanHuyen" onchange="updateDistrictAndFetchWards()">
+												<select class="form-control" id="ListQuanHuyen" onchange="updateDistrictValue(this); updateDistrictAndFetchWards()">
 													<option value="" disabled selected>Chọn quận / huyện</option>
 												</select>
 												<label for="floatingInputEmail">Quận/Huyện</label>
 											</div>
+											<input type="hidden" id="DistrictName" name="districtName" />
 										</div>
 										<div class="col">
 											<div class="form-floating mb-3">
-												<select class="form-control" id="ListPhuongXa" onchange="calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
+												<select class="form-control" id="ListPhuongXa" onchange="updateWardValue(this); calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
 													<option value="" disabled selected>Chọn xã / phường</option>
 												</select>
 												<label for="floatingInputEmail">Xã/Phường</label>
 											</div>
+											<input type="hidden" id="WardName" name="wardName" />
 										</div>
 									</div>
 									<div class="form-floating mb-3">
-										<input type="text" class="form-control" placeholder="Địa chỉ" required>
+										<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
 										<label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
 									</div>
+									<button class="btn-address" type="submit" style="margin-left: 0.5%;">
+										Thêm
+									</button>
 									<div style="padding-right: 300px; display:none;" id="shippingOptionsDiv">
 										<label class="radio-button" style="font-size: 14px; display: inline;">
 											<input type="radio" name="example-radio" value="option1">
@@ -296,6 +304,16 @@
 						</div>
 					</div>
 				</div>
+				<script>
+					function showExistingAddress() {
+						document.getElementById('existingAddress').style.display = 'block';
+						document.getElementById('newAddressForm').style.display = 'none';
+					}
+					function showNewAddressForm() {
+						document.getElementById('existingAddress').style.display = 'none';
+						document.getElementById('newAddressForm').style.display = 'block';
+					}
+				</script>
 				<div class="card mb-4 mb-lg-0" style="border: 1px solid white;">
 					<div class="card-body">
 						<p><strong>We accept</strong></p>
@@ -377,6 +395,11 @@
 							console.error("Error fetching provinces:", error);
 						});
 				}
+				// Update hidden input value when a province is selected
+				function updateProvinceValue(selectElement) {
+					const provinceName = selectElement.options[selectElement.selectedIndex].text;
+					document.getElementById("ProvinceName").value = provinceName;
+				}
 				// Call the fetchProvinces function to populate the select box
 				fetchProvinces();
 			</script>
@@ -406,6 +429,11 @@
 						})
 						.catch(error => console.log(error));
 				}
+				// Update hidden input value when a province is selected
+				function updateDistrictValue(selectElement) {
+					const districtName = selectElement.options[selectElement.selectedIndex].text;
+					document.getElementById("DistrictName").value = districtName;
+				}
 				fetchDistricts();
 			</script>
 			<script>
@@ -433,6 +461,11 @@
 							});
 						})
 						.catch(error => console.log(error));
+				}
+				// Update hidden input value when a province is selected
+				function updateWardValue(selectElement) {
+					const wardName = selectElement.options[selectElement.selectedIndex].text;
+					document.getElementById("WardName").value = wardName;
 				}
 			</script>
 			<script>

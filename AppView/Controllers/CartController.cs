@@ -8,6 +8,7 @@ using AppView.Models;
 using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -365,10 +366,24 @@ namespace AppView.Controllers
             List<Bill> lstBills = _bill.GetAllBills();
             return View(lstBills);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var userUpdate = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
+            if (userUpdate != null)
+            {
+                userUpdate.FullName = nameUser;
+                userUpdate.PhoneNumber = phoneNumber;
+                _dBContext.Update(userUpdate);
+                _dBContext.SaveChanges();
+            }
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&Status=0&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+            return RedirectToAction("Cart");
+        }
     }
 }
-//if (!HttpContext.Session.TryGetValue("EmployeeID", out _))
-//{
-//    // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập hoặc hiển thị thông báo lỗi.
-//    return RedirectToAction("Login", "Employee");
-//}

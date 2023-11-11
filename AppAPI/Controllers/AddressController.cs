@@ -3,6 +3,7 @@ using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,16 +29,8 @@ namespace AppAPI.Controllers
             return _repos.GetAll();
         }
 
-        //// GET api/<AddressController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        // POST api/<AddressController>
         [HttpPost("create-address")]
-        public string CreateAddress(string Street, string Commune, string District, string Province, int Status, Guid CumstomerID)
+        public string CreateAddress(string Street, string Commune, string District, string Province, int Status, DateTime DateCreated, Guid CumstomerID)
         {
             Address address = new Address();
             address.AddressID = Guid.NewGuid();
@@ -46,6 +39,7 @@ namespace AppAPI.Controllers
             address.District = District;
             address.Province = Province;
             address.Status = Status;
+            address.DateCreated = DateCreated;
             address.CumstomerID = CumstomerID;
             if (_repos.AddItem(address))
             {
@@ -59,7 +53,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<AddressController>/5
         [HttpPut("update-address")]
-        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, int Status, Guid CumstomerID)
+        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, int Status, DateTime DateCreated, Guid CumstomerID)
         {
             var address = _repos.GetAll().First(c => c.AddressID == AddressID);
             address.Street = Street;
@@ -67,6 +61,7 @@ namespace AppAPI.Controllers
             address.District = District;
             address.Province = Province;
             address.Status = Status;
+            address.DateCreated = DateCreated;
             address.CumstomerID = CumstomerID;
             if (_repos.EditItem(address))
             {
@@ -80,17 +75,11 @@ namespace AppAPI.Controllers
 
         // DELETE api/<AddressController>/5
         [HttpDelete("delete-address")]
-        public string DeleteAddress(Guid id)
+        public bool DeleteAddress(Guid id)
         {
             var address = _repos.GetAll().First(c => c.AddressID == id);
-            if (_repos.RemoveItem(address))
-            {
-                return "Xóa thành công";
-            }
-            else
-            {
-                return "Xóa thất bại";
-            }
+            address.Status = 0;
+            return _repos.EditItem(address); ;
         }
     }
 }
