@@ -16,6 +16,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Your Page Title</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 	<style>
 		#apply-voucher-btn {
 			background-color: #4CAF50; /* Green background color */
@@ -83,6 +84,59 @@
 				top: -30px;
 				left: -30px;
 			}
+
+		.cbx {
+			position: relative;
+			top: 1px;
+			width: 27px;
+			height: 27px;
+			border: 1px solid #c8ccd4;
+			border-radius: 3px;
+			vertical-align: middle;
+			transition: background 0.1s ease;
+			cursor: pointer;
+			display: block;
+		}
+
+			.cbx:after {
+				content: '';
+				position: absolute;
+				top: 2px;
+				left: 8px;
+				width: 7px;
+				height: 14px;
+				opacity: 0;
+				transform: rotate(45deg) scale(0);
+				border-right: 2px solid #fff;
+				border-bottom: 2px solid #fff;
+				transition: all 0.3s ease;
+				transition-delay: 0.15s;
+			}
+
+		.lbl {
+			margin-left: 5px;
+			vertical-align: middle;
+			cursor: pointer;
+		}
+
+		#cbx:checked ~ .cbx {
+			border-color: transparent;
+			background: #6871f1;
+			animation: jelly 0.6s ease;
+		}
+
+			#cbx:checked ~ .cbx:after {
+				opacity: 1;
+				transform: rotate(45deg) scale(1);
+			}
+
+		.cntr {
+			position: relative;
+		}
+
+		.hidden-xs-up {
+			display: none !important;
+		}
 	</style>
 </head>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -148,7 +202,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-															<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -188,7 +242,7 @@
 
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
-													});												
+													});
 												});
 											});
 
@@ -225,11 +279,24 @@
 							<div class="card-header py-3">
 								<h5 class="mb-0">Địa chỉ nhận hàng</h5>
 							</div>
-							<div class="card-body" id="existingAddress">
-								<p style="font-weight:bold; font-size:17px;">@ViewBag.FullNameCus</p>
-								<p>@ViewBag.PhoneNumber</p>
-								<p>@ViewBag.Street, @ViewBag.Ward, @ViewBag.District, @ViewBag.Province</p>
-							</div>
+							@foreach (var item in Model.AddressList)
+							{
+								<div class="card-body" id="existingAddress">
+									<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
+									<p>@item.PhoneNumber</p>
+									<p>@item.Street, @item.Ward, @item.District, @item.Province</p>
+									<div class="btn-list">
+										<div class="cntr">
+											<input checked="" type="checkbox" id="cbx" class="hidden-xs-up">
+											<label for="cbx" class="cbx"></label>
+										</div>
+										<button class="btn-address" style="float:right; margin-top:-10%; margin-right:4%;">
+											Chọn địa chỉ
+										</button>
+									</div>
+								</div>
+								<hr>
+							}
 							<div class="btn-container">
 								<button class="btn-address" onclick="showExistingAddress()">
 									Chọn địa chỉ
@@ -818,3 +885,4 @@
 		</div>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

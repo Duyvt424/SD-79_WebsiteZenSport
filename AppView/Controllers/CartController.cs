@@ -44,23 +44,11 @@ namespace AppView.Controllers
             var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
             var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
-
             if (customerId != Guid.Empty)
             {
                 var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
                 if (loggedInUser != null)
                 {
-                    var address = _dBContext.Addresses.FirstOrDefault(c => c.CumstomerID == loggedInUser.CumstomerID);
-                    if (address != null)
-                    {
-                        ViewBag.FullNameCus = loggedInUser.FullName;
-                        ViewBag.PhoneNumber = loggedInUser.PhoneNumber;
-                        ViewBag.Street = address.Street;
-                        ViewBag.Ward = address.Commune;
-                        ViewBag.District = address.District;
-                        ViewBag.Province = address.Province;
-                    }
-
                     var cartItemList = _dBContext.CartDetails
                         .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_Size != null)
                         .Select(cd => new CartItemViewModel
@@ -72,19 +60,28 @@ namespace AppView.Controllers
                             Description = _dBContext.Styles.FirstOrDefault(c => c.StyleID == cd.ShoesDetails_Size.ShoesDetails.StyleID).Name,
                             Size = cd.ShoesDetails_Size.Size.Name,
                             ProductImage = _dBContext.Images.FirstOrDefault(i => i.ShoesDetailsID == cd.ShoesDetails_Size.ShoesDetails.ShoesDetailsId).Image1,
-                            MaHD = "",
-                            FullNameCus = _dBContext.Customers.First(c => c.CumstomerID == cd.CumstomerID).FullName,
-                            PhoneNumber = _dBContext.Customers.First(c => c.CumstomerID == cd.CumstomerID).PhoneNumber,
-                            Street = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Street,
-                            Ward = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Commune,
-                            District = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).District,
-                            Province = _dBContext.Addresses.First(c => c.CumstomerID == cd.CumstomerID).Province
+                            MaHD = ""
+                        })
+                        .ToList();
+
+                    var addressList = _dBContext.Addresses
+                        .Where(c => c.CumstomerID == customerId)
+                        .Select(address => new AddressViewModel
+                        {
+                            AddressID = _dBContext.Addresses.First(c => c.CumstomerID == customerId).AddressID,
+                            FullNameCus = _dBContext.Customers.First(c => c.CumstomerID == customerId).FullName,
+                            PhoneNumber = _dBContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
+                            Street = address.Street,
+                            Ward = address.Commune,
+                            District = address.District,
+                            Province = address.Province
                         })
                         .ToList();
 
                     ShoppingCartViewModel model = new ShoppingCartViewModel
                     {
                         CartItems = cartItemList,
+                        AddressList = addressList,
                         Vouchers = styles
                     };
 
