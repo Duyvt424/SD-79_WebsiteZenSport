@@ -23,8 +23,8 @@ namespace AppView.Controllers
 		private readonly ISupplierService _supplier;
 		private readonly IStyleService _style;
 		private readonly IColorService _color;
-
-		public HomeController()
+        private readonly ISoleService _sole;
+        public HomeController()
 		{
 			_shopDBContext = new ShopDBContext();
 			_shoesDT = new ShoesDetailsService();
@@ -215,7 +215,8 @@ namespace AppView.Controllers
 			var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
 			var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
 			var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
-			if (NameProduct != null)
+		//	var SoleProduct = _sole.GetAllSole().FirstOrDefault(c => c.SoleID == ShoesDT.SoleID);
+            if (NameProduct != null)
 			{
 				ViewBag.nameProduct = NameProduct.Name;
 			}
@@ -223,7 +224,11 @@ namespace AppView.Controllers
 			{
 				ViewBag.styleProduct = StyleProduct.Name;
 			}
-			var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
+          /*  if (SoleProduct != null)
+            {
+                ViewBag.soleProduct = SoleProduct.Name;
+            }*/
+            var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
 			ViewBag.ImageGolden1 = ImageGoldens.Image1;
 			ViewBag.ImageGolden2 = ImageGoldens.Image2;
 			ViewBag.ImageGolden3 = ImageGoldens.Image3;

@@ -303,10 +303,30 @@
                         </script>
                     </div>
                     <div class="chu1">
-                        <hr style="width:78%;" />
-                        <h5 onclick="toggleDescription()" style="width:77%;">Thêm thông tin <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
+                        <hr style="width:77%;" />
+                        <h5 onclick="toggleDescription()" style="width:77%;">Thông tin chi tiết sản phẩm <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
                         <p class="about" style="font-size: 13px; margin-top: 5px; text-align: justify; display:none; width:77%;" id="description">
-                            @Model.Description
+                       
+                            
+                            <strong>Mô tả:</strong> @Model.Description<br />
+                          
+                            <div class="additional-info" >
+                                <strong>🎀 Đặc tính nổi bật:</strong>
+                                <ul>
+                                    <li>Kháng nước nhẹ khi đi mưa</li>
+                                    <li>Đế và lót được khâu toàn bộ tránh bung keo</li>
+                                    <li>Nhiều phiên bản màu sắc</li>
+                                    <li>Thích hợp sử dụng với nhiều hoạt động thể thao, vui chơi,...</li>
+                                </ul>
+                                <strong>🎀 Hướng dẫn sử dụng:</strong>
+                                <ul>
+                                    <li>Bảo quản nơi khô ráo tránh ẩm mốc sản phẩm</li>
+                                    <li>Không giặt giày với nước nhiệt độ cao</li>
+                                    <li>Khuyến cáo sử dụng thêm sản phẩm vệ sinh giày của shop để tăng tuổi thọ cho sản phẩm</li>
+                                </ul>
+                                <strong>🎀 Cách tìm mua sản phẩm @ViewBag.nameProduct:</strong> Vào ô tìm kiếm của Shop gõ từ khóa "@ViewBag.nameProduct". <br />
+                                <strong>🎀 Hotline:</strong> 0766900008
+                            </div>
                         </p>
                     </div>
                     <script>
