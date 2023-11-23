@@ -68,7 +68,7 @@ namespace AppView.Controllers
                         .Where(c => c.CumstomerID == customerId)
                         .Select(address => new AddressViewModel
                         {
-                            AddressID = _dBContext.Addresses.First(c => c.CumstomerID == customerId).AddressID,
+                            AddressID = address.AddressID,
                             FullNameCus = _dBContext.Customers.First(c => c.CumstomerID == customerId).FullName,
                             PhoneNumber = _dBContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
                             Street = address.Street,

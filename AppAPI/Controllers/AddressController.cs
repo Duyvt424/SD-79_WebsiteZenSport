@@ -30,7 +30,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost("create-address")]
-        public string CreateAddress(string Street, string Commune, string District, string Province, int Status, DateTime DateCreated, Guid CumstomerID)
+        public string CreateAddress(string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost , int Status, DateTime DateCreated, Guid CumstomerID)
         {
             Address address = new Address();
             address.AddressID = Guid.NewGuid();
@@ -38,6 +38,8 @@ namespace AppAPI.Controllers
             address.Commune = Commune;
             address.District = District;
             address.Province = Province;
+            address.IsDefaultAddress = IsDefaultAddress;
+            address.ShippingCost = ShippingCost;
             address.Status = Status;
             address.DateCreated = DateCreated;
             address.CumstomerID = CumstomerID;
@@ -53,13 +55,15 @@ namespace AppAPI.Controllers
 
         // PUT api/<AddressController>/5
         [HttpPut("update-address")]
-        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, int Status, DateTime DateCreated, Guid CumstomerID)
+        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost, int Status, DateTime DateCreated, Guid CumstomerID)
         {
             var address = _repos.GetAll().First(c => c.AddressID == AddressID);
             address.Street = Street;
             address.Commune = Commune;
             address.District = District;
             address.Province = Province;
+            address.IsDefaultAddress = IsDefaultAddress;
+            address.ShippingCost = ShippingCost;
             address.Status = Status;
             address.DateCreated = DateCreated;
             address.CumstomerID = CumstomerID;

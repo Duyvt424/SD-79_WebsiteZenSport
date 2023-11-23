@@ -43,7 +43,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateAddress(Address address)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={address.Street}&Commune={address.Commune}&District={address.District}&Province={address.Province}&Status={address.Status}&CumstomerID={address.CumstomerID}";
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={address.Street}&Commune={address.Commune}&District={address.District}&Province={address.Province}&IsDefaultAddress={address.IsDefaultAddress}&ShippingCost={address.ShippingCost}&Status={address.Status}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={address.CumstomerID}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllAddress");
         }
@@ -62,7 +62,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> UpdateAddress(Address address)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Address/update-address?AddressID={address.AddressID}&Street={address.Street}&Commune={address.Commune}&District={address.District}&Province={address.Province}&Status={address.Status}&CumstomerID={address.CumstomerID}";
+            string apiUrl = $"https://localhost:7036/api/Address/update-address?AddressID={address.AddressID}&Street={address.Street}&Commune={address.Commune}&District={address.District}&Province={address.Province}&IsDefaultAddress={address.IsDefaultAddress}&ShippingCost={address.ShippingCost}&Status={address.Status}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={address.CumstomerID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllAddress");
         }

@@ -50,6 +50,23 @@
                                         <label for="floatingInputEmail">Tỉnh</label>
                                         <span asp-validation-for="Province" class="text-danger"></span>
                                     </div>
+                                    <div class="form-control">
+                                        <input class="form-check-input" type="radio" asp-for="IsDefaultAddress" value="True" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Đặt làm mặc định
+                                        </label>
+                                    </div>
+                                    <div class="form-control" style="margin-top:4%;">
+                                        <input class="form-check-input" type="radio" asp-for="IsDefaultAddress" value="False" id="flexRadioDefault2" checked>
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Không đặt làm mặc định
+                                        </label>
+                                    </div>
+                                    <div class="form-floating mb-3" style="margin-top:4%;">
+                                        <input asp-for="ShippingCost" type="text" class="form-control" placeholder="ShippingCost" required>
+                                        <label for="floatingInputEmail">Giá tiền vận chuyển</label>
+                                        <span asp-validation-for="ShippingCost" class="text-danger"></span>
+                                    </div>
                                     <div class="form-floating mb-3">
                                         <input asp-for="Status" type="number" class="form-control" placeholder="Status" required>
                                         <label for="floatingInputEmail">Trạng thái</label>
