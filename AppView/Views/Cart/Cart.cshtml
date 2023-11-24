@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-																								<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -369,17 +369,17 @@
 							</div>
 							@foreach (var item in Model.AddressList)
 							{
-								<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;">
+								<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()">
 									<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
 									<p style="font-weight:bold;">@item.PhoneNumber</p>
 									<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
 									<div class="btn-list">
 										<label class="cl-checkbox">
-											<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID')" style="padding-top:3%;">
+											<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
 											<span>Đặt làm mặc định</span>
 										</label>
-										<button class="btn-address" style="float:right; margin-top:-10%; margin-right:4%;">
-											Chọn địa chỉ
+										<button class="btn-address" style="float:right; margin-top: -5%; margin-right:4%;">
+											Sửa địa chỉ
 										</button>
 									</div>
 									<hr>
@@ -399,31 +399,44 @@
 
 								// Thiết lập địa chỉ mặc định từ Razor Model
 								var selectedAddressId = '@(defaultAddress?.AddressID.ToString() ?? "")';
+								document.addEventListener('DOMContentLoaded', function () {
+									// Thực hiện ajax request để lấy thông tin địa chỉ mặc định từ server
+									$.ajax({
+										url: '@Url.Action("GetDefaultAddress", "Address")',
+										type: 'GET',
+										success: function (response) {
+											// Kiểm tra xem có địa chỉ mặc định hay không
+											if (response && response.addressId) {
+												// Hiển thị địa chỉ mặc định
+												showDefaultAddress(response.addressId);
+											}
 
-								window.onload = function () {
-									// Hiển thị địa chỉ mặc định ban đầu
-									showDefaultAddress();
-
-									// Chọn checkbox mặc định
-									var defaultCheckbox = document.getElementById('cbx_' + selectedAddressId);
-									if (defaultCheckbox) {
-										defaultCheckbox.checked = true;
-										lastCheckedCheckbox = defaultCheckbox;
-									}
-								};
+											// Chọn checkbox mặc định
+											var defaultCheckbox = document.getElementById('cbx_' + response.addressId);
+											if (defaultCheckbox) {
+												defaultCheckbox.checked = true;
+												lastCheckedCheckbox = defaultCheckbox;
+											}
+										},
+										error: function (xhr, textStatus, errorThrown) {
+											// Xử lý lỗi (nếu có)
+											console.error('Error:', errorThrown);
+										}
+									});
+								});
 
 								// Hàm hiển thị địa chỉ mặc định
-								function showDefaultAddress() {
+								function showDefaultAddress(addressId) {
 									// Ẩn tất cả các địa chỉ
 									var addressList = document.querySelectorAll('.existing-address');
 									addressList.forEach(function (address) {
 										address.style.display = 'none';
 									});
 
-									// Hiển thị địa chỉ mặc định
-									var defaultAddress = document.getElementById('existingAddress_' + selectedAddressId);
-									if (defaultAddress) {
-										defaultAddress.style.display = 'block';
+									// Hiển thị địa chỉ được chọn
+									var selectedAddress = document.getElementById('existingAddress_' + addressId);
+									if (selectedAddress) {
+										selectedAddress.style.display = 'block';
 									}
 								}
 
@@ -472,6 +485,20 @@
 									}
 									// Thiết lập giá trị cho biến selectedAddressId
 									selectedAddressId = addressId;
+									//
+									$.ajax({
+										url: '@Url.Action("SetDefaultAddress", "Address")',
+										type: 'POST',
+										data: { addressId: addressId },
+										success: function (response) {
+											// Xử lý thành công (nếu cần)
+											console.log('Success:', response);
+										},
+										error: function (xhr, textStatus, errorThrown) {
+											// Xử lý lỗi (nếu có)
+											console.error('Error:', errorThrown);
+										}
+									});
 								}
 							</script>
 							<div class="card-body" id="newAddressForm" style="display:none;">

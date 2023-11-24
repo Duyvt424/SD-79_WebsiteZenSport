@@ -74,7 +74,8 @@ namespace AppView.Controllers
                             Street = address.Street,
                             Ward = address.Commune,
                             District = address.District,
-                            Province = address.Province
+                            Province = address.Province,
+                            IsDefaultAddress = address.IsDefaultAddress
                         })
                         .ToList();
 

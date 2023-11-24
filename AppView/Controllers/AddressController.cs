@@ -28,6 +28,49 @@ namespace AppView.Controllers
             var address = JsonConvert.DeserializeObject<List<Address>>(apiData);
             return View(address);
         }
+
+        [HttpPost]
+        public IActionResult SetDefaultAddress(Guid addressId)
+        {
+            // Kiểm tra xem địa chỉ có tồn tại không
+            var address = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == addressId);
+            if (address == null)
+            {
+                return NotFound();
+            }
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            // Lấy địa chỉ mặc định hiện tại của người dùng
+            var currentDefaultAddress = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress);
+            if (currentDefaultAddress != null)
+            {
+                // Hủy đặt làm mặc định cho địa chỉ hiện tại
+                currentDefaultAddress.IsDefaultAddress = false;
+            }
+            // Đặt làm mặc định cho địa chỉ mới
+            address.IsDefaultAddress = true;
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _dbContext.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetDefaultAddress()
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            // Lấy địa chỉ mặc định của người dùng
+            var defaultAddress = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress == true);
+            if (defaultAddress == null)
+            {
+                // Không tìm thấy địa chỉ mặc định
+                return NotFound();
+            }
+            // Trả về thông tin địa chỉ mặc định
+            return Ok(new { addressId = defaultAddress.AddressID });
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> CreateAddress()
         {
