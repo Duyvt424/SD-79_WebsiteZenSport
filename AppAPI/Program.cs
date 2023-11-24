@@ -12,6 +12,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
+builder.Services.AddHttpContextAccessor();
+//builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(); /*
 builder.Services.AddIdentity<Employee, Role>().AddDefaultTokenProviders();
 
@@ -50,6 +52,10 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])),
     };
 }); */
+builder.Services.Configure<ForwardedHeadersOptions>(option =>
+{
+    option.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,7 +72,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseForwardedHeaders();
 app.MapControllers();
 
 app.Run();
