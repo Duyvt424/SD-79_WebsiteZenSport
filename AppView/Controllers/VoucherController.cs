@@ -148,6 +148,11 @@ namespace AppView.Controllers
 			return View();
 		}
 
+		public async Task<IActionResult> Details(Guid Id)
+		{
+			var vc = repos.GetAll().FirstOrDefault( c=> c.VoucherID == Id);
+			return View(vc);
+		}
 
 	}
 }

@@ -1,0 +1,201 @@
+﻿body {
+    height: 100vh;
+    background: white
+}
+
+.container {
+    border-radius: 10px;
+    padding: 0 2px;
+    margin: 150px auto;
+    position: relative;
+    height: 400px
+}
+
+#left {
+    position: relative
+}
+
+#image-section {
+    position: relative
+}
+
+    #image-section img {
+        width: 350px;
+        height: 200px;
+        border-radius: 10px;
+        position: absolute;
+        left: 15%;
+        top: -100px
+    }
+
+#coupon {
+    transform: rotate(-90deg);
+    position: absolute;
+    left: -30px;
+    bottom: 15%;
+    color: #000080;
+    font-weight: bold
+}
+
+.brand {
+    padding-top: 150px;
+    padding-left: 150px;
+    padding-bottom: 10px;
+    position: relative
+}
+
+    .brand h1 {
+        font-weight: bolder;
+        color: #000080
+    }
+
+#validity {
+    position: absolute;
+    width: 100%;
+    bottom: -110px
+}
+
+.row {
+    height: 100%
+}
+
+#line {
+    background-color: #a0a0af;
+    clip-path: polygon(59% 0, 68% 0, 8% 100%, 0% 100%);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0
+}
+
+#offer {
+    color: #000080;
+    text-align: center;
+    font-weight: bold
+}
+
+#offer-description {
+    padding-top: 20px
+}
+
+    #offer-description p {
+        text-align: center;
+        margin: 2px;
+        font-weight: bold
+    }
+
+.btn {
+    border: 1px solid #ddd
+}
+
+    .btn:last-child {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px
+    }
+
+    .btn:nth-child(2) {
+        border-radius: 0px;
+        border-left: none;
+        border-right: none
+    }
+
+    .btn:first-child {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px
+    }
+
+    .btn:hover {
+        color: #fff;
+        background-color: #000080
+    }
+
+#code {
+    font-size: 2rem;
+    font-weight: 600
+}
+
+#expiry {
+    display: none
+}
+
+@media(min-width:768px) and (max-width:991px) {
+    #image-section img {
+        width: 250px;
+        height: 170px;
+        left: 15%;
+        top: -80px
+    }
+
+    .brand {
+        padding-left: 100px
+    }
+
+    #offer-description p:nth-child(2) {
+        text-align: center
+    }
+}
+
+@media(max-width:767px) {
+    .col-md-2, #validity {
+        display: none
+    }
+
+    .container {
+        border-radius: 10px;
+        margin-top: 50px;
+        padding: 0 2px;
+        position: relative;
+        height: 800px
+    }
+
+    #image-section img {
+        position: relative;
+        left: 10;
+        top: 20px
+    }
+
+    #image-section {
+        height: 150px
+    }
+
+    .brand {
+        padding-top: 150px;
+        padding-left: 100px
+    }
+
+    #coupon {
+        bottom: 10%
+    }
+
+    .brand h1 {
+        display: inline-block
+    }
+
+    #offer-description p {
+        font-size: 1.3rem
+    }
+
+    #expiry {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        padding-top: 10px
+    }
+}
+
+@media(min-width:320px)and (max-width:440px) {
+    #image-section img {
+        display: flex;
+        justify-content: center;
+        left: 10px
+    }
+
+    .brand {
+        padding-left: 60px
+    }
+
+    .container {
+        margin-left: 10px;
+        width: 120%
+    }
+}
