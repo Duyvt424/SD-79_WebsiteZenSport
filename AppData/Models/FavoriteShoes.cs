@@ -13,5 +13,6 @@ namespace AppData.Models
         public Guid CumstomerID { get; set; }
         public virtual ShoesDetails ShoesDetails { get; set; }
         public virtual Customer Customer { get; set; }
+        
     }
 }
