@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Net;
 using System.Security.Claims;
 
 namespace AppView.Controllers
@@ -75,7 +76,8 @@ namespace AppView.Controllers
                             Ward = address.Commune,
                             District = address.District,
                             Province = address.Province,
-                            IsDefaultAddress = address.IsDefaultAddress
+                            IsDefaultAddress = address.IsDefaultAddress,
+                            ShippingCost = address.ShippingCost
                         })
                         .ToList();
 
@@ -366,7 +368,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street)
+        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
@@ -378,8 +380,16 @@ namespace AppView.Controllers
                 _dBContext.Update(userUpdate);
                 _dBContext.SaveChanges();
             }
+            // Lấy địa chỉ mặc định hiện tại của người dùng
+            var currentDefaultAddress = _dBContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress == true);
+            if (currentDefaultAddress != null)
+            {
+                // Hủy đặt làm mặc định cho địa chỉ hiện tại
+                currentDefaultAddress.IsDefaultAddress = false;
+            }
+            _dBContext.SaveChanges();
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&Status=0&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Cart");
         }

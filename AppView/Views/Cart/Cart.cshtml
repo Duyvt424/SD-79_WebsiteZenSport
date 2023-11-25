@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+																	<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -369,10 +369,11 @@
 							</div>
 							@foreach (var item in Model.AddressList)
 							{
-								<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()">
+								<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
 									<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
 									<p style="font-weight:bold;">@item.PhoneNumber</p>
 									<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
+									<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
 									<div class="btn-list">
 										<label class="cl-checkbox">
 											<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
@@ -393,6 +394,41 @@
 									Thêm mới
 								</button>
 							</div>
+							<script>
+								document.addEventListener('DOMContentLoaded', function () {
+									// Lấy giá tiền vận chuyển mặc định khi trang được tải
+									var defaultShippingCostElement = $('.existing-address[data-isdefault="True"] .shipping-cost');
+									var defaultShippingCost = parseFloat(defaultShippingCostElement.text());
+
+									// Hiển thị giá tiền mặc định
+									var phivanchuyenElement = document.getElementById('phivanchuyen');
+									phivanchuyenElement.innerText = defaultShippingCost.toLocaleString('vi-VN') + "đ";
+									// Lắng nghe sự kiện change của tất cả các checkbox
+									var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
+									checkboxes.forEach(function (checkbox) {
+										checkbox.addEventListener('change', function () {
+											updateShippingCost();
+										});
+									});
+
+									// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
+									updateShippingCost();
+								});
+
+								function updateShippingCost() {
+									// Tìm checkbox được chọn
+									var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+
+									if (selectedCheckbox) {
+										// Lấy giá trị vận chuyển từ thuộc tính data
+										var shippingCost = parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost);
+
+										// Cập nhật giá trị vận chuyển trên trang
+										var phivanchuyenElement = document.getElementById('phivanchuyen');
+										phivanchuyenElement.innerText = shippingCost.toLocaleString('vi-VN') + "đ";
+									}
+								}
+							</script>
 							<script>
 								// Biến để lưu trữ trạng thái hiển thị của danh sách địa chỉ
 								var isAddressListVisible = false;
@@ -460,6 +496,7 @@
 								function setDefaultAddress(addressId) {
 									// Lấy checkbox tương ứng với địa chỉ được chọn
 									var selectedCheckbox = document.getElementById('cbx_' + addressId);
+									var isCheckboxChecked = selectedCheckbox.checked;
 
 									// Nếu checkbox đã được chọn trước đó, bỏ chọn nó
 									if (lastCheckedCheckbox !== null && lastCheckedCheckbox !== selectedCheckbox) {
@@ -539,6 +576,7 @@
 											</div>
 											<input type="hidden" id="WardName" name="wardName" />
 										</div>
+										<input style="display:none;" id="shippingCost" name="ShippingCost"/>
 									</div>
 									<div class="form-floating mb-3">
 										<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
@@ -567,23 +605,6 @@
 						</div>
 					</div>
 				</div>
-				<script>
-					function showExistingAddress() {
-						var existingAddresses = document.getElementsByClassName('existing-address');
-						for (var i = 0; i < existingAddresses.length; i++) {
-							existingAddresses[i].style.display = 'block';
-						}
-						document.getElementById('newAddressForm').style.display = 'none';
-					}
-
-					function showNewAddressForm() {
-						var existingAddresses = document.getElementsByClassName('existing-address');
-						for (var i = 0; i < existingAddresses.length; i++) {
-							existingAddresses[i].style.display = 'none';
-						}
-						document.getElementById('newAddressForm').style.display = 'block';
-					}
-				</script>
 				<div class="card mb-4 mb-lg-0" style="border: 1px solid white;">
 					<div class="card-body">
 						<p><strong>We accept</strong></p>
@@ -865,12 +886,31 @@
 							// giá trị cho input
 							var shippingFee = data.data.total;
 							document.getElementById('shippingFee').value = shippingFee;
+							document.getElementById('shippingCost').value = shippingFee;
 							//
 							var totalOk = totalPrice + shippingFee;
 							var tongTienElement = document.querySelector('[name="TongTien"]');
 							tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
 						})
 						.catch(error => console.log(error));
+				}
+			</script>
+			<script>
+				function showExistingAddress() {
+					var existingAddresses = document.getElementsByClassName('existing-address');
+					for (var i = 0; i < existingAddresses.length; i++) {
+						existingAddresses[i].style.display = 'block';
+					}
+					document.getElementById('newAddressForm').style.display = 'none';
+				}
+
+				function showNewAddressForm() {
+					isAddingNewAddress = true;
+					var existingAddresses = document.getElementsByClassName('existing-address');
+					for (var i = 0; i < existingAddresses.length; i++) {
+						existingAddresses[i].style.display = 'none';
+					}
+					document.getElementById('newAddressForm').style.display = 'block';
 				}
 			</script>
 			<div class="col-md-4">

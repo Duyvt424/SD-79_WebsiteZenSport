@@ -10,5 +10,6 @@
         public string? District { get; set; }
         public string? Province { get; set; }
         public bool IsDefaultAddress { get; set; }
+        public decimal ShippingCost { get; set; }
     }
 }
