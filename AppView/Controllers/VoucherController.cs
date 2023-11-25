@@ -153,6 +153,6 @@ namespace AppView.Controllers
 			var vc = repos.GetAll().FirstOrDefault( c=> c.VoucherID == Id);
 			return View(vc);
 		}
-
+		
 	}
 }

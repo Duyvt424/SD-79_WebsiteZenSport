@@ -932,14 +932,60 @@
 									<select id="voucher-select">
 										@foreach (var voucher in Model.Vouchers)
 										{
-											<option value="@voucher.VoucherCode">@voucher.VoucherCode - @voucher.VoucherValue đ</option>
+											<option value="@voucher.VoucherCode">@voucher.VoucherCode - @voucher.VoucherValue đ - @voucher.DateCreated</option>
 										}
 									</select>
 									<button id="apply-voucher-btn">Áp dụng</button>
 								</li>
-
-
 								<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+								<script>
+									$(document).ready(function () {
+										$("#apply-voucher-btn").click(function () {
+											// Lấy giá trị được chọn từ dropdown
+											var selectedVoucherCode = $("#voucher-select").val();
+
+											// Gửi yêu cầu đến server để xử lý áp dụng voucher
+											$.ajax({
+												type: "GET",
+												url: "https://localhost:7036/api/Voucher/find-voucher", // Thay thế đường dẫn và tên controller phù hợp
+												data: { code: selectedVoucherCode },
+												success: function (result) {
+													console.log(result);
+
+													// Kiểm tra xem result có dữ liệu và result[0] không là null
+													if (result && result.length > 0 && result[0]) {
+														console.log(@totalPrice);
+
+														// Kiểm tra xem ngày bắt đầu của voucher đã đến hay chưa
+														var startDate = new Date(result[0].dateCreated);
+														var currentDate = new Date();
+
+														if (startDate > currentDate) {
+															// Hiển thị thông báo nếu ngày bắt đầu chưa đến
+															alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+														} else {
+															// Kiểm tra xem result[0].voucherValue có giá trị
+															if (result[0].voucherValue != null) {
+																var total = (@totalPrice - result[0].voucherValue);
+																document.getElementById('total-price-payment').innerText = total;
+																console.log(total);
+															} else {
+																console.log("Lỗi: result[0].voucherValue không có giá trị.");
+															}
+														}
+													} else {
+														console.log("Lỗi: Dữ liệu từ server không hợp lệ.");
+													}
+												},
+												error: function (error) {
+													console.log("Lỗi:", error);
+												}
+											});
+										});
+									});
+								</script>
+
+						@*		<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 								<script>
 									$(document).ready(function () {
 										$("#apply-voucher-btn").click(function () {
@@ -963,8 +1009,8 @@
 											});
 										});
 									});
-								</script>
-
+								</script>*@
+								
 								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
 									Phí vận chuyển
 									<span id="phivanchuyen">@Html.Raw(shippingFee)</span>
