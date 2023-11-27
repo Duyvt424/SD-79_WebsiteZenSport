@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-																	<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+																			<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -362,29 +362,37 @@
 						<div class="card mb-4">
 							@{
 								// Chọn địa chỉ mặc định từ Model
-								var defaultAddress = Model.AddressList.FirstOrDefault();
+								var defaultAddress = Model.AddressList != null && Model.AddressList.Any() ? Model.AddressList.FirstOrDefault() : null;
 							}
-							<div class="card-header py-3">
-								<h5 class="mb-0">Địa chỉ nhận hàng</h5>
-							</div>
-							@foreach (var item in Model.AddressList)
+							@if (Model.AddressList != null && Model.AddressList.Any())
 							{
-								<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
-									<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
-									<p style="font-weight:bold;">@item.PhoneNumber</p>
-									<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
-									<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
-									<div class="btn-list">
-										<label class="cl-checkbox">
-											<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
-											<span>Đặt làm mặc định</span>
-										</label>
-										<button class="btn-address" style="float:right; margin-top: -5%; margin-right:4%;">
-											Sửa địa chỉ
-										</button>
-									</div>
-									<hr>
+								<div class="card-header py-3">
+									<h5 class="mb-0">Địa chỉ nhận hàng</h5>
 								</div>
+
+								@foreach (var item in Model.AddressList)
+								{
+									<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
+										<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
+										<p style="font-weight:bold;">@item.PhoneNumber</p>
+										<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
+										<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
+										<div class="btn-list">
+											<label class="cl-checkbox">
+												<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
+												<span>Đặt làm mặc định</span>
+											</label>
+											<button class="btn-address" style="float:right; margin-top: -5%; margin-right:4%;">
+												Sửa địa chỉ
+											</button>
+										</div>
+										<hr>
+									</div>
+								}
+							}
+							else
+							{
+								<p style="font-weight:bold; font-size:17px; margin-left: 2%; margin-top: 2%;">Bạn chưa có địa chỉ nhận hàng, hãy thêm mới hoặc đăng nhập!</p>
 							}
 							<div class="btn-container">
 								<button class="btn-address" onclick="toggleAddressList()">
@@ -399,10 +407,17 @@
 									// Lấy giá tiền vận chuyển mặc định khi trang được tải
 									var defaultShippingCostElement = $('.existing-address[data-isdefault="True"] .shipping-cost');
 									var defaultShippingCost = parseFloat(defaultShippingCostElement.text());
-
+									// lấy giá tiền gốc
+									var totalPriceElement = document.getElementById('totalPrice');
+									var totalPriceText = totalPriceElement.innerText;
+									var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
 									// Hiển thị giá tiền mặc định
 									var phivanchuyenElement = document.getElementById('phivanchuyen');
 									phivanchuyenElement.innerText = defaultShippingCost.toLocaleString('vi-VN') + "đ";
+									// hiển thị tổng giá tiền khi trang đc load
+									var totalOk = totalPrice + defaultShippingCost;
+									var tongTienElement = document.querySelector('[name="TongTien"]');
+									tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
 									// Lắng nghe sự kiện change của tất cả các checkbox
 									var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
 									checkboxes.forEach(function (checkbox) {
@@ -416,6 +431,9 @@
 								});
 
 								function updateShippingCost() {
+									var totalPriceElement = document.getElementById('totalPrice');
+									var totalPriceText = totalPriceElement.innerText;
+									var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
 									// Tìm checkbox được chọn
 									var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
 
@@ -426,6 +444,10 @@
 										// Cập nhật giá trị vận chuyển trên trang
 										var phivanchuyenElement = document.getElementById('phivanchuyen');
 										phivanchuyenElement.innerText = shippingCost.toLocaleString('vi-VN') + "đ";
+										// tính tổng tiền khi ng dùng đổi checkbox
+										var totalOk = totalPrice + shippingCost;
+										var tongTienElement = document.querySelector('[name="TongTien"]');
+										tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
 									}
 								}
 							</script>

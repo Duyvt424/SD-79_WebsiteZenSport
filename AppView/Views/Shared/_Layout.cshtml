@@ -15,6 +15,9 @@
 	<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Thư viện jQuery UI -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<link href="~/css/css.css" />
 	<link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
 	<link href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css" rel="stylesheet">
@@ -200,7 +203,7 @@
 						</ul>
 						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
 							<div class="src-box">
-								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
+								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input-home" name="name" value="@ViewBag.Name">
 								<button type="submit"></button>
 							</div>
 						</form>
@@ -222,7 +225,7 @@
 						</ul>
 						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
 							<div class="src-box">
-								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input" name="name" value="@ViewBag.Name">
+								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input-customer" name="name" value="@ViewBag.Name">
 								<button type="submit"></button>
 							</div>
 							<div class="buttonok" style="margin-right: 10px;">
@@ -230,6 +233,35 @@
 									<i class="fa badge fa-lg" id="cartIcon" style="color: black; font-size: 35px; padding-top: 15px;">&#xf290;</i>
 								</a>
 							</div>
+							<script>
+								function initializeAutocomplete(selector) {
+									$(selector).autocomplete({
+										source: function (request, response) {
+											// Gửi request đến action Search trong controller Home để lấy dữ liệu suggest
+											$.ajax({
+												url: "@Url.Action("Autocomplete", "Home")", // Điều chỉnh đường dẫn và tên action nếu cần
+												dataType: "json",
+												data: {
+													term: request.term
+												},
+												success: function (data) {
+													response(data);
+												}
+											});
+										},
+										minLength: 1 // Số ký tự tối thiểu trước khi autocomplete bắt đầu
+									});
+								}
+
+								$(function () {
+									// Khởi tạo autocomplete cho input của trang chủ
+									initializeAutocomplete("#search-input-home");
+
+									// Khởi tạo autocomplete cho input của khách hàng
+									initializeAutocomplete("#search-input-customer");
+								});
+							</script>
+
 							<script>
 								function updateCartItemCount() {
 									$.get('@Url.Action("GetCartItemCount", "Cart")', function (data) {

@@ -448,6 +448,14 @@ namespace AppView.Controllers
 			}
 		}
 
-
-	}
+        public IActionResult Autocomplete(string term)
+        {
+            // Lấy danh sách suggest từ database hoặc bất kỳ nguồn dữ liệu nào bạn đang sử dụng
+            var suggestions = _shopDBContext.Products
+                .Where(p => p.Name.ToLower().Contains(term.ToLower()))
+                .Select(p => p.Name)
+                .ToList();
+            return Json(suggestions);
+        }
+    }
 }
