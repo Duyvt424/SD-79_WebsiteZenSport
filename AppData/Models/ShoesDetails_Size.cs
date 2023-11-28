@@ -15,5 +15,6 @@ namespace AppData.Models
         public virtual ShoesDetails ShoesDetails { get; set; }
         public virtual Size Size { get; set; }
         public virtual List<CartDetails> CartDetails { get; set; }
+        public virtual List<BillDetails> BillDetails { get; set; }
     }
 }

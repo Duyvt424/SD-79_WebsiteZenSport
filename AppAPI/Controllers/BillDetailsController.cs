@@ -29,10 +29,10 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost("create-billdetails")]
-        public string CreateBilldetails(int Quantity, decimal Price, int Status, Guid ShoesDetailsId, Guid BillID)
+        public string CreateBilldetails(int Quantity, decimal Price, int Status, Guid ShoesDetails_SizeId, Guid BillID)
         {
-            var billDT = _repos.GetAll().FirstOrDefault(c => c.BillID == BillID && c.ShoesDetailsId == ShoesDetailsId);
-            var shoesDT = _dbContext.ShoesDetails.FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId);
+            var billDT = _repos.GetAll().FirstOrDefault(c => c.BillID == BillID && c.ShoesDetails_SizeID == ShoesDetails_SizeId);
+            var shoesDT = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ID == ShoesDetails_SizeId).ShoesDetailsId;
             if (billDT != null)
             {
                 var newQuantity = billDT.Quantity += Quantity;
@@ -60,7 +60,7 @@ namespace AppAPI.Controllers
                 billDetails.Price = Price;
                 billDetails.Status = Status;
                 billDetails.BillID = BillID;
-                billDetails.ShoesDetailsId = ShoesDetailsId;
+                billDetails.ShoesDetails_SizeID = ShoesDetails_SizeId;
                 if (_repos.AddItem(billDetails))
                 {
                     return "Thêm thành công";
@@ -74,13 +74,13 @@ namespace AppAPI.Controllers
 
         // PUT api/<BillDetailsController>/5
         [HttpPut("update-billdetails")]
-        public string UpdateBillDetails(Guid id, int Quantity, decimal Price, int Status, Guid ShoesDetailsId, Guid BillID)
+        public string UpdateBillDetails(Guid id, int Quantity, decimal Price, int Status, Guid ShoesDetails_SizeId, Guid BillID)
         {
             var billDetails = _repos.GetAll().First(c => c.ID == id);
             billDetails.Quantity = Quantity;
             billDetails.Price = Price;
             billDetails.Status = Status;
-            billDetails.ShoesDetailsId = ShoesDetailsId;
+            billDetails.ShoesDetails_SizeID = ShoesDetails_SizeId;
             billDetails.BillID = BillID;
             if (_repos.EditItem(billDetails))
             {

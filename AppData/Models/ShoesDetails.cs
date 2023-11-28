@@ -25,7 +25,6 @@ namespace AppData.Models
         public virtual Product Product { get; set; }
         public virtual Style Style { get; set; }
         public virtual List<Image> Images { get; set; }
-        public virtual List<BillDetails> BillDetails { get; set; }
         public virtual List<ShoesDetails_Size> ShoesDetails_Size { get; set; }
         public virtual List<FavoriteShoes> FavoriteShoes { get; set; }
     }

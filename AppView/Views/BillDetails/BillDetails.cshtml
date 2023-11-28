@@ -96,7 +96,7 @@
                                         <td>
                                             @foreach (var shoesDetails in ViewData["Name"] as SelectList)
                                             {
-                                                if (shoesDetails.Value == item.ShoesDetailsId.ToString())
+                                                if (shoesDetails.Value == item.ShoesDetails_SizeID.ToString())
                                                 {
                                                     @shoesDetails.Text
                                                 }

@@ -68,7 +68,7 @@ namespace AppView.Services
                 x.Quantity = i.Quantity;
                 x.Price= i.Price;
                 x.Status= i.Status;
-                x.ShoesDetailsId= i.ShoesDetailsId;
+                x.ShoesDetails_SizeID= i.ShoesDetails_SizeID;
                 x.BillID= i.BillID;
                 context.BillDetails.Update(x);
                 context.SaveChanges();
