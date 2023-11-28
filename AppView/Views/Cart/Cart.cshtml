@@ -1047,10 +1047,11 @@
 																	 alt="totoprayogo.com"
 																	 class="" />
 																	<div style="margin-left: 10px">
-																		<p>@voucher.VoucherCode</p>
-																		<p>@voucher.VoucherValue</p>
-																		<p>@voucher.DateCreated</p>
-																		<p>@voucher.ExpirationDate</p>
+																		<p>Mã @voucher.VoucherCode giảm @voucher.VoucherValue VNĐ trên hóa đơn</p>
+														
+																		<p>Ngày bắt đầu: @voucher.DateCreated</p>
+																		<p>Ngày kết thúc: @voucher.ExpirationDate</p>
+																		<p><a asp-controller="Voucher" asp-action="Details" asp-route-Id="@voucher.VoucherID">Chi tiết</a></p>
 
 																	</div>
 																</div>
@@ -1143,7 +1144,7 @@ var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 									</script>
 *@
 									<!-- Kiểm tra jQuery đã được tải thành công -->
-									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+									@*<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 									<script>
 										if (typeof jQuery == 'undefined') {
 											console.error('jQuery không được tải thành công.');
@@ -1194,7 +1195,94 @@ var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 												});
 											});
 										}
-									</script>
+									</script>*@
+									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    if (typeof jQuery == 'undefined') {
+        console.error('jQuery không được tải thành công.');
+    } else {
+        $(document).ready(function () {
+            // Mã hiện tại của bạn ở đây
+
+            // Yêu cầu Ajax với dataType và xử lý lỗi được thêm vào
+            $("#apply-voucher-btn").click(function () {
+                var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+                if (selectedVoucherCode) {
+                    $.ajax({
+                        type: "GET",
+                        url: "https://localhost:7036/api/Voucher/find-voucher",
+                        data: { code: selectedVoucherCode },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result && result.length > 0 && result[0]) {
+                                var startDate = new Date(result[0].dateCreated);
+                                var currentDate = new Date();
+
+                                if (startDate > currentDate) {
+                                    alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+                                } else {
+                                    // Tiếp tục với xử lý voucher khi nó có hiệu lực
+                                    if (result[0].voucherValue != null) {
+                                        console.log(result);
+
+                                        // Kiểm tra từng điều kiện áp dụng voucher
+                                        var total = parseFloat(@totalPrice);
+                                        var voucherConditions = [
+                                            { code: 'VC002', minTotal: 50000000, discount: 10 },
+                                            { code: 'VC003', minTotal: 30000000, discount: 15 },
+                                            // Thêm các điều kiện cho các voucher khác nếu cần
+                                        ];
+
+                                        var appliedVoucher = voucherConditions.find(voucher => voucher.code === result[0].voucherCode);
+
+                                        if (appliedVoucher) {
+                                            if (total >= appliedVoucher.minTotal) {
+                                                // Áp dụng giảm giá từ voucher
+                                                total -= (parseFloat(result[0].voucherValue) * appliedVoucher.discount) / 100;
+
+                                                // Hiển thị giá trị mới sau khi áp dụng voucher
+                                                document.getElementById('total-price-payment').innerText = total;
+                                                console.log(total);
+
+                                                // Hiển thị mã voucher đã áp dụng
+                                                document.getElementById('code-voucher').innerText = result[0].voucherCode;
+                                                alert("Áp dụng voucher thành công!");
+                                            } else {
+                                                alert(`Tổng giá trị đơn hàng cần lớn hơn ${appliedVoucher.minTotal} để áp dụng voucher ${result[0].voucherCode}.`);
+                                            }
+                                        } else {
+                                            // Xử lý cho các voucher khác có điều kiện 0 đ
+                                            // Áp dụng giảm giá từ voucher
+                                            total -= parseFloat(result[0].voucherValue);
+
+                                            // Hiển thị giá trị mới sau khi áp dụng voucher
+                                            document.getElementById('total-price-payment').innerText = total;
+                                            console.log(total);
+
+                                            // Hiển thị mã voucher đã áp dụng
+                                            document.getElementById('code-voucher').innerText = result[0].voucherCode;
+                                            alert("Áp dụng voucher thành công!");
+                                        }
+
+                                    } else {
+                                        console.log("Lỗi: result[0].voucherValue không có giá trị.");
+                                    }
+                                }
+                            } else {
+                                console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+                            }
+                        },
+                        error: function (error) {
+                            console.log("Lỗi Ajax:", error);
+                        }
+                    });
+                } else {
+                    alert("Vui lòng chọn một voucher để áp dụng.");
+                }
+            });
+        });
+    }
+</script>
 
 
 								</li>
