@@ -26,7 +26,8 @@ namespace AppView.Controllers
         private readonly IProductService _product;
         private readonly IImageService _image;
         private readonly IBillService _bill;
-        public CartController(ILogger<CartController> logger)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CartController(ILogger<CartController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _dBContext = new ShopDBContext();
@@ -34,6 +35,7 @@ namespace AppView.Controllers
             _product = new ProductService();
             _image = new ImageService();
             _bill = new BillService();
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<IActionResult> Cart()
         {
@@ -257,16 +259,27 @@ namespace AppView.Controllers
         }
         private string GenerateBillCode()
         {
-            // Tạo mã đơn hàng dựa trên số lượng đơn hàng đã có trong cơ sở dữ liệu
-            var count = _dBContext.Bills.Count();
-            var billCode = $"HD{count + 1:000}";
-            return billCode;
+            var lastBill = _dBContext.Bills.OrderByDescending(c => c.BillCode).FirstOrDefault();
+            if (lastBill != null)
+            {
+                var lastNumber = int.Parse(lastBill.BillCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newBillCode = "HĐ" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+                return newBillCode;
+            }
+            return "HĐ001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
         }
+
         [HttpPost]
         public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, int shippingFee)
         {
+            //lấy id ng dùng trên session
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            //lấy id nhân viên trên session
+            var employeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeId = !string.IsNullOrEmpty(employeeIdString) ? JsonConvert.DeserializeObject<Guid>(employeeIdString) : Guid.Empty;
+            //tìm hình thức tt tương ứng
             var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
             if (CustomerID == Guid.Empty)
             {
@@ -274,16 +287,16 @@ namespace AppView.Controllers
             }
 
             // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
-            //var cartItems = _dBContext.CartDetails
-            //    .Where(c => c.CumstomerID == CustomerID)
-            //    .Include(c => c.ShoesDetails)
-            //    .ToList();
+            var cartItems = _dBContext.CartDetails
+                .Where(c => c.CumstomerID == CustomerID)
+                .Include(c => c.ShoesDetails_Size)
+                .ToList();
             // Tính tổng giá tiền cho cả hóa đơn
             decimal totalPrice = 0;
-            //foreach (var item in cartItems)
-            //{
-            //    totalPrice += (item.ShoesDetails.Price * item.Quantity) + shippingFee;
-            //}
+            foreach (var item in cartItems)
+            {
+                totalPrice += (item.ShoesDetails_Size.ShoesDetails.Price * item.Quantity) + shippingFee;
+            }
             // Tạo đơn hàng
             var bill = new Bill
             {
@@ -298,24 +311,24 @@ namespace AppView.Controllers
                 DeliveryDate = DateTime.Now,
                 CancelDate = DateTime.Now,
                 TotalPrice = totalPrice,
-                EmployeeID = Guid.Parse("779ae3d8-6a02-46f1-bde2-960140a0e585"),
-                VoucherID = Guid.Parse("9f86a42e-cfbe-4043-8d2d-8ebcea7f8fcd"),
+                EmployeeID = EmployeeId != null ? EmployeeId : Guid.Parse("ca416ca9-40f9-4c96-1867-08dbdf6c81c5"),
+                VoucherID = Guid.Parse("9006cb32-cfeb-4aa6-93e4-eca9ce014c40"),
                 PurchaseMethodID = HTThanhToan
             };
             _dBContext.Bills.Add(bill);
 
-            //foreach (var item in cartItems)
-            //{
-            //    var billDetail = new BillDetails
-            //    {
-            //        ID = Guid.NewGuid(),
-            //        BillID = bill.BillID,
-            //        ShoesDetailsId = item.ShoesDetailsId,
-            //        Quantity = item.Quantity,
-            //        Price = item.ShoesDetails.Price
-            //    };
-            //    _dBContext.BillDetails.Add(billDetail);
-            //}
+            foreach (var item in cartItems)
+            {
+                var billDetail = new BillDetails
+                {
+                    ID = Guid.NewGuid(),
+                    BillID = bill.BillID,
+                    ShoesDetails_SizeID = item.ShoesDetails_SizeID,
+                    Quantity = item.Quantity,
+                    Price = item.ShoesDetails_Size.ShoesDetails.Price
+                };
+                _dBContext.BillDetails.Add(billDetail);
+            }
 
             // Lưu thay đổi vào cơ sở dữ liệu
             _dBContext.SaveChanges();
@@ -393,5 +406,58 @@ namespace AppView.Controllers
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Cart");
         }
+
+        #region Thanh toán vnpay
+        public string UrlPayment(int TypePaymentVN, string orderCode)
+        {
+            var urlPayment = "";
+            var order = _dBContext.Bills.FirstOrDefault(x => x.BillCode == orderCode);
+            //Get Config Info
+            // Get Config Info
+            string vnp_Returnurl = "https://localhost:7120/";
+            string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+            string vnp_TmnCode = "8CTTMT9O";
+            string vnp_HashSecret = "ZVQBBDHXCGSKREWPDKMNFTNBXYOARQNF";
+
+            //Build URL for VNPAY
+            // Build URL for VNPAY
+            VnPayLibrary vnpay = new VnPayLibrary();
+            Utils utils = new Utils();
+            var Price = (long)order.TotalPrice * 100;
+            vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
+            vnpay.AddRequestData("vnp_Amount", Price.ToString()); //Số tiền thanh toán. Số tiền không mang các ký tự phân tách thập phân, phần nghìn, ký tự tiền tệ. Để gửi số tiền thanh toán là 100,000 VND (một trăm nghìn VNĐ) thì merchant cần nhân thêm 100 lần (khử phần thập phân), sau đó gửi sang VNPAY là: 10000000
+            if (TypePaymentVN == 1)
+            {
+                vnpay.AddRequestData("vnp_BankCode", "VNPAYQR");
+            }
+            else if (TypePaymentVN == 2)
+            {
+                vnpay.AddRequestData("vnp_BankCode", "VNBANK");
+            }
+            else if (TypePaymentVN == 3)
+            {
+                vnpay.AddRequestData("vnp_BankCode", "INTCARD");
+            }
+
+            vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+            vnpay.AddRequestData("vnp_IpAddr", utils.GetIpAddress(_httpContextAccessor));
+            vnpay.AddRequestData("vnp_Locale", "vn");
+            vnpay.AddRequestData("vnp_OrderInfo", "Thanh toán đơn hàng :" + order.BillCode);
+            vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
+
+            vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
+            vnpay.AddRequestData("vnp_TxnRef", order.BillCode); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
+
+            //Add Params of 2.1.0 Version
+            //Billing
+
+            urlPayment = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+            //log.InfoFormat("VNPAY URL: {0}", paymentUrl);
+            return urlPayment;
+        }
+        #endregion
     }
 }
