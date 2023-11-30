@@ -4,7 +4,9 @@ using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
+using Address = AppData.Models.Address;
 
 namespace AppView.Controllers
 {
@@ -70,6 +72,19 @@ namespace AppView.Controllers
             return Ok(new { addressId = defaultAddress.AddressID });
         }
 
+        [HttpPost]
+        public IActionResult UpdatePriceShipping(Guid addressId, decimal shippingCost)
+        {
+            var objAddress = _dbContext.Addresses.First(c => c.AddressID == addressId);
+            if (objAddress == null)
+            {
+                return NotFound();
+            }
+            objAddress.ShippingCost = shippingCost;
+            _dbContext.Update(objAddress);
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
 
         [HttpGet]
         public async Task<IActionResult> CreateAddress()

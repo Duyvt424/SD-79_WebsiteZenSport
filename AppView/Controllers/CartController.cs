@@ -79,7 +79,10 @@ namespace AppView.Controllers
                             District = address.District,
                             Province = address.Province,
                             IsDefaultAddress = address.IsDefaultAddress,
-                            ShippingCost = address.ShippingCost
+                            ShippingCost = address.ShippingCost,
+                            DistrictId = address.DistrictId,
+                            WardCode = address.WardCode,
+                            ShippingMethodID = address.ShippingMethodID
                         })
                         .ToList();
 
@@ -381,7 +384,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost)
+        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
@@ -402,7 +405,7 @@ namespace AppView.Controllers
             }
             _dBContext.SaveChanges();
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Cart");
         }

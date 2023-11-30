@@ -11,5 +11,8 @@
         public string? Province { get; set; }
         public bool IsDefaultAddress { get; set; }
         public decimal ShippingCost { get; set; }
+        public int DistrictId { get; set; }
+        public decimal WardCode { get; set; }
+        public int ShippingMethodID { get; set; }
     }
 }

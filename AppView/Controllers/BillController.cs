@@ -7,11 +7,13 @@ using AppData.Models;
 using AppData.Repositories;
 using AppView.IServices;
 using AppView.Models;
+using AppView.Models.DetailsBillViewModel;
 using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;
 
 namespace AppView.Controllers
 {
@@ -65,7 +67,8 @@ namespace AppView.Controllers
             return "HD001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllBill() { 
+        public async Task<IActionResult> GetAllBill()
+        {
             string apiUrl = "https://localhost:7036/api/Bill/get-bill";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -125,14 +128,14 @@ namespace AppView.Controllers
             return View();
         }
 
-          [HttpPost]
-          public async Task<IActionResult> CreateBill(Bill bill)
-          {
-              var httpClient = new HttpClient();
-              string apiUrl = $"https://localhost:7036/api/Bill/create-bill?BillCode={GenerateBillCode()}&CreateDate={bill.CreateDate}&SuccessDate={bill.SuccessDate}&DeliveryDate={bill.DeliveryDate}&CancelDate={bill.CancelDate}&TotalPrice={bill.TotalPrice}&ShippingCosts={bill.ShippingCosts}&Note={bill.Note}&Status={bill.Status}&CustomerID={bill.CustomerID}&VoucherID={bill.VoucherID}&EmployeeID={bill.EmployeeID}&PurchaseMethodID={bill.PurchaseMethodID}";
-              var response = await httpClient.PostAsync(apiUrl, null);
-              return RedirectToAction("GetAllBill");
-          }
+        [HttpPost]
+        public async Task<IActionResult> CreateBill(Bill bill)
+        {
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Bill/create-bill?BillCode={GenerateBillCode()}&CreateDate={bill.CreateDate}&SuccessDate={bill.SuccessDate}&DeliveryDate={bill.DeliveryDate}&CancelDate={bill.CancelDate}&TotalPrice={bill.TotalPrice}&ShippingCosts={bill.ShippingCosts}&Note={bill.Note}&Status={bill.Status}&CustomerID={bill.CustomerID}&VoucherID={bill.VoucherID}&EmployeeID={bill.EmployeeID}&PurchaseMethodID={bill.PurchaseMethodID}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+            return RedirectToAction("GetAllBill");
+        }
 
         [HttpGet]
         public async Task<IActionResult> EditBill(Guid id)
@@ -208,9 +211,55 @@ namespace AppView.Controllers
 
             return View(billViewModels);
         }
-        public IActionResult DetailsBill()
+        public async Task<IActionResult> DetailsBill(Guid id)
         {
-            return View();
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+
+            if (customerId != Guid.Empty)
+            {
+                var loggedInUser = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CumstomerID == customerId);
+
+                if (loggedInUser != null)
+                {
+                    var detailsBill = await _dbContext.BillDetails
+                        .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null)
+                        .Select(c => new OrderDetailsViewModel
+                        {
+                            BillCode = _dbContext.Bills.First(x => x.BillID == c.BillID).BillCode,
+                            Products = new List<ProductViewModel>
+                            {
+                                new ProductViewModel
+                                {
+                                    ImageUrl = _dbContext.Images.First(x => x.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
+                                    Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                                    Description = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
+                                    Size = _dbContext.Sizes.First(x => x.SizeID == c.ShoesDetails_Size.SizeID).Name,
+                                    Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price
+                                }
+                            },
+                            FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName, 
+                            PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber, 
+                            Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email, 
+                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName, 
+                            Street = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Street,
+                            Ward = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Commune,
+                            District = _dbContext.Addresses.First(x => x.CumstomerID == customerId).District,
+                            Province = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Province,
+                            OrderStatuses = new List<OrderStatusViewModel>
+                            {
+                        new OrderStatusViewModel
+                        {
+                            Status = _dbContext.Bills.First(x => x.BillID == c.BillID).Status, 
+                            Date = DateTime.Now
+                        }
+                            }
+                        })
+                        .ToListAsync();
+                    return View(detailsBill);
+                }
+            }
+            return View(new OrderDetailsViewModel());
         }
     }
 }

@@ -15,6 +15,9 @@ namespace AppData.Models
         public string? Province { get; set; } // tỉnh
         public bool IsDefaultAddress { get; set; }
         public decimal ShippingCost { get; set; }
+        public int DistrictId { get; set; }
+        public int WardCode { get; set; }
+        public int ShippingMethodID { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
         public Guid CumstomerID { get; set; }

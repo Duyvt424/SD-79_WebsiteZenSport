@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -296,7 +296,7 @@
 
 												// Khởi tạo tổng tiền của cả giỏ hàng
 												let totalPrice = 0;
-
+												
 												// Lặp qua từng input
 												quantityInputs.forEach(input => {
 													const shoesDetailsId = input.getAttribute('data-shoesdetailsid');
@@ -326,6 +326,22 @@
 
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
+														// Gọi hàm tính toán phí vận chuyển
+														const selectedDistrictId = parseInt(document.getElementById('districtIdShow').textContent);
+														const selectedWardCode = parseInt(document.getElementById('wardCodeShow').textContent);
+														calculateShippingFee(selectedWardCode, selectedDistrictId);
+														// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
+														const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+														console.log('Duy', existingAddressChecked);
+														if(existingAddressChecked) {
+															var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+															console.log('Ha', addressId);
+															var shippingCostHTML = document.getElementById('shippingCost').value;
+															var shippingCost = parseFloat(shippingCostHTML);
+															console.log("Manh", shippingCost);
+														}
+														// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
+														updatePriceShipping(addressId, shippingCost);
 													});
 												});
 											});
@@ -344,6 +360,20 @@
 													}
 												});
 											}
+
+											function updatePriceShipping(addressId, shippingCost) {
+												$.ajax({
+													url: '@Url.Action("UpdatePriceShipping", "Address")',
+													type: 'POST',
+													data: { addressId: addressId, shippingCost: shippingCost },
+													success: function (response) {
+														// Xử lý thành công nếu cần
+													},
+													error: function (xhr, textStatus, errorThrown) {
+														// Xử lý lỗi nếu cần
+													}
+												});
+											}
 										</script>
 										<!-- Total Price -->
 									</div>
@@ -357,7 +387,7 @@
 				<div id="cart-total-container" style="display:none;">
 					<span name="TongKhoiLuong" class="cart-total-weight" id="khoiLuongSum">@totalWeight</span>
 				</div>
-				<div class="row" id="shipping-address-form-container" style="display:none;">
+				<div class="row" id="shipping-address-form-container">
 					<div class="col-md-12 mb-4">
 						<div class="card mb-4">
 							@{
@@ -369,14 +399,16 @@
 								<div class="card-header py-3">
 									<h5 class="mb-0">Địa chỉ nhận hàng</h5>
 								</div>
-
 								@foreach (var item in Model.AddressList)
 								{
 									<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
 										<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
 										<p style="font-weight:bold;">@item.PhoneNumber</p>
 										<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
-										<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
+										<p style="display:block;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
+										<p style="display:none;" id="districtIdShow">@item.DistrictId</p>
+										<p style="display:none;" id="wardCodeShow">@item.WardCode</p>
+										<p style="display:none;" id="shippingMethodIDShow">@item.ShippingMethodID</p>
 										<div class="btn-list">
 											<label class="cl-checkbox">
 												<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
@@ -599,6 +631,9 @@
 											<input type="hidden" id="WardName" name="wardName" />
 										</div>
 										<input style="display:none;" id="shippingCost" name="ShippingCost" />
+										<input style="display:none;" id="districtIDCus" name="DistrictID" />
+										<input style="display:none;" id="wardCodeCus" name="WardCode" />
+										<input style="display:none;" id="shippingMethodID" name="ShippingMethodID" />
 									</div>
 									<div class="form-floating mb-3">
 										<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
@@ -718,6 +753,12 @@
 			</script>
 			<script>
 				function fetchDistricts(province_id) {
+					const districtSelect = document.getElementById('ListQuanHuyen');
+					// Clear existing options
+					districtSelect.innerHTML = '<option value="" disabled selected>Chọn quận / huyện</option>';
+					// Set districtID after creating options
+					var districtID = document.getElementById('districtID');
+
 					const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${province_id}`;
 					const token = '6092d580-fde7-11ed-a967-deea53ba3605';
 
@@ -730,8 +771,6 @@
 					})
 						.then(response => response.json())
 						.then(data => {
-							const districtSelect = document.getElementById('ListQuanHuyen');
-
 							// Add districts to the dropdown list
 							data.data.forEach(district => {
 								const option = document.createElement('option');
@@ -739,18 +778,26 @@
 								option.textContent = district.DistrictName;
 								districtSelect.appendChild(option);
 							});
+							// Trigger change event to update wards
+							districtSelect.dispatchEvent(new Event('change'));
 						})
 						.catch(error => console.log(error));
 				}
 				// Update hidden input value when a province is selected
 				function updateDistrictValue(selectElement) {
 					const districtName = selectElement.options[selectElement.selectedIndex].text;
+					const districtId = selectElement.value;
 					document.getElementById("DistrictName").value = districtName;
+					document.getElementById("districtIDCus").value = districtId;
 				}
 				fetchDistricts();
 			</script>
 			<script>
 				function fetchWards(district_id) {
+					const wardSelect = document.getElementById('ListPhuongXa');
+					// Clear existing options
+					wardSelect.innerHTML = '<option value="" disabled selected>Chọn xã / phường</option>';
+
 					const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${district_id}`;
 					const token = '6092d580-fde7-11ed-a967-deea53ba3605';
 
@@ -763,8 +810,6 @@
 					})
 						.then(response => response.json())
 						.then(data => {
-							const wardSelect = document.getElementById('ListPhuongXa');
-
 							// Add wards to the dropdown list
 							data.data.forEach(ward => {
 								const option = document.createElement('option');
@@ -772,13 +817,17 @@
 								option.textContent = ward.WardName;
 								wardSelect.appendChild(option);
 							});
+							// Trigger change event to update shipping fee
+							wardSelect.dispatchEvent(new Event('change'));
 						})
 						.catch(error => console.log(error));
 				}
 				// Update hidden input value when a province is selected
 				function updateWardValue(selectElement) {
 					const wardName = selectElement.options[selectElement.selectedIndex].text;
+					const wardCode = selectElement.value;
 					document.getElementById("WardName").value = wardName;
+					document.getElementById("wardCodeCus").value = wardCode;
 				}
 			</script>
 			<script>
@@ -814,6 +863,7 @@
 
 							// Gọi hàm tính toán ngày nhận hàng dự kiến
 							calculateDeliveryDate();
+							document.getElementById("shippingMethodID").value = shippingMethods[0].service_id;
 						})
 						.catch(error => {
 							console.error('Error:', error);
@@ -880,6 +930,24 @@
 				}
 			</script>
 			<script>
+				let isNewAddressClicked = false;
+				function showExistingAddress() {
+					var existingAddresses = document.getElementsByClassName('existing-address');
+					for (var i = 0; i < existingAddresses.length; i++) {
+						existingAddresses[i].style.display = 'block';
+					}
+					document.getElementById('newAddressForm').style.display = 'none';
+				}
+
+				function showNewAddressForm() {
+					isNewAddressClicked = true;
+					isAddingNewAddress = true;
+					var existingAddresses = document.getElementsByClassName('existing-address');
+					for (var i = 0; i < existingAddresses.length; i++) {
+						existingAddresses[i].style.display = 'none';
+					}
+					document.getElementById('newAddressForm').style.display = 'block';
+				}
 				function calculateShippingFee(to_ward_code, to_district_id) {
 					var totalPriceElement = document.getElementById('totalPrice');
 					var totalPriceText = totalPriceElement.innerText;
@@ -888,7 +956,12 @@
 					var totalWeight = document.getElementById('khoiLuongSum');
 					var totalWeightText = totalWeight.innerText;
 					var totalWeightSum = parseInt(totalWeightText.replace(/[^\d]/g, ''));
-					const url = `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
+					// lấy id hình thức giao từ db
+					var ShippingMethodID = document.getElementById("shippingMethodIDShow").textContent;
+					// Xây dựng URL dựa trên việc người dùng có click "Thêm mới" hay không
+					const url = isNewAddressClicked
+						? `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`
+						: `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${ShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
 					const token = '6092d580-fde7-11ed-a967-deea53ba3605';
 					const shop_id = '4185066';
 
@@ -915,24 +988,6 @@
 							tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
 						})
 						.catch(error => console.log(error));
-				}
-			</script>
-			<script>
-				function showExistingAddress() {
-					var existingAddresses = document.getElementsByClassName('existing-address');
-					for (var i = 0; i < existingAddresses.length; i++) {
-						existingAddresses[i].style.display = 'block';
-					}
-					document.getElementById('newAddressForm').style.display = 'none';
-				}
-
-				function showNewAddressForm() {
-					isAddingNewAddress = true;
-					var existingAddresses = document.getElementsByClassName('existing-address');
-					for (var i = 0; i < existingAddresses.length; i++) {
-						existingAddresses[i].style.display = 'none';
-					}
-					document.getElementById('newAddressForm').style.display = 'block';
 				}
 			</script>
 			<div class="col-md-4">
@@ -1323,14 +1378,12 @@
 									</div>
 								</li>
 							</ul>
-							<hr style="margin-top: 104px;" />
-							<h5>Thông Tin Thanh Toán</h5>
 							<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
 								<input type="number" id="shippingFee" name="shippingFee" value="" style="display:none;">
 								<div class="form-group">
 									<input type="hidden" id="total-price" name="TongTien" value="">
 								</div>
-								<div class="form-group">
+								<div class="form-group" style="display:none;">
 									<input type="radio" id="paid" name="HinhThucThanhToan" value="Thanh toán khi nhận hàng" checked>
 									<label for="paid">Thanh toán khi nhận hàng</label>
 									<br />
@@ -1346,21 +1399,6 @@
 					</div>
 				</div>
 			</div>
-			<script>
-				$(document).ready(function () {
-					// Lắng nghe sự kiện khi radio button thay đổi
-					$('input[name="HinhThucThanhToan"]').change(function () {
-						var shippingFormContainer = document.getElementById('shipping-address-form-container');
-						if (this.value === 'Thanh toán trực tuyến VNPay') {
-							// Hiển thị form "Địa chỉ nhận hàng"
-							shippingFormContainer.style.display = 'block';
-						} else {
-							// Ẩn form "Địa chỉ nhận hàng"
-							shippingFormContainer.style.display = 'none';
-						}
-					});
-				});
-			</script>
 		</div>
 	</div>
 </section>
