@@ -322,7 +322,7 @@
                             <th>MaxUsage</th>
                             <th>RemainingUsage</th>
                             <th>ExpirationDate</th>
-                           
+                           <th>Total</th>
                             <th>DateCreated</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -339,6 +339,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.MaxUsage)</td>
                                             <td>@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
                                             <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Total)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                             <td>
                                         @if (item.Status == 0)

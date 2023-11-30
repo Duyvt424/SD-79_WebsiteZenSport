@@ -57,7 +57,7 @@ namespace AppView.Controllers
 		public async Task<IActionResult> CreateVouchers(Voucher voucher)
 		{
             var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
+			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&status={voucher.Status}&total={voucher.Total}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllVouchers"); 
         }
@@ -73,7 +73,7 @@ namespace AppView.Controllers
 		public async Task<IActionResult> EditVouchers(Voucher voucher)
 		{
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Voucher/update-voucher?id={voucher.VoucherID}&code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&dateTime={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            string apiUrl = $"https://localhost:7036/api/Voucher/update-voucher?id={voucher.VoucherID}&total={voucher.Total}&code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&dateTime={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllVouchers");
         }

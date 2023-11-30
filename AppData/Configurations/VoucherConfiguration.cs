@@ -17,7 +17,8 @@ namespace AppData.Configurations
             builder.HasKey(c => c.VoucherID);
             builder.Property(c => c.VoucherCode).HasColumnType("nvarchar(100)");
             builder.Property(c => c.VoucherValue).HasColumnType("decimal(18, 2)");
-            builder.Property(c => c.ExpirationDate).HasColumnType("Datetime");
+			builder.Property(c => c.Total).HasColumnType("decimal(18, 2)");
+			builder.Property(c => c.ExpirationDate).HasColumnType("Datetime");
             builder.Property(c => c.MaxUsage).HasColumnType("int");
             builder.Property(c => c.RemainingUsage).HasColumnType("int");
             builder.Property(c => c.Status).HasColumnType("int");

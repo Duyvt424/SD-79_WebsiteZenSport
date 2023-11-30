@@ -1,4 +1,5 @@
-﻿using AppData.IRepositories;
+﻿using System.Web.Http.Results;
+using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
 using Microsoft.AspNetCore.Cors;
@@ -32,11 +33,17 @@ namespace AppAPI.Controllers
 		public IEnumerable<Voucher> GetVoucher(string code)
 		{
 			var voucher = repos.GetAll().Where(x => x.VoucherCode == code);
+			/*Voucher voucher1 = (Voucher)voucher;
+
+			if (voucher1.DateCreated > DateTime.Now)
+			{
+				return BadRequestResult();
+			}*/
 			return voucher;
 		}
 
 		[HttpPost("create-voucher")]
-		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated)
+		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total)
 		{
 			Voucher voucher = new Voucher();
 			voucher.VoucherID = Guid.NewGuid();
@@ -47,11 +54,12 @@ namespace AppAPI.Controllers
 			voucher.RemainingUsage = remainUse;
 			voucher.ExpirationDate = expireDate;
 			voucher.DateCreated = DateCreated;
+			voucher.Total = Total;
 			return repos.AddItem(voucher);
 		}
 
 		[HttpPut("update-voucher")]
-		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated)
+		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total)
 		{
 			Voucher voucher = repos.GetAll().First(x => x.VoucherID == id);
 			voucher.VoucherCode = code;
@@ -61,6 +69,7 @@ namespace AppAPI.Controllers
 			voucher.RemainingUsage = remainUse;
 			voucher.ExpirationDate = dateTime;
 			voucher.DateCreated = DateCreated;
+			voucher.Total = Total;
 			return repos.EditItem(voucher);
 		}
 

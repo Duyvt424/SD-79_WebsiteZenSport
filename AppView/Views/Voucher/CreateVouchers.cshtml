@@ -49,8 +49,10 @@
 										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
 										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
 									</div>
-									
-									<div class="d-flex justify-content-center" style="padding-top:5px;">
+									<div class="form-floating mb-3">
+										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
+										<label for="floatingInputUsername">Total</label>
+									</div>									<div class="d-flex justify-content-center" style="padding-top:5px;">
 										<button type="submit" value="Create"
 												style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
 												class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
