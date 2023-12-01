@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+																<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -296,13 +296,13 @@
 
 												// Khởi tạo tổng tiền của cả giỏ hàng
 												let totalPrice = 0;
-												
+
 												// Lặp qua từng input
 												quantityInputs.forEach(input => {
 													const shoesDetailsId = input.getAttribute('data-shoesdetailsid');
 													const size = input.getAttribute('data-size');
 
-													// Lắng nghe sự kiện thay đổi cho từng input
+													// Lắng nghe sự kiện input cho từng input
 													input.addEventListener('change', function () {
 														const price = parseFloat(input.getAttribute('data-price'));
 														const quantity = parseInt(input.value);
@@ -330,18 +330,25 @@
 														const selectedDistrictId = parseInt(document.getElementById('districtIdShow').textContent);
 														const selectedWardCode = parseInt(document.getElementById('wardCodeShow').textContent);
 														calculateShippingFee(selectedWardCode, selectedDistrictId);
-														// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
-														const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
-														console.log('Duy', existingAddressChecked);
-														if(existingAddressChecked) {
-															var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-															console.log('Ha', addressId);
-															var shippingCostHTML = document.getElementById('shippingCost').value;
-															var shippingCost = parseFloat(shippingCostHTML);
-															console.log("Manh", shippingCost);
-														}
-														// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
-														updatePriceShipping(addressId, shippingCost);
+
+														// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
+														setTimeout(function () {
+															// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
+															const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+															console.log('Duy', existingAddressChecked);
+															if (existingAddressChecked) {
+																var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+																console.log('Ha', addressId);
+
+																// Di chuyển phần lấy giá trị vận chuyển vào đây
+																var shippingCostHTML = document.getElementById('shippingCost').value;
+																var shippingCost = parseFloat(shippingCostHTML);
+																console.log("Manh", shippingCost);
+
+																// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
+																updatePriceShipping(addressId, shippingCost);
+															}
+														}, 500);
 													});
 												});
 											});
@@ -405,7 +412,7 @@
 										<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
 										<p style="font-weight:bold;">@item.PhoneNumber</p>
 										<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
-										<p style="display:block;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
+										<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
 										<p style="display:none;" id="districtIdShow">@item.DistrictId</p>
 										<p style="display:none;" id="wardCodeShow">@item.WardCode</p>
 										<p style="display:none;" id="shippingMethodIDShow">@item.ShippingMethodID</p>
@@ -1004,7 +1011,7 @@
 										<span class="cart-total-sub" id="totalPrice">@totalPrice.ToString("N0")đ</span>
 									</div>
 								</li>
-								
+
 								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
 									<div>
 										<p>Voucher: <span id="code-voucher" style="margin-left: 45px;"></span></p>
@@ -1045,7 +1052,7 @@
 																	 class="" />
 																	<div style="margin-left: 10px">
 																		<p>Mã @voucher.VoucherCode giảm @string.Format("{0:N0}đ", voucher.VoucherValue) trên hóa đơn  @string.Format("{0:N0}đ", voucher.Total) </p>
-																		
+
 																		<p>Ngày bắt đầu: @voucher.DateCreated</p>
 																		<p>Ngày kết thúc: @voucher.ExpirationDate</p>
 																		<p><a asp-controller="Voucher" asp-action="Details" asp-route-Id="@voucher.VoucherID">Chi tiết</a></p>
@@ -1078,9 +1085,6 @@
 												</div>
 											</div>
 										</div>
-
-									
-										<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 										<script>
 											if (typeof jQuery == 'undefined') {
 												console.error('jQuery không được tải thành công.');
@@ -1109,29 +1113,36 @@
 																			if (result[0].voucherValue != null) {
 																				console.log(result);
 
-																				// Kiểm tra từng điều kiện áp dụng voucher
-																				var total = parseFloat($("#totalPrice").text().replace("đ", "").replace(",", ""));
-																				if(@totalPrice < result[0].total){
+																				//lấy giá tiền sản phẩm + tiền ship để cho total -= mỗi lần chọn 1 voucher khác ko bị dồn
+																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+																				// Loại bỏ kí tự phân cách hàng nghìn
+																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+																				
+																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+																				var priceShip = parseFloat(regexPriceShipHTML);
+																				var totalAll = parseFloat(sanphamPrice + priceShip);
+																				console.log('All', totalAll);
+																				if (@totalPrice < result[0].total) {
 																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-																				}else{
-																					total -= parseFloat(result[0].voucherValue);
+																				} else {
+																					totalAll -= parseFloat(result[0].voucherValue);
 
 																					// Hiển thị giá trị mới sau khi áp dụng voucher
-																					$("#total-price-payment").text(total.toLocaleString('vi-VN') + "đ");
-																					console.log(total);
+																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+																					console.log(totalAll);
 
 																					// Hiển thị mã voucher đã áp dụng
 																					$("#code-voucher").text(result[0].voucherCode);
 																					alert("Áp dụng voucher thành công!");
 
+																					// lưu id của voucher đang áp dụng vào để thanh toán
+																					var idVoucher = document.getElementById('voucherId');
+																					idVoucher.value = result[0].voucherID;
 																				}
-
-																				
-
-																					// Xử lý cho các voucher khác có điều kiện 0 đ
-																					// Áp dụng giảm giá từ voucher
-																				
-
+																				// Xử lý cho các voucher khác có điều kiện 0 đ
+																				// Áp dụng giảm giá từ voucher
 																			} else {
 																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
 																			}
@@ -1151,8 +1162,7 @@
 												});
 											}
 										</script>
-
-
+									</div>
 								</li>
 
 								@*		<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -1195,7 +1205,8 @@
 								</li>
 							</ul>
 							<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
-								<input type="number" id="shippingFee" name="shippingFee" value="" style="display:none;">
+								<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
+								<input type="text" id="voucherId" name="voucherID" style="display:none;">
 								<div class="form-group">
 									<input type="hidden" id="total-price" name="TongTien" value="">
 								</div>

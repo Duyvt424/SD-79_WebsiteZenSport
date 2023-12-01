@@ -274,48 +274,52 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, int shippingFee)
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID)
         {
             //lấy id ng dùng trên session
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            //lấy id nhân viên trên session
-            var employeeIdString = HttpContext.Session.GetString("EmployeeID");
-            var EmployeeId = !string.IsNullOrEmpty(employeeIdString) ? JsonConvert.DeserializeObject<Guid>(employeeIdString) : Guid.Empty;
             //tìm hình thức tt tương ứng
             var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
             if (CustomerID == Guid.Empty)
             {
                 return RedirectToAction("Login", "Customer");
             }
-
+            var objVoucher = _dBContext.Vouchers.FirstOrDefault(c => c.VoucherID == voucherID);
+            if (objVoucher == null)
+            {
+                return NotFound();
+            }
             // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
             var cartItems = _dBContext.CartDetails
                 .Where(c => c.CumstomerID == CustomerID)
                 .Include(c => c.ShoesDetails_Size)
                 .ToList();
-            // Tính tổng giá tiền cho cả hóa đơn
-            decimal totalPrice = 0;
-            foreach (var item in cartItems)
+            // Tính tổng giá tiền cho sản phẩm trong giỏ hàng
+            decimal totalProductPrice = cartItems.Sum(item =>
             {
-                totalPrice += (item.ShoesDetails_Size.ShoesDetails.Price * item.Quantity) + shippingFee;
-            }
+                var shoesDetails = _dBContext.ShoesDetails.FirstOrDefault(c => c.ShoesDetailsId == item.ShoesDetails_Size.ShoesDetailsId);
+                return shoesDetails.Price * item.Quantity;
+            });
+
+            // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
+            decimal totalPrice = (totalProductPrice + shippingFee) - objVoucher.VoucherValue;
             // Tạo đơn hàng
             var bill = new Bill
             {
                 BillID = Guid.NewGuid(),
-                BillCode = GenerateBillCode(), // Tạo mã đơn hàng (ví dụ: HD001, HD002, ...)
+                BillCode = GenerateBillCode(),
                 CustomerID = CustomerID,
                 CreateDate = DateTime.Now,
-                Status = 1,
+                Status = 0,
                 Note = "",
                 SuccessDate = DateTime.Now,
                 ShippingCosts = shippingFee,
                 DeliveryDate = DateTime.Now,
                 CancelDate = DateTime.Now,
                 TotalPrice = totalPrice,
-                EmployeeID = EmployeeId != null ? EmployeeId : Guid.Parse("ca416ca9-40f9-4c96-1867-08dbdf6c81c5"),
-                VoucherID = Guid.Parse("9006cb32-cfeb-4aa6-93e4-eca9ce014c40"),
+                EmployeeID = Guid.Parse("ca416ca9-40f9-4c96-1867-08dbdf6c81c5"),
+                VoucherID = objVoucher.VoucherID != null ? objVoucher.VoucherID : Guid.Empty,
                 PurchaseMethodID = HTThanhToan
             };
             _dBContext.Bills.Add(bill);
@@ -340,7 +344,7 @@ namespace AppView.Controllers
             //_dBContext.CartDetails.RemoveRange(cartItems);
             _dBContext.SaveChanges();
 
-            return RedirectToAction("ViewBill");
+            return Content("Đã thanh toán và lưu dữ liệu vào db, mai làm tiếp");
         }
         [HttpPost]
         public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity, string size)
