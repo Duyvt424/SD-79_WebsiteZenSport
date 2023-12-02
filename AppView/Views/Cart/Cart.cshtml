@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-																<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+																				<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -335,15 +335,12 @@
 														setTimeout(function () {
 															// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
 															const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
-															console.log('Duy', existingAddressChecked);
 															if (existingAddressChecked) {
 																var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-																console.log('Ha', addressId);
 
 																// Di chuyển phần lấy giá trị vận chuyển vào đây
 																var shippingCostHTML = document.getElementById('shippingCost').value;
 																var shippingCost = parseFloat(shippingCostHTML);
-																console.log("Manh", shippingCost);
 
 																// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
 																updatePriceShipping(addressId, shippingCost);
@@ -413,12 +410,17 @@
 										<p style="font-weight:bold;">@item.PhoneNumber</p>
 										<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
 										<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
-										<p style="display:none;" id="districtIdShow">@item.DistrictId</p>
-										<p style="display:none;" id="wardCodeShow">@item.WardCode</p>
-										<p style="display:none;" id="shippingMethodIDShow">@item.ShippingMethodID</p>
+										<p style="display:none;" id="districtIdShow" class="district-idShow">@item.DistrictId</p>
+										<p style="display:none;" id="wardCodeShow" class="ward-codeShow">@item.WardCode</p>
+										<p style="display:none;" id="shippingMethodIDShow" class="shipping-methodId">@item.ShippingMethodID</p>
+										<div>
+											<div>
+												<label id="deliveryDateLabel2"><span id="deliveryDateSpan" class="delivery-date"></span></label>
+											</div>
+										</div>
 										<div class="btn-list">
 											<label class="cl-checkbox">
-												<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID')" style="padding-top:3%;">
+												<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up" onclick="setDefaultAddress('@item.AddressID'); showDefaultAddress('@item.AddressID'); calculateDeliveryDate();" style="padding-top:3%;">
 												<span>Đặt làm mặc định</span>
 											</label>
 											<button class="btn-address" style="float:right; margin-top: -5%; margin-right:4%;">
@@ -467,6 +469,10 @@
 
 									// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
 									updateShippingCost();
+									// Đảm bảo rằng dữ liệu đã được load hoàn tất trước khi gọi hàm
+									setTimeout(function () {
+										calculateDeliveryDate();
+									}, 200);
 								});
 
 								function updateShippingCost() {
@@ -660,10 +666,10 @@
 											<span class="radio"></span>
 										</label>
 									</div>
-									<div>
+@*									<div>
 										<img id="imageShipper" src="~/image/icons8-delivery-25.png" style="padding-left: 10px; display:none;" />
 										<label id="deliveryDateLabel1"></label>
-									</div>
+									</div>*@
 								</form>
 							</div>
 						</div>
@@ -902,22 +908,35 @@
 							// Tạo chuỗi định dạng "dd-mm-yyyy"
 							var formattedDate = day + '-' + (month < 10 ? '0' : '') + month + '-' + year;
 
-							var deliveryDateLabel = document.getElementById('deliveryDateLabel1');
-							deliveryDateLabel.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
-							deliveryDateLabel.style.paddingLeft = '10px';
-							deliveryDateLabel.style.paddingTop = '10px';
-							deliveryDateLabel.style.fontWeight = 'bold';
+							var deliveryDateSpanElement = document.querySelector('.existing-address input[type="checkbox"]:checked');
+							var deliveryDateSpan = deliveryDateSpanElement ? deliveryDateSpanElement.closest('.existing-address').querySelector('.delivery-date') : null;
+							console.log(deliveryDateSpan);
+							deliveryDateSpan.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
+							deliveryDateSpan.style.paddingTop = '10px';
+							deliveryDateSpan.style.fontWeight = 'bold';
+
+							//lưu vào db khi thanh toán
+							var deliveryDateSaveHTML = document.getElementById('deliveryDateSave');
+							deliveryDateSaveHTML.value = formattedDate;
 						}
 					});
 				}
 
 				// Hàm để lấy thời gian dự kiến nhận hàng
 				function getLeadTime() {
-					var toDistrictId = document.getElementById('ListQuanHuyen').value;
-					console.log(toDistrictId);
-					var toWardCode = document.getElementById('ListPhuongXa').value;
-					console.log(toWardCode);
-					return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${selectedShippingMethodID}`, {
+					var checkedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+					var toDistrictIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.district-idShow') : null;    
+				    var toDistrictId = parseFloat(toDistrictIdElement.textContent);
+				    console.log('Id huyen', toDistrictId);
+
+					var toWardCodeElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.ward-codeShow') : null;
+					var toWardCode = parseFloat(toWardCodeElement.textContent);
+				    console.log('Id xa', toWardCode);
+;
+					var toMethodShipIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.shipping-methodId') : null;
+					var methodId = parseFloat(toMethodShipIdElement.textContent);
+				    console.log('Id ship', methodId);
+					return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${methodId}`, {
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',
@@ -1207,6 +1226,7 @@
 							<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
 								<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
 								<input type="text" id="voucherId" name="voucherID" style="display:none;">
+								<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
 								<div class="form-group">
 									<input type="hidden" id="total-price" name="TongTien" value="">
 								</div>

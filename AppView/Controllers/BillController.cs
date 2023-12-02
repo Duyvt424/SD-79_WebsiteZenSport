@@ -86,14 +86,16 @@ namespace AppView.Controllers
                 BillID = bills.BillID,
                 BillCode = bills.BillCode,
                 CreateDate = bills.CreateDate,
+                ConfirmationDate = bills.ConfirmationDate,
                 SuccessDate = bills.SuccessDate,
                 DeliveryDate = bills.DeliveryDate,
                 CancelDate = bills.CancelDate,
+                UpdateDate = bills.UpdateDate,
                 TotalPrice = bills.TotalPrice,
                 ShippingCosts = bills.ShippingCosts,
+                TotalPriceAfterDiscount = bills.TotalPriceAfterDiscount,
                 Note = bills.Note,
                 Status = bills.Status,
-
                 CustomerName = cus.FirstOrDefault(s => s.CumstomerID == bills.CustomerID)?.FullName,
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
                 EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
@@ -193,14 +195,16 @@ namespace AppView.Controllers
                 BillID = bills.BillID,
                 BillCode = bills.BillCode,
                 CreateDate = bills.CreateDate,
+                ConfirmationDate = bills.ConfirmationDate,
                 SuccessDate = bills.SuccessDate,
                 DeliveryDate = bills.DeliveryDate,
                 CancelDate = bills.CancelDate,
+                UpdateDate = bills.UpdateDate,
                 TotalPrice = bills.TotalPrice,
                 ShippingCosts = bills.ShippingCosts,
+                TotalPriceAfterDiscount = bills.TotalPriceAfterDiscount,
                 Note = bills.Note,
                 Status = bills.Status,
-
                 CustomerName = cus.FirstOrDefault(s => s.CumstomerID == bills.CustomerID)?.FullName,
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
                 EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
@@ -211,7 +215,8 @@ namespace AppView.Controllers
 
             return View(billViewModels);
         }
-        public async Task<IActionResult> DetailsBill(Guid id)
+
+        public async Task<IActionResult> DetailsBill(Guid billId)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
@@ -226,7 +231,7 @@ namespace AppView.Controllers
                         .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null)
                         .Select(c => new OrderDetailsViewModel
                         {
-                            BillCode = _dbContext.Bills.First(x => x.BillID == c.BillID).BillCode,
+                            BillCode = _dbContext.Bills.First(c => c.BillID == billId).BillCode,
                             Products = new List<ProductViewModel>
                             {
                                 new ProductViewModel
@@ -238,28 +243,34 @@ namespace AppView.Controllers
                                     Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price
                                 }
                             },
-                            FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName, 
-                            PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber, 
-                            Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email, 
-                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName, 
+                            FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
+                            PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
+                            Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
+                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
                             Street = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Street,
                             Ward = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Commune,
                             District = _dbContext.Addresses.First(x => x.CumstomerID == customerId).District,
                             Province = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Province,
                             OrderStatuses = new List<OrderStatusViewModel>
                             {
-                        new OrderStatusViewModel
-                        {
-                            Status = _dbContext.Bills.First(x => x.BillID == c.BillID).Status, 
-                            Date = DateTime.Now
-                        }
+                                new OrderStatusViewModel
+                                {
+                                    Status = _dbContext.Bills.First(c => c.BillID == billId).Status,
+                                    CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                    ConfirmationDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                }
                             }
                         })
                         .ToListAsync();
+
                     return View(detailsBill);
                 }
             }
-            return View(new OrderDetailsViewModel());
+
+            return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
         }
     }
 }

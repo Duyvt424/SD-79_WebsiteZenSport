@@ -274,7 +274,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID)
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID, string deliveryDateSave)
         {
             //lấy id ng dùng trên session
             var userIdString = HttpContext.Session.GetString("UserId");
@@ -303,7 +303,8 @@ namespace AppView.Controllers
             });
 
             // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
-            decimal totalPrice = (totalProductPrice + shippingFee) - objVoucher.VoucherValue;
+            decimal totalPrice = (totalProductPrice + shippingFee);
+            decimal totalPriceAfterDiscount = (totalProductPrice + shippingFee) - objVoucher.VoucherValue;
             // Tạo đơn hàng
             var bill = new Bill
             {
@@ -311,15 +312,18 @@ namespace AppView.Controllers
                 BillCode = GenerateBillCode(),
                 CustomerID = CustomerID,
                 CreateDate = DateTime.Now,
+                ConfirmationDate = DateTime.Now,
                 Status = 0,
                 Note = "",
-                SuccessDate = DateTime.Now,
+                SuccessDate = Convert.ToDateTime(deliveryDateSave),
                 ShippingCosts = shippingFee,
                 DeliveryDate = DateTime.Now,
                 CancelDate = DateTime.Now,
+                UpdateDate = DateTime.Now,
                 TotalPrice = totalPrice,
+                TotalPriceAfterDiscount = totalPriceAfterDiscount,
                 EmployeeID = Guid.Parse("ca416ca9-40f9-4c96-1867-08dbdf6c81c5"),
-                VoucherID = objVoucher.VoucherID != null ? objVoucher.VoucherID : Guid.Empty,
+                VoucherID = objVoucher.VoucherID != Guid.Empty ? objVoucher.VoucherID : Guid.Empty,
                 PurchaseMethodID = HTThanhToan
             };
             _dBContext.Bills.Add(bill);
@@ -340,11 +344,11 @@ namespace AppView.Controllers
             // Lưu thay đổi vào cơ sở dữ liệu
             _dBContext.SaveChanges();
 
-            // Xóa giỏ hàng của người dùng
-            //_dBContext.CartDetails.RemoveRange(cartItems);
+            //Xóa giỏ hàng của người dùng
+            _dBContext.CartDetails.RemoveRange(cartItems);
             _dBContext.SaveChanges();
 
-            return Content("Đã thanh toán và lưu dữ liệu vào db, mai làm tiếp");
+            return RedirectToAction("DetailsBill", "Bill", new {billID = bill.BillID});
         }
         [HttpPost]
         public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity, string size)
