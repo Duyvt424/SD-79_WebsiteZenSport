@@ -153,6 +153,42 @@ namespace AppView.Controllers
 			var vc = repos.GetAll().FirstOrDefault( c=> c.VoucherID == Id);
 			return View(vc);
 		}
-		
-	}
+
+
+        public ActionResult LockVoucher(Guid id)
+        {
+            // Lấy voucher từ cơ sở dữ liệu dựa trên id
+            var voucher = context.Vouchers.Find(id);
+
+            if (voucher != null)
+            {
+                // Thực hiện logic để khóa voucher
+                voucher.Status = 1; // Đặt Status thành 1 để chỉ định đã khóa
+
+                // Cập nhật cơ sở dữ liệu
+                context.SaveChanges();
+            }
+
+            // Chuyển hướng lại danh sách voucher
+            return RedirectToAction("GetAllVouchers");
+        }
+
+        public ActionResult UnlockVoucher(Guid id)
+        {
+            // Lấy voucher từ cơ sở dữ liệu dựa trên id
+            var voucher = context.Vouchers.Find(id);
+
+            if (voucher != null)
+            {
+                // Thực hiện logic để mở khóa voucher
+                voucher.Status = 0; // Đặt Status thành 0 để chỉ định đã mở khóa
+
+                // Cập nhật cơ sở dữ liệu
+                context.SaveChanges();
+            }
+
+            // Chuyển hướng lại danh sách voucher
+            return RedirectToAction("GetAllVouchers");
+        }
+    }
 }

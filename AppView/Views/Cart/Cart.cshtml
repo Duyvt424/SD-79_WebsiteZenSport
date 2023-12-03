@@ -1108,12 +1108,81 @@
 											if (typeof jQuery == 'undefined') {
 												console.error('jQuery không được tải thành công.');
 											} else {
-												$(document).ready(function () {
-													// Mã hiện tại của bạn ở đây
+												//$(document).ready(function () {
+												//	// Mã hiện tại của bạn ở đây
 
-													// Yêu cầu Ajax với dataType và xử lý lỗi được thêm vào
+												//	// Yêu cầu Ajax với dataType và xử lý lỗi được thêm vào
+												//	$("#apply-voucher-btn").click(function () {
+												//		var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+												//		if (selectedVoucherCode) {
+												//			$.ajax({
+												//				type: "GET",
+												//				url: "https://localhost:7036/api/Voucher/find-voucher",
+												//				data: { code: selectedVoucherCode },
+												//				dataType: 'json',
+												//				success: function (result) {
+												//					if (result && result.length > 0 && result[0]) {
+												//						var startDate = new Date(result[0].dateCreated);
+												//						var currentDate = new Date();
+
+												//						if (startDate > currentDate) {
+												//							alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+												//						} else {
+												//							// Tiếp tục với xử lý voucher khi nó có hiệu lực
+												//							if (result[0].voucherValue != null) {
+												//								console.log(result);
+
+												//								//lấy giá tiền sản phẩm + tiền ship để cho total -= mỗi lần chọn 1 voucher khác ko bị dồn
+												//								var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+												//								// Loại bỏ kí tự phân cách hàng nghìn
+												//								var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+												//								var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+																				
+												//								var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+												//								var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+												//								var priceShip = parseFloat(regexPriceShipHTML);
+												//								var totalAll = parseFloat(sanphamPrice + priceShip);
+												//								console.log('All', totalAll);
+												//								if (@totalPrice < result[0].total) {
+												//									alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+												//								} else {
+												//									totalAll -= parseFloat(result[0].voucherValue);
+
+												//									// Hiển thị giá trị mới sau khi áp dụng voucher
+												//									$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+												//									console.log(totalAll);
+
+												//									// Hiển thị mã voucher đã áp dụng
+												//									$("#code-voucher").text(result[0].voucherCode);
+												//									alert("Áp dụng voucher thành công!");
+
+												//									// lưu id của voucher đang áp dụng vào để thanh toán
+												//									var idVoucher = document.getElementById('voucherId');
+												//									idVoucher.value = result[0].voucherID;
+												//								}
+												//								// Xử lý cho các voucher khác có điều kiện 0 đ
+												//								// Áp dụng giảm giá từ voucher
+												//							} else {
+												//								console.log("Lỗi: result[0].voucherValue không có giá trị.");
+												//							}
+												//						}
+												//					} else {
+												//						console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+												//					}
+												//				},
+												//				error: function (error) {
+												//					console.log("Lỗi Ajax:", error);
+												//				}
+												//			});
+												//		} else {
+												//			alert("Vui lòng chọn một voucher để áp dụng.");
+												//		}
+												//	});
+												//});
+												$(document).ready(function () {
 													$("#apply-voucher-btn").click(function () {
 														var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+
 														if (selectedVoucherCode) {
 															$.ajax({
 																type: "GET",
@@ -1122,49 +1191,50 @@
 																dataType: 'json',
 																success: function (result) {
 																	if (result && result.length > 0 && result[0]) {
-																		var startDate = new Date(result[0].dateCreated);
-																		var currentDate = new Date();
+																		// Kiểm tra trạng thái của voucher
+																		if (result[0].status == 0) {
+																			var startDate = new Date(result[0].dateCreated);
+																			var currentDate = new Date();
 
-																		if (startDate > currentDate) {
-																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-																		} else {
-																			// Tiếp tục với xử lý voucher khi nó có hiệu lực
-																			if (result[0].voucherValue != null) {
-																				console.log(result);
-
-																				//lấy giá tiền sản phẩm + tiền ship để cho total -= mỗi lần chọn 1 voucher khác ko bị dồn
-																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-																				// Loại bỏ kí tự phân cách hàng nghìn
-																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
-																				
-																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-																				var priceShip = parseFloat(regexPriceShipHTML);
-																				var totalAll = parseFloat(sanphamPrice + priceShip);
-																				console.log('All', totalAll);
-																				if (@totalPrice < result[0].total) {
-																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-																				} else {
-																					totalAll -= parseFloat(result[0].voucherValue);
-
-																					// Hiển thị giá trị mới sau khi áp dụng voucher
-																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
-																					console.log(totalAll);
-
-																					// Hiển thị mã voucher đã áp dụng
-																					$("#code-voucher").text(result[0].voucherCode);
-																					alert("Áp dụng voucher thành công!");
-
-																					// lưu id của voucher đang áp dụng vào để thanh toán
-																					var idVoucher = document.getElementById('voucherId');
-																					idVoucher.value = result[0].voucherID;
-																				}
-																				// Xử lý cho các voucher khác có điều kiện 0 đ
-																				// Áp dụng giảm giá từ voucher
+																			// Kiểm tra ngày bắt đầu của voucher
+																			if (startDate > currentDate) {
+																				alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
 																			} else {
-																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
+																				// Tiếp tục với xử lý voucher khi nó có hiệu lực
+																				if (result[0].voucherValue != null) {
+																					var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+																					var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+																					var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+
+																					var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+																					var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+																					var priceShip = parseFloat(regexPriceShipHTML);
+
+																					var totalAll = parseFloat(sanphamPrice + priceShip);
+
+																					// Kiểm tra điều kiện tổng giá trị đơn hàng
+																					if (totalAll < result[0].total) {
+																						alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+																					} else {
+																						totalAll -= parseFloat(result[0].voucherValue);
+
+																						// Hiển thị giá trị mới sau khi áp dụng voucher
+																						$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+
+																						// Hiển thị mã voucher đã áp dụng
+																						$("#code-voucher").text(result[0].voucherCode);
+																						alert("Áp dụng voucher thành công!");
+
+																						// lưu id của voucher đang áp dụng vào để thanh toán
+																						var idVoucher = document.getElementById('voucherId');
+																						idVoucher.value = result[0].voucherID;
+																					}
+																				} else {
+																					console.log("Lỗi: result[0].voucherValue không có giá trị.");
+																				}
 																			}
+																		} else {
+																			alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
 																		}
 																	} else {
 																		console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
@@ -1179,6 +1249,7 @@
 														}
 													});
 												});
+
 											}
 										</script>
 									</div>
