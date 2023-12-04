@@ -222,7 +222,29 @@
 							<li class="nav-item">
 								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
 							</li>
+							<li class="nav-item">
+								<a class="nav-link active"><input id="thanh-toan" name="gender" type="radio" />Thanh toán qua VNPAY</a>
+							</li>
 						</ul>
+						<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+						<script>
+							$("#thanh-toan").on("click", function (event) {
+								event.preventDefault();
+
+								$.ajax({
+									url: "https://localhost:7036/api/payment",
+									method: "GET",
+									data: { totalPayment: 100000 },
+									success: function (data) {
+										window.location.href = data;
+									},
+									error: function (error) {
+										console.error("Error calling API:", error);
+									}
+								});
+							});
+
+						</script>
 						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
 							<div class="src-box">
 								<input type="text" placeholder="@ViewBag.Name Search " Search"" id="search-input-customer" name="name" value="@ViewBag.Name">
