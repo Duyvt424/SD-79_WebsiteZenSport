@@ -232,17 +232,6 @@ namespace AppView.Controllers
                         .Select(c => new OrderDetailsViewModel
                         {
                             BillCode = _dbContext.Bills.First(c => c.BillID == billId).BillCode,
-                            Products = new List<ProductViewModel>
-                            {
-                                new ProductViewModel
-                                {
-                                    ImageUrl = _dbContext.Images.First(x => x.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
-                                    Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
-                                    Description = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
-                                    Size = _dbContext.Sizes.First(x => x.SizeID == c.ShoesDetails_Size.SizeID).Name,
-                                    Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price
-                                }
-                            },
                             FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
                             PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
                             Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
@@ -251,25 +240,35 @@ namespace AppView.Controllers
                             Ward = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Commune,
                             District = _dbContext.Addresses.First(x => x.CumstomerID == customerId).District,
                             Province = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Province,
+                            Products = new List<ProductViewModel>
+                            {
+                                new ProductViewModel
+                                {
+                                    ImageUrl = _dbContext.Images.First(x => x.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
+                                    Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                                    Description = _dbContext.Styles.First(x => x.StyleID == c.ShoesDetails_Size.ShoesDetails.StyleID).Name,
+                                    Size = _dbContext.Sizes.First(x => x.SizeID == c.ShoesDetails_Size.SizeID).Name,
+                                    Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price
+                                }
+                            },
                             OrderStatuses = new List<OrderStatusViewModel>
                             {
                                 new OrderStatusViewModel
                                 {
                                     Status = _dbContext.Bills.First(c => c.BillID == billId).Status,
                                     CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
-                                    ConfirmationDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
-                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
-                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
-                                    //CreateDate = _dbContext.Bills.First(c => c.BillID == billId).CreateDate,
+                                    ConfirmationDate = _dbContext.Bills.First(c => c.BillID == billId).ConfirmationDate,
+                                    DeliveryDate = _dbContext.Bills.First(c => c.BillID == billId).DeliveryDate,
+                                    SuccessDate = _dbContext.Bills.First(c => c.BillID == billId).SuccessDate,
+                                    CancelDate = _dbContext.Bills.First(c => c.BillID == billId).CancelDate,
+                                    UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate
                                 }
                             }
                         })
                         .ToListAsync();
-
                     return View(detailsBill);
                 }
             }
-
             return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
         }
     }

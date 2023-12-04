@@ -2,6 +2,32 @@
 @{
 	ViewData["Title"] = "Chi tiết đơn hàng";
 }
+@{
+	var status = Model.First().OrderStatuses.First().Status;
+	string statusText;
+
+	switch (status)
+	{
+		case 0:
+			statusText = "Chờ xác nhận";
+			break;
+		case 1:
+			statusText = "Đã xác nhận thông tin thanh toán";
+			break;
+		case 2:
+			statusText = "Đã bàn giao cho đơn vị vận chuyển";
+			break;
+		case 4:
+			statusText = "Đã nhận được hàng";
+			break;
+		case 5:
+			statusText = "Đã hủy đơn";
+			break;
+		default:
+			statusText = "Không xác định";
+			break;
+	}
+}
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,44 +39,198 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
 <div class="container-fluid padding-bottom-3x mb-1" style="margin-top: 3%;">
 	<div class="card mb-3">
-		<div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">MÃ	HÓA ĐƠN:  </span><span class="text-medium">???</span></div>
+		<div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">MÃ	HÓA ĐƠN:  </span><span class="text-medium"> @Model.First().BillCode</span></div>
 		<div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
 			<div class="w-100 text-center py-1 px-2" style="display:none;"><span class="text-medium">Shipped Via:</span> UPS Ground</div>
-			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><span class="text-medium">Trạng thái:</span> Chờ xác nhận</div>
-			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><span class="text-medium">Ngày nhận hàng dự kiến:</span> 30/11/2023</div>
+			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><span class="text-medium">Trạng thái:</span> @statusText</div>
+			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><img src="~/image/icons8-date-25.png" alt="Date" /><span class="text-medium" style="padding-left:1%;">Ngày nhận hàng dự kiến:</span> @Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")</div>
 		</div>
 		<div class="card-body">
 			<div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
-				<div class="step completed">
-					<div class="step-icon-wrap">
-						<div class="step-icon"><i class="pe-7s-cart"></i></div>
+				@if (status == 0) // Trạng thái chờ xác nhận
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
-					<h4 class="step-title">Đơn hàng đã đặt</h4>
-				</div>
-				<div class="step completed">
-					<div class="step-icon-wrap">
-						<div class="step-icon"><i class="pe-7s-config"></i></div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-config"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
 					</div>
-					<h4 class="step-title">Đã xác nhận thông tin thanh toán</h4>
-				</div>
-				<div class="step completed">
-					<div class="step-icon-wrap">
-						<div class="step-icon"><i class="pe-7s-medal"></i></div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-medal"></i></div>
+						</div>
+						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
 					</div>
-					<h4 class="step-title">Đã giao cho đơn vị vận chuyển</h4>
-				</div>
-				<div class="step completed">
-					<div class="step-icon-wrap">
-						<div class="step-icon"><i class="pe-7s-car"></i></div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
 					</div>
-					<h4 class="step-title">Đã nhận được hàng</h4>
-				</div>
-				<div class="step">
-					<div class="step-icon-wrap">
-						<div class="step-icon"><i class="pe-7s-home"></i></div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-home"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
 					</div>
-					<h4 class="step-title">Hoàn trả</h4>
-				</div>
+				}
+
+				@if(status == 1)
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed ConfirmationDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-config"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-medal"></i></div>
+						</div>
+						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-home"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
+					</div>
+				}
+
+				@if (status == 2)
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed ConfirmationDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-config"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed DeliveryDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+						</div>
+						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-home"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
+					</div>
+				}
+
+				@if (status == 3)
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed ConfirmationDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-config"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed DeliveryDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+						</div>
+						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed SuccessDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-car"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-home"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
+					</div>
+				}
+
+				@if (status == 4)
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed ConfirmationDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-config"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed DeliveryDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+						</div>
+						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed SuccessDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-car"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed CancelDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-home"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CancelDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+				}
 			</div>
 		</div>
 	</div>
@@ -65,38 +245,41 @@
 		</div>
 		<div class="card-body">
 			<!-- Single item -->
-			<div class="row">
-				<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
-					<!-- Image -->
-					<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-						<img src="~/image/anh62.png" class="w-100" alt="Blue Jeans Jacket" />
-						<a href="#!">
-							<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
-						</a>
+			@foreach (var item in Model.First().Products)
+			{
+				<div class="row">
+					<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
+						<!-- Image -->
+						<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+							<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-80" alt="Blue Jeans Jacket" />
+							<a href="#!">
+								<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+							</a>
+						</div>
+						<!-- Image -->
 					</div>
-					<!-- Image -->
-				</div>
-				<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-					<!-- Data -->
-					<p><strong>New Shoes</strong></p>
-					<p>Good Shoes</p>
-					<p>Size 34</p>
-					<!-- Button to remove cart item -->
-					<button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+					<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+						<!-- Data -->
+						<p><strong>@item.Name</strong></p>
+						<p>@item.Description</p>
+						<p>Size: @item.Size</p>
+						<!-- Button to remove cart item -->
+						<button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
 							title="Xóa sản phẩm">
-						<i class="fas fa-trash"></i>
-					</button>
+							<i class="fas fa-trash"></i>
+						</button>
 
+					</div>
+					<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+						<!-- Total Price -->
+						<p class="text-start text-md-center">
+							<span class="total-price ms-auto total-price-span">@item.Price.ToString("N0")đ</span>
+						</p>
+						<!-- Total Price -->
+					</div>
+					<hr class="my-4" />
 				</div>
-				<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-					<!-- Total Price -->
-					<p class="text-start text-md-center">
-						<span class="total-price ms-auto total-price-span">3.500.000đ</span>
-					</p>
-					<!-- Total Price -->
-				</div>
-				<hr class="my-4" />
-			</div>
+			}
 			<!-- Single item -->
 		</div>
 	</div>
@@ -106,11 +289,18 @@
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
 				</div>
-				<div class="card-body existing-address" id="existingAddress">
-					<p style="font-size:17px;">Họ và tên: </p>
-					<p>Số điện thoại: </p>
-					<p>Email: </p>
-					<p>Địa chỉ nhận hàng: </p>
+				<div class="card-body existing-address" id="existingAddress" style="display:flex;">
+					<div style="float:left;">
+						<p style="font-size:17px;">Mã đơn hàng: <span style="font-weight:bold;"> @Model.First().BillCode</span></p>
+						<p style="font-size:17px;">Trạng thái: <span style="font-weight:bold;"> @statusText</span> </p>
+						<p style="font-size:17px;">Hình thức thanh toán: <span style="font-weight:bold;"> @Model.First().PurchaseMethod</span></p>
+					</div>
+					<div style="margin-left:5%;">
+						<p style="font-size:17px;">Họ và tên: <span style="font-weight:bold;"> @Model.First().FullName</span></p>
+						<p>Số điện thoại: <span style="font-weight:bold;"> @Model.First().PhoneNumber</span></p>
+						<p>Email: <span style="font-weight:bold;"> @Model.First().Email</span></p>
+						<p>Địa chỉ nhận hàng: <span style="font-weight:bold;"> @Model.First().Street, @Model.First().Ward, @Model.First().District, @Model.First().Province</span></p>
+					</div>
 				</div>
 			</div>
 		</div>

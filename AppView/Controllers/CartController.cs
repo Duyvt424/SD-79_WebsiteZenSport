@@ -303,7 +303,7 @@ namespace AppView.Controllers
             });
 
             // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
-            decimal totalPrice = (totalProductPrice + shippingFee);
+            decimal totalPrice = totalProductPrice + shippingFee;
             decimal totalPriceAfterDiscount = (totalProductPrice + shippingFee) - objVoucher.VoucherValue;
             // Tạo đơn hàng
             var bill = new Bill
