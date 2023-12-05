@@ -262,15 +262,9 @@ namespace AppView.Controllers
         }
         private string GenerateBillCode()
         {
-            var lastBill = _dBContext.Bills.OrderByDescending(c => c.BillCode).FirstOrDefault();
-            if (lastBill != null)
-            {
-                var lastNumber = int.Parse(lastBill.BillCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
-                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
-                var newBillCode = "HĐ" + nextNumber.ToString("D3"); // Tạo ColorCode mới
-                return newBillCode;
-            }
-            return "HĐ001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+            DateTime currentDateTime = DateTime.Now;
+            var newBillCode = currentDateTime.ToString("yyyyMMddHHmmssfff");
+            return newBillCode;
         }
 
         [HttpPost]
@@ -286,10 +280,7 @@ namespace AppView.Controllers
                 return RedirectToAction("Login", "Customer");
             }
             var objVoucher = _dBContext.Vouchers.FirstOrDefault(c => c.VoucherID == voucherID);
-            if (objVoucher == null)
-            {
-                return NotFound();
-            }
+            var voucherId = objVoucher?.VoucherID;
             // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
             var cartItems = _dBContext.CartDetails
                 .Where(c => c.CumstomerID == CustomerID)
@@ -304,7 +295,7 @@ namespace AppView.Controllers
 
             // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
             decimal totalPrice = totalProductPrice + shippingFee;
-            decimal totalPriceAfterDiscount = (totalProductPrice + shippingFee) - objVoucher.VoucherValue;
+            decimal totalPriceAfterDiscount = voucherID != Guid.Empty ? (totalProductPrice + shippingFee) - objVoucher.VoucherValue : (totalProductPrice + shippingFee) - 0;
             // Tạo đơn hàng
             var bill = new Bill
             {
@@ -322,8 +313,8 @@ namespace AppView.Controllers
                 UpdateDate = DateTime.Now,
                 TotalPrice = totalPrice,
                 TotalPriceAfterDiscount = totalPriceAfterDiscount,
-                EmployeeID = Guid.Parse("ca416ca9-40f9-4c96-1867-08dbdf6c81c5"),
-                VoucherID = objVoucher.VoucherID != Guid.Empty ? objVoucher.VoucherID : Guid.Empty,
+                EmployeeID = null,
+                VoucherID = voucherId,
                 PurchaseMethodID = HTThanhToan
             };
             _dBContext.Bills.Add(bill);

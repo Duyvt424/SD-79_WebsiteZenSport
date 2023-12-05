@@ -27,9 +27,9 @@ namespace AppData.Configurations
             builder.Property(c => c.TotalPriceAfterDiscount).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.Note).HasColumnType("nvarchar(500)");
             builder.Property(c => c.Status).HasColumnType("int");
-            builder.HasOne(c => c.Employee).WithMany(c => c.Bills).HasForeignKey(c => c.EmployeeID);
+            builder.HasOne(c => c.Employee).WithMany(c => c.Bills).HasForeignKey(c => c.EmployeeID).IsRequired(false);
             builder.HasOne(c => c.Customer).WithMany(c => c.Bills).HasForeignKey(c => c.CustomerID);
-            builder.HasOne(c => c.Voucher).WithMany(c => c.Bills).HasForeignKey(c => c.VoucherID);
+            builder.HasOne(c => c.Voucher).WithMany(c => c.Bills).HasForeignKey(c => c.VoucherID).IsRequired(false);
             builder.HasOne(c => c.PurchaseMethod).WithMany(c => c.Bills).HasForeignKey(c => c.PurchaseMethodID);
         }
     }

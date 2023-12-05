@@ -216,11 +216,11 @@ namespace AppView.Controllers
             return View(billViewModels);
         }
 
-        public async Task<IActionResult> DetailsBill(Guid billId)
+        public async Task<IActionResult> DetailsBill(Guid billId, Guid? customerID)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerID != null ? customerID : customerIdSession;
             if (customerId != Guid.Empty)
             {
                 var loggedInUser = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CumstomerID == customerId);
@@ -248,7 +248,8 @@ namespace AppView.Controllers
                                     Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                                     Description = _dbContext.Styles.First(x => x.StyleID == c.ShoesDetails_Size.ShoesDetails.StyleID).Name,
                                     Size = _dbContext.Sizes.First(x => x.SizeID == c.ShoesDetails_Size.SizeID).Name,
-                                    Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price
+                                    Quantity = c.Quantity,
+                                    Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price * c.Quantity
                                 }
                             },
                             OrderStatuses = new List<OrderStatusViewModel>
