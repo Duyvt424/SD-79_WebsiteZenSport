@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -406,6 +406,7 @@
 								@foreach (var item in Model.AddressList)
 								{
 									<div class="card-body existing-address" id="existingAddress_@item.AddressID" style="display:none;" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
+										<p style="display:none;" id="addressIDShow" class="addressId-show">@item.AddressID</p>
 										<p style="font-weight:bold; font-size:17px;">@item.FullNameCus</p>
 										<p style="font-weight:bold;">@item.PhoneNumber</p>
 										<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
@@ -472,6 +473,13 @@
 									// Đảm bảo rằng dữ liệu đã được load hoàn tất trước khi gọi hàm
 									setTimeout(function () {
 										calculateDeliveryDate();
+
+										// Tìm checkbox được chọn
+										var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+										var addressIDShowHide = selectedCheckbox ? selectedCheckbox.closest('.existing-address').querySelector('.addressId-show') : null;
+										//lưu id của address để hiển thị về sau
+										var objAddress = document.getElementById('addressIDSave');
+										objAddress.value = addressIDShowHide.textContent;
 									}, 200);
 								});
 
@@ -481,7 +489,7 @@
 									var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
 									// Tìm checkbox được chọn
 									var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
-
+									var addressIDShowHide = selectedCheckbox ? selectedCheckbox.closest('.existing-address').querySelector('.addressId-show') : null;
 									if (selectedCheckbox) {
 										// Lấy giá trị vận chuyển từ thuộc tính data
 										var shippingCost = parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost);
@@ -493,6 +501,10 @@
 										var totalOk = totalPrice + shippingCost;
 										var tongTienElement = document.querySelector('[name="TongTien"]');
 										tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+
+										//lưu id của address để hiển thị về sau
+										var objAddress = document.getElementById('addressIDSave');
+										objAddress.value = addressIDShowHide.textContent;
 									}
 								}
 							</script>
@@ -1024,13 +1036,6 @@
 					<div class="card-body" style="border: 1px solid white;">
 						<div id="total-price">
 							<ul class="list-group list-group-flush">
-								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-									Tổng giá sản phẩm
-									<div id="cart-total-container">
-										<span class="cart-total-sub" id="totalPrice">@totalPrice.ToString("N0")đ</span>
-									</div>
-								</li>
-
 								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
 									<div>
 										<p>Voucher: <span id="code-voucher" style="margin-left: 45px;"></span></p>
@@ -1151,6 +1156,10 @@
 																					$("#code-voucher").text(result[0].voucherCode);
 																					alert("Áp dụng voucher thành công!");
 
+																					var giamgiaElement = document.getElementById('giamgia');
+																					var giamgia = parseFloat(result[0].voucherValue);
+																					giamgiaElement.innerHTML = giamgia.toLocaleString('vi-VN') + "đ";
+
 																					// lưu id của voucher đang áp dụng vào để thanh toán
 																					var idVoucher = document.getElementById('voucherId');
 																					idVoucher.value = result[0].voucherID;
@@ -1178,9 +1187,19 @@
 										</script>
 									</div>
 								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center px-0">
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+									Tổng giá sản phẩm
+									<div id="cart-total-container">
+										<span class="cart-total-sub" id="totalPrice">@totalPrice.ToString("N0")đ</span>
+									</div>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 									Phí vận chuyển
 									<span id="phivanchuyen">@Html.Raw(shippingFee)</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+									Giảm giá
+									<span id="giamgia">0đ</span>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
 									<div>
@@ -1195,6 +1214,7 @@
 								<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
 								<input type="text" id="voucherId" name="voucherID" style="display:none;">
 								<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
+								<input type="text" id="addressIDSave" name="addressIDSave1" style="display:none;">
 								<div class="form-group">
 									<input type="hidden" id="total-price" name="TongTien" value="">
 								</div>

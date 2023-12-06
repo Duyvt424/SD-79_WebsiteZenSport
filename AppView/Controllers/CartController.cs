@@ -268,7 +268,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID, string deliveryDateSave)
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID, string deliveryDateSave, Guid addressIDSave1)
         {
             //lấy id ng dùng trên session
             var userIdString = HttpContext.Session.GetString("UserId");
@@ -315,7 +315,8 @@ namespace AppView.Controllers
                 TotalPriceAfterDiscount = totalPriceAfterDiscount,
                 EmployeeID = null,
                 VoucherID = voucherId,
-                PurchaseMethodID = HTThanhToan
+                PurchaseMethodID = HTThanhToan,
+                AddressID = addressIDSave1
             };
             _dBContext.Bills.Add(bill);
 

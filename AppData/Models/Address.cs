@@ -22,5 +22,6 @@ namespace AppData.Models
         public DateTime DateCreated { get; set; }
         public Guid CumstomerID { get; set; }
         public virtual Customer Customer { get; set; }
+        public virtual List<Bill> Bills { get; set; }
     }
 }

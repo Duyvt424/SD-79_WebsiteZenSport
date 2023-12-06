@@ -227,19 +227,23 @@ namespace AppView.Controllers
 
                 if (loggedInUser != null)
                 {
+                    var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billId);
                     var detailsBill = await _dbContext.BillDetails
-                        .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null)
+                        .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null && c.BillID == billId)
                         .Select(c => new OrderDetailsViewModel
                         {
-                            BillCode = _dbContext.Bills.First(c => c.BillID == billId).BillCode,
+                            BillCode = objBill.BillCode,
                             FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
                             PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
                             Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
-                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
-                            Street = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Street,
-                            Ward = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Commune,
-                            District = _dbContext.Addresses.First(x => x.CumstomerID == customerId).District,
-                            Province = _dbContext.Addresses.First(x => x.CumstomerID == customerId).Province,
+                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == objBill.PurchaseMethodID).MethodName,
+                            Street = _dbContext.Addresses.First(c => c.AddressID == objBill.AddressID).Street,
+                            Ward = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Commune,
+                            District = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).District,
+                            Province = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Province,
+                            TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
+                            PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
+                            ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             Products = new List<ProductViewModel>
                             {
                                 new ProductViewModel

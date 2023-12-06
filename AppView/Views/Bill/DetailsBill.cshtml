@@ -28,6 +28,12 @@
 			break;
 	}
 }
+@{
+	decimal totalPrice = Model.First().TotalPrice - Model.First().ShippingCost;
+	decimal shippingCost = Model.First().ShippingCost;
+	decimal priceVoucher = Model.First().PriceVoucher ?? 0;
+	decimal totalAll = totalPrice + shippingCost - priceVoucher;
+}
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,7 +87,7 @@
 						<div class="step-icon-wrap">
 							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
 						</div>
-						<h3 class="step-title"  style="display:none;">Đã nhận được hàng</h3>
+						<h3 class="step-title" style="display:none;">Đã nhận được hàng</h3>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
@@ -91,7 +97,7 @@
 					</div>
 				}
 
-				@if(status == 1)
+				@if (status == 1)
 				{
 					<div class="step completed CreateDate">
 						<div class="step-icon-wrap">
@@ -154,7 +160,7 @@
 						<div class="step-icon-wrap">
 							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
 						</div>
-						<h3 class="step-title"  style="display:none;">Đã nhận được hàng</h3>
+						<h3 class="step-title" style="display:none;">Đã nhận được hàng</h3>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
@@ -287,9 +293,36 @@
 						</p>
 						<!-- Total Price -->
 					</div>
-					<hr class="my-4" style="width:98%;"/>
+					<hr class="my-4" style="width:98%;" />
 				</div>
 			}
+			<div style="text-align: right;">
+				<ul style="margin-left: auto;">
+					<li class="">
+						Tổng giá sản phẩm:
+						<span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 13.5%;">@totalPrice.ToString("N0")đ</span>
+					</li>
+					<li class="">
+						Phí vận chuyển:
+						<span id="phivanchuyen" style="padding: 5px 10px; margin: 2px; margin-left: 17%;">+ @shippingCost.ToString("N0")đ</span>
+					</li>
+					<li class="">
+						Giảm giá:
+						@if (Model.First().PriceVoucher != null)
+						{
+							<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 20%;">- @string.Format("{0:N0}đ", priceVoucher)</span>
+						}
+						else
+						{
+							<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 20%;">0đ</span>
+						}
+					</li>
+					<li class="">
+						Tổng
+						<span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 21.5%;">= @totalAll.ToString("N0")đ</span>
+					</li>
+				</ul>
+			</div>
 			<!-- Single item -->
 		</div>
 	</div>
