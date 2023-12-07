@@ -232,7 +232,9 @@ namespace AppView.Controllers
                         .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null && c.BillID == billId)
                         .Select(c => new OrderDetailsViewModel
                         {
+                            BillID = objBill.BillID,
                             BillCode = objBill.BillCode,
+                            CustomerId = objBill.CustomerID,
                             FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
                             PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
                             Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
@@ -275,6 +277,20 @@ namespace AppView.Controllers
                 }
             }
             return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
+        }
+        public IActionResult SaveStatusBill(Guid billID)
+        {
+            string DOCUMENT = "Thanh toán trực tuyến VNPay";
+            var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billID);
+            var purchaseMethod = _dbContext.PurchaseMethods.First(c => c.MethodName == DOCUMENT).PurchaseMethodID;
+            if (purchaseMethod != null)
+            {
+                objBill.PurchaseMethodID = purchaseMethod;
+                objBill.UpdateDate = DateTime.Now;
+            }
+            _dbContext.Update(objBill);
+            _dbContext.SaveChanges();
+            return Ok();
         }
     }
 }

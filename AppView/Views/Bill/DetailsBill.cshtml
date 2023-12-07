@@ -331,12 +331,27 @@
 			<div class="card mb-6">
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
+					@if (@Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay")
+					{
+						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover thanh-toan">Thanh toán online</a>
+					}
+					else
+					{
+						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light rounded-full btn-hover">Đơn hàng đã được thanh toán vào lúc: @Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+					}
 				</div>
 				<div class="card-body existing-address" id="existingAddress" style="display:flex;">
 					<div style="float:left;">
 						<p style="font-size:16px;">Mã đơn hàng: <span style="font-weight:bold; margin-left:16%;"> @Model.First().BillCode</span></p>
 						<p style="font-size:16px; padding-top:2%;">Trạng thái: <span style="font-size:16px; padding:5px 10px; margin:2px; margin-left:22%;" class="main-btn secondary-btn rounded-full btn-hover"> @statusText</span> </p>
-						<p style="font-size:16px; padding-top:2%;">Hình thức thanh toán: <span class="main-btn info-btn rounded-full btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;"> @Model.First().PurchaseMethod</span></p>
+						@if (@Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay")
+						{
+							<p style="font-size:16px; padding-top:2%;">Hình thức thanh toán: <span class="main-btn info-btn rounded-full btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;"> @Model.First().PurchaseMethod</span></p>
+						}
+						else
+						{
+							<p style="font-size:16px; padding-top:2%;">Hình thức thanh toán: <span class="main-btn warning-btn rounded-full btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;"> @Model.First().PurchaseMethod</span></p>
+						}
 					</div>
 					<div style="margin-left:5%;">
 						<p style="font-size:16px;">Họ và tên: <span style="font-weight:bold; margin-left:9%;"> @Model.First().FullName</span></p>
@@ -348,4 +363,56 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		function saveStatusBill(billId1) {
+			$.ajax({
+				url: '@Url.Action("SaveStatusBill", "Bill")',
+				type: 'POST',
+				data: { billID: billId1 },
+				success: function (response) {
+					// Xử lý thành công nếu cần
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		}
+
+		// Kiểm tra xem trên thanh url có parameter nào là vnpResponseCode ko
+		var urlParams = new URLSearchParams(window.location.search);
+		var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+		console.log('Trạng thái thanh toán là:', vnpResponseCode);
+
+		// Kiểm tra nếu vnp_ResponseCode là '00'
+		if (vnpResponseCode === '00') {
+			var billID = '@Model.First().BillID.ToString()';
+			saveStatusBill(billID);
+		}
+		//cái này bắt sự kiện khi bấm thanh toán onlien thì sẽ điều hướng đến trang thanh toán vnpay và sau đó là trở lại trang chi tiết đơn hàng
+		$(".thanh-toan").on("click", function (event) {
+			event.preventDefault();
+
+			var totalPayment = @totalAll;
+			var billID = '@Model.First().BillID.ToString()';
+			var customerID = '@Model.First().CustomerId.ToString()';
+
+			$.ajax({
+				url: "https://localhost:7036/api/payment",
+				method: "GET",
+				data: { totalPayment: totalPayment, billID: billID, customerID: customerID },
+				success: function (data) {
+					// Chuyển hướng đến trang thanh toán nếu vnp_ResponseCode không phải '00'
+					var urlParams = new URLSearchParams(window.location.search);
+					var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+
+					if (vnpResponseCode !== '00') {
+						window.location.href = data;
+					}
+				},
+				error: function (error) {
+					console.error("Error calling API:", error);
+				}
+			});
+		});
+	</script>
 </div>
