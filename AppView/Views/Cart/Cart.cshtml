@@ -1065,6 +1065,15 @@
 															aria-label="Close"></button>
 												</div>
 												<div class="modal-body">
+													<form id="searchForm" class="row g-2">
+														<div class="col">
+															<input type="text" class="form-control" id="voucherCodeInput" name="voucherCode" />
+														</div>
+														<div class="col-auto">
+															<button type="button" class="btn btn-primary" id="searchVoucherBtn">Tìm kiếm</button>
+														</div>
+													</form>
+													<br />
 													<ul class="list-group">
 														@foreach (var voucher in Model.Vouchers)
 														{
@@ -1109,7 +1118,7 @@
 												</div>
 											</div>
 										</div>
-										<script>
+									@*	<script>
 											$(document).ready(function () {
 												$("#apply-voucher-btn").click(function () {
 													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
@@ -1184,6 +1193,168 @@
 													}
 												});
 											});
+										</script>*@
+
+
+
+										<script>
+											$(document).ready(function () {
+												$("#searchVoucherBtn").click(function () {
+													var voucherCode = $("#voucherCodeInput").val();
+													var voucherList = $(".list-group");
+
+													if (voucherCode) {
+														$.ajax({
+															type: "GET",
+															url: "https://localhost:7036/api/Voucher/find-voucher",
+															data: { code: voucherCode },
+															dataType: 'json',
+															success: function (result) {
+																if (result && result.length > 0 && result[0]) {
+																	// Check if the voucher is already in the list
+																	var voucherExists = false;
+																	$(".list-group-item").each(function () {
+																		var existingVoucherCode = $(this).find("[name='selectedVoucher']").val();
+																		if (existingVoucherCode === voucherCode) {
+																			voucherExists = true;
+																			return false; // Break out of the loop
+																		}
+																	});
+
+																	if (!voucherExists) {
+																		// Clear existing content in the modal
+																		voucherList.empty();
+
+																		// Display the voucher details in the existing list
+																		$.each(result, function (index, voucher) {
+																			var listItem = $("<li class='list-group-item d-flex justify-content-between align-items-center'></li>");
+
+																			var detailsContainer = $("<div style='display: flex'></div>");
+
+																			if (voucher.ImageBase64) {
+																				var imgElement = $("<img width='85' alt='voucher image' class='' />");
+																				imgElement.attr("src", "data:image/png;base64," + voucher.ImageBase64);
+																				detailsContainer.append(imgElement);
+																			}
+
+																			detailsContainer.append("<div style='margin-left: 10px'>" +
+																				"<p>Mã " + voucher.VoucherCode + " giảm " + voucher.FormattedVoucherValue + " trên hóa đơn " + voucher.FormattedTotal + "</p>" +
+																				"<p>Ngày bắt đầu: " + voucher.DateCreated + "</p>" +
+																				"<p>Ngày kết thúc: " + voucher.ExpirationDate + "</p>" +
+																				"<p><a href='/Voucher/Details/" + voucher.VoucherID + "'>Chi tiết</a></p>" +
+																				"</div>");
+
+																			listItem.append(detailsContainer);
+
+																			var radioContainer = $("<div style='margin-top: 25px'></div>");
+
+																			var radioButton = $("<input type='radio' style='width: 20px; height: 20px' />");
+																			radioButton.attr({
+																				"id": "voucher" + index,
+																				"name": "selectedVoucher",
+																				"value": voucher.VoucherCode
+																			});
+
+																			radioContainer.append(radioButton);
+																			listItem.append(radioContainer);
+
+																			// Append to the existing voucher list
+																			voucherList.append(listItem);
+																		});
+
+																		// Show the voucher list container
+																		voucherList.show();
+																	} else {
+																		alert("Voucher đã tồn tại trong danh sách.");
+																	}
+																} else {
+																	alert("Không tìm thấy voucher nào với mã " + voucherCode);
+																}
+															},
+															error: function (error) {
+																console.log("Lỗi Ajax:", error);
+															}
+														});
+													} else {
+														alert("Vui lòng nhập mã voucher để tìm kiếm.");
+													}
+												});
+
+												// Add this if you want to submit the form when pressing Enter in the voucher code input
+												$("#voucherCodeInput").keypress(function (e) {
+													if (e.which === 13) { // Enter key
+														$("#searchVoucherBtn").click();
+													}
+												});
+
+												$("#apply-voucher-btn").click(function () {
+													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+
+													if (selectedVoucherCode) {
+														$.ajax({
+															type: "GET",
+															url: "https://localhost:7036/api/Voucher/find-voucher",
+															data: { code: selectedVoucherCode },
+															dataType: 'json',
+															success: function (result) {
+																if (result && result.length > 0 && result[0]) {
+																	if (result[0].status == 0) {
+																		var startDate = new Date(result[0].dateCreated);
+																		var currentDate = new Date();
+
+																		// Kiểm tra ngày bắt đầu của voucher
+																		if (startDate > currentDate) {
+																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+																		} else {
+																			// Tiếp tục với xử lý voucher khi nó có hiệu lực
+																			if (result[0].voucherValue != null) {
+																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+
+																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+																				var priceShip = parseFloat(regexPriceShipHTML);
+
+																				var totalAll = parseFloat(sanphamPrice + priceShip);
+
+																				// Kiểm tra điều kiện tổng giá trị đơn hàng
+																				if (totalAll < result[0].total) {
+																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+																				} else {
+																					totalAll -= parseFloat(result[0].voucherValue);
+
+																					// Hiển thị giá trị mới sau khi áp dụng voucher
+																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+
+																					// Hiển thị mã voucher đã áp dụng
+																					$("#code-voucher").text(result[0].voucherCode);
+																					alert("Áp dụng voucher thành công!");
+
+																					// lưu id của voucher đang áp dụng vào để thanh toán
+																					var idVoucher = document.getElementById('voucherId');
+																					idVoucher.value = result[0].voucherID;
+																				}
+																			} else {
+																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
+																			}
+																		}
+																	} else {
+																		alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
+																	}
+																} else {
+																	console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+																}
+															},
+															error: function (error) {
+																console.log("Lỗi Ajax:", error);
+															}
+														});
+													} else {
+														alert("Vui lòng chọn một voucher để áp dụng.");
+													}
+												});
+											});
 										</script>
 									</div>
 								</li>
@@ -1229,6 +1400,60 @@
 										style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
 									Xác Nhận Đặt Hàng
 								</button>
+
+								<script>
+									$(document).ready(function () {
+										$("#checkout-form").submit(function (event) {
+											// Ngăn chặn mặc định của form
+											//event.preventDefault();
+
+											// Lấy voucherId từ trường ẩn
+											var a = $("#voucherId").val();
+											console.log(a)
+											// Kiểm tra xem voucherId có tồn tại không
+											if (!a) {
+												console.log("Voucher ID không hợp lệ");
+												return;
+											}
+
+											// Thực hiện AJAX để cập nhật số lượng voucher
+											$.ajax({
+												type: "GET",
+												url: "https://localhost:7036/api/Voucher/update-quantity",
+												contentType: "application/json", // Thêm dòng này để chỉ định kiểu dữ liệu của nội dung
+												data: { voucherId: a },
+												success: function (result) {
+													// Xử lý kết quả nếu cần thiết
+													console.log("Cập nhật số lượng voucher thành công");
+
+													// Kiểm tra trạng thái của AJAX
+													if (result && result.success) {
+														// Tiếp tục với bước xác nhận đặt hàng
+														// Ví dụ: Hiển thị thông báo hoặc chuyển hướng đến trang cảm ơn
+
+														// Submit form sau khi đã xử lý xong
+														submitCheckoutForm();
+													} else {
+														console.log("Lỗi khi cập nhật số lượng voucher");
+													}
+												},
+												error: function (error) {
+													console.log("Lỗi Ajax:", error);
+
+													// Nếu có lỗi, bạn có thể xử lý tùy thuộc vào yêu cầu của bạn
+												}
+											});
+										});
+									});
+
+									// Hàm để submit form sau khi đã xử lý xong
+									function submitCheckoutForm() {
+										// Đảm bảo rằng đã cập nhật số lượng voucher thành công trước khi submit form
+										console.log("submitCheckoutForm được gọi");
+										$("#checkout-form")[0].submit();
+									}
+								</script>
+
 							</form>
 						</div>
 					</div>

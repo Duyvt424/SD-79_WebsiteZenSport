@@ -1,4 +1,5 @@
-﻿using System.Web.Http.Results;
+﻿using System.Data;
+using System.Web.Http.Results;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
@@ -79,6 +80,40 @@ namespace AppAPI.Controllers
 			var role = repos.GetAll().First(c => c.VoucherID == id);
 			role.Status = 1;
 			return repos.EditItem(role);
+		}
+
+		[HttpGet("update-quantity")]
+		public bool UpdateVoucherQuantity([FromQuery(Name = "voucherId")] Guid voucherId)
+		{
+			try
+			{
+				// Lấy voucher từ cơ sở dữ liệu dựa trên voucherId
+				var voucher = repos.GetAll().FirstOrDefault(c => c.VoucherID == voucherId);
+
+				if (voucher != null && voucher.RemainingUsage > 0)
+				{
+					// Giảm số lượng voucher đi 1
+					voucher.RemainingUsage -= 1;
+
+					// Lưu thay đổi vào cơ sở dữ liệu
+					bool updateResult = repos.EditItem(voucher);
+
+					return updateResult;
+				}
+				else
+				{
+					// Trả về false nếu không tìm thấy voucher hoặc số lượng còn lại là 0
+					return false;
+				}
+			}
+			catch (Exception ex)
+			{
+				// Xử lý ngoại lệ, log lỗi, và trả về false nếu có lỗi
+				return false;
+			}
+
+
+
 		}
 	}
 }
