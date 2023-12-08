@@ -114,5 +114,31 @@ namespace AppView.Controllers
             var response = await httpClient.DeleteAsync(apiUrl);
             return RedirectToAction("GetAllBillStatusHistory");
         }
+
+        public IActionResult SaveStatusBill(string ghiChu, Guid idBill)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            //đổi trạng thái cho hóa đơn
+            var bill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (EmployeeID != null)
+            {
+                var billStatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 0,
+                    ChangeDate = DateTime.Now,
+                    Note = ghiChu,
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                bill.Status = 1;
+                bill.ConfirmationDate = DateTime.Now;
+                _dbContext.Bills.Update(bill);
+                _repos.AddItem(billStatusHis);
+                _dbContext.SaveChanges();
+            }
+            return Json(new { success = true, message = "Lưu trạng thái thành công" });
+        }
     }
 }
