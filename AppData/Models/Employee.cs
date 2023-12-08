@@ -24,5 +24,6 @@ namespace AppData.Models
         public Guid RoleID { get; set; }
         public virtual Role Role { get; set; }
         public virtual List<Bill> Bills { get; set; }
+        public virtual List<BillStatusHistory> BillStatusHistories { get; set; }
     }
 }

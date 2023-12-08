@@ -32,5 +32,6 @@ namespace AppData.Models
         public virtual Customer Customer { get; set; }
         public virtual Address Address { get; set; }
         public virtual List<BillDetails> BillDetails { get; set; }
+        public virtual List<BillStatusHistory> BillStatusHistories { get; set; }
     }
 }

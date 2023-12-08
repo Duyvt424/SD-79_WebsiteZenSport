@@ -40,10 +40,11 @@ namespace AppData.Models
         public DbSet<Material> Materials { get; set; }
         public DbSet<Rank> Ranks { get; set; }
         public DbSet<ShoesDetails_Size> ShoesDetails_Sizes { get; set; }
+        public DbSet<BillStatusHistory> BillStatusHistories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=SD_79_XDWebsiteBanGiayTTZenSport;Persist Security Info=True;User ID=sa;Password=123456");
+            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=SD79_DATN;Persist Security Info=True;User ID=sa;Password=123456");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
