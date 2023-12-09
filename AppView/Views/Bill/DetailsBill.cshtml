@@ -36,7 +36,14 @@
 }
 @inject IHttpContextAccessor HttpContextAccessor
 @{
+	var date = "a";
 	var userName = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
+	string param1Value = "h";
+	if (Context.Request.Query.ContainsKey("vnp_TransactionStatus"))
+	{
+		param1Value = Context.Request.Query["vnp_TransactionStatus"];
+		date = Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy");
+	}
 }
 <head>
 	<meta charset="UTF-8">
@@ -573,7 +580,7 @@
 			</div>
 		</div>
 	</div>
-	<script>
+	@*<script>	
 		function saveStatusBill(billId1) {
 			$.ajax({
 				url: '@Url.Action("SaveStatusBill", "Bill")',
@@ -624,5 +631,159 @@
 				}
 			});
 		});
+		if (@param1Value !== "h") {
+			if (@param1Value === 00) {
+				alert("Thanh toán thành công");
+				//window.location.reload();
+				//document.getElementById('message_payment').innerText = @param1Value == 00 ? "Thanh toán thành công" : '';
+			}
+		}
+	</script>*@
+	@*<script>
+		var isPageReloaded = false; // Biến để kiểm tra xem trang đã được load lại chưa
+
+		function saveStatusBill(billId1) {
+			$.ajax({
+				url: '@Url.Action("SaveStatusBill", "Bill")',
+				type: 'POST',
+				data: { billID: billId1 },
+				success: function (response) {
+					// Xử lý thành công nếu cần
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		}
+
+		// Kiểm tra xem trên thanh url có parameter nào là vnpResponseCode không
+		var urlParams = new URLSearchParams(window.location.search);
+		var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+		console.log('Trạng thái thanh toán là:', vnpResponseCode);
+
+		// Kiểm tra nếu vnp_ResponseCode là '00' và trang chưa được load lại
+		if (vnpResponseCode === '00' && !isPageReloaded) {
+			var billID = '@Model.First().BillID.ToString()';
+			saveStatusBill(billID);
+
+			// Hiển thị thông báo thành công
+			// alert("Thanh toán thành công");
+
+			// Đặt cờ isPageReloaded thành true để ngăn không cho load lại lần thứ 2
+			isPageReloaded = true;
+
+			// Lưu trạng thái đã load lại trang vào localStorage
+			localStorage.setItem('isPageReloaded', 'true');
+
+			// Nếu có parameter trên URL và vnp_ResponseCode là '00', thì load lại trang sau một khoảng thời gian (ví dụ: 3 giây)
+			setTimeout(function () {
+				window.location.reload();
+			}, 3000);
+		}
+
+		// Kiểm tra localStorage để xem trang đã được load lại hay chưa
+		var localStorageReloaded = localStorage.getItem('isPageReloaded');
+		if (localStorageReloaded === 'true') {
+			// Thực hiện các thao tác bạn cần khi trang đã được load lại
+			// Ví dụ: alert("Trang đã được load lại");
+
+			// Xóa trạng thái đã load lại trang từ localStorage
+			localStorage.removeItem('isPageReloaded');
+		}
+
+		//cái này bắt sự kiện khi bấm thanh toán online thì sẽ điều hướng đến trang thanh toán vnpay và sau đó là trở lại trang chi tiết đơn hàng
+		$(".thanh-toan").on("click", function (event) {
+			event.preventDefault();
+
+			var totalPayment = @totalAll;
+			var billID = '@Model.First().BillID.ToString()';
+			var customerID = '@Model.First().CustomerId.ToString()';
+
+			$.ajax({
+				url: "https://localhost:7036/api/payment",
+				method: "GET",
+				data: { totalPayment: totalPayment, billID: billID, customerID: customerID },
+				success: function (data) {
+					// Chuyển hướng đến trang thanh toán nếu vnp_ResponseCode không phải '00'
+					var urlParams = new URLSearchParams(window.location.search);
+					var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+
+					if (vnpResponseCode !== '00') {
+						window.location.href = data;
+					}
+				},
+				error: function (error) {
+					console.error("Error calling API:", error);
+				}
+			});
+		});
+
+	</script>*@
+
+	<script>
+		var isPageReloaded = localStorage.getItem('isPageReloaded') === 'true';
+
+		function saveStatusBill(billId1) {
+			$.ajax({
+				url: '@Url.Action("SaveStatusBill", "Bill")',
+				type: 'POST',
+				data: { billID: billId1 },
+				success: function (response) {
+					// Xử lý thành công nếu cần
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		}
+
+		var urlParams = new URLSearchParams(window.location.search);
+		var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+		console.log('Trạng thái thanh toán là:', vnpResponseCode);
+
+		// Kiểm tra nếu vnp_ResponseCode là '00' và trang chưa được load lại
+		if (vnpResponseCode === '00' && !isPageReloaded) {
+			var billID = '@Model.First().BillID.ToString()';
+			saveStatusBill(billID);
+			alert("Thanh toán thành công");
+			// Đặt cờ isPageReloaded thành true để ngăn không cho load lại lần thứ 2
+			localStorage.setItem('isPageReloaded', 'true');
+
+			// Nếu có parameter trên URL và vnp_ResponseCode là '00', thì load lại trang sau một khoảng thời gian (ví dụ: 3 giây)
+			setTimeout(function () {
+				window.location.reload();
+			}, 3000);
+		} else {
+			// Nếu không phải trường hợp đặt đơn mới, đặt lại cờ để cho phép load lại khi đặt đơn mới tiếp theo
+			localStorage.setItem('isPageReloaded', 'false');
+		}
+
+		//cái này bắt sự kiện khi bấm thanh toán online thì sẽ điều hướng đến trang thanh toán vnpay và sau đó là trở lại trang chi tiết đơn hàng
+		$(".thanh-toan").on("click", function (event) {
+			event.preventDefault();
+
+			var totalPayment = @totalAll;
+			var billID = '@Model.First().BillID.ToString()';
+			var customerID = '@Model.First().CustomerId.ToString()';
+
+			$.ajax({
+				url: "https://localhost:7036/api/payment",
+				method: "GET",
+				data: { totalPayment: totalPayment, billID: billID, customerID: customerID },
+				success: function (data) {
+					// Chuyển hướng đến trang thanh toán nếu vnp_ResponseCode không phải '00'
+					var urlParams = new URLSearchParams(window.location.search);
+					var vnpResponseCode = urlParams.get('vnp_ResponseCode');
+
+					if (vnpResponseCode !== '00') {
+						window.location.href = data;
+					}
+				},
+				error: function (error) {
+					console.error("Error calling API:", error);
+				}
+			});
+		});
+
 	</script>
 </div>

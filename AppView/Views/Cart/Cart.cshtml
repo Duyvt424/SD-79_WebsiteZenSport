@@ -1265,6 +1265,7 @@
 																		// Show the voucher list container
 																		voucherList.show();
 																	} else {
+																		
 																		alert("Voucher đã tồn tại trong danh sách.");
 																	}
 																} else {
@@ -1298,6 +1299,8 @@
 															dataType: 'json',
 															success: function (result) {
 																if (result && result.length > 0 && result[0]) {
+																console.log(result);
+
 																	if (result[0].status == 0) {
 																		var startDate = new Date(result[0].dateCreated);
 																		var currentDate = new Date();
@@ -1322,13 +1325,19 @@
 																				if (totalAll < result[0].total) {
 																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
 																				} else {
-																					totalAll -= parseFloat(result[0].voucherValue);
+																					var voucherDiscount = parseFloat(result[0].voucherValue);
+
+																					totalAll -= voucherDiscount;
 
 																					// Hiển thị giá trị mới sau khi áp dụng voucher
 																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
 
 																					// Hiển thị mã voucher đã áp dụng
 																					$("#code-voucher").text(result[0].voucherCode);
+
+																					// Hiển thị số tiền giảm giá của voucher
+																					$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+
 																					alert("Áp dụng voucher thành công!");
 
 																					// lưu id của voucher đang áp dụng vào để thanh toán

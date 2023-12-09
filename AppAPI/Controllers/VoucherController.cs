@@ -27,7 +27,7 @@ namespace AppAPI.Controllers
 		[HttpGet("get-voucher")]
 		public IEnumerable<Voucher> GetAll()
 		{
-			return repos.GetAll().Where(x => x.ExpirationDate > DateTime.Now);
+			return repos.GetAll().Where(x => x.ExpirationDate > DateTime.Now && x.RemainingUsage > 0);
 		}
 
 		[HttpGet("find-voucher")]
