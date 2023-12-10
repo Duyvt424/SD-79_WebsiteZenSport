@@ -339,7 +339,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.MaxUsage)</td>
                                             <td>@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
                                             <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Total)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Total)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                             <td>
                                         @if (item.Status == 0)
@@ -356,7 +356,14 @@
                                            @*<a href="@Url.Action("Details", new { id = item.VoucherID})" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>*@
                                             <a href="@Url.Action("DeleteVouchers", new { id = item.VoucherID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                                             <button onclick="window.location='@Url.Action("Details", new { id = item.VoucherID})'" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></button>
-                                            
+                                        @if (item.Status == 0)
+                                        {
+                                        <a href="@Url.Action("LockVoucher", new { id = item.VoucherID })" class="lock" title="Lock" data-toggle="tooltip"><i class="material-icons">lock</i></a>
+                                        }
+                                        else
+                                        {
+                                        <a href="@Url.Action("UnlockVoucher", new { id = item.VoucherID })" class="unlock" title="Unlock" data-toggle="tooltip"><i class="material-icons">lock_open</i></a>
+                                        }
                                            
                                        
                                             </td>
@@ -365,21 +372,26 @@
                             
                         }
                     </tbody>
+               
+
                     <script>
-                        document.getElementById("ket-thuc").addEventListener("click", function () {
-                            filterRows("Kết thúc");
-                        });
+                        document.addEventListener("DOMContentLoaded", function () {
+                            // Add event listeners after the DOM is fully loaded
+                            document.getElementById("ket-thuc").addEventListener("click", function () {
+                                filterRows("Kết thúc");
+                            });
 
-                        document.getElementById("dang-dien-ra").addEventListener("click", function () {
-                            filterRows("Đang diễn ra");
-                        });
+                            document.getElementById("dang-dien-ra").addEventListener("click", function () {
+                                filterRows("Đang diễn ra");
+                            });
 
-                        document.getElementById("sap-dien-ra").addEventListener("click", function () {
-                            filterRows("Sắp diễn ra");
-                        });
+                            document.getElementById("sap-dien-ra").addEventListener("click", function () {
+                                filterRows("Sắp diễn ra");
+                            });
 
-                        document.getElementById("tat-ca").addEventListener("click", function () {
-                            showAllRows();
+                            document.getElementById("tat-ca").addEventListener("click", function () {
+                                showAllRows();
+                            });
                         });
 
                         function filterRows(status) {
@@ -388,8 +400,13 @@
 
                             for (var i = 0; i < rows.length; i++) {
                                 var row = rows[i];
-                                var dateCreated = new Date(row.querySelector("td:nth-child(7)").innerText); // Assuming DateCreated is in the 7th column
-                                var expirationDate = new Date(row.querySelector("td:nth-child(6)").innerText); // Assuming ExpirationDate is in the 6th column
+                                var dateCreatedText = row.querySelector("td:nth-child(8)").innerText.trim(); // Assuming DateCreated is in the 8th column
+                                var expirationDateText = row.querySelector("td:nth-child(6)").innerText.trim(); // Assuming ExpirationDate is in the 6th column
+
+                                // Chuyển đổi định dạng ngày thời gian thành ngày JavaScript
+                                var dateCreated = new Date(dateCreatedText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
+                                var expirationDate = new Date(expirationDateText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
+
                                 var display = "none";
 
                                 switch (status) {
@@ -419,12 +436,15 @@
                             }
                         }
 
+                        
+
                         function showAllRows() {
                             var rows = document.getElementsByClassName("voucher-row");
                             for (var i = 0; i < rows.length; i++) {
                                 rows[i].style.display = "";
                             }
                         }
+
                     </script>
 
 
