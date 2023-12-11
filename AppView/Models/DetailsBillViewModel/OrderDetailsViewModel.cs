@@ -18,5 +18,6 @@
         public decimal TotalPrice { get; set; }
         public decimal? PriceVoucher { get; set; }
         public decimal ShippingCost { get; set; }
+        public bool IsPaid { get; set; }
     }
 }

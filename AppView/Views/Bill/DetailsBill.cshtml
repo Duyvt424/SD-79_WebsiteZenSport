@@ -188,10 +188,154 @@
 					.modal-box .modal-dialog .modal-content .modal-body .btn:focus {
 						outline: none;
 					}
+
+		.modal-box1 {
+			font-family: 'Lato', sans-serif;
+		}
+
+			.modal-box1 .show-modal {
+				color: #fff;
+				background-color: #282828;
+				font-size: 18px;
+				font-weight: 600;
+				text-transform: capitalize;
+				padding: 10px 15px;
+				margin: 80px auto 0;
+				border: none;
+				outline: none;
+				border-radius: 20px 50px/50px 20px;
+				display: block;
+				transition: all 0.3s ease 0s;
+			}
+
+				.modal-box1 .show-modal:hover {
+					color: #282828;
+					background: transparent;
+					border: none;
+					box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+				}
+
+				.modal-box1 .show-modal:focus {
+					outline: none;
+				}
+
+		.modal-backdrop.in {
+			opacity: 0;
+		}
+
+		.modal-box1 .modal-dialog {
+			width: 450px;
+			margin: 100px auto 0;
+		}
+
+			.modal-box1 .modal-dialog .modal-content {
+				color: #3c3c3c;
+				background: #e9e9e9;
+				text-align: center;
+				border: none;
+				border-radius: 0;
+				box-shadow: none;
+				overflow: hidden;
+				position: relative;
+			}
+
+				.modal-box1 .modal-dialog .modal-content:before {
+					content: '';
+					width: 100%;
+					height: calc(100% + 20px);
+					border-top: 16px dotted #72BCC9;
+					border-bottom: 16px dotted #72BCC9;
+					position: absolute;
+					top: -10px;
+					bottom: -10px;
+					left: 0;
+				}
+
+				.modal-box1 .modal-dialog .modal-content .close {
+					color: #fff;
+					background: #72BCC9;
+					font-size: 25px;
+					text-shadow: none;
+					line-height: 23px;
+					height: 25px;
+					width: 24px;
+					opacity: 1;
+					border-radius: 50px;
+					position: absolute;
+					left: auto;
+					right: 10px;
+					top: 15px;
+					z-index: 1;
+					transition: all 0.3s ease;
+				}
+
+					.modal-box1 .modal-dialog .modal-content .close span {
+						margin: -2px 0 0;
+						display: block;
+					}
+
+					.modal-box1 .modal-dialog .modal-content .close:hover {
+						color: #fff;
+						box-shadow: 0 0 10px -5px rgba(0,0,0,0.9);
+					}
+
+					.modal-box1 .modal-dialog .modal-content .close:focus {
+						outline: none;
+					}
+
+				.modal-box1 .modal-dialog .modal-content .modal-body {
+					padding: 30px 25px !important;
+				}
+
+					.modal-box1 .modal-dialog .modal-content .modal-body .title {
+						font-family: 'Amaranth', sans-serif;
+						font-size: 30px;
+						font-weight: 500;
+						font-style: italic;
+						padding: 0 0 20px 0;
+						margin: 0 0 15px 0;
+						border-bottom: 2px dotted #d5d5d5;
+					}
+
+					.modal-box1 .modal-dialog .modal-content .modal-body .description {
+						color: #8c8c8c;
+						font-size: 17px;
+						letter-spacing: 1px;
+						;
+						margin: 0 0 20px;
+					}
+
+					.modal-box1 .modal-dialog .modal-content .modal-body .btn {
+						color: #fff;
+						background: linear-gradient(to bottom, #ba4040, #a52929);
+						font-size: 16px;
+						font-weight: 600;
+						text-transform: uppercase;
+						letter-spacing: 2px;
+						width: 130px;
+						padding: 10px 0;
+						margin: 0 10px 10px 0;
+						border: 1px solid #7a0909;
+						border-radius: 5px;
+						display: inline-block;
+						transition: all 0.3s ease 0s;
+					}
+
+						.modal-box1 .modal-dialog .modal-content .modal-body .btn.cancel {
+							background: linear-gradient(to bottom, #8da556, #748f3e);
+							margin-right: 0;
+							border-color: #4b641a;
+						}
+
+						.modal-box1 .modal-dialog .modal-content .modal-body .btn:hover {
+							text-shadow: 5px 5px 0 rgba(0,0,0,0.4);
+							box-shadow: 0 0 10px rgba(0,0,0,0.5);
+						}
 	</style>
 </head>
 <link rel="stylesheet" href="~/css/detailsBill.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <div class="container-fluid padding-bottom-3x mb-1" style="margin-top: 3%;">
 	<div class="card mb-3">
 		<div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">MÃ	ĐƠN HÀNG:  </span><span class="text-medium" style="padding-left:1%;"> @Model.First().BillCode</span></div>
@@ -213,19 +357,19 @@
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-config"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-credit-card"></i></div>
 						</div>
 						<h3 class="step-title" style="display:none;">Đã xác nhận thông tin thanh toán</h3>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-medal"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-truck"></i></div>
 						</div>
-						<h3 class="step-title" style="display:none;">Đã giao cho đơn vị vận chuyển</h3>
+						<h3 class="step-title" style="display:none;">Đang vận chuyển</h3>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-check-circle-o"></i></div>
 						</div>
 						<h3 class="step-title" style="display:none;">Đã nhận được hàng</h3>
 					</div>
@@ -248,20 +392,20 @@
 					</div>
 					<div class="step completed ConfirmationDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-config"></i></div>
+							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
 						</div>
 						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-medal"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-truck"></i></div>
 						</div>
-						<h3 class="step-title" style="display:none;">Đã giao cho đơn vị vận chuyển</h3>
+						<h3 class="step-title" style="display:none;">Đang vận chuyển</h3>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-check-circle-o"></i></div>
 						</div>
 						<h3 class="step-title" style="display:none;">Đã nhận được hàng</h3>
 					</div>
@@ -284,21 +428,21 @@
 					</div>
 					<div class="step completed ConfirmationDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-config"></i></div>
+							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
 						</div>
 						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step completed DeliveryDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+							<div class="step-icon"><i class="fa fa-truck"></i></div>
 						</div>
-						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h3 class="step-title">Đang vận chuyển</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step notcompleted">
 						<div class="step-icon-wrap">
-							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="pe-7s-car"></i></div>
+							<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-check-circle-o"></i></div>
 						</div>
 						<h3 class="step-title" style="display:none;">Đã nhận được hàng</h3>
 					</div>
@@ -321,21 +465,21 @@
 					</div>
 					<div class="step completed ConfirmationDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-config"></i></div>
+							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
 						</div>
 						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step completed DeliveryDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+							<div class="step-icon"><i class="fa fa-truck"></i></div>
 						</div>
-						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h3 class="step-title">Đang vận chuyển</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step completed SuccessDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-car"></i></div>
+							<div class="step-icon"><i class="fa fa-check-circle-o"></i></div>
 						</div>
 						<h3 class="step-title">Đã nhận được hàng</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
@@ -359,21 +503,21 @@
 					</div>
 					<div class="step completed ConfirmationDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-config"></i></div>
+							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
 						</div>
 						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step completed DeliveryDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-medal"></i></div>
+							<div class="step-icon"><i class="fa fa-truck"></i></div>
 						</div>
-						<h3 class="step-title">Đã giao cho đơn vị vận chuyển</h3>
+						<h3 class="step-title">Đang vận chuyển</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
 					<div class="step completed SuccessDate">
 						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-car"></i></div>
+							<div class="step-icon"><i class="fa fa-check-circle-o"></i></div>
 						</div>
 						<h3 class="step-title">Đã nhận được hàng</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
@@ -392,11 +536,24 @@
 				<a class="main-btn success-btn square-btn btn-hover show-modal" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Xác nhận</a>
 				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
 				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
-			}else
-			if (userName != null && status == 1)
+			}
+			@if (userName != null && status == 1)
 			{
-				<a class="main-btn success-btn square-btn btn-hover show-modal" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Giao hàng</a>
+				<a class="main-btn success-btn square-btn btn-hover show-modal-delivery" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Giao hàng</a>
 				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
+				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+			}
+			@if (userName != null && status == 2)
+			{
+				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;">Hủy đơn</a>
+				@if (Model.First().IsPaid == true)
+				{
+					<a class="main-btn success-btn square-btn btn-hover show-modal-success" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hoàn thành</a>
+				}
+				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+			}
+			@if (userName != null && status == 3)
+			{
 				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
 		</div>
@@ -415,7 +572,7 @@
 				</button>
 				<div class="modal-body">
 					<form>
-						<h3 class="title">Hahaha</h3>
+						<h3 class="title">Xác nhận đơn hàng</h3>
 						<div class="form-group">
 							<label>Ghi chú</label>
 							<input type="text" name="ghiChu" class="form-control">
@@ -427,7 +584,110 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="myModal1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<form>
+						<h3 class="title">Xác nhận giao hàng</h3>
+						<div class="form-group">
+							<label>Ghi chú</label>
+							<input type="text" name="ghiChu1" class="form-control">
+							<input id="idBill1" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						</div>
+						<button class="btn" type="submit">Xác nhận</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myModal2" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<form>
+						<h3 class="title">Xác nhận hoàn thành</h3>
+						<div class="form-group">
+							<label>Ghi chú</label>
+							<input type="text" name="ghiChu2" class="form-control">
+							<input id="idBill2" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						</div>
+						<button class="btn" type="submit">Xác nhận</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+<div class="modal-box1">
+	<!-- Modal -->
+	<div class="modal fade" id="myModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content clearfix">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<form>
+					<div class="modal-body">
+						<h3 class="title">Xác nhận thanh toán</h3>
+						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						<p class="description">Xác nhận thanh toán cho đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ] bằng hình thức thanh toán:</p>
+						<button class="btn" type="submit" value="Thanh toán khi nhận hàng" name="httt">Trực tiếp</button>
+						<button class="btn cancel" type="submit" value="Thanh toán trực tuyến VNPay" name="httt">Online</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		$('.xac-nhan-tt').click(function () {
+			$('#myModalConfirm').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.close-modal, .modal .close').click(function () {
+			$('#myModalConfirm').modal('hide');
+		});
+
+		var selectedPaymentMethod = ''; // Biến để lưu trữ giá trị của button được chọn
+
+		// Bắt sự kiện click trên các button
+		$('.btn').click(function () {
+			selectedPaymentMethod = $(this).val(); // Lưu giá trị của button được chọn
+		});
+
+		// Bắt sự kiện submit form
+		$('form').submit(function (e) {
+			e.preventDefault();
+			var idBill = $('#idBillSuccess').val();
+
+			// Gửi dữ liệu lên server sử dụng Ajax
+			$.ajax({
+				url: '@Url.Action("SaveSuccessBill", "BillStatusHistory")',
+				type: 'POST',
+				data: { idBill: idBill, httt: selectedPaymentMethod },
+				success: function (response) {
+					// Xử lý kết quả từ server
+					if (response.success) {
+						// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
+						$('#myModalConfirm').modal('hide');
+						location.reload();
+					} else {
+						// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
+					}
+				},
+				error: function (error) {
+				}
+			});
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.show-modal').click(function () {
@@ -464,7 +724,88 @@
 				},
 				error: function (error) {
 					// Xử lý lỗi nếu cần
-					alert("Có lỗi xảy ra");
+				}
+			});
+		});
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		$('.show-modal-delivery').click(function () {
+			$('#myModal1').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.close-modal, .modal .close').click(function () {
+			$('#myModal1').modal('hide');
+		});
+
+		// Bắt sự kiện submit form
+		$('form').submit(function (e) {
+			e.preventDefault();
+
+			var ghiChu = $('input[name="ghiChu1"]').val();
+			var idBill = $('#idBill1').val();
+
+			// Gửi dữ liệu lên server sử dụng Ajax
+			$.ajax({
+				url: '@Url.Action("SaveStatusBill1", "BillStatusHistory")',
+				type: 'POST',
+				data: { ghiChu: ghiChu, idBill: idBill },
+				success: function (response) {
+					// Xử lý kết quả từ server
+					if (response.success) {
+						// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
+						$('#myModal1').modal('hide');
+						location.reload();
+					} else {
+						// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
+						alert(response.message);
+					}
+				},
+				error: function (error) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		});
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		$('.show-modal-success').click(function () {
+			$('#myModal2').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.close-modal, .modal .close').click(function () {
+			$('#myModal2').modal('hide');
+		});
+
+		// Bắt sự kiện submit form
+		$('form').submit(function (e) {
+			e.preventDefault();
+
+			var ghiChu = $('input[name="ghiChu2"]').val();
+			var idBill = $('#idBill2').val();
+
+			// Gửi dữ liệu lên server sử dụng Ajax
+			$.ajax({
+				url: '@Url.Action("SaveStatusBill2", "BillStatusHistory")',
+				type: 'POST',
+				data: { ghiChu: ghiChu, idBill: idBill },
+				success: function (response) {
+					// Xử lý kết quả từ server
+					if (response.success) {
+						// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
+						$('#myModal2').modal('hide');
+						location.reload();
+					} else {
+						// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
+						alert(response.message);
+					}
+				},
+				error: function (error) {
+					// Xử lý lỗi nếu cần
 				}
 			});
 		});
@@ -548,13 +889,32 @@
 			<div class="card mb-6">
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
-					@if (@Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay")
+					@if (userName != null && Model.First().IsPaid == false)
 					{
-						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover thanh-toan">Thanh toán online</a>
+						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
 					}
-					else
+					@if (userName == null)
 					{
-						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light rounded-full btn-hover">Đơn hàng đã được thanh toán vào lúc: @Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+						@if (@Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status != 3)
+						{
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover thanh-toan">Thanh toán online</a>
+						}
+						else
+						{
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:left; margin-top:1%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được bạn thanh toán online vào lúc: @Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover">Đã thanh toán</a>
+						}
+					}
+					@if (userName != null && Model.First().IsPaid == true)
+					{
+						@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay")
+						{
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được thanh toán trực tiếp vào lúc: @Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+						}
+						else
+						{
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được thanh toán online vào lúc: @Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+						}
 					}
 				</div>
 				<div class="card-body existing-address" id="existingAddress" style="display:flex;">
@@ -580,146 +940,6 @@
 			</div>
 		</div>
 	</div>
-	@*<script>	
-		function saveStatusBill(billId1) {
-			$.ajax({
-				url: '@Url.Action("SaveStatusBill", "Bill")',
-				type: 'POST',
-				data: { billID: billId1 },
-				success: function (response) {
-					// Xử lý thành công nếu cần
-				},
-				error: function (xhr, textStatus, errorThrown) {
-					// Xử lý lỗi nếu cần
-				}
-			});
-		}
-
-		// Kiểm tra xem trên thanh url có parameter nào là vnpResponseCode ko
-		var urlParams = new URLSearchParams(window.location.search);
-		var vnpResponseCode = urlParams.get('vnp_ResponseCode');
-		console.log('Trạng thái thanh toán là:', vnpResponseCode);
-
-		// Kiểm tra nếu vnp_ResponseCode là '00'
-		if (vnpResponseCode === '00') {
-			var billID = '@Model.First().BillID.ToString()';
-			saveStatusBill(billID);
-		}
-		//cái này bắt sự kiện khi bấm thanh toán onlien thì sẽ điều hướng đến trang thanh toán vnpay và sau đó là trở lại trang chi tiết đơn hàng
-		$(".thanh-toan").on("click", function (event) {
-			event.preventDefault();
-
-			var totalPayment = @totalAll;
-			var billID = '@Model.First().BillID.ToString()';
-			var customerID = '@Model.First().CustomerId.ToString()';
-
-			$.ajax({
-				url: "https://localhost:7036/api/payment",
-				method: "GET",
-				data: { totalPayment: totalPayment, billID: billID, customerID: customerID },
-				success: function (data) {
-					// Chuyển hướng đến trang thanh toán nếu vnp_ResponseCode không phải '00'
-					var urlParams = new URLSearchParams(window.location.search);
-					var vnpResponseCode = urlParams.get('vnp_ResponseCode');
-
-					if (vnpResponseCode !== '00') {
-						window.location.href = data;
-					}
-				},
-				error: function (error) {
-					console.error("Error calling API:", error);
-				}
-			});
-		});
-		if (@param1Value !== "h") {
-			if (@param1Value === 00) {
-				alert("Thanh toán thành công");
-				//window.location.reload();
-				//document.getElementById('message_payment').innerText = @param1Value == 00 ? "Thanh toán thành công" : '';
-			}
-		}
-	</script>*@
-	@*<script>
-		var isPageReloaded = false; // Biến để kiểm tra xem trang đã được load lại chưa
-
-		function saveStatusBill(billId1) {
-			$.ajax({
-				url: '@Url.Action("SaveStatusBill", "Bill")',
-				type: 'POST',
-				data: { billID: billId1 },
-				success: function (response) {
-					// Xử lý thành công nếu cần
-				},
-				error: function (xhr, textStatus, errorThrown) {
-					// Xử lý lỗi nếu cần
-				}
-			});
-		}
-
-		// Kiểm tra xem trên thanh url có parameter nào là vnpResponseCode không
-		var urlParams = new URLSearchParams(window.location.search);
-		var vnpResponseCode = urlParams.get('vnp_ResponseCode');
-		console.log('Trạng thái thanh toán là:', vnpResponseCode);
-
-		// Kiểm tra nếu vnp_ResponseCode là '00' và trang chưa được load lại
-		if (vnpResponseCode === '00' && !isPageReloaded) {
-			var billID = '@Model.First().BillID.ToString()';
-			saveStatusBill(billID);
-
-			// Hiển thị thông báo thành công
-			// alert("Thanh toán thành công");
-
-			// Đặt cờ isPageReloaded thành true để ngăn không cho load lại lần thứ 2
-			isPageReloaded = true;
-
-			// Lưu trạng thái đã load lại trang vào localStorage
-			localStorage.setItem('isPageReloaded', 'true');
-
-			// Nếu có parameter trên URL và vnp_ResponseCode là '00', thì load lại trang sau một khoảng thời gian (ví dụ: 3 giây)
-			setTimeout(function () {
-				window.location.reload();
-			}, 3000);
-		}
-
-		// Kiểm tra localStorage để xem trang đã được load lại hay chưa
-		var localStorageReloaded = localStorage.getItem('isPageReloaded');
-		if (localStorageReloaded === 'true') {
-			// Thực hiện các thao tác bạn cần khi trang đã được load lại
-			// Ví dụ: alert("Trang đã được load lại");
-
-			// Xóa trạng thái đã load lại trang từ localStorage
-			localStorage.removeItem('isPageReloaded');
-		}
-
-		//cái này bắt sự kiện khi bấm thanh toán online thì sẽ điều hướng đến trang thanh toán vnpay và sau đó là trở lại trang chi tiết đơn hàng
-		$(".thanh-toan").on("click", function (event) {
-			event.preventDefault();
-
-			var totalPayment = @totalAll;
-			var billID = '@Model.First().BillID.ToString()';
-			var customerID = '@Model.First().CustomerId.ToString()';
-
-			$.ajax({
-				url: "https://localhost:7036/api/payment",
-				method: "GET",
-				data: { totalPayment: totalPayment, billID: billID, customerID: customerID },
-				success: function (data) {
-					// Chuyển hướng đến trang thanh toán nếu vnp_ResponseCode không phải '00'
-					var urlParams = new URLSearchParams(window.location.search);
-					var vnpResponseCode = urlParams.get('vnp_ResponseCode');
-
-					if (vnpResponseCode !== '00') {
-						window.location.href = data;
-					}
-				},
-				error: function (error) {
-					console.error("Error calling API:", error);
-				}
-			});
-		});
-
-	</script>*@
-
 	<script>
 		var isPageReloaded = localStorage.getItem('isPageReloaded') === 'true';
 
@@ -752,7 +972,7 @@
 			// Nếu có parameter trên URL và vnp_ResponseCode là '00', thì load lại trang sau một khoảng thời gian (ví dụ: 3 giây)
 			setTimeout(function () {
 				window.location.reload();
-			}, 3000);
+			}, 500);
 		} else {
 			// Nếu không phải trường hợp đặt đơn mới, đặt lại cờ để cho phép load lại khi đặt đơn mới tiếp theo
 			localStorage.setItem('isPageReloaded', 'false');

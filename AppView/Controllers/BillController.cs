@@ -245,6 +245,7 @@ namespace AppView.Controllers
                             Province = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Province,
                             TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
                             PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
+                            IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             Products = new List<ProductViewModel>
                             {

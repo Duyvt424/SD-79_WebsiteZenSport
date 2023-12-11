@@ -20,6 +20,7 @@ namespace AppData.Models
         public decimal ShippingCosts { get; set; }
         public decimal TotalPriceAfterDiscount { get; set; }
         public string Note { get; set; }
+        public bool IsPaid { get; set; }
         public int Status { get; set; }
         public Guid CustomerID { get; set; }
         public Guid? VoucherID { get; set; }

@@ -306,6 +306,7 @@ namespace AppView.Controllers
                 ConfirmationDate = DateTime.Now,
                 Status = 0,
                 Note = "",
+                IsPaid = false,
                 SuccessDate = Convert.ToDateTime(deliveryDateSave),
                 ShippingCosts = shippingFee,
                 DeliveryDate = DateTime.Now,

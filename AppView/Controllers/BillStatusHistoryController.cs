@@ -140,5 +140,71 @@ namespace AppView.Controllers
             }
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
+
+        public IActionResult SaveStatusBill1(string ghiChu, Guid idBill)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            //đổi trạng thái cho hóa đơn
+            var bill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (EmployeeID != null)
+            {
+                var billStatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 1,
+                    ChangeDate = DateTime.Now,
+                    Note = ghiChu,
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                bill.Status = 2;
+                bill.DeliveryDate = DateTime.Now;
+                _dbContext.Bills.Update(bill);
+                _repos.AddItem(billStatusHis);
+                _dbContext.SaveChanges();
+            }
+            return Json(new { success = true, message = "Lưu trạng thái thành công" });
+        }
+
+        public IActionResult SaveStatusBill2(string ghiChu, Guid idBill)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            //đổi trạng thái cho hóa đơn
+            var bill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (EmployeeID != null)
+            {
+                var billStatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 2,
+                    ChangeDate = DateTime.Now,
+                    Note = ghiChu,
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                bill.Status = 3;
+                bill.SuccessDate = DateTime.Now;
+                _dbContext.Bills.Update(bill);
+                _repos.AddItem(billStatusHis);
+                _dbContext.SaveChanges();
+            }
+            return Json(new { success = true, message = "Lưu trạng thái thành công" });
+        }
+
+        public IActionResult SaveSuccessBill(Guid idBill, string httt)
+        {
+            var namePurchaseMethod = _dbContext.PurchaseMethods.First(c => c.MethodName == httt).PurchaseMethodID;
+            var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (objBill != null)
+            {
+                objBill.IsPaid = true;
+                objBill.UpdateDate = DateTime.Now;
+            }
+            _dbContext.Bills.Update(objBill);
+            _dbContext.SaveChanges();
+            return Json(new { success = true, message = "Xác nhận đơn hàng thành công" });
+        }
     }
 }

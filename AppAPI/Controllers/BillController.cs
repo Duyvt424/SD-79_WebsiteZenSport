@@ -34,7 +34,7 @@ namespace AppAPI.Controllers
 			return _repos.GetAll().Where(x => x.BillCode == code);
 		}
 		[HttpPost("create-bill")]
-		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
+		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
 		{
 			Bill bill = new Bill();
 			bill.BillID = Guid.NewGuid();
@@ -49,6 +49,7 @@ namespace AppAPI.Controllers
 			bill.ShippingCosts = ShippingCosts;
 			bill.TotalPriceAfterDiscount = TotalPriceAfterDiscount;
 			bill.Note = Note;
+			bill.IsPaid = IsPaid;
 			bill.Status = Status;
 			bill.VoucherID = VoucherID;
 			bill.EmployeeID = EmployeeID;
@@ -67,7 +68,7 @@ namespace AppAPI.Controllers
 
 		// PUT api/<BillController>/5
 		[HttpPut("update-bill")]
-		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
+		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
 		{
 			var bill = _repos.GetAll().First(c => c.BillID == BillID);
 			bill.BillCode = BillCode;
@@ -81,6 +82,7 @@ namespace AppAPI.Controllers
 			bill.ShippingCosts = ShippingCosts;
 			bill.TotalPriceAfterDiscount = TotalPriceAfterDiscount;
 			bill.Note = Note;
+			bill.IsPaid = IsPaid;
 			bill.Status = Status;
 			bill.CustomerID = CustomerID;
 			bill.EmployeeID = EmployeeID;
