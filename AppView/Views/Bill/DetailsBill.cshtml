@@ -854,7 +854,7 @@
 					<hr class="my-4" style="width:98%;" />
 				</div>
 			}
-			<div style="text-align: right;">
+			@*<div style="text-align: right;">
 				<ul style="margin-left: auto;">
 					<li class="">
 						Tổng giá sản phẩm:
@@ -880,8 +880,44 @@
 						<span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 21.5%;">= @totalAll.ToString("N0")đ</span>
 					</li>
 				</ul>
-			</div>
+			</div>*@
 			<!-- Single item -->
+
+
+			<div style="text-align: right;">
+				<table class="table table-borderless">
+					<thead>
+						<tr>
+							<th scope="col">Tổng sản phẩm:</th>
+							<th scope="col"><span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@totalPrice.ToString("N0")đ</span></th>
+						</tr>
+
+						<tr>
+							<th scope="col">Phí vận chuyển:</th>
+							<th scope="col"><span id="phivanchuyen" style="padding: 5px 10px; margin: 2px; margin-left: 8%;">+ @shippingCost.ToString("N0")đ</span></th>
+						</tr>
+
+						<tr>
+							<th scope="col">Giảm giá:</th>
+							<th scope="col">
+								@if (Model.First().PriceVoucher != null)
+								{
+									<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">- @string.Format("{0:N0}đ", priceVoucher)</span>
+								}
+								else
+								{
+									<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">0đ</span>
+								}
+							</th>
+						</tr>
+
+						<tr>
+							<th scope="col">Tổng: </th>
+							<th scope="col"><span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 		</div>
 	</div>
 	<div class="row" id="shipping-address-form-container" style="margin-top:5%;">
