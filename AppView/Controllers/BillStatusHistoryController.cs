@@ -126,7 +126,7 @@ namespace AppView.Controllers
                 var billStatusHis = new BillStatusHistory()
                 {
                     BillStatusHistoryID = Guid.NewGuid(),
-                    Status = 0,
+                    Status = 1,
                     ChangeDate = DateTime.Now,
                     Note = ghiChu,
                     BillID = idBill,
@@ -152,7 +152,7 @@ namespace AppView.Controllers
                 var billStatusHis = new BillStatusHistory()
                 {
                     BillStatusHistoryID = Guid.NewGuid(),
-                    Status = 1,
+                    Status = 2,
                     ChangeDate = DateTime.Now,
                     Note = ghiChu,
                     BillID = idBill,
@@ -178,7 +178,7 @@ namespace AppView.Controllers
                 var billStatusHis = new BillStatusHistory()
                 {
                     BillStatusHistoryID = Guid.NewGuid(),
-                    Status = 2,
+                    Status = 3,
                     ChangeDate = DateTime.Now,
                     Note = ghiChu,
                     BillID = idBill,

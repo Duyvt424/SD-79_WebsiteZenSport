@@ -3,6 +3,7 @@
 	ViewData["Title"] = "Chi tiết đơn hàng";
 }
 @{
+	var billStatusHis = Model.First().BillStatusHistories;
 	var status = Model.First().OrderStatuses.First().Status;
 	string statusText;
 
@@ -331,6 +332,132 @@
 							text-shadow: 5px 5px 0 rgba(0,0,0,0.4);
 							box-shadow: 0 0 10px rgba(0,0,0,0.5);
 						}
+
+		.main-timeline {
+			font-family: 'Poppins', sans-serif;
+		}
+
+			.main-timeline:after {
+				content: '';
+				display: block;
+				clear: both;
+			}
+
+			.main-timeline .timeline {
+				width: calc(50% + 200px);
+				margin: 0 0 25px 5px;
+				float: right;
+			}
+
+			.main-timeline .timeline-content {
+				color: #555;
+				background: #fff;
+				padding: 15px 15px 15px 290px;
+				border-radius: 20px;
+				box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+				display: block;
+				position: relative;
+			}
+
+				.main-timeline .timeline-content:hover {
+					text-decoration: none;
+				}
+
+				.main-timeline .timeline-content:before {
+					content: '';
+					background-color: #00A7FB;
+					height: 100%;
+					width: 120px;
+					position: absolute;
+					left: 140px;
+					top: 0;
+				}
+
+			.main-timeline .timeline-year {
+				color: #00A7FB;
+				font-size: 20px;
+				font-weight: 700;
+				line-height: 43px;
+				transform: translateY(-50%);
+				position: absolute;
+				left: 22px;
+				top: 50%;
+			}
+
+			.main-timeline .timeline-icon {
+				color: #fff;
+				font-size: 50px;
+				font-weight: 600;
+				text-align: center;
+				line-height: 50px;
+				width: 120px;
+				transform: translateY(-50%);
+				position: absolute;
+				left: 140px;
+				top: 50%;
+			}
+
+			.main-timeline .title {
+				font-size: 23px;
+				font-weight: 500;
+				text-transform: capitalize;
+				margin: 0 0 7px;
+			}
+
+			.main-timeline .description {
+				font-size: 14px;
+				line-height: 20px;
+				letter-spacing: 0.5px;
+				margin: 0;
+			}
+
+			.main-timeline .timeline:nth-child(even) {
+				margin: 0 5px 25px 0;
+				float: left;
+			}
+
+				.main-timeline .timeline:nth-child(even) .timeline-content {
+					padding: 15px 280px 15px 20px;
+				}
+
+					.main-timeline .timeline:nth-child(even) .timeline-content:before {
+						left: auto;
+						right: 139px;
+					}
+
+				.main-timeline .timeline:nth-child(even) .timeline-year {
+					left: auto;
+					right: 19px;
+				}
+
+				.main-timeline .timeline:nth-child(even) .timeline-icon {
+					left: auto;
+					right: 139px;
+				}
+
+			.main-timeline .timeline:nth-child(4n+2) .timeline-content:before {
+				background-color: #FF3E7D;
+			}
+
+			.main-timeline .timeline:nth-child(4n+2) .timeline-year {
+				color: #FF3E7D;
+			}
+
+			.main-timeline .timeline:nth-child(4n+3) .timeline-content:before {
+				background-color: #7338BA;
+			}
+
+			.main-timeline .timeline:nth-child(4n+3) .timeline-year {
+				color: #7338BA;
+			}
+
+			.main-timeline .timeline:nth-child(4n+4) .timeline-content:before {
+				background-color: #FF9800;
+			}
+
+			.main-timeline .timeline:nth-child(4n+4) .timeline-year {
+				color: #FF9800;
+			}
 	</style>
 </head>
 <link rel="stylesheet" href="~/css/detailsBill.css">
@@ -535,13 +662,13 @@
 			{
 				<a class="main-btn success-btn square-btn btn-hover show-modal" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Xác nhận</a>
 				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
-				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
 			@if (userName != null && status == 1)
 			{
 				<a class="main-btn success-btn square-btn btn-hover show-modal-delivery" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Giao hàng</a>
 				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
-				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
 			@if (userName != null && status == 2)
 			{
@@ -550,11 +677,11 @@
 				{
 					<a class="main-btn success-btn square-btn btn-hover show-modal-success" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hoàn thành</a>
 				}
-				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
-			@if (userName != null && status == 3)
+			@if (status == 3)
 			{
-				<a href="#" class="main-btn active-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
 		</div>
 	</div>
@@ -644,6 +771,78 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="myModalDetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12" style="background-color:white; border-radius:1%;">
+					<div class="main-timeline" style="margin-top:3%;">
+						@foreach (var item in billStatusHis.OrderBy(c => c.ChangeDate))
+						{
+							<div class="timeline">
+								<a href="#" class="timeline-content">
+									<div class="timeline-year">
+										@item.ChangeDate.ToString("HH:mm:ss")<br>
+										@item.ChangeDate.ToString("dd/MM/yyyy")
+									</div>
+									@if (item.StatusName == 0)
+									{
+										<div class="timeline-icon"><i class="fa fa-shopping-cart"></i></div>
+									}
+									@if (item.StatusName == 1)
+									{
+										<div class="timeline-icon"><i class="fa fa-credit-card"></i></div>
+									}
+									@if (item.StatusName == 2)
+									{
+										<div class="timeline-icon"><i class="fa fa-truck"></i></div>
+									}
+									@if (item.StatusName == 3)
+									{
+										<div class="timeline-icon"><i class="fa fa-check-square-o"></i></div>
+									}
+
+									@if (item.StatusName == 0)
+									{
+										<h3 class="title">Người dùng đặt hàng</h3>
+									}
+									@if (item.StatusName == 1)
+									{
+										<h3 class="title">Đã xác thực thông tin đơn hàng</h3>
+									}
+									@if (item.StatusName == 2)
+									{
+										<h3 class="title">Đơn hàng đang trên đường giao đến bạn</h3>
+									}
+									@if (item.StatusName == 3)
+									{
+										<h3 class="title">Đã nhận được hàng</h3>
+									}
+									<p class="description">
+										Ghi chú: @item.Note
+									</p>
+									<h5>Nhân viên xác nhận: @item.EmployeeName</h5>
+								</a>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		$('.show-modal-details').click(function () {
+			$('#myModalDetails').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.close-modal, .modal .close').click(function () {
+			$('#myModalDetails').modal('hide');
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.xac-nhan-tt').click(function () {
@@ -854,35 +1053,6 @@
 					<hr class="my-4" style="width:98%;" />
 				</div>
 			}
-			@*<div style="text-align: right;">
-				<ul style="margin-left: auto;">
-					<li class="">
-						Tổng giá sản phẩm:
-						<span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 13.5%;">@totalPrice.ToString("N0")đ</span>
-					</li>
-					<li class="">
-						Phí vận chuyển:
-						<span id="phivanchuyen" style="padding: 5px 10px; margin: 2px; margin-left: 17%;">+ @shippingCost.ToString("N0")đ</span>
-					</li>
-					<li class="">
-						Giảm giá:
-						@if (Model.First().PriceVoucher != null)
-						{
-							<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 20%;">- @string.Format("{0:N0}đ", priceVoucher)</span>
-						}
-						else
-						{
-							<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 20%;">0đ</span>
-						}
-					</li>
-					<li class="">
-						Tổng
-						<span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 21.5%;">= @totalAll.ToString("N0")đ</span>
-					</li>
-				</ul>
-			</div>*@
-			<!-- Single item -->
-
 
 			<div style="text-align: right;">
 				<table class="table table-borderless">

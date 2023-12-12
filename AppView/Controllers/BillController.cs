@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
 using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;
 
 namespace AppView.Controllers
@@ -220,6 +221,10 @@ namespace AppView.Controllers
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            //
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+
             var customerId = customerID != null ? customerID : customerIdSession;
             if (customerId != Guid.Empty)
             {
@@ -271,7 +276,14 @@ namespace AppView.Controllers
                                     CancelDate = _dbContext.Bills.First(c => c.BillID == billId).CancelDate,
                                     UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate
                                 }
-                            }
+                            },
+                            BillStatusHistories = _dbContext.BillStatusHistories.Where(c => c.BillID == billId).Select(x => new BillStatusHistoryViewModel
+                            {
+                                ChangeDate = x.ChangeDate,
+                                StatusName = x.Status,
+                                EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == EmployeeID).FullName,
+                                Note = x.Note
+                            }).ToList()
                         })
                         .ToListAsync();
                     return View(detailsBill);

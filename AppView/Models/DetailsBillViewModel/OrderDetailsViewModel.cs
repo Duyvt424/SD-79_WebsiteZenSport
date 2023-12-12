@@ -19,5 +19,6 @@
         public decimal? PriceVoucher { get; set; }
         public decimal ShippingCost { get; set; }
         public bool IsPaid { get; set; }
+        public List<BillStatusHistoryViewModel> BillStatusHistories { get; set; }
     }
 }

@@ -321,6 +321,17 @@ namespace AppView.Controllers
             };
             _dBContext.Bills.Add(bill);
 
+            var billStatusHistory = new BillStatusHistory
+            {
+                BillStatusHistoryID = Guid.NewGuid(),
+                Status = 0,
+                ChangeDate = DateTime.Now,
+                Note = "Người mua tạo đơn hàng",
+                BillID = bill.BillID,
+                EmployeeID = null,
+            };
+            _dBContext.BillStatusHistories.Add(billStatusHistory);
+
             foreach (var item in cartItems)
             {
                 var billDetail = new BillDetails
