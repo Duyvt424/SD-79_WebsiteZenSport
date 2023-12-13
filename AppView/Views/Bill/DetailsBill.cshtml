@@ -458,6 +458,7 @@
 			.main-timeline .timeline:nth-child(4n+4) .timeline-year {
 				color: #FF9800;
 			}
+
 	</style>
 </head>
 <link rel="stylesheet" href="~/css/detailsBill.css">
@@ -661,27 +662,27 @@
 			@if (userName != null && status == 0)
 			{
 				<a class="main-btn success-btn square-btn btn-hover show-modal" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Xác nhận</a>
-				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
-				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a href="#" class="main-btn danger-btn square-btn btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hủy đơn</a>
 			}
 			@if (userName != null && status == 1)
 			{
 				<a class="main-btn success-btn square-btn btn-hover show-modal-delivery" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Giao hàng</a>
-				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Hủy đơn</a>
-				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+				<a href="#" class="main-btn danger-btn square-btn btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hủy đơn</a>
 			}
 			@if (userName != null && status == 2)
 			{
-				<a href="#" class="main-btn danger-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;">Hủy đơn</a>
 				@if (Model.First().IsPaid == true)
 				{
 					<a class="main-btn success-btn square-btn btn-hover show-modal-success" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hoàn thành</a>
 				}
-				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
-			@if (status == 3)
+			@if (status == 0 || status == 1 || status == 2 || status == 3)
 			{
 				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
+			}
+			@if (userName == null && Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status == 0 && status == 1)
+			{
+				<a class="main-btn light-btn-outline btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Hủy đơn hàng</a>
 			}
 		</div>
 	</div>
@@ -821,7 +822,10 @@
 									<p class="description">
 										Ghi chú: @item.Note
 									</p>
-									<h5>Nhân viên xác nhận: @item.EmployeeName</h5>
+									@if (item.StatusName != 0)
+									{
+										<h5>Nhân viên xác nhận: @item.EmployeeName</h5>
+									}
 								</a>
 							</div>
 						}
@@ -831,6 +835,75 @@
 		</div>
 	</div>
 </div>
+<div class="modal-box1">
+	<!-- Modal -->
+	<div class="modal fade" id="myModalCancel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content clearfix">
+				<button type="button" class="close quay-lai" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<form class="formCancel">
+					<div class="modal-body">
+						<h3 class="title">Xác nhận hủy đơn hàng</h3>
+						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						<p class="description">Bạn chắc chắn muốn hủy đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ]:</p>
+						@if (userName != null)
+						{
+							<label class="description">Ghi chú hủy đơn:</label>
+							<input type="text" name="ghiChuHuy" class="form-control" />
+							<input type="text" id="idBillHuy" class="form-control" value="@Model.First().BillID" style="display:none;"/>
+						}
+						<div style="margin-top:2%;">
+							<button class="btn cancel quay-lai">Quay lại</button>
+							<button class="btn" type="submit">Xác nhận</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		$('.show-modal-cancel').click(function () {
+			$('#myModalCancel').modal('show');
+		});
+	});
+
+	$(document).ready(function () {
+		$('.quay-lai').click(function () {
+			$('#myModalCancel').modal('hide');
+		});
+	});
+
+	// Bắt sự kiện submit form
+	$('.formCancel').submit(function (e) {
+		e.preventDefault();
+
+		var ghiChu = $('input[name="ghiChuHuy"]').val();
+		var idBill = $('#idBillHuy').val();
+
+		// Gửi dữ liệu lên server sử dụng Ajax
+		$.ajax({
+			url: '@Url.Action("CancelOrder", "BillStatusHistory")',
+			type: 'POST',
+			data: { ghiChu: ghiChu, idBill: idBill },
+			success: function (response) {
+				// Xử lý kết quả từ server
+				if (response.success) {
+					// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
+					$('#myModal').modal('hide');
+					location.reload();
+				} else {
+					// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
+					alert(response.message);
+				}
+			},
+			error: function (error) {
+				// Xử lý lỗi nếu cần
+			}
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.show-modal-details').click(function () {

@@ -221,10 +221,6 @@ namespace AppView.Controllers
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            //
-            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
-            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
-
             var customerId = customerID != null ? customerID : customerIdSession;
             if (customerId != Guid.Empty)
             {
@@ -281,7 +277,7 @@ namespace AppView.Controllers
                             {
                                 ChangeDate = x.ChangeDate,
                                 StatusName = x.Status,
-                                EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == EmployeeID).FullName,
+                                EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == x.EmployeeID).FullName,
                                 Note = x.Note
                             }).ToList()
                         })

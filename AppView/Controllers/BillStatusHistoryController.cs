@@ -206,5 +206,30 @@ namespace AppView.Controllers
             _dbContext.SaveChanges();
             return Json(new { success = true, message = "Xác nhận đơn hàng thành công" });
         }
+
+        public IActionResult CancelOrder(string ghiChu, Guid idBill)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (EmployeeID != null)
+            {
+                var billStatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 4,
+                    ChangeDate = DateTime.Now,
+                    Note = ghiChu,
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                objBill.Status = 4;
+                objBill.CancelDate = DateTime.Now;
+                _dbContext.Bills.Update(objBill);
+                _repos.AddItem(billStatusHis);
+                _dbContext.SaveChanges();
+            }
+            return Json(new { success = true, message = "Lưu trạng thái thành công" });
+        }
     }
 }
