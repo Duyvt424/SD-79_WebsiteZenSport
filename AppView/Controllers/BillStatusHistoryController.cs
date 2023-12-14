@@ -221,7 +221,7 @@ namespace AppView.Controllers
                     ChangeDate = DateTime.Now,
                     Note = ghiChu,
                     BillID = idBill,
-                    EmployeeID = EmployeeID
+                    EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null
                 };
                 objBill.Status = 4;
                 objBill.CancelDate = DateTime.Now;

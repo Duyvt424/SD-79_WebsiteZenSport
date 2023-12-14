@@ -20,5 +20,6 @@
         public decimal ShippingCost { get; set; }
         public bool IsPaid { get; set; }
         public List<BillStatusHistoryViewModel> BillStatusHistories { get; set; }
+        public List<AddressViewModel> AddressViewModels { get; set; }
     }
 }

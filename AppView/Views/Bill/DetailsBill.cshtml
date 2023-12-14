@@ -470,7 +470,17 @@
 		<div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
 			<div class="w-100 text-center py-1 px-2" style="display:none;"><span class="text-medium">Shipped Via:</span> UPS Ground</div>
 			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><span class="text-medium">Trạng thái:</span> @statusText</div>
-			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;"><img src="~/image/icons8-date-25.png" alt="Date" /><span class="text-medium" style="padding-left:1%;">Ngày nhận hàng dự kiến:</span> @Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")</div>
+			<div class="w-100 text-center py-1 px-2" style="font-weight:bold;">
+				<img src="~/image/icons8-date-25.png" alt="Date" /><span class="text-medium" style="padding-left:1%;">Ngày nhận hàng dự kiến:</span>
+				@if (status != 4)
+				{
+					@Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")
+				}
+				else
+				{
+					<p>Không có</p>
+				}
+			</div>
 		</div>
 		<div class="card-body">
 			<div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
@@ -622,40 +632,11 @@
 
 				@if (status == 4)
 				{
-					<div class="step completed CreateDate">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-cart"></i></div>
-						</div>
-						<h3 class="step-title">Đơn hàng đã đặt</h3>
-						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
-					</div>
-					<div class="step completed ConfirmationDate">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
-						</div>
-						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
-						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
-					</div>
-					<div class="step completed DeliveryDate">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="fa fa-truck"></i></div>
-						</div>
-						<h3 class="step-title">Đang vận chuyển</h3>
-						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
-					</div>
-					<div class="step completed SuccessDate">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="fa fa-check-circle-o"></i></div>
-						</div>
-						<h3 class="step-title">Đã nhận được hàng</h3>
-						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
-					</div>
-					<div class="step completed CancelDate">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="pe-7s-home"></i></div>
-						</div>
-						<h3 class="step-title">Hoàn trả</h3>
-						<h4 class="step-title">@Model.First().OrderStatuses.First().CancelDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					<div style="text-align:center; margin-left:25%;">
+						<img src="~/image/cancel-order-8091835-6506585.png" style="max-width:55%;" />
+						<h4 style="color:red;">Đã hủy đơn hàng</h4>
+						<p>vào @Model.First().OrderStatuses.First().CancelDate.ToString("HH:mm, dd/MM/yyyy")</p>
+						<p style="margin-top:1%;">Lý do: <strong>@billStatusHis.First(c => c.StatusName == 4).Note</strong></p>
 					</div>
 				}
 			</div>
@@ -676,11 +657,15 @@
 					<a class="main-btn success-btn square-btn btn-hover show-modal-success" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hoàn thành</a>
 				}
 			}
-			@if (status == 0 || status == 1 || status == 2 || status == 3)
+			@if (status == 0 || status == 1 || status == 2 || status == 3 || status == 4)
 			{
 				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
-			@if (userName == null && Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status == 0 && status == 1)
+			@if (userName == null && Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status == 0)
+			{
+				<a class="main-btn light-btn-outline btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Hủy đơn hàng</a>
+			}
+			@if (userName == null && Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status == 1)
 			{
 				<a class="main-btn light-btn-outline btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Hủy đơn hàng</a>
 			}
@@ -846,12 +831,9 @@
 						<h3 class="title">Xác nhận hủy đơn hàng</h3>
 						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
 						<p class="description">Bạn chắc chắn muốn hủy đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ]:</p>
-						@if (userName != null)
-						{
-							<label class="description">Ghi chú hủy đơn:</label>
-							<input type="text" name="ghiChuHuy" class="form-control" />
-							<input type="text" id="idBillHuy" class="form-control" value="@Model.First().BillID" style="display:none;"/>
-						}
+						<label class="description">Lý do hủy đơn:</label>
+						<input type="text" name="ghiChuHuy" class="form-control" required/>
+						<input type="text" id="idBillHuy" class="form-control" value="@Model.First().BillID" style="display:none;" />
 						<div style="margin-top:2%;">
 							<button class="btn cancel quay-lai">Quay lại</button>
 							<button class="btn" type="submit">Xác nhận</button>
@@ -862,6 +844,68 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalShowListAddress" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-md" role="document">
+			<div class="modal-content">
+				<button type="button" class="close quay-lai" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					@{
+						// Chọn địa chỉ mặc định từ Model
+						var defaultAddress = Model.First().AddressViewModels != null && Model.First().AddressViewModels.Any() ? Model.First().AddressViewModels.FirstOrDefault() : null;
+					}
+					<div class="card-header py-3">
+						<h5 class="mb-0">Địa chỉ nhận hàng</h5>
+					</div>
+					@foreach (var item in Model.First().AddressViewModels)
+					{
+						<div class="card-body existing-address" id="existingAddress_@item.AddressID" data-isdefault="@item.IsDefaultAddress.ToString()" data-shipping-cost="@item.ShippingCost">
+							<p style="display:none;" id="addressIDShow" class="addressId-show">@item.AddressID</p>
+							<p style="font-weight:bold; font-size:17px; color:red;">@item.FullNameCus</p>
+							<p style="font-weight:bold;">@item.PhoneNumber</p>
+							<p style="font-weight:bold;">@item.Street, @item.Ward, @item.District, @item.Province</p>
+							<p style="display:none;" id="displayShipping" class="shipping-cost">@item.ShippingCost</p>
+							<p style="display:none;" id="districtIdShow" class="district-idShow">@item.DistrictId</p>
+							<p style="display:none;" id="wardCodeShow" class="ward-codeShow">@item.WardCode</p>
+							<p style="display:none;" id="shippingMethodIDShow" class="shipping-methodId">@item.ShippingMethodID</p>
+							<div>
+								<div>
+									<label id="deliveryDateLabel2"><span id="deliveryDateSpan" class="delivery-date"></span></label>
+								</div>
+							</div>
+							<div class="btn-list">
+								<label class="cl-checkbox">
+									<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up quay-lai" onclick="setDefaultAddress('@item.AddressID'); calculateDeliveryDate();" style="padding-top:3%;">
+									<span>Đặt làm mặc định</span>
+								</label>
+							</div>
+							<hr>
+						</div>
+					}
+					<a class="main-btn success-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Thêm mới</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('.btn-change-info').click(function () {
+			$('#modalShowListAddress').modal('show');
+		});
+	});
+
+	$(document).ready(function () {
+		$('.quay-lai').click(function () {
+			$('#modalShowListAddress').modal('hide');
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.show-modal-cancel').click(function () {
@@ -1156,7 +1200,7 @@
 
 						<tr>
 							<th scope="col">Tổng: </th>
-							<th scope="col"><span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
+							<th scope="col"><span class="cart-total-sub" id="totalPrice" name="TongTien" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
 						</tr>
 					</thead>
 				</table>
@@ -1168,11 +1212,17 @@
 			<div class="card mb-6">
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
-					@if (userName != null && Model.First().IsPaid == false)
+					@if (userName != null && Model.First().IsPaid == false && status != 4)
 					{
 						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
 					}
-					@if (userName == null)
+
+					@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && userName != null && status == 0 || status == 1)
+					{
+						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi thông tin</a>
+					}
+
+					@if (userName == null && status != 4)
 					{
 						@if (@Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && status != 3)
 						{
@@ -1284,5 +1334,115 @@
 			});
 		});
 
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Lắng nghe sự kiện change của tất cả các checkbox
+			var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
+			checkboxes.forEach(function (checkbox) {
+				checkbox.addEventListener('change', function () {
+					updateShippingCost();
+				});
+			});
+
+			// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
+			updateShippingCost();
+			// Đảm bảo rằng dữ liệu đã được load hoàn tất trước khi gọi hàm
+			setTimeout(function () {
+				calculateDeliveryDate();
+			}, 200);
+		});
+
+		function updateShippingCost() {
+			var totalPriceElement = document.getElementById('totalPrice');
+			var totalPriceText = totalPriceElement.innerText;
+			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+			//lấy giá giảm voucher
+			var priceVoucherElement = document.getElementById('giamgia');
+			var priceVoucherText = priceVoucherElement.innerText;
+			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
+			// Tìm checkbox được chọn
+			var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+			if (selectedCheckbox) {
+				// Lấy giá trị vận chuyển từ thuộc tính data
+				var shippingCost = parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost);
+
+				// Cập nhật giá trị vận chuyển trên trang
+				var phivanchuyenElement = document.getElementById('phivanchuyen');
+				phivanchuyenElement.innerText = "+ " + shippingCost.toLocaleString('vi-VN') + "đ";
+				// tính tổng tiền khi ng dùng đổi checkbox
+				var totalOk = totalPrice + shippingCost - priceVoucher;
+				var tongTienElement = document.querySelector('[name="TongTien"]');
+				tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
+			}
+		}
+	</script>
+	<script>
+		// Thiết lập địa chỉ mặc định từ Razor Model
+		var selectedAddressId = '@(defaultAddress?.AddressID.ToString() ?? "")';
+		var idCus = '@Model.First().CustomerId.ToString()';
+		var idBill = '@Model.First().BillID.ToString()';
+		$('.btn-change-info').click(function () {
+			// Thực hiện ajax request để lấy thông tin địa chỉ mặc định từ server
+			$.ajax({
+				url: '@Url.Action("GetDefaultAddress", "Address")',
+				type: 'GET',
+				data: { idCus: idCus},
+				success: function (response) {
+					console.log('id cus', idCus);
+					// Chọn checkbox mặc định
+					var defaultCheckbox = document.getElementById('cbx_' + response.addressId);
+					if (defaultCheckbox) {
+						defaultCheckbox.checked = true;
+						lastCheckedCheckbox = defaultCheckbox;
+					}
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi (nếu có)
+					console.error('Error:', errorThrown);
+				}
+			});
+		});
+
+		// Biến để lưu trữ trạng thái của checkbox
+		var lastCheckedCheckbox = null;
+
+		const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+		if (existingAddressChecked) 
+		{
+			var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+		}
+
+		function setDefaultAddress(addressId) {
+			// Lấy checkbox tương ứng với địa chỉ được chọn
+			var selectedCheckbox = document.getElementById('cbx_' + addressId);
+			var isCheckboxChecked = selectedCheckbox.checked;
+
+			// Nếu checkbox đã được chọn trước đó, bỏ chọn nó
+			if (lastCheckedCheckbox !== null && lastCheckedCheckbox !== selectedCheckbox) {
+				lastCheckedCheckbox.checked = false;
+			}
+
+			// Chọn checkbox tương ứng với địa chỉ được chọn
+			selectedCheckbox.checked = true;
+
+			// Lưu trạng thái của checkbox hiện tại
+			lastCheckedCheckbox = selectedCheckbox;
+
+			// Thiết lập giá trị cho biến selectedAddressId
+			selectedAddressId = addressId;
+			//
+			$.ajax({
+				url: '@Url.Action("SetDefaultAddressModal", "Address")',
+				type: 'POST',
+				data: { addressId: addressId, idCus: idCus, idBill: idBill},
+				success: function (response) {
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi (nếu có)
+					console.error('Error:', errorThrown);
+				}
+			});
+		}
 	</script>
 </div>

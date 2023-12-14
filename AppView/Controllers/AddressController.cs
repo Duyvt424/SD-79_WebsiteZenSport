@@ -32,7 +32,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetDefaultAddress(Guid addressId)
+        public IActionResult SetDefaultAddress(Guid addressId, Guid idCus)
         {
             // Kiểm tra xem địa chỉ có tồn tại không
             var address = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == addressId);
@@ -41,7 +41,8 @@ namespace AppView.Controllers
                 return NotFound();
             }
             var userIdString = HttpContext.Session.GetString("UserId");
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCus;
             // Lấy địa chỉ mặc định hiện tại của người dùng
             var currentDefaultAddress = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress);
             if (currentDefaultAddress != null)
@@ -56,11 +57,42 @@ namespace AppView.Controllers
             return Ok();
         }
 
+
+        [HttpPost]
+        public IActionResult SetDefaultAddressModal(Guid addressId, Guid idCus, Guid idBill)
+        {
+            var objBill = _dbContext.Bills.First(c => c.BillID == idBill && c.CustomerID == idCus);
+            // Kiểm tra xem địa chỉ có tồn tại không
+            var address = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == addressId);
+            if (address == null)
+            {
+                return NotFound();
+            }
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCus;
+            // Lấy địa chỉ mặc định hiện tại của người dùng
+            var currentDefaultAddress = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress);
+            if (currentDefaultAddress != null)
+            {
+                // Hủy đặt làm mặc định cho địa chỉ hiện tại
+                currentDefaultAddress.IsDefaultAddress = false;
+            }
+            // Đặt làm mặc định cho địa chỉ mới
+            address.IsDefaultAddress = true;
+            objBill.AddressID = address.AddressID;
+            _dbContext.Bills.Update(objBill);
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _dbContext.SaveChanges();
+            return Ok();
+        }
+
         [HttpGet]
-        public IActionResult GetDefaultAddress()
+        public IActionResult GetDefaultAddress(Guid idCus)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCus;
             // Lấy địa chỉ mặc định của người dùng
             var defaultAddress = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress == true);
             if (defaultAddress == null)

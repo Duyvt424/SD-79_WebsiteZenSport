@@ -12,6 +12,7 @@ using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
 using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
 using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;
@@ -273,6 +274,21 @@ namespace AppView.Controllers
                                     UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate
                                 }
                             },
+                            AddressViewModels = _dbContext.Addresses.Where(c => c.CumstomerID == objBill.CustomerID).Select(a => new AddressViewModel
+                            {
+                                AddressID = a.AddressID,
+                                FullNameCus = _dbContext.Customers.First(c => c.CumstomerID == objBill.CustomerID).FullName,
+                                PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerID).PhoneNumber,
+                                Street = a.Street,
+                                Ward = a.Commune,
+                                District = a.District,
+                                Province = a.Province,
+                                IsDefaultAddress = a.IsDefaultAddress,
+                                ShippingCost = a.ShippingCost,
+                                DistrictId = a.DistrictId,
+                                WardCode = a.WardCode,
+                                ShippingMethodID = a.ShippingMethodID
+                            }).ToList(),
                             BillStatusHistories = _dbContext.BillStatusHistories.Where(c => c.BillID == billId).Select(x => new BillStatusHistoryViewModel
                             {
                                 ChangeDate = x.ChangeDate,
