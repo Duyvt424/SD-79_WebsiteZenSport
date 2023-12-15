@@ -299,12 +299,47 @@ namespace AppView.Controllers
                             }).ToList()
                         })
                         .ToListAsync();
-                    return View(detailsBill);
-                }
+
+					var sharedData = new { BillId = billId, DetailsBill = detailsBill };
+					var sharedDataString = JsonConvert.SerializeObject(sharedData);
+					HttpContext.Session.SetString("SharedDataKey", sharedDataString);
+					return View(detailsBill);
+				}
             }
             return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
         }
-        public IActionResult SaveStatusBill(Guid billID)
+
+		public async Task<IActionResult> BillDetail(Guid? customerID)
+		{
+			// Lấy dữ liệu từ TempData
+			var tempBillId = TempData["BillId"] as Guid?;
+			var tempDetailsBill = TempData["DetailsBill"] as List<OrderDetailsViewModel>;
+
+			var userIdString = HttpContext.Session.GetString("UserId");
+			var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+			var customerId = customerID ?? customerIdSession;
+
+			var sharedDataString = HttpContext.Session.GetString("SharedDataKey");
+
+			if (!string.IsNullOrEmpty(sharedDataString))
+			{
+				var sharedData = JsonConvert.DeserializeObject<dynamic>(sharedDataString);
+
+				// Truy xuất dữ liệu
+				var billId = (Guid)sharedData.BillId;
+				var detailsBill = sharedData.DetailsBill.ToObject<List<OrderDetailsViewModel>>(); // Chuyển đổi thành List<OrderDetailsViewModel>
+
+				// Sử dụng dữ liệu đã lấy để hiển thị hoặc thực hiện các công việc khác cần thiết
+				ViewBag.BillId = billId;
+				ViewBag.DetailsBill = detailsBill;
+
+				return View(detailsBill);
+			}
+
+			return View(new List<OrderDetailsViewModel>());
+		}
+
+		public IActionResult SaveStatusBill(Guid billID)
         {
             string DOCUMENT = "Thanh toán trực tuyến VNPay";
             var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billID);

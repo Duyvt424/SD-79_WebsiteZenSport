@@ -1,0 +1,315 @@
+﻿@model List<AppView.Models.DetailsBillViewModel.OrderDetailsViewModel>
+
+@{
+    ViewData["Title"] = "BillDetail";
+}
+@{
+	var billStatusHis = Model.First().BillStatusHistories;
+	var status = Model.First().OrderStatuses.First().Status;
+	string statusText;
+
+	switch (status)
+	{
+		case 0:
+			statusText = "Chờ xác nhận";
+			break;
+		case 1:
+			statusText = "Đã xác nhận thông tin thanh toán";
+			break;
+		case 2:
+			statusText = "Đã bàn giao cho đơn vị vận chuyển";
+			break;
+		case 3:
+			statusText = "Đã nhận được hàng";
+			break;
+		case 4:
+			statusText = "Đã hủy đơn";
+			break;
+		default:
+			statusText = "Không xác định";
+			break;
+	}
+}
+@{
+	decimal totalPrice = Model.First().TotalPrice - Model.First().ShippingCost;
+	decimal shippingCost = Model.First().ShippingCost;
+	decimal priceVoucher = Model.First().PriceVoucher ?? 0;
+	decimal totalAll = totalPrice + shippingCost - priceVoucher;
+}
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	var date = "a";
+	var userName = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
+	string param1Value = "h";
+	if (Context.Request.Query.ContainsKey("vnp_TransactionStatus"))
+	{
+		param1Value = Context.Request.Query["vnp_TransactionStatus"];
+		date = Model.First().OrderStatuses.First().UpdateDate.ToString("HH:mm, dd/MM/yyyy");
+	}
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<style>
+		body {
+			background-color: white;
+			font-family: 'Montserrat', sans-serif
+		}
+
+		.card {
+			border: none
+		}
+
+		.logo {
+			background-color: #eeeeeea8
+		}
+
+		.totals tr td {
+			font-size: 13px
+		}
+
+		.footer {
+			background-color: #eeeeeea8
+		}
+
+			.footer span {
+				font-size: 12px
+			}
+
+		.product-qty span {
+			font-size: 12px;
+			color: black
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="container mt-5 mb-5">
+
+		<div class="row d-flex justify-content-center">
+
+			<div class="col-md-8">
+
+				<div class="card">
+
+
+					<div class="text-left logo p-2 px-5">
+
+						<img src="https://i.imgur.com/2zDU056.png" width="50">
+
+
+					</div>
+
+					<div class="invoice p-5">
+
+						<h5>Your order Confirmed!</h5>
+
+						<span class="font-weight-bold d-block mt-4">Hello,  @Model.First().FullName</span>
+						<span>You order has been confirmed and will be shipped in next two days!</span>
+
+						<div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+
+							<table class="table table-borderless">
+
+								<tbody>
+									<tr>
+										<td>
+											<div class="py-2">
+
+												<span class="d-block text-muted">Order Date</span>
+												<span>@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</span>
+
+											</div>
+										</td>
+
+										<td>
+											<div class="py-2">
+
+												<span class="d-block text-muted">Order No</span>
+												<span>@Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")</span>
+
+											</div>
+										</td>
+
+										<td>
+											<div class="py-2">
+
+												<span class="d-block text-muted">Payment</span>
+												<span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
+
+											</div>
+										</td>
+
+										<td>
+											<div class="py-2">
+
+												<span class="d-block text-muted">Shiping Address</span>
+												<span>
+													@(Model.First().AddressViewModels.First().Street +
+														", " + Model.First().AddressViewModels.First().Ward +
+														", " + Model.First().AddressViewModels.First().District +
+														", " + Model.First().AddressViewModels.First().Province)
+												</span>
+
+											</div>
+										</td>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+						<div class="product border-bottom table-responsive">
+							
+								<table class="table table-borderless">
+								@foreach (var item in Model)
+								{
+									<tbody>
+										<tr>
+											<td width="20%">
+												<img src="@Url.Content("~/image/" + item.Products.First().ImageUrl)" width="90">
+											</td>
+											<td width="60%">
+												<span class="font-weight-bold">@item.Products.First().Name</span>
+												<div class="product-qty">
+													<span class="d-block">Quantity: @item.Products.First().Quantity</span>
+													<span>Size: @item.Products.First().Size</span>
+												</div>
+											</td>
+											<td width="20%">
+												<div class="text-right">
+													<span class="font-weight-bold">@item.Products.First().Price.ToString("N0")</span>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								}
+
+								</table>
+							
+						</div>
+
+						<div class="row d-flex justify-content-end">
+
+							<div class="col-md-5">
+
+								<table class="table table-borderless">
+
+									<tbody class="totals">
+
+										<tr>
+											<td>
+												<div class="text-left">
+
+													<span class="text-muted">Subtotal</span>
+
+												</div>
+											</td>
+											<td>
+												<div class="text-right">
+													<span>@totalPrice.ToString("N0")đ</span>
+												</div>
+											</td>
+										</tr>
+
+
+										<tr>
+											<td>
+												<div class="text-left">
+
+													<span class="text-muted">Shipping Fee</span>
+
+												</div>
+											</td>
+											<td>
+												<div class="text-right">
+													<span>@shippingCost.ToString("N0")đ</span>
+												</div>
+											</td>
+										</tr>
+
+
+								
+
+
+										<tr>
+											<td>
+												<div class="text-left">
+
+													<span class="text-muted">Voucher</span>
+
+												</div>
+											</td>
+											<td>
+												<div class="text-right">
+													<span class="text-success">@string.Format("{0:N0}đ", priceVoucher)</span>
+												</div>
+											</td>
+										</tr>
+
+
+										<tr class="border-top border-bottom">
+											<td>
+												<div class="text-left">
+
+													<span class="font-weight-bold">Subtotal</span>
+
+												</div>
+											</td>
+											<td>
+												<div class="text-right">
+													<span class="font-weight-bold"> @totalAll.ToString("N0")đ</span>
+												</div>
+											</td>
+										</tr>
+
+									</tbody>
+
+								</table>
+
+							</div>
+
+
+
+						</div>
+
+
+						<p>We will be sending shipping confirmation email when the item shipped successfully!</p>
+						<p class="font-weight-bold mb-0">Thanks for shopping with us!</p>
+						<span>Nike Team</span>
+
+
+
+
+
+					</div>
+
+
+					<div class="d-flex justify-content-between footer p-3">
+
+						<span>Need Help? visit our <a href="#"> help center</a></span>
+						<span>12 June, 2020</span>
+
+					</div>
+
+
+
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</body>
+</html>
