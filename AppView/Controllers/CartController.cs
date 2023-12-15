@@ -396,10 +396,11 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID)
+        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID, Guid idCustomer)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
-            var customerId = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCustomer;
             var userUpdate = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
             if (userUpdate != null)
             {

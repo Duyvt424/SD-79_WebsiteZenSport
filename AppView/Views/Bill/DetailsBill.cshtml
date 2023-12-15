@@ -1,6 +1,9 @@
 ﻿@model List<AppView.Models.DetailsBillViewModel.OrderDetailsViewModel>
 @{
 	ViewData["Title"] = "Chi tiết đơn hàng";
+	var selectedShippingMethodID = 0;
+	var totalWeightShow = Model.First().Products.First().Quantity;
+	var totalWeight = totalWeightShow * 500;
 }
 @{
 	var billStatusHis = Model.First().BillStatusHistories;
@@ -92,7 +95,7 @@
 		}
 
 		.modal-box .modal-dialog {
-			width: 450px;
+			width: 650px;
 			margin: 50px auto 0;
 		}
 
@@ -474,7 +477,7 @@
 				<img src="~/image/icons8-date-25.png" alt="Date" /><span class="text-medium" style="padding-left:1%;">Ngày nhận hàng dự kiến:</span>
 				@if (status != 4)
 				{
-					@Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")
+					<p id="deliveryDateBill">@Model.First().OrderStatuses.First()?.SuccessDate.ToString("dd/MM/yyyy")</p>
 				}
 				else
 				{
@@ -832,7 +835,7 @@
 						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
 						<p class="description">Bạn chắc chắn muốn hủy đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ]:</p>
 						<label class="description">Lý do hủy đơn:</label>
-						<input type="text" name="ghiChuHuy" class="form-control" required/>
+						<input type="text" name="ghiChuHuy" class="form-control" required />
 						<input type="text" id="idBillHuy" class="form-control" value="@Model.First().BillID" style="display:none;" />
 						<div style="margin-top:2%;">
 							<button class="btn cancel quay-lai">Quay lại</button>
@@ -886,13 +889,150 @@
 							<hr>
 						</div>
 					}
-					<a class="main-btn success-btn square-btn btn-hover" style="font-size:16px; padding:5px 10px; margin:2px;">Thêm mới</a>
+					<a class="main-btn success-btn square-btn btn-hover add-info" style="font-size:16px; padding:5px 10px; margin:2px;">Thêm mới</a>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalAddAddress" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<button type="button" class="close quay-lai" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<h3 class="title">Thêm địa chỉ mới</h3>
+					<form method="post" action="@Url.Action("AddAddress", "Cart")">
+						<div class="form-floating mb-3">
+							<input type="text" class="form-control" name="nameUser" placeholder="Họ và tên" required>
+							<label for="floatingInputEmail">Họ và tên</label>
+						</div>
+						<div class="form-floating mb-3">
+							<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
+							<label for="floatingInputEmail">Số điện thoại</label>
+						</div>
+						<div class="row mb-4">
+							<div class="col">
+								<div class="form-floating mb-3">
+									<select class="form-control" id="ListTinh" onchange="updateProvinceValue(this); fetchDistricts(this.value)">
+										<option value="" disabled selected>Chọn tỉnh / thành</option>
+									</select>
+									<label for="floatingInputEmail">Tỉnh/Thành Phố</label>
+								</div>
+								<input type="hidden" id="ProvinceName" name="provinceName" />
+							</div>
+							<div class="col">
+								<div class="form-floating mb-3">
+									<select class="form-control" id="ListQuanHuyen" onchange="updateDistrictValue(this); updateDistrictAndFetchWards()">
+										<option value="" disabled selected>Chọn quận / huyện</option>
+									</select>
+									<label for="floatingInputEmail">Quận/Huyện</label>
+								</div>
+								<input type="hidden" id="DistrictName" name="districtName" />
+							</div>
+							<div class="col">
+								<div class="form-floating mb-3">
+									<select class="form-control" id="ListPhuongXa" onchange="updateWardValue(this); calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
+										<option value="" disabled selected>Chọn xã / phường</option>
+									</select>
+									<label for="floatingInputEmail">Xã/Phường</label>
+								</div>
+								<input type="hidden" id="WardName" name="wardName" />
+							</div>
+							<input style="display:none;" id="shippingCost" name="ShippingCost" />
+							<input style="display:none;" id="districtIDCus" name="DistrictID" />
+							<input style="display:none;" id="wardCodeCus" name="WardCode" />
+							<input style="display:none;" id="shippingMethodID" name="ShippingMethodID" />
+						</div>
+						<div class="form-floating mb-3">
+							<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
+							<label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
+						</div>
+						<button class="main-btn dark-btn-outline btn-hover btn-add-diachi" type="button" style="font-size:16px; padding:5px 10px; margin:2px;">
+							Thêm
+						</button>
+						<div style="padding-right: 300px; display:none;" id="shippingOptionsDiv">
+							<label class="radio-button" style="font-size: 14px; display: inline;">
+								<input type="radio" name="example-radio" value="option1">
+								<span class="radio"></span>
+							</label>
+
+							<label class="radio-button" style="font-size: 14px; display:none;">
+								<input type="radio" name="example-radio" value="option2">
+								<span class="radio"></span>
+							</label>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		$('.add-info').click(function () {
+			$('#modalAddAddress').modal('show');
+			$('#modalShowListAddress').modal('hide');
+		});
+	});
+
+	$(document).ready(function () {
+		$('.quay-lai').click(function () {
+			$('#modalAddAddress').modal('hide');
+		});
+	});
+
+	$(document).ready(function () {
+		// Bắt sự kiện click trên nút "Thêm"
+		$('.btn-add-diachi').click(function (e) {
+			e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+
+			// Lấy giá trị từ các trường input và select
+			var nameUser = $('input[name="nameUser"]').val();
+			var phoneNumber = $('input[name="phoneNumber"]').val();
+			var provinceName = $('input[name="provinceName"]').val();
+			var districtName = $('input[name="districtName"]').val();
+			var wardName = $('input[name="wardName"]').val();
+			var street = $('input[name="street"]').val();
+			var shippingCostHTML = $('input[name="ShippingCost"]').val();
+			var shippingCost = parseFloat(shippingCostHTML);
+			var districtID = $('input[name="DistrictID"]').val();
+			var wardCode = $('input[name="WardCode"]').val();
+			var shippingMethodID = $('input[name="ShippingMethodID"]').val();
+			var idCustomer = '@Model.First().CustomerId.ToString()';
+
+			// Gửi dữ liệu lên server sử dụng Ajax
+			$.ajax({
+				url: '@Url.Action("AddAddress", "Cart")',
+				type: 'POST',
+				data: {
+					nameUser: nameUser,
+					phoneNumber: phoneNumber,
+					provinceName: provinceName,
+					districtName: districtName,
+					wardName: wardName,
+					street: street,
+					ShippingCost: shippingCost,
+					DistrictID: districtID,
+					WardCode: wardCode,
+					ShippingMethodID: shippingMethodID,
+					idCustomer: idCustomer
+				},
+				success: function (response) {
+					$('#modalAddAddress').modal('hide');
+					location.reload();
+				},
+				error: function (error) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.btn-change-info').click(function () {
@@ -1401,7 +1541,7 @@
 			$.ajax({
 				url: '@Url.Action("GetDefaultAddress", "Address")',
 				type: 'GET',
-				data: { idCus: idCus},
+				data: { idCus: idCus },
 				success: function (response) {
 					// Chọn checkbox mặc định
 					var defaultCheckbox = document.getElementById('cbx_' + response.addressId);
@@ -1427,7 +1567,7 @@
 			var voucherObj = parseFloat(voucherObjHTML);
 			if (existingAddressChecked) {
 				var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-			    var shippingCost = parseFloat(existingAddressChecked.closest('.existing-address').dataset.shippingCost);
+				var shippingCost = parseFloat(existingAddressChecked.closest('.existing-address').dataset.shippingCost);
 				updatePriceShippingInBill(objBill, shippingCost, voucherObj);
 			}
 		}, 500);
@@ -1454,7 +1594,7 @@
 			$.ajax({
 				url: '@Url.Action("SetDefaultAddressModal", "Address")',
 				type: 'POST',
-				data: { addressId: addressId, idCus: idCus, idBill: idBill},
+				data: { addressId: addressId, idCus: idCus, idBill: idBill },
 				success: function (response) {
 					location.reload();
 				},
@@ -1469,7 +1609,7 @@
 			$.ajax({
 				url: '@Url.Action("UpdatePriceShippingInBill", "Address")',
 				type: 'POST',
-				data: { billId: billId, shippingCost: shippingCost, priceVoucher: priceVoucher},
+				data: { billId: billId, shippingCost: shippingCost, priceVoucher: priceVoucher },
 				success: function (response) {
 					// Xử lý thành công nếu cần
 				},
@@ -1477,6 +1617,315 @@
 					// Xử lý lỗi nếu cần
 				}
 			});
+		}
+	</script>
+
+	<script>
+		// Sử dụng sự kiện change để theo dõi sự thay đổi trong selection chọn xã
+		const phuongXaSelect = document.getElementById('ListPhuongXa');
+		phuongXaSelect.addEventListener('change', function () {
+			// Kiểm tra xem xã đã được chọn hay chưa
+			const selectedXa = phuongXaSelect.value;
+			const shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+
+			if (selectedXa) {
+				// Nếu đã chọn xã, hiển thị radio button
+				shippingOptionsDiv.style.display = 'block';
+			} else {
+				// Nếu xã chưa được chọn, ẩn radio button
+				shippingOptionsDiv.style.display = 'none';
+			}
+		});
+	</script>
+	<script>
+		function updateDistrictAndFetchWards() {
+			const selectedDistrict = document.getElementById('ListQuanHuyen').value;
+			fetchWards(selectedDistrict);
+			calculateShippingFee(document.getElementById('ListPhuongXa').value, selectedDistrict);
+		}
+	</script>
+	<script>
+		// Function to fetch province data from API and populate the select element
+		function fetchProvinces() {
+			// API endpoint URL
+			const apiUrl = "https://online-gateway.ghn.vn/shiip/public-api/master-data/province";
+			// Token
+			const token = "6092d580-fde7-11ed-a967-deea53ba3605";
+			// Create headers for the request
+			const headers = {
+				"Content-Type": "application/json",
+				token: token
+			};
+			// Send GET request to the API
+			fetch(apiUrl, {
+				method: "GET",
+				headers: headers
+			})
+				.then(response => response.json())
+				.then(data => {
+					// Process the response data
+					if (data && data.data) {
+						const provinces = data.data;
+
+						// Get the select element
+						const selectElement = document.getElementById("ListTinh");
+
+						// Create and append option elements for each province
+						provinces.forEach(province => {
+							const option = document.createElement("option");
+							option.value = province.ProvinceID;
+							option.textContent = province.ProvinceName;
+							selectElement.appendChild(option);
+						});
+					}
+				})
+				.catch(error => {
+					console.error("Error fetching provinces:", error);
+				});
+		}
+		// Update hidden input value when a province is selected
+		function updateProvinceValue(selectElement) {
+			const provinceName = selectElement.options[selectElement.selectedIndex].text;
+			document.getElementById("ProvinceName").value = provinceName;
+		}
+		// Call the fetchProvinces function to populate the select box
+		fetchProvinces();
+	</script>
+	<script>
+		function fetchDistricts(province_id) {
+			const districtSelect = document.getElementById('ListQuanHuyen');
+			// Clear existing options
+			districtSelect.innerHTML = '<option value="" disabled selected>Chọn quận / huyện</option>';
+			// Set districtID after creating options
+			var districtID = document.getElementById('districtID');
+
+			const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${province_id}`;
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					// Add districts to the dropdown list
+					data.data.forEach(district => {
+						const option = document.createElement('option');
+						option.value = district.DistrictID;
+						option.textContent = district.DistrictName;
+						districtSelect.appendChild(option);
+					});
+					// Trigger change event to update wards
+					districtSelect.dispatchEvent(new Event('change'));
+				})
+				.catch(error => console.log(error));
+		}
+		// Update hidden input value when a province is selected
+		function updateDistrictValue(selectElement) {
+			const districtName = selectElement.options[selectElement.selectedIndex].text;
+			const districtId = selectElement.value;
+			document.getElementById("DistrictName").value = districtName;
+			document.getElementById("districtIDCus").value = districtId;
+		}
+		fetchDistricts();
+	</script>
+	<script>
+		function fetchWards(district_id) {
+			const wardSelect = document.getElementById('ListPhuongXa');
+			// Clear existing options
+			wardSelect.innerHTML = '<option value="" disabled selected>Chọn xã / phường</option>';
+
+			const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${district_id}`;
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					// Add wards to the dropdown list
+					data.data.forEach(ward => {
+						const option = document.createElement('option');
+						option.value = ward.WardCode;
+						option.textContent = ward.WardName;
+						wardSelect.appendChild(option);
+					});
+					// Trigger change event to update shipping fee
+					wardSelect.dispatchEvent(new Event('change'));
+				})
+				.catch(error => console.log(error));
+		}
+		// Update hidden input value when a province is selected
+		function updateWardValue(selectElement) {
+			const wardName = selectElement.options[selectElement.selectedIndex].text;
+			const wardCode = selectElement.value;
+			document.getElementById("WardName").value = wardName;
+			document.getElementById("wardCodeCus").value = wardCode;
+		}
+	</script>
+	<script>
+		// Hàm để cập nhật hình thức vận chuyển và thời gian dự kiến
+		function updateShippingOptions() {
+			var toDistrict = document.getElementById('ListQuanHuyen').value;
+			// Gọi API để cập nhật hình thức vận chuyển
+			fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toDistrict}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': '6092d580-fde7-11ed-a967-deea53ba3605'
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					var shippingMethods = data.data;
+					var shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+
+					// Cập nhật hình thức vận chuyển
+					var firstLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(1)');
+					firstLabel.innerHTML = 'Hình thức vận chuyển: ' + shippingMethods[0].short_name;
+					firstLabel.style.fontSize = '16px';
+					firstLabel.style.fontWeight = 'bold';
+					selectedShippingMethodID = shippingMethods[0].service_id;
+					console.log(selectedShippingMethodID);
+					// Ẩn dòng thứ hai
+					var secondLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(2)');
+					secondLabel.style.display = 'none';
+
+					// Hiển thị "shippingOptionsDiv" sau khi có dữ liệu
+					shippingOptionsDiv.style.display = 'block';
+
+					// Gọi hàm tính toán ngày nhận hàng dự kiến
+					calculateDeliveryDate();
+					document.getElementById("shippingMethodID").value = shippingMethods[0].service_id;
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+		// Sự kiện khi có sự thay đổi ở các textbox chọn địa chỉ hoặc khi trang web được tải lần đầu
+		document.getElementById('ListQuanHuyen').addEventListener('change', updateShippingOptions);
+		document.getElementById('ListPhuongXa').addEventListener('change', updateShippingOptions);
+
+		// Hàm tính toán ngày nhận hàng dự kiến
+		function calculateDeliveryDate() {
+			// Gọi hàm getLeadTime() để lấy thời gian dự kiến nhận hàng
+			getLeadTime().then(leadTime => {
+				if (leadTime !== null) {
+					// Thời điểm Epoch (ngày 1 tháng 1 năm 1970) theo múi giờ UTC
+					var epochTimeUTC = new Date("1970-01-01T00:00:00Z");
+
+					// Chuyển leadTime thành mili giây và thêm vào thời điểm Epoch theo múi giờ UTC
+					var deliveryDateUTC = new Date(epochTimeUTC.getTime() + (leadTime * 1000));
+
+					// Điều chỉnh thời gian dự kiến nhận hàng sang múi giờ Việt Nam (UTC+7)
+					var deliveryDateVietnam = new Date(deliveryDateUTC.getTime() + (7 * 60 * 60 * 1000));
+
+					// Trích xuất ngày, tháng và năm từ thời gian dự kiến
+					var day = deliveryDateVietnam.getDate();
+					var month = deliveryDateVietnam.getMonth() + 1; // Tháng trong JavaScript bắt đầu từ 0, cần cộng thêm 1.
+					var year = deliveryDateVietnam.getFullYear();
+
+					// Tạo chuỗi định dạng "dd-mm-yyyy"
+					var formattedDate = day + '-' + (month < 10 ? '0' : '') + month + '-' + year;
+
+					var deliveryDateSpanElement = document.querySelector('.existing-address input[type="checkbox"]:checked');
+					var deliveryDateSpan = deliveryDateSpanElement ? deliveryDateSpanElement.closest('.existing-address').querySelector('.delivery-date') : null;
+					console.log(deliveryDateSpan);
+					deliveryDateSpan.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
+					deliveryDateSpan.style.paddingTop = '10px';
+					deliveryDateSpan.style.fontWeight = 'bold';
+
+					//lưu vào db khi thanh toán
+					var deliveryDateSaveHTML = document.getElementById('deliveryDateBill');
+					deliveryDateSaveHTML.innerHTML = formattedDate;
+				}
+			});
+		}
+
+		// Hàm để lấy thời gian dự kiến nhận hàng
+		function getLeadTime() {
+			var checkedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+			var toDistrictIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.district-idShow') : null;
+			var toDistrictId = parseFloat(toDistrictIdElement.textContent);
+			console.log('Id huyen', toDistrictId);
+
+			var toWardCodeElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.ward-codeShow') : null;
+			var toWardCode = parseFloat(toWardCodeElement.textContent);
+			console.log('Id xa', toWardCode);
+			;
+			var toMethodShipIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.shipping-methodId') : null;
+			var methodId = parseFloat(toMethodShipIdElement.textContent);
+			console.log('Id ship', methodId);
+			return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${methodId}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': '6092d580-fde7-11ed-a967-deea53ba3605',
+					'shop_id': '4185066'
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log(data.data.leadtime);
+					return data.data.leadtime;
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					return null;
+				});
+		}
+	</script>
+	<script>
+		let isNewAddressClicked = false;
+		$('.add-info').click(function () {
+			isNewAddressClicked = true;
+		});
+		function calculateShippingFee(to_ward_code, to_district_id) {
+			var totalPriceElement = document.getElementById('totalPrice');
+			var totalPriceText = totalPriceElement.innerText;
+			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+
+			var totalWeight = '@totalWeight';
+			var totalWeightSum = parseInt(totalWeight.replace(/[^\d]/g, ''));
+			// lấy id hình thức giao từ db
+			var ShippingMethodID = document.getElementById("shippingMethodIDShow").textContent;
+			// Xây dựng URL dựa trên việc người dùng có click "Thêm mới" hay không
+			const url = isNewAddressClicked
+				? `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`
+				: `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${ShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`;
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+			const shop_id = '4185066';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token,
+					'shop_id': shop_id
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					const wardSelect = document.getElementById('phivanchuyen');
+					wardSelect.innerHTML = data.data.total.toLocaleString('vi-VN') + "đ";
+					// giá trị cho input
+					var shippingFee = data.data.total;
+					console.log('gia van chuyen', shippingFee);
+					document.getElementById('shippingCost').value = shippingFee;
+					//
+					var totalOk = totalPrice + shippingFee;
+					var tongTienElement = document.querySelector('[name="TongTien"]');
+					tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+				})
+				.catch(error => console.log(error));
 		}
 	</script>
 </div>
