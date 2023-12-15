@@ -118,6 +118,29 @@ namespace AppView.Controllers
             return Ok(new { success = true });
         }
 
+        [HttpPost]
+        public IActionResult UpdatePriceShippingInBill(Guid billId, decimal shippingCost, decimal priceVoucher)
+        {
+            var cartItems = _dbContext.BillDetails.Where(c => c.BillID == billId).Include(x => x.ShoesDetails_Size).ToList();
+            // Tính tổng giá tiền cho sản phẩm trong giỏ hàng
+            decimal totalProductPrice = cartItems.Sum(item =>
+            {
+                var shoesDetails = _dbContext.ShoesDetails.FirstOrDefault(c => c.ShoesDetailsId == item.ShoesDetails_Size.ShoesDetailsId);
+                return shoesDetails.Price * item.Quantity;
+            });
+            var objBill = _dbContext.Bills.First(c => c.BillID == billId);
+            if (objBill == null)
+            {
+                return NotFound();
+            }
+            objBill.ShippingCosts = shippingCost;
+            objBill.TotalPrice = totalProductPrice + shippingCost;
+            objBill.TotalPriceAfterDiscount = priceVoucher != null ? (totalProductPrice + shippingCost) - priceVoucher : (totalProductPrice + shippingCost) - 0;
+            _dbContext.Update(objBill);
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
+
         [HttpGet]
         public async Task<IActionResult> CreateAddress()
         {

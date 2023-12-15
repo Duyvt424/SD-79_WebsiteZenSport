@@ -16,6 +16,7 @@
         public string? Province { get; set; }
         public string? PurchaseMethod { get; set; }
         public decimal TotalPrice { get; set; }
+        public decimal TotalPriceAfterDiscount { get; set; }
         public decimal? PriceVoucher { get; set; }
         public decimal ShippingCost { get; set; }
         public bool IsPaid { get; set; }

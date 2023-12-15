@@ -33,7 +33,7 @@
 	decimal totalPrice = Model.First().TotalPrice - Model.First().ShippingCost;
 	decimal shippingCost = Model.First().ShippingCost;
 	decimal priceVoucher = Model.First().PriceVoucher ?? 0;
-	decimal totalAll = totalPrice + shippingCost - priceVoucher;
+	decimal totalAll = Model.First().TotalPriceAfterDiscount;
 }
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -879,7 +879,7 @@
 							</div>
 							<div class="btn-list">
 								<label class="cl-checkbox">
-									<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up quay-lai" onclick="setDefaultAddress('@item.AddressID'); calculateDeliveryDate();" style="padding-top:3%;">
+									<input type="checkbox" id="cbx_@item.AddressID" class="hidden-xs-up quay-lai" onclick="setDefaultAddress('@item.AddressID');" style="padding-top:3%;">
 									<span>Đặt làm mặc định</span>
 								</label>
 							</div>
@@ -1200,7 +1200,7 @@
 
 						<tr>
 							<th scope="col">Tổng: </th>
-							<th scope="col"><span class="cart-total-sub" id="totalPrice" name="TongTien" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
+							<th scope="col"><span class="cart-total-sub" id="totalPriceAfterDiscount" name="TongTienAfterDiscount" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
 						</tr>
 					</thead>
 				</table>
@@ -1337,6 +1337,24 @@
 	</script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
+			// Lấy giá tiền vận chuyển mặc định khi trang được tải
+			var defaultShippingCostElement = $('.existing-address[data-isdefault="True"] .shipping-cost');
+			var defaultShippingCost = parseFloat(defaultShippingCostElement.text());
+			// lấy giá tiền gốc
+			var totalPriceElement = document.getElementById('totalPrice');
+			var totalPriceText = totalPriceElement.innerText;
+			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+			//lấy giá giảm voucher
+			var priceVoucherElement = document.getElementById('giamgia');
+			var priceVoucherText = priceVoucherElement.innerText;
+			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
+			// Hiển thị giá tiền mặc định
+			var phivanchuyenElement = document.getElementById('phivanchuyen');
+			phivanchuyenElement.innerText = "+ " + defaultShippingCost.toLocaleString('vi-VN') + "đ";
+			// hiển thị tổng giá tiền khi trang đc load
+			var totalOk = (totalPrice + defaultShippingCost) - priceVoucher;
+			var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
+			tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			// Lắng nghe sự kiện change của tất cả các checkbox
 			var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
 			checkboxes.forEach(function (checkbox) {
@@ -1347,10 +1365,6 @@
 
 			// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
 			updateShippingCost();
-			// Đảm bảo rằng dữ liệu đã được load hoàn tất trước khi gọi hàm
-			setTimeout(function () {
-				calculateDeliveryDate();
-			}, 200);
 		});
 
 		function updateShippingCost() {
@@ -1372,7 +1386,7 @@
 				phivanchuyenElement.innerText = "+ " + shippingCost.toLocaleString('vi-VN') + "đ";
 				// tính tổng tiền khi ng dùng đổi checkbox
 				var totalOk = totalPrice + shippingCost - priceVoucher;
-				var tongTienElement = document.querySelector('[name="TongTien"]');
+				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
 				tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			}
 		}
@@ -1389,7 +1403,6 @@
 				type: 'GET',
 				data: { idCus: idCus},
 				success: function (response) {
-					console.log('id cus', idCus);
 					// Chọn checkbox mặc định
 					var defaultCheckbox = document.getElementById('cbx_' + response.addressId);
 					if (defaultCheckbox) {
@@ -1406,12 +1419,18 @@
 
 		// Biến để lưu trữ trạng thái của checkbox
 		var lastCheckedCheckbox = null;
-
-		const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
-		if (existingAddressChecked) 
-		{
-			var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-		}
+		setTimeout(function () {
+			// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
+			const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+			var objBill = '@Model.First().BillID.ToString()';
+			var voucherObjHTML = '@Model.First().PriceVoucher';
+			var voucherObj = parseFloat(voucherObjHTML);
+			if (existingAddressChecked) {
+				var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+			    var shippingCost = parseFloat(existingAddressChecked.closest('.existing-address').dataset.shippingCost);
+				updatePriceShippingInBill(objBill, shippingCost, voucherObj);
+			}
+		}, 500);
 
 		function setDefaultAddress(addressId) {
 			// Lấy checkbox tương ứng với địa chỉ được chọn
@@ -1437,10 +1456,25 @@
 				type: 'POST',
 				data: { addressId: addressId, idCus: idCus, idBill: idBill},
 				success: function (response) {
+					location.reload();
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					// Xử lý lỗi (nếu có)
 					console.error('Error:', errorThrown);
+				}
+			});
+		}
+
+		function updatePriceShippingInBill(billId, shippingCost, priceVoucher) {
+			$.ajax({
+				url: '@Url.Action("UpdatePriceShippingInBill", "Address")',
+				type: 'POST',
+				data: { billId: billId, shippingCost: shippingCost, priceVoucher: priceVoucher},
+				success: function (response) {
+					// Xử lý thành công nếu cần
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					// Xử lý lỗi nếu cần
 				}
 			});
 		}
