@@ -8,32 +8,61 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using AppView.Models;
 
 namespace AppView.Controllers
 { 
     public class CustomerController : Controller
     {
         private readonly IAllRepositories<Customer> _repos;
-        private ShopDBContext _dbContext = new ShopDBContext();
+		private readonly IAllRepositories<Rank> _repos1;
+		private ShopDBContext _dbContext = new ShopDBContext();
         private DbSet<Customer> _customer;
-        public CustomerController()
+		private DbSet<Rank> _rank;
+		public CustomerController()
         {
             _customer = _dbContext.Customers;
             AllRepositories<Customer> all = new AllRepositories<Customer>(_dbContext, _customer);
             _repos = all;
-        }
+
+			_rank = _dbContext.Ranks;
+			AllRepositories<Rank> all1 = new AllRepositories<Rank>(_dbContext, _rank);
+			_repos1 = all1;
+		}
        
         public async Task<IActionResult> GetAllCustomer()
         {
-            string apiUrl = "https://localhost:7036/api/Customer/get-customer";
-            var httpClient = new HttpClient(); // tạo ra để callApi
-            var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-                                                             // Lấy dữ liệu Json trả về từ Api được call dạng string
-            string apiData = await response.Content.ReadAsStringAsync();
-            // Lấy kqua trả về từ API
-            // Đọc từ string Json vừa thu được sang List<T>
-            var customer = JsonConvert.DeserializeObject<List<Customer>>(apiData);
-            return View(customer);
+   //         string apiUrl = "https://localhost:7036/api/Customer/get-customer";
+   //         var httpClient = new HttpClient(); // tạo ra để callApi
+   //         var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
+   //                                                          // Lấy dữ liệu Json trả về từ Api được call dạng string
+   //         string apiData = await response.Content.ReadAsStringAsync();
+			//// Lấy kqua trả về từ API
+			// Đọc từ string Json vừa thu được sang List<T>
+
+
+			string apiUrl = "https://localhost:7036/api/Customer/get-customer";
+			var httpClient = new HttpClient(); // tạo ra để callApi
+			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
+			string apiData = await response.Content.ReadAsStringAsync();
+			
+			var customer = JsonConvert.DeserializeObject<List<Customer>>(apiData);
+            var rank = _repos1.GetAll();
+			var productViewModels = customer.Select(employee => new CustomerViewModel
+			{
+				CumstomerID = employee.CumstomerID,
+				FullName = employee.FullName,
+				UserName = employee.UserName,
+				Password = employee.Password,
+				Email = employee.Email,
+				Sex = employee.Sex,
+				ResetPassword = employee.ResetPassword,
+				PhoneNumber = employee.PhoneNumber,
+				Status = employee.Status,
+				DateCreated = employee.DateCreated,
+				RankName = rank.FirstOrDefault(s => s.RankID == employee.RankID)?.Name,
+			}).ToList();
+			return View(productViewModels);
         }
         [HttpGet]
         public async Task<IActionResult> CreateCustomer()
@@ -149,10 +178,10 @@ namespace AppView.Controllers
             return RedirectToAction("Index", "Home");
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
 
         public IActionResult ForgotPassword()
         {

@@ -44,7 +44,7 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-voucher")]
-		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total)
+		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright)
 		{
 			Voucher voucher = new Voucher();
 			voucher.VoucherID = Guid.NewGuid();
@@ -56,11 +56,12 @@ namespace AppAPI.Controllers
 			voucher.ExpirationDate = expireDate;
 			voucher.DateCreated = DateCreated;
 			voucher.Total = Total;
+			voucher.Exclusiveright = Exclusiveright;
 			return repos.AddItem(voucher);
 		}
 
 		[HttpPut("update-voucher")]
-		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total)
+		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total, string Exclusiveright)
 		{
 			Voucher voucher = repos.GetAll().First(x => x.VoucherID == id);
 			voucher.VoucherCode = code;
@@ -71,6 +72,7 @@ namespace AppAPI.Controllers
 			voucher.ExpirationDate = dateTime;
 			voucher.DateCreated = DateCreated;
 			voucher.Total = Total;
+			voucher.Exclusiveright = Exclusiveright;
 			return repos.EditItem(voucher);
 		}
 

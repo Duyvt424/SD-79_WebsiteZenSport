@@ -18,7 +18,7 @@ namespace AppData.Models
         public string? PhoneNumber { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
-        public Guid RankID { get; set; }
+        public Guid? RankID { get; set; }
         public virtual Rank Rank { get; set; }
         public virtual Cart Cart { get; set; }
         public virtual List<Bill> Bills { get; set; }

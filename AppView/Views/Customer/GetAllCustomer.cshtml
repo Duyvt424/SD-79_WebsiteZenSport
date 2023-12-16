@@ -1,5 +1,4 @@
-﻿@model IEnumerable<AppData.Models.Customer>
-
+﻿@model IEnumerable<AppView.Models.CustomerViewModel>
 @{
     ViewData["Title"] = "GetAllCustomer";
     var stt = 1;
@@ -302,7 +301,7 @@
                             <th>ResetPassword</th>
                             <th>PhoneNumber</th>
                             
-                            <th>RankID</th>
+                            <th>RankName</th>
                             <th>DateCreated</th>
                             <th>Status</th>
                          
@@ -323,7 +322,7 @@
                                     <td>@Html.DisplayFor(modelItem => item.Sex)</td>
                                     <td>@Html.DisplayFor(modelItem => item.ResetPassword)</td>
                                     <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.RankID)</td>
+                                    <td>@item.RankName</td>
                                 
                                     <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                     <td>

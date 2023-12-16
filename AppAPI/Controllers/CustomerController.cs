@@ -55,7 +55,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("update-customer")]
-        public bool UpdateCustomer(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid CumstomerID)
+        public bool UpdateCustomer(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid CumstomerID, string Res)
         {
             var cus = _repos.GetAll().First(c => c.CumstomerID == CumstomerID);
             cus.FullName = FullName;
@@ -64,6 +64,7 @@ namespace AppAPI.Controllers
             cus.Sex = Sex;
             cus.PhoneNumber = PhoneNumber;
             cus.Status = Status;
+            cus.ResetPassword = Res;
             return _repos.EditItem(cus);
         }
 

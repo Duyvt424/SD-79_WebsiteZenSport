@@ -6,6 +6,7 @@ namespace AppView.Models
     {
 		public Guid VoucherID { get; set; }
 		public string? VoucherCode { get; set; }
+		public string? Exclusiveright { get; set; }
 		public decimal VoucherValue { get; set; }
 		public decimal Total { get; set; }
 		public int MaxUsage { get; set; }
