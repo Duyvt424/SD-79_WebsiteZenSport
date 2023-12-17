@@ -1086,8 +1086,9 @@
 																	<div style="margin-left: 10px">
 																		<p>Mã @voucher.VoucherCode giảm @string.Format("{0:N0}đ", voucher.VoucherValue) trên hóa đơn  @string.Format("{0:N0}đ", voucher.Total) </p>
 
-																		<p>Ngày bắt đầu: @voucher.DateCreated</p>
-																		<p>Ngày kết thúc: @voucher.ExpirationDate</p>
+										
+																		<p>Ngày kết thúc: @voucher.ExpirationDate.ToString("dd/MM/yyyy")</p>
+																		<p>Hạng: @voucher.Exclusiveright</p>
 																		<p><a asp-controller="Voucher" asp-action="Details" asp-route-Id="@voucher.VoucherID">Chi tiết</a></p>
 
 																	</div>
@@ -1118,82 +1119,6 @@
 												</div>
 											</div>
 										</div>
-									@*	<script>
-											$(document).ready(function () {
-												$("#apply-voucher-btn").click(function () {
-													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
-
-													if (selectedVoucherCode) {
-														$.ajax({
-															type: "GET",
-															url: "https://localhost:7036/api/Voucher/find-voucher",
-															data: { code: selectedVoucherCode },
-															dataType: 'json',
-															success: function (result) {
-																if (result && result.length > 0 && result[0]) {
-																	// Kiểm tra trạng thái của voucher
-																	if (result[0].status == 0) {
-																		var startDate = new Date(result[0].dateCreated);
-																		var currentDate = new Date();
-
-																		// Kiểm tra ngày bắt đầu của voucher
-																		if (startDate > currentDate) {
-																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-																		} else {
-																			// Tiếp tục với xử lý voucher khi nó có hiệu lực
-																			if (result[0].voucherValue != null) {
-																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
-
-																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-																				var priceShip = parseFloat(regexPriceShipHTML);
-
-																				var totalAll = parseFloat(sanphamPrice + priceShip);
-
-																				// Kiểm tra điều kiện tổng giá trị đơn hàng
-																				if (totalAll < result[0].total) {
-																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-																				} else {
-																					totalAll -= parseFloat(result[0].voucherValue);
-
-																					// Hiển thị giá trị mới sau khi áp dụng voucher
-																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
-
-																					// Hiển thị mã voucher đã áp dụng
-																					$("#code-voucher").text(result[0].voucherCode);
-																					alert("Áp dụng voucher thành công!");
-
-																					var giamgiaElement = document.getElementById('giamgia');
-																					var giamgia = parseFloat(result[0].voucherValue);
-																					giamgiaElement.innerHTML = giamgia.toLocaleString('vi-VN') + "đ";
-
-																					// lưu id của voucher đang áp dụng vào để thanh toán
-																					var idVoucher = document.getElementById('voucherId');
-																					idVoucher.value = result[0].voucherID;
-																				}
-																			} else {
-																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
-																			}
-																		}
-																	} else {
-																		alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
-																	}
-																} else {
-																	console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
-																}
-															},
-															error: function (error) {
-																console.log("Lỗi Ajax:", error);
-															}
-														});
-													} else {
-														alert("Vui lòng chọn một voucher để áp dụng.");
-													}
-												});
-											});
-										</script>*@
 										<script>
 											$(document).ready(function () {
 												$("#searchVoucherBtn").click(function () {
@@ -1285,81 +1210,189 @@
 													}
 												});
 
+												//$("#apply-voucher-btn").click(function () {
+												//	var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+
+												//	if (selectedVoucherCode) {
+												//		$.ajax({
+												//			type: "GET",
+												//			url: "https://localhost:7036/api/Voucher/find-voucher",
+												//			data: { code: selectedVoucherCode },
+												//			dataType: 'json',
+												//			success: function (result) {
+												//				if (result && result.length > 0 && result[0]) {
+												//					console.log(result);
+
+												//					if (result[0].status == 0) {
+												//						var startDate = new Date(result[0].dateCreated);
+												//						var currentDate = new Date();
+
+												//						// Kiểm tra ngày bắt đầu của voucher
+												//						if (startDate > currentDate) {
+												//							alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+												//						} else {
+												//							// Tiếp tục với xử lý voucher khi nó có hiệu lực
+												//							if (result[0].voucherValue != null) {
+												//								var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+												//								var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+												//								var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+
+												//								var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+												//								var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+												//								var priceShip = parseFloat(regexPriceShipHTML);
+
+												//								var totalAll = parseFloat(sanphamPrice + priceShip);
+
+												//								// Kiểm tra điều kiện tổng giá trị đơn hàng
+												//								if (totalAll < result[0].total) {
+												//									alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+												//								} else {
+												//									var voucherDiscount = parseFloat(result[0].voucherValue);
+
+												//									totalAll -= voucherDiscount;
+
+												//									// Hiển thị giá trị mới sau khi áp dụng voucher
+												//									$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+
+												//									// Hiển thị mã voucher đã áp dụng
+												//									$("#code-voucher").text(result[0].voucherCode);
+
+												//									// Hiển thị số tiền giảm giá của voucher
+												//									$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+
+												//									alert("Áp dụng voucher thành công!");
+
+												//									// lưu id của voucher đang áp dụng vào để thanh toán
+												//									var idVoucher = document.getElementById('voucherId');
+												//									idVoucher.value = result[0].voucherID;
+												//								}
+												//							} else {
+												//								console.log("Lỗi: result[0].voucherValue không có giá trị.");
+												//							}
+												//						}
+												//					} else {
+												//						alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
+												//					}
+												//				} else {
+												//					console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+												//				}
+												//			},
+												//			error: function (error) {
+												//				console.log("Lỗi Ajax:", error);
+												//			}
+												//		});
+												//	} else {
+												//		alert("Vui lòng chọn một voucher để áp dụng.");
+												//	}
+												//});
+
 												$("#apply-voucher-btn").click(function () {
-													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+    var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 
-													if (selectedVoucherCode) {
-														$.ajax({
-															type: "GET",
-															url: "https://localhost:7036/api/Voucher/find-voucher",
-															data: { code: selectedVoucherCode },
-															dataType: 'json',
-															success: function (result) {
-																if (result && result.length > 0 && result[0]) {
-																	console.log(result);
+    if (selectedVoucherCode) {
+        $.ajax({
+            type: "GET",
+            url: "https://localhost:7036/api/Voucher/find-voucher",
+            data: { code: selectedVoucherCode },
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.length > 0 && result[0]) {
+                    console.log(result);
 
-																	if (result[0].status == 0) {
-																		var startDate = new Date(result[0].dateCreated);
-																		var currentDate = new Date();
+                    if (result[0].status == 0) {
+                        var startDate = new Date(result[0].dateCreated);
+                        var currentDate = new Date();
 
-																		// Kiểm tra ngày bắt đầu của voucher
-																		if (startDate > currentDate) {
-																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-																		} else {
-																			// Tiếp tục với xử lý voucher khi nó có hiệu lực
-																			if (result[0].voucherValue != null) {
-																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+                        // Kiểm tra ngày bắt đầu của voucher
+                        if (startDate > currentDate) {
+                            alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+                        } else {
+                            // Tiếp tục với xử lý voucher khi nó có hiệu lực
+                            if (result[0].voucherValue != null) {
+                                var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+                                var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+                                var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
 
-																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-																				var priceShip = parseFloat(regexPriceShipHTML);
+                                var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+                                var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+                                var priceShip = parseFloat(regexPriceShipHTML);
 
-																				var totalAll = parseFloat(sanphamPrice + priceShip);
+                                var totalAll = parseFloat(sanphamPrice + priceShip);
 
-																				// Kiểm tra điều kiện tổng giá trị đơn hàng
-																				if (totalAll < result[0].total) {
-																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-																				} else {
-																					var voucherDiscount = parseFloat(result[0].voucherValue);
+                                // Kiểm tra điều kiện tổng giá trị đơn hàng
+                                if (totalAll < result[0].total) {
+                                    alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+                                } else {
+                                    // Kiểm tra xem voucher có Exclusiveright không và khách hàng có đủ điều kiện không
+                                    var rankName = "@Model.RankName".trim(); // Lấy thông tin RankName từ server-side
+                                    var exclusiveright = result[0].exclusiveright.trim();
 
-																					totalAll -= voucherDiscount;
+																					function decodeEntities(encodedString) {
+																						var textArea = document.createElement('textarea');
+																						textArea.innerHTML = encodedString;
+																						return textArea.value;
+																					}
 
-																					// Hiển thị giá trị mới sau khi áp dụng voucher
-																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+																					// Sử dụng hàm decodeEntities để giải mã các ký tự HTML entities
+																					var decodedRankName = decodeEntities(rankName);
+																					var decodedExclusiveright = decodeEntities(exclusiveright);
 
-																					// Hiển thị mã voucher đã áp dụng
-																					$("#code-voucher").text(result[0].voucherCode);
+																					console.log("decodedRankName:", decodedRankName);
+																					console.log("decodedExclusiveright:", decodedExclusiveright);
 
-																					// Hiển thị số tiền giảm giá của voucher
-																					$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+																					if (
+																						(decodedRankName === decodedExclusiveright && decodedExclusiveright === "Không") ||
+																						(decodedRankName === "Hạng vàng" && decodedExclusiveright === "Không") ||
+																						(decodedRankName === "Hạng bạc" && decodedExclusiveright === "Không") ||
+																						(decodedRankName === "Hạng kim cương" && decodedExclusiveright === "Không") ||
+																						(decodedRankName === decodedExclusiveright)
+																					) {
+                                        var voucherDiscount = parseFloat(result[0].voucherValue);
 
-																					alert("Áp dụng voucher thành công!");
+                                        totalAll -= voucherDiscount;
 
-																					// lưu id của voucher đang áp dụng vào để thanh toán
-																					var idVoucher = document.getElementById('voucherId');
-																					idVoucher.value = result[0].voucherID;
-																				}
-																			} else {
-																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
-																			}
-																		}
-																	} else {
-																		alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
-																	}
-																} else {
-																	console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
-																}
-															},
-															error: function (error) {
-																console.log("Lỗi Ajax:", error);
-															}
-														});
-													} else {
-														alert("Vui lòng chọn một voucher để áp dụng.");
-													}
-												});
+                                        // Hiển thị giá trị mới sau khi áp dụng voucher
+                                        $("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+
+                                        // Hiển thị mã voucher đã áp dụng
+                                        $("#code-voucher").text(result[0].voucherCode);
+
+                                        // Hiển thị số tiền giảm giá của voucher
+                                        $("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+
+                                        alert("Áp dụng voucher thành công!");
+
+                                        // lưu id của voucher đang áp dụng vào để thanh toán
+                                        var idVoucher = document.getElementById('voucherId');
+                                        idVoucher.value = result[0].voucherID;
+                                    } else {
+                                        alert("Bạn không đủ điều kiện để sử dụng voucher này.");
+                                    }
+                                }
+                            } else {
+                                console.log("Lỗi: result[0].voucherValue không có giá trị.");
+                            }
+                        }
+                    } else {
+                        alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
+                    }
+                } else {
+                    console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+                }
+            },
+            error: function (error) {
+                console.log("Lỗi Ajax:", error);
+            }
+        });
+    } else {
+        alert("Vui lòng chọn một voucher để áp dụng.");
+    }
+});
+
+
+
+
+
 											});
 										</script>
 									
@@ -1407,7 +1440,9 @@
 										style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
 									Xác Nhận Đặt Hàng
 								</button>
-
+								@*<div>
+									<p>Cấp bậc của bạn: @Model.RankName</p>
+								</div>*@
 								<script>
 									$(document).ready(function () {
 										$("#checkout-form").submit(function (event) {

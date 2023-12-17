@@ -6,6 +6,7 @@ using AppData.Services;
 using AppView.IServices;
 using AppView.Models;
 using AppView.Services;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.Owin.BuilderProperties;
@@ -49,8 +50,9 @@ namespace AppView.Controllers
             var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
             if (customerId != Guid.Empty)
             {
-                var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
-                if (loggedInUser != null)
+                var loggedInUser = _dBContext.Customers.Include(c => c.Rank).FirstOrDefault(c => c.CumstomerID == customerId);
+				string rankName = loggedInUser?.Rank?.Name ?? "Unknown";
+				if (loggedInUser != null)
                 {
                     var cartItemList = _dBContext.CartDetails
                         .Where(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_Size != null)
@@ -90,7 +92,8 @@ namespace AppView.Controllers
                     {
                         CartItems = cartItemList,
                         AddressList = addressList,
-                        Vouchers = styles
+                        Vouchers = styles,
+                        RankName = rankName,
                     };
 
                     return View(model);
