@@ -286,17 +286,21 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+																	<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
-											window.addEventListener('load', function () {
+											window.addEventListener('DOMContentLoaded', function () {
 												// Lấy danh sách tất cả các input
 												const quantityInputs = document.querySelectorAll('.quantity-input');
 
 												// Khởi tạo tổng tiền của cả giỏ hàng
 												let totalPrice = 0;
 
+												const selectedDistrictId = parseInt(document.getElementById('districtIdShow').textContent);
+												const selectedWardCode = parseInt(document.getElementById('wardCodeShow').textContent);
+												// Gọi hàm tính toán phí vận chuyển
+												calculateShippingFee(selectedWardCode, selectedDistrictId);
 												// Lặp qua từng input
 												quantityInputs.forEach(input => {
 													const shoesDetailsId = input.getAttribute('data-shoesdetailsid');
@@ -319,7 +323,7 @@
 															const quantity = parseInt(input.value);
 															totalPrice += price * quantity;
 														});
-
+														console.log(totalPrice);
 														// Cập nhật tổng tiền cả giỏ hàng
 														const totalPriceElement = document.getElementById('totalPrice');
 														totalPriceElement.textContent = totalPrice.toLocaleString() + "đ";
@@ -327,8 +331,6 @@
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
 														// Gọi hàm tính toán phí vận chuyển
-														const selectedDistrictId = parseInt(document.getElementById('districtIdShow').textContent);
-														const selectedWardCode = parseInt(document.getElementById('wardCodeShow').textContent);
 														calculateShippingFee(selectedWardCode, selectedDistrictId);
 
 														// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
@@ -440,7 +442,7 @@
 								<button class="btn-address" onclick="toggleAddressList()">
 									Chọn địa chỉ
 								</button>
-								<button class="btn-address" onclick="showNewAddressForm()">
+								<button class="btn-address add-new-address">
 									Thêm mới
 								</button>
 							</div>
@@ -449,6 +451,7 @@
 									// Lấy giá tiền vận chuyển mặc định khi trang được tải
 									var defaultShippingCostElement = $('.existing-address[data-isdefault="True"] .shipping-cost');
 									var defaultShippingCost = parseFloat(defaultShippingCostElement.text());
+									defaultShippingCost = isNaN(defaultShippingCost) ? 0 : defaultShippingCost;
 									// lấy giá tiền gốc
 									var totalPriceElement = document.getElementById('totalPrice');
 									var totalPriceText = totalPriceElement.innerText;
@@ -977,7 +980,7 @@
 					document.getElementById('newAddressForm').style.display = 'none';
 				}
 
-				function showNewAddressForm() {
+				$('.add-new-address').click(function () {
 					isNewAddressClicked = true;
 					isAddingNewAddress = true;
 					var existingAddresses = document.getElementsByClassName('existing-address');
@@ -985,7 +988,9 @@
 						existingAddresses[i].style.display = 'none';
 					}
 					document.getElementById('newAddressForm').style.display = 'block';
-				}
+					console.log("isNewAddressClicked:", isNewAddressClicked);
+				});
+
 				function calculateShippingFee(to_ward_code, to_district_id) {
 					var totalPriceElement = document.getElementById('totalPrice');
 					var totalPriceText = totalPriceElement.innerText;

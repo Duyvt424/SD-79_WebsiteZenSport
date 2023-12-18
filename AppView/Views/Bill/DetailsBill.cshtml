@@ -1004,10 +1004,11 @@
 			var wardCode = $('input[name="WardCode"]').val();
 			var shippingMethodID = $('input[name="ShippingMethodID"]').val();
 			var idCustomer = '@Model.First().CustomerId.ToString()';
+			var idBill = '@Model.First().BillID.ToString()';
 
 			// Gửi dữ liệu lên server sử dụng Ajax
 			$.ajax({
-				url: '@Url.Action("AddAddress", "Cart")',
+				url: '@Url.Action("AddAddressFronDetailsBill", "Cart")',
 				type: 'POST',
 				data: {
 					nameUser: nameUser,
@@ -1020,7 +1021,8 @@
 					DistrictID: districtID,
 					WardCode: wardCode,
 					ShippingMethodID: shippingMethodID,
-					idCustomer: idCustomer
+					idCustomer: idCustomer,
+					idBill: idBill
 				},
 				success: function (response) {
 					$('#modalAddAddress').modal('hide');
@@ -1271,6 +1273,7 @@
 	<div class="card mb-7" style="border: 1px solid white;">
 		<div class="card-header py-3">
 			<h5 class="mb-0">Sản phẩm</h5>
+			<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi sản phẩm</a>
 		</div>
 		<div class="card-body">
 			<!-- Single item -->

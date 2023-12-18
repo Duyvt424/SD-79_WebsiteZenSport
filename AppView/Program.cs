@@ -8,7 +8,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSignalR();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(5);
+	options.IdleTimeout = TimeSpan.FromMinutes(60);
 });
 var app = builder.Build();
 

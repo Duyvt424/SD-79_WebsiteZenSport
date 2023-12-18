@@ -6,7 +6,7 @@ using AppData.Services;
 using AppView.IServices;
 using AppView.Models;
 using AppView.Services;
-using DocumentFormat.OpenXml.Wordprocessing;
+//using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.Owin.BuilderProperties;
@@ -423,6 +423,41 @@ namespace AppView.Controllers
             HttpClient httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
             var response = await httpClient.PostAsync(apiUrl, null);
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAddressFronDetailsBill(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID, Guid idCustomer, Guid idBill)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCustomer;
+
+            var objBill = _dBContext.Bills.First(c => c.BillID == idBill);
+
+            var userUpdate = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
+            if (userUpdate != null)
+            {
+                userUpdate.FullName = nameUser;
+                userUpdate.PhoneNumber = phoneNumber;
+                _dBContext.Update(userUpdate);
+                _dBContext.SaveChanges();
+            }
+            // Lấy địa chỉ mặc định hiện tại của người dùng
+            var currentDefaultAddress = _dBContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerId && c.IsDefaultAddress == true);
+            if (currentDefaultAddress != null)
+            {
+                // Hủy đặt làm mặc định cho địa chỉ hiện tại
+                currentDefaultAddress.IsDefaultAddress = false;
+            }
+            _dBContext.SaveChanges();
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+
+            objBill.AddressID = _dBContext.Addresses.First(c => c.IsDefaultAddress == true).AddressID;
+            _dBContext.Update(objBill);
+            _dBContext.SaveChanges();
             return RedirectToAction("Cart");
         }
 
