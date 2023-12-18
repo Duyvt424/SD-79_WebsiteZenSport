@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AppView.Models;
+using System.Web;
 
 namespace AppView.Controllers
 { 
@@ -155,8 +156,20 @@ namespace AppView.Controllers
                 return Content("Da ton tai");
             }
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={sex}&ResetPassword={"0000"}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={RankUser.RankID}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
-            var response = await httpClient.PostAsync(apiUrl, null);
+		
+			// Tạo URL API với các tham số cố định
+			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?" +
+				$"FullName={HttpUtility.UrlEncode(customer.FullName)}" +
+				$"&UserName={HttpUtility.UrlEncode(customer.UserName)}" +
+				$"&Password={HttpUtility.UrlEncode(customer.Password)}" +
+				$"&Email={HttpUtility.UrlEncode(customer.Email)}" +
+				$"&Sex={sex}" +
+				$"&ResetPassword=0000" +
+				$"&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}" +
+				$"&Status=0" +
+				$"&RankID=c388a0b3-899a-415a-8ac1-be43715c15ab" +
+				$"&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+			var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Login");
         }
         public IActionResult DangNhap()
