@@ -1243,83 +1243,6 @@
 														$("#searchVoucherBtn").click();
 													}
 												});
-
-												//$("#apply-voucher-btn").click(function () {
-												//	var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
-
-												//	if (selectedVoucherCode) {
-												//		$.ajax({
-												//			type: "GET",
-												//			url: "https://localhost:7036/api/Voucher/find-voucher",
-												//			data: { code: selectedVoucherCode },
-												//			dataType: 'json',
-												//			success: function (result) {
-												//				if (result && result.length > 0 && result[0]) {
-												//					console.log(result);
-
-												//					if (result[0].status == 0) {
-												//						var startDate = new Date(result[0].dateCreated);
-												//						var currentDate = new Date();
-
-												//						// Kiểm tra ngày bắt đầu của voucher
-												//						if (startDate > currentDate) {
-												//							alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-												//						} else {
-												//							// Tiếp tục với xử lý voucher khi nó có hiệu lực
-												//							if (result[0].voucherValue != null) {
-												//								var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-												//								var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-												//								var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
-
-												//								var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-												//								var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-												//								var priceShip = parseFloat(regexPriceShipHTML);
-
-												//								var totalAll = parseFloat(sanphamPrice + priceShip);
-
-												//								// Kiểm tra điều kiện tổng giá trị đơn hàng
-												//								if (totalAll < result[0].total) {
-												//									alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-												//								} else {
-												//									var voucherDiscount = parseFloat(result[0].voucherValue);
-
-												//									totalAll -= voucherDiscount;
-
-												//									// Hiển thị giá trị mới sau khi áp dụng voucher
-												//									$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
-
-												//									// Hiển thị mã voucher đã áp dụng
-												//									$("#code-voucher").text(result[0].voucherCode);
-
-												//									// Hiển thị số tiền giảm giá của voucher
-												//									$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
-
-												//									alert("Áp dụng voucher thành công!");
-
-												//									// lưu id của voucher đang áp dụng vào để thanh toán
-												//									var idVoucher = document.getElementById('voucherId');
-												//									idVoucher.value = result[0].voucherID;
-												//								}
-												//							} else {
-												//								console.log("Lỗi: result[0].voucherValue không có giá trị.");
-												//							}
-												//						}
-												//					} else {
-												//						alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
-												//					}
-												//				} else {
-												//					console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
-												//				}
-												//			},
-												//			error: function (error) {
-												//				console.log("Lỗi Ajax:", error);
-												//			}
-												//		});
-												//	} else {
-												//		alert("Vui lòng chọn một voucher để áp dụng.");
-												//	}
-												//});
-
 												$("#apply-voucher-btn").click(function () {
 													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 
@@ -1422,11 +1345,6 @@
 														alert("Vui lòng chọn một voucher để áp dụng.");
 													}
 												});
-
-
-
-
-
 											});
 										</script>
 
@@ -1475,7 +1393,7 @@
 													</form>
 													<br />
 												<ul class="list-group">
-														@foreach (var vouchership in Model.ShipVouchers)
+														@foreach (var vouchership in Model.ShipVouchers.Where(x => x.DateCreated <= DateTime.Now))
 														{
 															<li class="list-group-item d-flex justify-content-between align-items-center">
 																<div style="display: flex">
@@ -1503,66 +1421,152 @@
 
 												</ul>
 												</div>
+												<div class="modal-footer">
+													<button type="button"
+															class="btn btn-secondary"
+															data-bs-dismiss="modal">
+														Đóng
+													</button>
+													<button type="button"
+															class="btn btn-primary"
+															id="apply-shipping-voucher-btn">
+														Áp dụng voucher
+													</button>
+												</div>
 											</div>
+											
 										</div>
 									</div>
 								</li>
-								<!-- Make sure to include jQuery library -->
-								<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+								
+							
 
 								<script>
-									$(document).ready(function () {
-										$("#searchVoucherBtn1").click(function () {
-											var voucherCode = $("#voucherCodeInput1").val();
-											var voucherList = $(".list-group");
+							  $(document).ready(function () {
+	$("#searchVoucherBtn1").click(function () {
+		var voucherCode = $("#voucherCodeInput1").val();
+		var voucherList = $(".list-group");
 
-											if (voucherCode) {
-												$.ajax({
-													type: "GET",
-													url: "https://localhost:7036/api/ShippingVoucher/find-shippingVoucher",
-													data: { code: voucherCode },
-													dataType: 'json',
-													success: function (result) {
-														if (result && result.length > 0 && result[0]) {
-															// Check if the voucher is already in the list
-															var voucherExists = false;
-															$(".list-group-item").each(function () {
-																var existingVoucherCode = $(this).find("input[name='selectedVouchership']").val();
-																if (existingVoucherCode === voucherCode) {
-																	voucherExists = true;
-																	return false; // Break out of the loop
-																}
-															});
+		if (voucherCode) {
+			$.ajax({
+				type: "GET",
+				url: "https://localhost:7036/api/ShippingVoucher/find-shippingVoucher",
+				data: { code: voucherCode },
+				dataType: 'json',
+				success: function (result) {
+					if (result && result.length > 0 && result[0]) {
+						// Check if the voucher is already in the list
+						var voucherExists = false;
+						$(".list-group-item").each(function () {
+							var existingVoucherCode = $(this).find("input[name='selectedVouchership']").val();
+							if (existingVoucherCode === voucherCode) {
+								voucherExists = true;
+								return false; // Break out of the loop
+							}
+						});
 
-															if (!voucherExists) {
-																// Rest of the code...
+						if (!voucherExists) {
+							// Clear existing content in the modal
+							voucherList.empty();
 
-																// Display the voucher list container
-																voucherList.show();
-															} else {
-																alert("Voucher đã tồn tại trong danh sách.");
-															}
-														} else {
-															alert("Không tìm thấy voucher nào với mã " + voucherCode);
-														}
-													},
-													error: function (error) {
-														console.log("Lỗi Ajax:", error);
-													}
-												});
-											} else {
-												alert("Vui lòng nhập mã voucher để tìm kiếm.");
-											}
-										});
+							// Display the voucher details in the existing list
+							$.each(result, function (index, vouchership) {
+								var listItem = $("<li class='list-group-item d-flex justify-content-between align-items-center'></li>");
 
-										// Add this if you want to submit the form when pressing Enter in the voucher code input
-										$("#voucherCodeInput1").keypress(function (e) {
-											if (e.which === 13) { // Enter key
-												$("#searchVoucherBtn1").click();
-											}
-										});
-									});
-								</script>
+								var detailsContainer = $("<div style='display: flex'></div>");
+
+								// You can customize the content based on your needs
+								detailsContainer.append("<div style='margin-left: 10px'>" +
+									"<p>Mã " + vouchership.VoucherShipCode + " giảm phí ship " + vouchership.FormattedShippingDiscount + " trên đơn hàng</p>" +
+									"<p>Ngày kết thúc: " + vouchership.ExpirationDateFormatted + "</p>" +
+									"</div>");
+
+								listItem.append(detailsContainer);
+
+								var radioContainer = $("<div style='margin-top: 25px'></div>");
+
+								var radioButton = $("<input type='radio' style='width: 20px; height: 20px' />");
+								radioButton.attr({
+									"id": "vouchership" + index,
+									"name": "selectedVouchership",
+									"value": vouchership.VoucherShipCode
+								});
+
+								radioContainer.append(radioButton);
+								listItem.append(radioContainer);
+
+								// Append to the existing voucher list
+								voucherList.append(listItem);
+							});
+
+							// Show the voucher list container
+							voucherList.show();
+						} else {
+							alert("Voucher đã tồn tại trong danh sách.");
+						}
+					} else {
+						alert("Không tìm thấy voucher nào với mã " + voucherCode);
+					}
+				},
+				error: function (error) {
+					console.log("Lỗi Ajax:", error);
+				}
+			});
+		} else {
+			alert("Vui lòng nhập mã voucher để tìm kiếm.");
+		}
+	});
+	$("#apply-shipping-voucher-btn").click(function () {
+	var selectedShippingVoucherCode = $("input[name='selectedVouchership']:checked").val();
+
+	if (selectedShippingVoucherCode) {
+		$.ajax({
+			type: "GET",
+			url: "https://localhost:7036/api/ShippingVoucher/find-shippingVoucher",
+			data: { code: selectedShippingVoucherCode },
+			dataType: 'json',
+			success: function (result) {
+				if (result && result.length > 0 && result[0]) {
+					console.log(result);
+
+					if (result[0].shippingDiscount != null) {
+						//var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+						//var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+						//var priceShip = parseFloat(regexPriceShipHTML);
+
+						//// Subtract the shipping voucher value from the shipping cost
+						//var discountedPriceShip = priceShip - result[0].shippingDiscount;
+
+						//// Display the updated shipping cost
+						//$("#phivanchuyen").text(discountedPriceShip.toLocaleString('vi-VN') + "đ");
+
+						// Hiển thị giảm giá ship trong phần tử mới
+						$("#giamgiaship").text(result[0].shippingDiscount.toLocaleString('vi-VN') + "đ");
+
+						alert("Áp dụng shipping voucher thành công!");
+						var appliedVoucherId = document.getElementById('voucherId');
+						  appliedVoucherId.value = result[0].VoucherShipId;
+					} else {
+						console.log("Lỗi: result[0].shippingDiscount không có giá trị.");
+					}
+				} else {
+					alert("Shipping voucher không có hiệu lực do đã ngừng hoạt động.");
+				}
+			},
+			error: function (error) {
+				console.log("Lỗi Ajax:", error);
+			}
+		});
+	} else {
+		alert("Vui lòng chọn một shipping voucher để áp dụng.");
+	}
+});
+
+
+});
+
+                                </script>
+
 
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 									Tổng giá sản phẩm
@@ -1577,6 +1581,10 @@
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 									Giảm giá
 									<span id="giamgia">0đ</span>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+									Giảm giá ship
+									<span id="giamgiaship">0đ</span>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
 									<div>
