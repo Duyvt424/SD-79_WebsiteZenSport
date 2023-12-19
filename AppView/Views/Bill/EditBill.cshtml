@@ -89,6 +89,12 @@
                                     </div>
 
                                     <div class="form-floating mb-3">
+                                        <select asp-for="ShippingVoucherID" class="form-control" asp-items="@ViewBag.SVCList"></select>
+                                        <label for="floatingInputEmail">VoucherShipCode</label>
+                                        <span asp-validation-for="ShippingVoucherID" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
                                         <select asp-for="PurchaseMethodID" class="form-control" asp-items="@ViewBag.PuList"></select>
                                         <label for="floatingInputEmail">PurchaseMethod Name</label>
                                         <span asp-validation-for="PurchaseMethodID" class="text-danger"></span>

@@ -1,8 +1,11 @@
 ﻿using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,7 +37,7 @@ namespace AppAPI.Controllers
 			return _repos.GetAll().Where(x => x.BillCode == code);
 		}
 		[HttpPost("create-bill")]
-		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
+		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
 		{
 			Bill bill = new Bill();
 			bill.BillID = Guid.NewGuid();
@@ -56,6 +59,7 @@ namespace AppAPI.Controllers
 			bill.CustomerID = CustomerID;
 			bill.PurchaseMethodID = PurchaseMethodID;
 			bill.AddressID = AddressID;
+			bill.ShippingVoucherID = ShippingVoucherID;
 			if (_repos.AddItem(bill))
 			{
 				return "Thêm thành công";
@@ -68,7 +72,7 @@ namespace AppAPI.Controllers
 
 		// PUT api/<BillController>/5
 		[HttpPut("update-bill")]
-		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID)
+		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
 		{
 			var bill = _repos.GetAll().First(c => c.BillID == BillID);
 			bill.BillCode = BillCode;
@@ -89,6 +93,7 @@ namespace AppAPI.Controllers
 			bill.PurchaseMethodID = PurchaseMethodID;
 			bill.VoucherID = VoucherID;
 			bill.AddressID = AddressID;
+			bill.ShippingVoucherID = ShippingVoucherID;
 			if (_repos.EditItem(bill))
 			{
 				return "Sửa thành công";
@@ -107,5 +112,6 @@ namespace AppAPI.Controllers
 			role.Status = 1;
 			return _repos.EditItem(role);
 		}
+
 	}
 }

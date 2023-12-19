@@ -10,14 +10,17 @@
         public DateTime DeliveryDate { get; set; }
         public DateTime CancelDate { get; set; }
         public DateTime UpdateDate { get; set; }
+     
         public decimal TotalPrice { get; set; }
         public decimal ShippingCosts { get; set; }
         public decimal TotalPriceAfterDiscount { get; set; }
         public string Note { get; set; }
         public int Status { get; set; }
         public string CustomerName { get; set; }
-        public string VoucherName { get; set; }
-        public string EmployeeName { get; set; }
+		public string RankName { get; set; }
+		public string? VoucherName { get; set; }
+		public string? ShippingVoucherName { get; set; }
+		public string EmployeeName { get; set; }
         public string PurchaseMethodName { get; set; }
     }
 }

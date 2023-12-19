@@ -9,37 +9,37 @@ using Newtonsoft.Json;
 
 namespace AppView.Controllers
 {
-	public class VoucherController:Controller
+	public class ShippingVoucherController:Controller
 	{
-		private readonly IAllRepositories<Voucher> repos;
+		private readonly IAllRepositories<ShippingVoucher> repos;
 		private ShopDBContext context = new ShopDBContext();
-		private DbSet<Voucher> voucher;
+		private DbSet<ShippingVoucher> voucher;
 
-		public VoucherController()
+		public ShippingVoucherController()
 		{
-			voucher = context.Vouchers;
-			AllRepositories<Voucher> all = new AllRepositories<Voucher>(context, voucher);
+			voucher = context.ShippingVoucher;
+			AllRepositories<ShippingVoucher> all = new AllRepositories<ShippingVoucher>(context, voucher);
 			repos = all;
 		}
 		private string GenerateVoucherCode()
 		{
-			var last = context.Vouchers.OrderByDescending(c => c.VoucherCode).FirstOrDefault();
+			var last = context.ShippingVoucher.OrderByDescending(c => c.VoucherShipCode).FirstOrDefault();
 			if (last != null)
 			{
-				var lastNumber = int.Parse(last.VoucherCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+				var lastNumber = int.Parse(last.VoucherShipCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
 				var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
-				var newCode = "VC" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+				var newCode = "SV" + nextNumber.ToString("D3"); // Tạo ColorCode mới
 				return newCode;
 			}
-			return "VC001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+			return "SV001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
 		}
-		public async Task<IActionResult> GetAllVouchers()
+		public async Task<IActionResult> GetAllShippingVouchers()
 		{
-			string apiUrl = "https://localhost:7036/api/Voucher/get-voucher";
+			string apiUrl = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
 			var httpClient = new HttpClient(); // tạo ra để callApi
 			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
 			string apiData = await response.Content.ReadAsStringAsync();
-			var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
+			var styles = JsonConvert.DeserializeObject<List<ShippingVoucherViewModel>>(apiData);
 			/*ShoppingCartViewModel s = new ShoppingCartViewModel();
 			s.Vouchers = styles.ToList();*/
 		
@@ -54,41 +54,41 @@ namespace AppView.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateVouchers(Voucher voucher)
+		public async Task<IActionResult> CreateVouchers(ShippingVoucher voucher)
 		{
             var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&exclusiveright={voucher.Exclusiveright}&status={voucher.Status}&total={voucher.Total}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
+			string apiUrl = $"https://localhost:7036/api/ShippingVoucher/create-shippingVoucher?code={GenerateVoucherCode()}&MaxShippingDiscount={voucher.MaxShippingDiscount}&ShippingDiscount={voucher.ShippingDiscount}&QuantityShip={voucher.QuantityShip}&IsShippingVoucher={voucher.IsShippingVoucher}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PostAsync(apiUrl, null);
-			return RedirectToAction("GetAllVouchers"); 
+			return RedirectToAction("GetAllShippingVouchers"); 
         }
 
 		[HttpGet]
 		public async Task<IActionResult> EditVouchers(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
 			// Lấy Product từ database dựa theo id truyền vào từ route
-			Voucher voucher = repos.GetAll().FirstOrDefault(c => c.VoucherID == id);
+			ShippingVoucher voucher = repos.GetAll().FirstOrDefault(c => c.ShippingVoucherID == id);
 			return View(voucher);
 		}
 
-		public async Task<IActionResult> EditVouchers(Voucher voucher)
+		public async Task<IActionResult> EditVouchers(ShippingVoucher voucher)
 		{
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Voucher/update-voucher?id={voucher.VoucherID}&exclusiveright={voucher.Exclusiveright}&total={voucher.Total}&code={voucher.VoucherCode}&status={voucher.Status}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&dateTime={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            string apiUrl = $"https://localhost:7036/api/ShippingVoucher/update-shippingVoucher?id={voucher.ShippingVoucherID}&MaxShippingDiscount={voucher.MaxShippingDiscount}&ShippingDiscount={voucher.ShippingDiscount}&QuantityShip={voucher.QuantityShip}&IsShippingVoucher={voucher.IsShippingVoucher}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
             var response = await httpClient.PutAsync(apiUrl, null);
-            return RedirectToAction("GetAllVouchers");
+            return RedirectToAction("GetAllShippingVouchers");
         }
 
 		public async Task<IActionResult> DeleteVouchers(Guid id)
 		{
-            var voucher = repos.GetAll().First(c => c.VoucherID == id);
+            var voucher = repos.GetAll().First(c => c.ShippingVoucherID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Voucher/delete-voucher?id={id}";
             var response = await httpClient.DeleteAsync(apiUrl);
-            return RedirectToAction("GetAllVouchers");
+            return RedirectToAction("GetAllShippingVouchers");
         }
 		public async Task<IActionResult> FindVouchers(string searchQuery)
         {
-            var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));
+            var color = repos.GetAll().Where(c => c.VoucherShipCode.ToLower().Contains(searchQuery.ToLower()));
             return View(color);
         }
 
@@ -150,7 +150,7 @@ namespace AppView.Controllers
 
 		public async Task<IActionResult> Details(Guid Id)
 		{
-			var vc = repos.GetAll().FirstOrDefault( c=> c.VoucherID == Id);
+			var vc = repos.GetAll().FirstOrDefault( c=> c.ShippingVoucherID == Id);
 			return View(vc);
 		}
 
@@ -170,7 +170,7 @@ namespace AppView.Controllers
             }
 
             // Chuyển hướng lại danh sách voucher
-            return RedirectToAction("GetAllVouchers");
+            return RedirectToAction("GetAllShippingVouchers");
         }
 
         public ActionResult UnlockVoucher(Guid id)
@@ -188,7 +188,7 @@ namespace AppView.Controllers
             }
 
             // Chuyển hướng lại danh sách voucher
-            return RedirectToAction("GetAllVouchers");
+            return RedirectToAction("GetAllShippingVouchers");
         }
     }
 }

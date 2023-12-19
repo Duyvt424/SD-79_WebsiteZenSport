@@ -24,7 +24,8 @@ namespace AppView.Controllers
         private readonly IAllRepositories<Bill> _repos;
         private readonly IAllRepositories<Customer> customer;
         private readonly IAllRepositories<Voucher> voucher;
-        private readonly IAllRepositories<Employee> employee;
+		private readonly IAllRepositories<ShippingVoucher> shippingvoucher;
+		private readonly IAllRepositories<Employee> employee;
         private readonly IAllRepositories<PurchaseMethod> purchaseMethod;
         // private readonly IAllRepositories<Supplier> supplierRepos;
         ShopDBContext _dbContext = new ShopDBContext();
@@ -33,6 +34,7 @@ namespace AppView.Controllers
         DbSet<Voucher> _voucher;
         DbSet<PurchaseMethod> _pu;
         DbSet<Bill> _bill;
+        DbSet<ShippingVoucher> _shipVoucher;
         public BillController()
         {
             _bill = _dbContext.Bills;
@@ -55,7 +57,12 @@ namespace AppView.Controllers
             AllRepositories<PurchaseMethod> pu = new AllRepositories<PurchaseMethod>(_dbContext, _pu);
             purchaseMethod = pu;
 
-        }
+
+			_shipVoucher = _dbContext.ShippingVoucher;
+			AllRepositories<ShippingVoucher> pu1 = new AllRepositories<ShippingVoucher>(_dbContext, _shipVoucher);
+			shippingvoucher = pu1;
+
+		}
         private string GenerateBillCode()
         {
             var lastProduct = _dbContext.Bills.OrderByDescending(c => c.BillCode).FirstOrDefault();
@@ -80,6 +87,7 @@ namespace AppView.Controllers
             var em = employee.GetAll();
             var pu = purchaseMethod.GetAll();
             var vc = voucher.GetAll();
+            var sv = shippingvoucher.GetAll();
             //  var materials = materialRepos.GetAll();
 
             // Tạo danh sách ProductViewModel với thông tin Supplier và Material
@@ -100,7 +108,8 @@ namespace AppView.Controllers
                 Status = bills.Status,
                 CustomerName = cus.FirstOrDefault(s => s.CumstomerID == bills.CustomerID)?.FullName,
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
-                EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
+				ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
+				EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
                 PurchaseMethodName = pu.FirstOrDefault(p => p.PurchaseMethodID == bills.PurchaseMethodID).MethodName,
 
                 //  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
@@ -125,7 +134,11 @@ namespace AppView.Controllers
                 SelectList selectListVC = new SelectList(vc, "VoucherID", "VoucherCode");
                 ViewBag.VCList = selectListVC;
 
-                var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
+				var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
+				SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
+				ViewBag.SVCList = selectListVC;
+
+				var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
                 SelectList selectListPu = new SelectList(pu, "PurchaseMethodID", "MethodName");
                 ViewBag.PuList = selectListPu;
             }
@@ -136,7 +149,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateBill(Bill bill)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Bill/create-bill?BillCode={GenerateBillCode()}&CreateDate={bill.CreateDate}&SuccessDate={bill.SuccessDate}&DeliveryDate={bill.DeliveryDate}&CancelDate={bill.CancelDate}&TotalPrice={bill.TotalPrice}&ShippingCosts={bill.ShippingCosts}&Note={bill.Note}&Status={bill.Status}&CustomerID={bill.CustomerID}&VoucherID={bill.VoucherID}&EmployeeID={bill.EmployeeID}&PurchaseMethodID={bill.PurchaseMethodID}";
+            string apiUrl = $"https://localhost:7036/api/Bill/create-bill?BillCode={GenerateBillCode()}&CreateDate={bill.CreateDate}&SuccessDate={bill.SuccessDate}&DeliveryDate={bill.DeliveryDate}&CancelDate={bill.CancelDate}&TotalPrice={bill.TotalPrice}&ShippingCosts={bill.ShippingCosts}&Note={bill.Note}&Status={bill.Status}&CustomerID={bill.CustomerID}&VoucherID={bill.VoucherID}&EmployeeID={bill.EmployeeID}&PurchaseMethodID={bill.PurchaseMethodID}&ShippingVoucherID={bill.ShippingVoucherID}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllBill");
         }
@@ -159,7 +172,11 @@ namespace AppView.Controllers
                 SelectList selectListVC = new SelectList(vc, "VoucherID", "VoucherCode");
                 ViewBag.VCList = selectListVC;
 
-                var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
+				var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
+				SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
+				ViewBag.SVCList = selectListVC;
+
+				var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
                 SelectList selectListPu = new SelectList(pu, "PurchaseMethodID", "MethodName");
                 ViewBag.PuList = selectListPu;
             }
@@ -190,6 +207,7 @@ namespace AppView.Controllers
             var cus = customer.GetAll();
             var em = employee.GetAll();
             var vc = voucher.GetAll();
+            var sv = shippingvoucher.GetAll();
             var pu = purchaseMethod.GetAll();
             // Tạo danh sách ProductViewModel với thông tin Supplier và Material
             var billViewModels = bill.Select(bills => new BillViewModel
@@ -211,9 +229,10 @@ namespace AppView.Controllers
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
                 EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
                 PurchaseMethodName = pu.FirstOrDefault(p => p.PurchaseMethodID == bills.PurchaseMethodID).MethodName,
+				ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
 
-                //  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
-            }).ToList();
+				//  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
+			}).ToList();
 
             return View(billViewModels);
         }
@@ -333,12 +352,16 @@ namespace AppView.Controllers
 				ViewBag.BillId = billId;
 				ViewBag.DetailsBill = detailsBill;
 
-				return View(detailsBill);
+                ViewBag.GeneratePdfUrl = Url.Action("GeneratePdf", "PDF", new { billId });
+
+
+                return View(detailsBill);
 			}
 
 			return View(new List<OrderDetailsViewModel>());
 		}
 
+       
 		public IActionResult SaveStatusBill(Guid billID)
         {
             string DOCUMENT = "Thanh toán trực tuyến VNPay";

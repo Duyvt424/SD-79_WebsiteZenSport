@@ -24,13 +24,15 @@ namespace AppData.Models
         public int Status { get; set; }
         public Guid CustomerID { get; set; }
         public Guid? VoucherID { get; set; }
-        public Guid? EmployeeID { get; set; }
+		public Guid? ShippingVoucherID { get; set; }
+		public Guid? EmployeeID { get; set; }
         public Guid PurchaseMethodID { get; set; }
         public Guid? AddressID { get; set; }
         public virtual PurchaseMethod PurchaseMethod { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual Voucher Voucher { get; set; }
-        public virtual Customer Customer { get; set; }
+		public virtual ShippingVoucher ShippingVoucher { get; set; }
+		public virtual Customer Customer { get; set; }
         public virtual Address Address { get; set; }
         public virtual List<BillDetails> BillDetails { get; set; }
         public virtual List<BillStatusHistory> BillStatusHistories { get; set; }

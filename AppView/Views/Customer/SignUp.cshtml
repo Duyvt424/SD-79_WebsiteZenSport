@@ -125,6 +125,7 @@
                     <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                         <div class="">
                             <div class="card-body p-5">
+
                                 <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 200px;">
                                 <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
                                     BECOME A
@@ -249,7 +250,7 @@
         </div>
     </section>
 </div>
-<script>
+@*<script>
     $(document).ready(function () {
         $("#ConfirmPassword").keyup(checkPasswordMatch);
         $("#Password").keyup(checkPasswordMatch);
@@ -264,7 +265,52 @@
         else
             $("#divCheckPasswordMatch").html("");
     }
+
+</script>*@
+
+<script>
+     $(document).ready(function () {
+        $("#ConfirmPassword").keyup(checkPasswordMatch);
+        $("#Password").keyup(checkPasswordMatch);
+
+        $("#register-form").submit(function (e) {
+            // Kiểm tra điều kiện bỏ trống
+            var fullName = $("#FullName").val();
+            var userName = $("#UserName").val();
+            var email = $("#Email").val();
+            var phoneNumber = $("#PhoneNumber").val();
+            var password = $("#Password").val();
+            var confirmPassword = $("#ConfirmPassword").val();
+
+            if (!fullName || !userName || !email || !phoneNumber || !password || !confirmPassword) {
+                alert("Vui lòng điền đầy đủ thông tin!");
+                e.preventDefault(); // Ngăn chặn form submit nếu có thông tin bỏ trống
+                return;
+            }
+
+            // Thực hiện kiểm tra điều kiện xác nhận mật khẩu
+            if (password != confirmPassword) {
+                alert("Vui lòng điền đúng mật khẩu!");
+                e.preventDefault(); // Ngăn chặn form submit nếu mật khẩu không khớp
+                return;
+            }
+
+            // Hiển thị thông báo thành công bằng alert
+            alert("Đăng ký thành công!");
+        });
+    });
+
+    function checkPasswordMatch() {
+        var password = $("#Password").val();
+        var confirmPassword = $("#ConfirmPassword").val();
+
+        if (password != confirmPassword)
+            $("#divCheckPasswordMatch").html("Vui lòng điền đúng mật khẩu!");
+        else
+            $("#divCheckPasswordMatch").html("");
+    }
 </script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
