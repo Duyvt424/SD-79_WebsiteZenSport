@@ -297,8 +297,11 @@
 												// Khởi tạo tổng tiền của cả giỏ hàng
 												let totalPrice = 0;
 
-												const selectedDistrictId = parseInt(document.getElementById('districtIdShow').textContent);
-												const selectedWardCode = parseInt(document.getElementById('wardCodeShow').textContent);
+												const selectedDistrictIdElement = document.getElementById('districtIdShow');
+												const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+
+												const selectedWardCodeElement = document.getElementById('wardCodeShow');
+												const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
 												// Gọi hàm tính toán phí vận chuyển
 												calculateShippingFee(selectedWardCode, selectedDistrictId);
 												// Lặp qua từng input
@@ -310,6 +313,12 @@
 													input.addEventListener('change', function () {
 														const price = parseFloat(input.getAttribute('data-price'));
 														const quantity = parseInt(input.value);
+														//lấy id địa chỉ
+														const selectedDistrictIdElement = document.getElementById('districtIdShow');
+														const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+
+														const selectedWardCodeElement = document.getElementById('wardCodeShow');
+														const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
 
 														// Cập nhật giá tiền tương ứng
 														const total = price * quantity;
@@ -328,8 +337,18 @@
 														const totalPriceElement = document.getElementById('totalPrice');
 														totalPriceElement.textContent = totalPrice.toLocaleString() + "đ";
 
+														var phivanchuyenElement = document.getElementById('phivanchuyen');
+														var phivanchuyen = parseFloat(phivanchuyenElement.textContent.replace(/[,.]/g, ''));
+
+														var totalOk = totalPrice + phivanchuyen;
+
+														var tongTienElement = document.querySelector('[name="TongTien"]');
+														tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
+
+														checkCartItemQuantity(shoesDetailsId, quantity, size);
 														// Gọi hàm tính toán phí vận chuyển
 														calculateShippingFee(selectedWardCode, selectedDistrictId);
 
@@ -487,6 +506,12 @@
 								});
 
 								function updateShippingCost() {
+									const selectedDistrictIdElement = document.getElementById('districtIdShow');
+									const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+
+									const selectedWardCodeElement = document.getElementById('wardCodeShow');
+									const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
+
 									var totalPriceElement = document.getElementById('totalPrice');
 									var totalPriceText = totalPriceElement.innerText;
 									var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
@@ -494,6 +519,8 @@
 									var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
 									var addressIDShowHide = selectedCheckbox ? selectedCheckbox.closest('.existing-address').querySelector('.addressId-show') : null;
 									if (selectedCheckbox) {
+										// tính lại giá ship nếu ng dùng đổi địa chỉ
+										calculateShippingFee(selectedWardCode, selectedDistrictId);
 										// Lấy giá trị vận chuyển từ thuộc tính data
 										var shippingCost = parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost);
 
@@ -712,16 +739,13 @@
 					// Kiểm tra xem xã đã được chọn hay chưa
 					const selectedXa = phuongXaSelect.value;
 					const shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
-					const imageShip = document.getElementById('imageShipper');
 
 					if (selectedXa) {
 						// Nếu đã chọn xã, hiển thị radio button
 						shippingOptionsDiv.style.display = 'block';
-						imageShip.style.display = 'inline-block';
 					} else {
 						// Nếu xã chưa được chọn, ẩn radio button
 						shippingOptionsDiv.style.display = 'none';
-						imageShip.style.display = 'none';
 					}
 				});
 			</script>
@@ -861,7 +885,8 @@
 			<script>
 				// Hàm để cập nhật hình thức vận chuyển và thời gian dự kiến
 				function updateShippingOptions() {
-					var toDistrict = document.getElementById('ListQuanHuyen').value;
+					const selectedDistrictIdElement = document.getElementById('districtIdShow');
+					const toDistrict = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
 					// Gọi API để cập nhật hình thức vận chuyển
 					fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toDistrict}`, {
 						method: 'GET',
@@ -891,7 +916,7 @@
 
 							// Gọi hàm tính toán ngày nhận hàng dự kiến
 							calculateDeliveryDate();
-							document.getElementById("shippingMethodID").value = shippingMethods[0].service_id;
+							document.getElementById('shippingMethodID').value = shippingMethods[0].service_id;
 						})
 						.catch(error => {
 							console.error('Error:', error);
@@ -925,11 +950,13 @@
 
 							var deliveryDateSpanElement = document.querySelector('.existing-address input[type="checkbox"]:checked');
 							var deliveryDateSpan = deliveryDateSpanElement ? deliveryDateSpanElement.closest('.existing-address').querySelector('.delivery-date') : null;
-							console.log(deliveryDateSpan);
-							deliveryDateSpan.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
-							deliveryDateSpan.style.paddingTop = '10px';
-							deliveryDateSpan.style.fontWeight = 'bold';
-
+							if (deliveryDateSpan) {
+								deliveryDateSpan.innerHTML = 'Ngày nhận hàng dự kiến: ' + formattedDate;
+								deliveryDateSpan.style.paddingTop = '10px';
+								deliveryDateSpan.style.fontWeight = 'bold';
+							} else {
+								console.log('Không tìm thấy phần tử deliveryDateSpan.');
+							}
 							//lưu vào db khi thanh toán
 							var deliveryDateSaveHTML = document.getElementById('deliveryDateSave');
 							deliveryDateSaveHTML.value = formattedDate;
@@ -941,15 +968,15 @@
 				function getLeadTime() {
 					var checkedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
 					var toDistrictIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.district-idShow') : null;
-					var toDistrictId = parseFloat(toDistrictIdElement.textContent);
+					var toDistrictId = toDistrictIdElement ? parseFloat(toDistrictIdElement.textContent) : parseFloat(document.getElementById('ListQuanHuyen').value);
 					console.log('Id huyen', toDistrictId);
 
 					var toWardCodeElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.ward-codeShow') : null;
-					var toWardCode = parseFloat(toWardCodeElement.textContent);
+					var toWardCode = toWardCodeElement ? parseFloat(toWardCodeElement.textContent) : parseFloat(document.getElementById('ListPhuongXa').value);
 					console.log('Id xa', toWardCode);
-					;
+
 					var toMethodShipIdElement = checkedCheckbox ? checkedCheckbox.closest('.existing-address').querySelector('.shipping-methodId') : null;
-					var methodId = parseFloat(toMethodShipIdElement.textContent);
+					var methodId = toMethodShipIdElement ? parseFloat(toMethodShipIdElement.textContent) : selectedShippingMethodID;
 					console.log('Id ship', methodId);
 					return fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime?from_district_id=3440&from_ward_code=13010&to_district_id=${toDistrictId}&to_ward_code=${toWardCode}&service_id=${methodId}`, {
 						method: 'GET',
@@ -1000,7 +1027,8 @@
 					var totalWeightText = totalWeight.innerText;
 					var totalWeightSum = parseInt(totalWeightText.replace(/[^\d]/g, ''));
 					// lấy id hình thức giao từ db
-					var ShippingMethodID = document.getElementById("shippingMethodIDShow").textContent;
+					var ShippingMethodElement = document.getElementById("shippingMethodIDShow");
+					var ShippingMethodID = ShippingMethodElement ? ShippingMethodElement.textContent : "0";
 					// Xây dựng URL dựa trên việc người dùng có click "Thêm mới" hay không
 					const url = isNewAddressClicked
 						? `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`
@@ -1025,6 +1053,7 @@
 							var shippingFee = data.data.total;
 							document.getElementById('shippingFee').value = shippingFee;
 							document.getElementById('shippingCost').value = shippingFee;
+							console.log('phi ship la', shippingFee);
 							//
 							var totalOk = totalPrice + shippingFee;
 							var tongTienElement = document.querySelector('[name="TongTien"]');
@@ -1091,7 +1120,7 @@
 																	<div style="margin-left: 10px">
 																		<p>Mã @voucher.VoucherCode giảm @string.Format("{0:N0}đ", voucher.VoucherValue) trên hóa đơn  @string.Format("{0:N0}đ", voucher.Total) </p>
 
-										
+
 																		<p>Ngày kết thúc: @voucher.ExpirationDate.ToString("dd/MM/yyyy")</p>
 																		<p>Hạng: @voucher.Exclusiveright</p>
 																		<p><a asp-controller="Voucher" asp-action="Details" asp-route-Id="@voucher.VoucherID">Chi tiết</a></p>
@@ -1292,45 +1321,45 @@
 												//});
 
 												$("#apply-voucher-btn").click(function () {
-    var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 
-    if (selectedVoucherCode) {
-        $.ajax({
-            type: "GET",
-            url: "https://localhost:7036/api/Voucher/find-voucher",
-            data: { code: selectedVoucherCode },
-            dataType: 'json',
-            success: function (result) {
-                if (result && result.length > 0 && result[0]) {
-                    console.log(result);
+													if (selectedVoucherCode) {
+														$.ajax({
+															type: "GET",
+															url: "https://localhost:7036/api/Voucher/find-voucher",
+															data: { code: selectedVoucherCode },
+															dataType: 'json',
+															success: function (result) {
+																if (result && result.length > 0 && result[0]) {
+																	console.log(result);
 
-                    if (result[0].status == 0) {
-                        var startDate = new Date(result[0].dateCreated);
-                        var currentDate = new Date();
+																	if (result[0].status == 0) {
+																		var startDate = new Date(result[0].dateCreated);
+																		var currentDate = new Date();
 
-                        // Kiểm tra ngày bắt đầu của voucher
-                        if (startDate > currentDate) {
-                            alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-                        } else {
-                            // Tiếp tục với xử lý voucher khi nó có hiệu lực
-                            if (result[0].voucherValue != null) {
-                                var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-                                var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-                                var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+																		// Kiểm tra ngày bắt đầu của voucher
+																		if (startDate > currentDate) {
+																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
+																		} else {
+																			// Tiếp tục với xử lý voucher khi nó có hiệu lực
+																			if (result[0].voucherValue != null) {
+																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
 
-                                var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-                                var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-                                var priceShip = parseFloat(regexPriceShipHTML);
+																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+																				var priceShip = parseFloat(regexPriceShipHTML);
 
-                                var totalAll = parseFloat(sanphamPrice + priceShip);
+																				var totalAll = parseFloat(sanphamPrice + priceShip);
 
-                                // Kiểm tra điều kiện tổng giá trị đơn hàng
-                                if (totalAll < result[0].total) {
-                                    alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
-                                } else {
-                                    // Kiểm tra xem voucher có Exclusiveright không và khách hàng có đủ điều kiện không
-                                    var rankName = "@Model.RankName".trim(); // Lấy thông tin RankName từ server-side
-                                    var exclusiveright = result[0].exclusiveright.trim();
+																				// Kiểm tra điều kiện tổng giá trị đơn hàng
+																				if (totalAll < result[0].total) {
+																					alert("Tổng giá trị đơn hàng chưa thoản mãn điều kiện");
+																				} else {
+																					// Kiểm tra xem voucher có Exclusiveright không và khách hàng có đủ điều kiện không
+																					var rankName = "@Model.RankName".trim(); // Lấy thông tin RankName từ server-side
+																					var exclusiveright = result[0].exclusiveright.trim();
 
 																					function decodeEntities(encodedString) {
 																						var textArea = document.createElement('textarea');
@@ -1352,47 +1381,47 @@
 																						(decodedRankName === "Hạng kim cương" && decodedExclusiveright === "Không") ||
 																						(decodedRankName === decodedExclusiveright)
 																					) {
-                                        var voucherDiscount = parseFloat(result[0].voucherValue);
+																						var voucherDiscount = parseFloat(result[0].voucherValue);
 
-                                        totalAll -= voucherDiscount;
+																						totalAll -= voucherDiscount;
 
-                                        // Hiển thị giá trị mới sau khi áp dụng voucher
-                                        $("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+																						// Hiển thị giá trị mới sau khi áp dụng voucher
+																						$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
 
-                                        // Hiển thị mã voucher đã áp dụng
-                                        $("#code-voucher").text(result[0].voucherCode);
+																						// Hiển thị mã voucher đã áp dụng
+																						$("#code-voucher").text(result[0].voucherCode);
 
-                                        // Hiển thị số tiền giảm giá của voucher
-                                        $("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+																						// Hiển thị số tiền giảm giá của voucher
+																						$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
 
-                                        alert("Áp dụng voucher thành công!");
+																						alert("Áp dụng voucher thành công!");
 
-                                        // lưu id của voucher đang áp dụng vào để thanh toán
-                                        var idVoucher = document.getElementById('voucherId');
-                                        idVoucher.value = result[0].voucherID;
-                                    } else {
-                                        alert("Bạn không đủ điều kiện để sử dụng voucher này.");
-                                    }
-                                }
-                            } else {
-                                console.log("Lỗi: result[0].voucherValue không có giá trị.");
-                            }
-                        }
-                    } else {
-                        alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
-                    }
-                } else {
-                    console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
-                }
-            },
-            error: function (error) {
-                console.log("Lỗi Ajax:", error);
-            }
-        });
-    } else {
-        alert("Vui lòng chọn một voucher để áp dụng.");
-    }
-});
+																						// lưu id của voucher đang áp dụng vào để thanh toán
+																						var idVoucher = document.getElementById('voucherId');
+																						idVoucher.value = result[0].voucherID;
+																					} else {
+																						alert("Bạn không đủ điều kiện để sử dụng voucher này.");
+																					}
+																				}
+																			} else {
+																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
+																			}
+																		}
+																	} else {
+																		alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
+																	}
+																} else {
+																	console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+																}
+															},
+															error: function (error) {
+																console.log("Lỗi Ajax:", error);
+															}
+														});
+													} else {
+														alert("Vui lòng chọn một voucher để áp dụng.");
+													}
+												});
 
 
 
@@ -1400,7 +1429,7 @@
 
 											});
 										</script>
-									
+
 									</div>
 								</li>
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
@@ -1446,7 +1475,7 @@
 									Xác Nhận Đặt Hàng
 								</button>
 								@*<div>
-									<p>Cấp bậc của bạn: @Model.RankName</p>
+								<p>Cấp bậc của bạn: @Model.RankName</p>
 								</div>*@
 								<script>
 									$(document).ready(function () {
