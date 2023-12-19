@@ -48,7 +48,13 @@ namespace AppView.Controllers
             var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
             var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
-            if (customerId != Guid.Empty)
+
+			string apiUrl1 = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
+			var httpClient1 = new HttpClient(); // tạo ra để callApi
+			var response1 = await httpClient1.GetAsync(apiUrl1);// Lấy dữ liệu ra
+			string apiData1 = await response1.Content.ReadAsStringAsync();
+			var styles1 = JsonConvert.DeserializeObject<List<ShippingVoucherViewModel>>(apiData1);
+			if (customerId != Guid.Empty)
             {
                 var loggedInUser = _dBContext.Customers.Include(c => c.Rank).FirstOrDefault(c => c.CumstomerID == customerId);
 				string rankName = loggedInUser?.Rank?.Name ?? "Unknown";
@@ -93,6 +99,7 @@ namespace AppView.Controllers
                         CartItems = cartItemList,
                         AddressList = addressList,
                         Vouchers = styles,
+                        ShipVouchers = styles1,
                         RankName = rankName,
                     };
 
@@ -105,8 +112,9 @@ namespace AppView.Controllers
             ShoppingCartViewModel s = new ShoppingCartViewModel
             {
                 CartItems = cartItems,
-                Vouchers = styles
-            };
+                Vouchers = styles,
+				ShipVouchers = styles1
+			};
 
             return View(s);
         }

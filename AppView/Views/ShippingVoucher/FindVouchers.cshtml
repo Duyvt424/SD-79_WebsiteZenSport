@@ -1,7 +1,7 @@
-﻿@model IEnumerable<AppView.Models.ShippingVoucherViewModel>
+﻿@model IEnumerable<AppData.Models.ShippingVoucher>
 
 @{
-    ViewData["Title"] = "GetAllShippingVouchers";
+    ViewData["Title"] = "FindVouchers";
     var stt = 1;
 }
 
@@ -281,38 +281,12 @@
                         </div>
                     </div>
                 </div>
-                @* <form method="get" action="@Url.Action("FindVouchers")">
-                <div class="form">
-                <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
-                <span class="input-border"></span>
-                </div>
-                </form>*@
-                <div class="row">
-                    <div class="col">
-                        <form method="get" action="@Url.Action("FindVouchers")">
-                            <div class="form">
-                                <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
-                                <span class="input-border"></span>
-                            </div>
-                        </form>
+                <form method="get" action="@Url.Action("FindVouchers")">
+                    <div class="form">
+                        <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
+                        <span class="input-border"></span>
                     </div>
-                    <div class="col">
-                        <div class="d-flex justify-content-end">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Chọn trạng thái
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#" id="tat-ca">Tất cả</a>
-                                    <a class="dropdown-item" href="#" id="ket-thuc">Kết thúc</a>
-                                    <a class="dropdown-item" href="#" id="dang-dien-ra">Đang diễn ra</a>
-                                    <a class="dropdown-item" href="#" id="sap-dien-ra">Sắp diễn ra</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                </form>
                 <table class="table table-striped table-hover" style="margin-top:15px;">
                     <thead>
                         <tr>
@@ -339,7 +313,7 @@
                                 <td>@Html.DisplayFor(modelItem => item.QuantityShip)</td>
                                 <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
                                 <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                              
+
                                 <td>
                                     @if (item.IsShippingVoucher == 0)
                                     {
@@ -371,104 +345,6 @@
 
                         }
                     </tbody>
-
-
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            // Thêm bộ lắng nghe sự kiện sau khi DOM đã được tải hoàn toàn
-                            document.getElementById("ket-thuc").addEventListener("click", function () {
-                                filterRows("Kết thúc");
-                            });
-
-                            document.getElementById("dang-dien-ra").addEventListener("click", function () {
-                                filterRows("Đang diễn ra");
-                            });
-
-                            document.getElementById("sap-dien-ra").addEventListener("click", function () {
-                                filterRows("Sắp diễn ra");
-                            });
-
-                            document.getElementById("tat-ca").addEventListener("click", function () {
-                                showAllRows();
-                            });
-
-                            updateExpiredVouchers();
-                        });
-
-                        function filterRows(status) {
-                            var rows = document.getElementsByClassName("voucher-row");
-                            var currentDate = new Date();
-
-                            for (var i = 0; i < rows.length; i++) {
-                                var row = rows[i];
-                                var dateCreatedText = row.querySelector("td:nth-child(7)").innerText.trim(); // Giả sử DateCreated ở cột 8
-                                var expirationDateText = row.querySelector("td:nth-child(6)").innerText.trim(); // Giả sử ExpirationDate ở cột 6
-
-                                // Chuyển đổi định dạng ngày thời gian thành ngày JavaScript
-                                var dateCreated = new Date(dateCreatedText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
-                                var expirationDate = new Date(expirationDateText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
-
-                                var display = "none";
-
-                                switch (status) {
-                                    case "Kết thúc":
-                                        if (expirationDate < currentDate) {
-                                            display = "";
-                                        }
-                                        break;
-
-                                    case "Đang diễn ra":
-                                        if (dateCreated <= currentDate && expirationDate >= currentDate) {
-                                            display = "";
-                                        }
-                                        break;
-
-                                    case "Sắp diễn ra":
-                                        if (dateCreated > currentDate) {
-                                            display = "";
-                                        }
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-
-                                row.style.display = display;
-                            }
-                        }
-
-                        function updateExpiredVouchers() {
-                            var rows = document.getElementsByClassName("voucher-row");
-                            var currentDate = new Date();
-
-                            for (var i = 0; i < rows.length; i++) {
-                                var row = rows[i];
-                                var expirationDateText = row.querySelector("td:nth-child(6)").innerText.trim(); // Giả sử ExpirationDate ở cột 6
-
-                                // Chuyển đổi định dạng ngày thời gian thành ngày JavaScript
-                                var expirationDate = new Date(expirationDateText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
-
-                                if (expirationDate <= currentDate) {
-                                    // Cập nhật trạng thái thành "Kết thúc"
-                                    row.querySelector("td:nth-child(9)").innerHTML = '<p><img src="~/image/icons8-connection-status-off18.png" /> Kết thúc</p>';
-                                    // Tùy chọn: Ẩn liên kết khóa/mở khóa hoặc cập nhật chúng tương ứng
-                                    // row.querySelector(".lock").style.display = "none";
-                                    row.querySelector(".unlock").style.display = "none";
-                                }
-                            }
-                        }
-
-                        function showAllRows() {
-                            var rows = document.getElementsByClassName("voucher-row");
-                            for (var i = 0; i < rows.length; i++) {
-                                rows[i].style.display = "";
-                            }
-                        }
-                    </script>
-
-
-
                 </table>
                 <div class="clearfix">
                     <div class="hint-text">Showing <b>1</b> out of <b>3</b> list</div>
@@ -487,3 +363,4 @@
     </div>
 </body>
 </html>
+

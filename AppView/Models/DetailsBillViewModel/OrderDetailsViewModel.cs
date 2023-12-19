@@ -18,7 +18,8 @@
         public decimal TotalPrice { get; set; }
         public decimal TotalPriceAfterDiscount { get; set; }
         public decimal? PriceVoucher { get; set; }
-        public decimal ShippingCost { get; set; }
+		public decimal? PriceVoucherShip { get; set; }
+		public decimal ShippingCost { get; set; }
         public bool IsPaid { get; set; }
         public List<BillStatusHistoryViewModel> BillStatusHistories { get; set; }
         public List<AddressViewModel> AddressViewModels { get; set; }

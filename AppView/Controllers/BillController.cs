@@ -267,7 +267,8 @@ namespace AppView.Controllers
                             TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
                             TotalPriceAfterDiscount = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPriceAfterDiscount,
                             PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
-                            IsPaid = objBill.IsPaid,
+							PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
+							IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             Products = new List<ProductViewModel>
                             {

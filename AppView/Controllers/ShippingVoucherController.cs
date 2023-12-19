@@ -21,30 +21,30 @@ namespace AppView.Controllers
 			AllRepositories<ShippingVoucher> all = new AllRepositories<ShippingVoucher>(context, voucher);
 			repos = all;
 		}
-		private string GenerateVoucherCode()
+        private string GenerateVoucherCode()
+        {
+            var last = context.ShippingVoucher.OrderByDescending(c => c.VoucherShipCode).FirstOrDefault();
+            if (last != null)
+            {
+                var lastNumber = int.Parse(last.VoucherShipCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
+                var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
+                var newCode = "SV" + nextNumber.ToString("D3"); // Tạo ColorCode mới
+                return newCode;
+            }
+            return "SV001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
+        }
+        public async Task<IActionResult> GetAllShippingVouchers()
 		{
-			var last = context.ShippingVoucher.OrderByDescending(c => c.VoucherShipCode).FirstOrDefault();
-			if (last != null)
-			{
-				var lastNumber = int.Parse(last.VoucherShipCode.Substring(2)); // Lấy phần số cuối cùng từ ColorCode
-				var nextNumber = lastNumber + 1; // Tăng giá trị cuối cùng
-				var newCode = "SV" + nextNumber.ToString("D3"); // Tạo ColorCode mới
-				return newCode;
-			}
-			return "SV001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
-		}
-		public async Task<IActionResult> GetAllShippingVouchers()
-		{
-			string apiUrl = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
-			var httpClient = new HttpClient(); // tạo ra để callApi
-			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-			string apiData = await response.Content.ReadAsStringAsync();
-			var styles = JsonConvert.DeserializeObject<List<ShippingVoucherViewModel>>(apiData);
+			string apiUrl1 = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
+			var httpClient1 = new HttpClient(); // tạo ra để callApi
+			var response1 = await httpClient1.GetAsync(apiUrl1);// Lấy dữ liệu ra
+			string apiData1 = await response1.Content.ReadAsStringAsync();
+			var styles1 = JsonConvert.DeserializeObject<List<ShippingVoucherViewModel>>(apiData1);
 			/*ShoppingCartViewModel s = new ShoppingCartViewModel();
 			s.Vouchers = styles.ToList();*/
-		
 
-			return View(styles);
+
+			return View(styles1);
        
         }
 
@@ -78,14 +78,15 @@ namespace AppView.Controllers
             return RedirectToAction("GetAllShippingVouchers");
         }
 
+
 		public async Task<IActionResult> DeleteVouchers(Guid id)
 		{
-            var voucher = repos.GetAll().First(c => c.ShippingVoucherID == id);
-            var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Voucher/delete-voucher?id={id}";
-            var response = await httpClient.DeleteAsync(apiUrl);
-            return RedirectToAction("GetAllShippingVouchers");
-        }
+			var voucher = repos.GetAll().First(c => c.ShippingVoucherID == id);
+			var httpClient = new HttpClient();
+			string apiUrl = $"https://localhost:7036/api/ShippingVoucher/delete-voucher?id={id}";
+			var response = await httpClient.DeleteAsync(apiUrl);
+			return RedirectToAction("GetAllShippingVouchers");
+		}
 		public async Task<IActionResult> FindVouchers(string searchQuery)
         {
             var color = repos.GetAll().Where(c => c.VoucherShipCode.ToLower().Contains(searchQuery.ToLower()));
@@ -158,12 +159,12 @@ namespace AppView.Controllers
         public ActionResult LockVoucher(Guid id)
         {
             // Lấy voucher từ cơ sở dữ liệu dựa trên id
-            var voucher = context.Vouchers.Find(id);
+            var voucher = context.ShippingVoucher.Find(id);
 
             if (voucher != null)
             {
                 // Thực hiện logic để khóa voucher
-                voucher.Status = 1; // Đặt Status thành 1 để chỉ định đã khóa
+                voucher.IsShippingVoucher = 1; // Đặt Status thành 1 để chỉ định đã khóa
 
                 // Cập nhật cơ sở dữ liệu
                 context.SaveChanges();
@@ -176,12 +177,12 @@ namespace AppView.Controllers
         public ActionResult UnlockVoucher(Guid id)
         {
             // Lấy voucher từ cơ sở dữ liệu dựa trên id
-            var voucher = context.Vouchers.Find(id);
+            var voucher = context.ShippingVoucher.Find(id);
 
             if (voucher != null)
             {
                 // Thực hiện logic để mở khóa voucher
-                voucher.Status = 0; // Đặt Status thành 0 để chỉ định đã mở khóa
+                voucher.IsShippingVoucher = 0; // Đặt Status thành 0 để chỉ định đã mở khóa
 
                 // Cập nhật cơ sở dữ liệu
                 context.SaveChanges();
