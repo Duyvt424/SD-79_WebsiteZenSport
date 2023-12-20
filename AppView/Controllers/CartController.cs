@@ -400,6 +400,28 @@ namespace AppView.Controllers
             return maxQuantity;
         }
 
+        [HttpPost]
+        public IActionResult CheckQuantityCart(Guid shoesDetailsId, string size)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var objSize = _dBContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var ShoesDT_Size = _dBContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == objSize);
+            var loggedInUser = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == CustomerID);
+            if (loggedInUser != null)
+            {
+                var cartItem = _dBContext.CartDetails.FirstOrDefault(cd => cd.CumstomerID == loggedInUser.CumstomerID && cd.ShoesDetails_SizeID == ShoesDT_Size.ID);
+                if (cartItem != null)
+                {
+                    if (ShoesDT_Size.Quantity <= 0)
+                    {
+                        return Json(new { success = false, message = "Số lượng sản phẩm đã hết!" });
+                    }
+                }
+            }
+            return NoContent();
+        }
+
         public IActionResult ViewBill()
         {
             List<Bill> lstBills = _bill.GetAllBills();

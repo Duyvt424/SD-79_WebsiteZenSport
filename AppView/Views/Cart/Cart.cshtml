@@ -278,7 +278,7 @@
 										<!-- Quantity -->
 										<div class="d-flex mb-4" style="max-width: 300px;">
 											<div class="form-outline" style="margin-left: 72px;">
-												<input id="quantity_@item.ShoesDetailsID@item.Size" min="1" max="10" name="quantity" value="@item.Quantity" type="number" class="form-control quantity-input" data-shoesdetailsid="@item.ShoesDetailsID" data-price="@item.Price" data-size="@item.Size" />
+												<input id="quantity_@item.ShoesDetailsID@item.Size" min="1" max="10" name="quantity" value="@item.Quantity" type="number" class="form-control quantity-input" data-shoesdetailsid="@item.ShoesDetailsID" data-price="@item.Price" data-size="@item.Size"/>
 											</div>
 										</div>
 
@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-																	<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -352,6 +352,8 @@
 														// Gọi hàm tính toán phí vận chuyển
 														calculateShippingFee(selectedWardCode, selectedDistrictId);
 
+														console.log('size laaa', size);
+														checkCartItemQuantity(shoesDetailsId, size);
 														// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
 														setTimeout(function () {
 															// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
@@ -396,6 +398,51 @@
 													},
 													error: function (xhr, textStatus, errorThrown) {
 														// Xử lý lỗi nếu cần
+													}
+												});
+											}
+				
+											function checkCartItemQuantity(shoesDetailsId, size) {
+												const selectedDistrictIdElement = document.getElementById('districtIdShow');
+												const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+												const selectedWardCodeElement = document.getElementById('wardCodeShow');
+												const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
+												$.ajax({
+													url: '@Url.Action("CheckQuantityCart", "Cart")',
+													type: 'POST',
+													data: { shoesDetailsId: shoesDetailsId, size: size },
+													success: function (response) {
+														if (!response.success) {
+															// Hiển thị thông báo lỗi
+															alert(response.message);
+
+															// Đặt lại giá trị cho ô input
+															const quantityInput = document.getElementById('quantity_' + shoesDetailsId + size);
+															if (quantityInput) {
+																quantityInput.value = quantityInput.value - 1; // Hoặc giá trị mặc định mong muốn
+																updateCartItemQuantity(shoesDetailsId, quantityInput.value, size);
+																calculateShippingFee(selectedWardCode, selectedDistrictId);
+																// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
+																setTimeout(function () {
+																	// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
+																	const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+																	if (existingAddressChecked) {
+																		var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+
+																		// Di chuyển phần lấy giá trị vận chuyển vào đây
+																		var shippingCostHTML = document.getElementById('shippingCost').value;
+																		var shippingCost = parseFloat(shippingCostHTML);
+
+																		// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
+																		updatePriceShipping(addressId, shippingCost);
+																	}
+																}, 300);
+															}
+															location.reload();
+														}
+													},
+													error: function (xhr, textStatus, errorThrown) {
+														// Xử lý lỗi (nếu có)
 													}
 												});
 											}
