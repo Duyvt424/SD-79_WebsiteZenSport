@@ -268,12 +268,14 @@ namespace AppView.Controllers
                             TotalPriceAfterDiscount = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPriceAfterDiscount,
                             PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
 							PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
+                            PriceProduct = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price,
 							IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             Products = new List<ProductViewModel>
                             {
                                 new ProductViewModel
                                 {
+                                    ProductID = c.ShoesDetails_Size.ShoesDetailsId,
                                     ImageUrl = _dbContext.Images.First(x => x.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
                                     Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                                     Description = _dbContext.Styles.First(x => x.StyleID == c.ShoesDetails_Size.ShoesDetails.StyleID).Name,

@@ -463,6 +463,38 @@
 				color: #FF9800;
 			}
 
+		.buttonA {
+			display: inline-block;
+			font-size: 20px;
+			width: 45px;
+			height: 45px;
+			background-color: black;
+			border: 0;
+			outline: none;
+			border-radius: 50%;
+			color: white;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all .3s ease;
+			-webkit-transition: all .3s ease;
+			-moz-transition: all .3s ease;
+		}
+
+			.buttonA:hover {
+				background-color: black;
+				color: red;
+			}
+
+		.inputTang {
+			display: inline-block;
+			width: 300px;
+			margin: 0px 20px;
+			padding: 10px 20px;
+			border-radius: 4px;
+			border: 0;
+			outline: none;
+			border:2px solid black;
+		}
 	</style>
 </head>
 <link rel="stylesheet" href="~/css/detailsBill.css">
@@ -973,6 +1005,97 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalUpdateProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<button type="button" class="close quay-lai" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
+							<!-- Image -->
+							<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+								<img src="" class="w-80" alt="Blue Jeans Jacket" />
+								<a href="#!">
+									<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+								</a>
+							</div>
+							<!-- Image -->
+						</div>
+						<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+							<!-- Data -->
+							<p><strong style="font-size:20px;"></strong></p>
+							<p style="font-size:15px; padding-top:1%;"></p>
+							<p style="font-size:15px; padding-top:1%;"></p>
+							<p style="font-size:15px; padding-top:1%;"></p>
+							<p style="font-size:15px; padding-top:1%; color:red;"></p>
+						</div>
+						<hr />
+						<div class="container" style="margin-left:12%;">
+							<button id="plus" class="buttonA">+</button>
+							<input class="inputTang" type="number" value="@Model.First().Products.First().Quantity" min="1" max="10">
+							<button id="minus" class="buttonA">-</button>
+						</div>
+						<label class="description" style="text-align:center; margin-top:4%; font-size:18px;">Ghi chú:</label>
+						<input type="text" name="ghiChuUpdateSP" class="form-control" required />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	window.addEventListener('DOMContentLoaded', function () {
+		const updateButtons = document.querySelectorAll('.btn-updateProduct');
+		updateButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				// Lấy thông tin sản phẩm từ thuộc tính data
+				const productId = button.dataset.productid;
+				const imageUrl = button.dataset.image;
+				const name = button.dataset.name;
+				const description = button.dataset.description;
+				const size = button.dataset.size;
+				const quantity = button.dataset.quantity;
+				const price = parseFloat(button.dataset.price);  // Chuyển đổi giá về kiểu số (nếu chưa là kiểu số)
+				const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+				// Gọi hàm để hiển thị thông tin sản phẩm trong modal
+				showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice);
+			});
+		});
+
+		function showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice) {
+			// Đây là nơi bạn có thể thực hiện các hành động để hiển thị modal
+			// Sử dụng thông tin sản phẩm để cập nhật nội dung modal
+			const modalUpdateProduct = document.getElementById('modalUpdateProduct');
+			const modalProductImage = modalUpdateProduct.querySelector('.bg-image img');
+			const modalProductName = modalUpdateProduct.querySelector('.modal-body p strong');
+			const modalProductDescription = modalUpdateProduct.querySelector('.modal-body p:nth-child(2)');
+			const modalProductSize = modalUpdateProduct.querySelector('.modal-body p:nth-child(3)');
+			const modalProductQuantity = modalUpdateProduct.querySelector('.modal-body p:nth-child(4)');
+			const modalProductPrice = modalUpdateProduct.querySelector('.modal-body p:nth-child(5)');
+
+			modalProductImage.src = "/image/" + imageUrl;
+			modalProductName.textContent = name;
+			modalProductDescription.textContent = description;
+			modalProductSize.textContent = "Size: " + size;
+			modalProductQuantity.textContent = "Số lượng: x" + quantity;
+			modalProductPrice.textContent = formattedPrice;
+
+			// Hiển thị modal
+			$(modalUpdateProduct).modal('show');
+		}
+	});
+	$(document).ready(function () {
+		$('.quay-lai').click(function () {
+			$('#modalAddAddress').modal('hide');
+		});
+	});
+</script>
+
 <script>
 	$(document).ready(function () {
 		$('.add-info').click(function () {
@@ -1297,10 +1420,20 @@
 						<p style="font-size:15px; padding-top:1%;">@item.Products.First().Description</p>
 						<p style="font-size:15px; padding-top:1%;">Size: @item.Products.First().Size</p>
 						<p style="font-size:15px; padding-top:1%;">Số lượng: x@(item.Products.First().Quantity)</p>
-						<p style="font-size:15px; padding-top:1%; color:red;">@(item.Products.First().Price.ToString("N0"))đ</p>
-						<button type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;">
+						<p style="font-size:15px; padding-top:1%; color:red;">@string.Format("{0:N0}đ", item.PriceProduct)</p>
+						<button type="button" id="BtnUpdate_@item.Products.First().ProductID"
+							class="btn btn-primary btn-updateProduct"
+							data-productid="@item.Products.First().ProductID"
+							data-image="@item.Products.First().ImageUrl"
+							data-name="@item.Products.First().Name"
+							data-description="@item.Products.First().Description"
+							data-size="@item.Products.First().Size"
+							data-quantity="@item.Products.First().Quantity"
+							data-price="@item.PriceProduct"
+							style="background-color:black; border:1px solid white;">
 							<i class="fa fa-pencil" style="padding-top:1%; font-size:15px;"></i>
 						</button>
+
 						<button type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;">
 							<i class="fa fa-trash" style="padding-top:1%; font-size:15px;"></i>
 						</button>
