@@ -419,7 +419,7 @@ namespace AppView.Controllers
                     }
                 }
             }
-            return NoContent();
+            return Json(new { success = true, message = "AA!" });
         }
 
         public IActionResult ViewBill()

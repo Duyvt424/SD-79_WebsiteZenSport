@@ -309,6 +309,14 @@
 													const shoesDetailsId = input.getAttribute('data-shoesdetailsid');
 													const size = input.getAttribute('data-size');
 
+													input.addEventListener('mousedown', function (event) {
+														// Kiểm tra xem có phải là mũi tên điều hướng lên hay không
+														const isArrowUpClicked = event.target.type === 'number' && event.clientY < input.getBoundingClientRect().top + input.offsetHeight / 2;
+
+														if (isArrowUpClicked) {
+															checkCartItemQuantity(shoesDetailsId, size);
+														}
+													});
 													// Lắng nghe sự kiện input cho từng input
 													input.addEventListener('change', function () {
 														const price = parseFloat(input.getAttribute('data-price'));
@@ -348,12 +356,9 @@
 														// Gửi yêu cầu AJAX để cập nhật số lượng trên máy chủ
 														updateCartItemQuantity(shoesDetailsId, quantity, size);
 
-														checkCartItemQuantity(shoesDetailsId, quantity, size);
 														// Gọi hàm tính toán phí vận chuyển
 														calculateShippingFee(selectedWardCode, selectedDistrictId);
 
-														console.log('size laaa', size);
-														checkCartItemQuantity(shoesDetailsId, size);
 														// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
 														setTimeout(function () {
 															// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
@@ -412,7 +417,7 @@
 													type: 'POST',
 													data: { shoesDetailsId: shoesDetailsId, size: size },
 													success: function (response) {
-														if (!response.success) {
+														if (response.success === false) {
 															// Hiển thị thông báo lỗi
 															alert(response.message);
 
@@ -438,7 +443,6 @@
 																	}
 																}, 300);
 															}
-															location.reload();
 														}
 													},
 													error: function (xhr, textStatus, errorThrown) {

@@ -37,6 +37,7 @@
 	decimal shippingCost = Model.First().ShippingCost;
 	decimal priceVoucher = Model.First().PriceVoucher ?? 0;
 	decimal totalAll = Model.First().TotalPriceAfterDiscount;
+	decimal PriceProduct = Model.First().Products.First().Price * Model.First().Products.First().Quantity;
 }
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -1273,7 +1274,7 @@
 	<div class="card mb-7" style="border: 1px solid white;">
 		<div class="card-header py-3">
 			<h5 class="mb-0">Sản phẩm</h5>
-			<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi sản phẩm</a>
+			<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thêm sản phẩm</a>
 		</div>
 		<div class="card-body">
 			<!-- Single item -->
@@ -1293,20 +1294,21 @@
 					<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
 						<!-- Data -->
 						<p><strong style="font-size:20px;">@item.Products.First().Name</strong></p>
-						<p style="font-size:20px; padding-top:1%;">@item.Products.First().Description</p>
-						<p style="font-size:20px; padding-top:1%;">Size: @item.Products.First().Size</p>
-						<p style="font-size:20px; padding-top:1%;">Số lượng: x@(item.Products.First().Quantity)</p>
-						<!-- Button to remove cart item -->
-						<button type="button" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
-							title="Xóa sản phẩm">
-							<i class="fas fa-trash" style="padding-top:1%;"></i>
+						<p style="font-size:15px; padding-top:1%;">@item.Products.First().Description</p>
+						<p style="font-size:15px; padding-top:1%;">Size: @item.Products.First().Size</p>
+						<p style="font-size:15px; padding-top:1%;">Số lượng: x@(item.Products.First().Quantity)</p>
+						<p style="font-size:15px; padding-top:1%; color:red;">@(item.Products.First().Price.ToString("N0"))đ</p>
+						<button type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;">
+							<i class="fa fa-pencil" style="padding-top:1%; font-size:15px;"></i>
 						</button>
-
+						<button type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;">
+							<i class="fa fa-trash" style="padding-top:1%; font-size:15px;"></i>
+						</button>
 					</div>
 					<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
 						<!-- Total Price -->
 						<p class="text-start text-md-center">
-							<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:16px; padding:5px 10px; margin:2px; margin-top: 45%;">@item.Products.First().Price.ToString("N0")đ</span>
+							<span class="main-btn info-btn btn-hover" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 45%;">@PriceProduct.ToString("N0")đ</span>
 						</p>
 						<!-- Total Price -->
 					</div>
