@@ -14,5 +14,8 @@ namespace AppView.Models
 		public DateTime ExpirationDate { get; set; }
 		public int Status { get; set; }
 		public DateTime DateCreated { get; set; }
+		public bool IsDel { get; set; }
+		public DateTime CreateDate { get; set; }
+		public int? Type { get; set; }
 	}
 }

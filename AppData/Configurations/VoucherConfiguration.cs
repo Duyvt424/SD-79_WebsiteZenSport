@@ -23,7 +23,10 @@ namespace AppData.Configurations
             builder.Property(c => c.MaxUsage).HasColumnType("int");
             builder.Property(c => c.RemainingUsage).HasColumnType("int");
             builder.Property(c => c.Status).HasColumnType("int");
-            builder.Property(c => c.DateCreated).HasColumnType("Datetime");
+			builder.Property(c => c.Type).HasColumnType("int").IsRequired(false);
+			builder.Property(c => c.CreateDate).HasColumnType("Datetime");
+			//builder.Property(c => c.IsDel).HasColumnType("bool").IsRequired(false);
+			builder.Property(c => c.DateCreated).HasColumnType("Datetime");
         }
     }
 }

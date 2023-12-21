@@ -57,17 +57,47 @@
 										<label for="floatingInputUsername">ExpirationDate</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
-										<label for="floatingInputUsername">Total</label>
-									</div>
-									<div class="form-floating mb-3">
-										<input asp-for="Exclusiveright" type="text" class="form-control" placeholder="Exclusiveright" required>
-										<label for="floatingInputUsername">Exclusiveright</label>
-									</div>
-									<div class="form-floating mb-3">
 										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
 										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
 									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
+										<label for="floatingInputUsername">Total</label>
+									</div>
+									@*	<div class="form-floating mb-3">
+									<input asp-for="Exclusiveright" type="text" class="form-control" placeholder="Exclusiveright" required>
+									<label for="floatingInputUsername">Exclusiveright</label>
+									</div>*@
+
+									<div class="form-floating mb-3">
+										<select asp-for="Exclusiveright" class="form-select" required>
+											<option value="Không">Không</option>
+											<option value="Hạng vàng">Hạng vàng</option>
+											<option value="Hạng bạc">Hạng bạc</option>
+											<option value="Hạng kim cương">Hạng kim cương</option>
+										</select>
+										<label for="Exclusiveright">Exclusiveright</label>
+									</div>
+
+									@*<<div class="form-check">
+									<input asp-for="IsDel" type="checkbox" class="form-check-input" value="1" id="IsDelCheckbox1" />
+									<label class="form-check-label" for="IsDelCheckbox1">Kích hoạt</label>
+									</div>
+									<div class="form-check">
+									<input asp-for="IsDel" type="checkbox" class="form-check-input" value="0" id="IsDelCheckbox0" />
+									<label class="form-check-label" for="IsDelCheckbox0">Chưa kích hoạt</label>
+									</div>*@
+
+									<div class="form-check">
+										<div>Type:</div>
+										<input asp-for="Type" type="radio" class="form-check-input" value="0" id="Type0" />
+										<label class="form-check-label" for="Type0">Tất cả</label>
+										<br />
+										<input asp-for="Type" type="radio" class="form-check-input" value="1" id="Type1" />
+										<label class="form-check-label" for="Type1">Tùy chọn khách hàng</label>
+										<!-- Add more radio buttons for other options if needed -->
+									</div>
+
 
 									<div class="d-flex justify-content-center" style="padding-top:5px;">
 										<button type="submit" value="Create"

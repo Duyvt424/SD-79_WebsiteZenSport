@@ -44,7 +44,7 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-voucher")]
-		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright)
+		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type)
 		{
 			Voucher voucher = new Voucher();
 			voucher.VoucherID = Guid.NewGuid();
@@ -57,11 +57,14 @@ namespace AppAPI.Controllers
 			voucher.DateCreated = DateCreated;
 			voucher.Total = Total;
 			voucher.Exclusiveright = Exclusiveright;
+			voucher.IsDel = IsDel;
+			voucher.CreateDate = DateTime.Now;
+			voucher.Type = Type;
 			return repos.AddItem(voucher);
 		}
 
 		[HttpPut("update-voucher")]
-		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total, string Exclusiveright)
+		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type)
 		{
 			Voucher voucher = repos.GetAll().First(x => x.VoucherID == id);
 			voucher.VoucherCode = code;
@@ -73,6 +76,9 @@ namespace AppAPI.Controllers
 			voucher.DateCreated = DateCreated;
 			voucher.Total = Total;
 			voucher.Exclusiveright = Exclusiveright;
+			voucher.IsDel = IsDel;
+			voucher.CreateDate = DateTime.Now;
+			voucher.Type = Type;
 			return repos.EditItem(voucher);
 		}
 
@@ -80,8 +86,8 @@ namespace AppAPI.Controllers
 		public bool DeleteVoucher(Guid id)
 		{
 			var role = repos.GetAll().First(c => c.VoucherID == id);
-			role.Status = 1;
-			return repos.EditItem(role);
+			
+			return repos.RemoveItem(role);
 		}
 
 		[HttpGet("update-quantity")]
@@ -94,13 +100,22 @@ namespace AppAPI.Controllers
 
 				if (voucher != null && voucher.RemainingUsage > 0)
 				{
-					// Giảm số lượng voucher đi 1
-					voucher.RemainingUsage -= 1;
+					// Kiểm tra nếu MaxUsage đã đạt đến RemainingUsage
+					if (voucher.MaxUsage < voucher.RemainingUsage)
+					{
+						// Tăng số lượng voucher đi 1
+						voucher.MaxUsage += 1;
 
-					// Lưu thay đổi vào cơ sở dữ liệu
-					bool updateResult = repos.EditItem(voucher);
+						// Lưu thay đổi vào cơ sở dữ liệu
+						bool updateResult = repos.EditItem(voucher);
 
-					return updateResult;
+						return updateResult;
+					}
+					else
+					{
+						// Trả về false nếu MaxUsage đã đạt đến RemainingUsage
+						return false;
+					}
 				}
 				else
 				{
@@ -113,9 +128,7 @@ namespace AppAPI.Controllers
 				// Xử lý ngoại lệ, log lỗi, và trả về false nếu có lỗi
 				return false;
 			}
-
-
-
 		}
+
 	}
 }

@@ -319,12 +319,16 @@
                             <th>#</th>
                             <th>VoucherCode</th>
                             <th>VoucherValue</th>
-                            <th>MaxUsage</th>
-                            <th>RemainingUsage</th>
-                            <th>ExpirationDate</th>
+                            <th>AmountUsed</th>
+                            <th>Quantity</th>
                            <th>Total</th>
                             <th>Exclusiveright</th>
+                            <th>CreateDate</th>
                             <th>DateCreated</th>
+                            <th>ExpirationDate</th>
+                           
+                            <th>Type</th>
+                           @* <th>IsDel</th>*@
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -337,12 +341,48 @@
                                             <td>@stt</td>
                                             <td>@Html.DisplayFor(modelItem => item.VoucherCode)</td>
                                             <td>@Html.DisplayFor(modelItem => item.VoucherValue)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.MaxUsage)</td>
+                                <td>@Html.DisplayFor(modelItem => item.MaxUsage)/@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
                                             <td>@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+                                         
                                             <td>@Html.DisplayFor(modelItem => item.Total)</td>
                                            <td>@Html.DisplayFor(modelItem => item.Exclusiveright)</td>
+                                           <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                                          <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+
+                                <td>@Html.DisplayFor(modelItem => item.Type)</td>
+                             @*   <td>
+                                    <input type="hidden" id="IsDelHidden" name="IsDel" value="@item.IsDel" />
+                                    <span id="IsDelDisplay">@Html.DisplayFor(modelItem => item.IsDel)</span>
+                                </td>
+
+                                <script>
+                                    // Lắng nghe sự kiện thay đổi của checkbox
+                                    document.getElementById("IsDelCheckbox0")?.addEventListener("change", updateIsDelDisplay);
+                                    document.getElementById("IsDelCheckbox1")?.addEventListener("change", updateIsDelDisplay);
+
+                                    function updateIsDelDisplay() {
+                                        // Lấy giá trị của checkbox được chọn
+                                        var isChecked0 = document.getElementById("IsDelCheckbox0").checked;
+                                        var isChecked1 = document.getElementById("IsDelCheckbox1").checked;
+
+                                        // Kiểm tra giá trị của các checkbox và cập nhật giá trị hiển thị và hidden input
+                                        if (isChecked0 && !isChecked1) {
+                                            document.getElementById("IsDelHidden").value = "0";
+                                            document.getElementById("IsDelDisplay").textContent = "0";
+                                        } else if (!isChecked0 && isChecked1) {
+                                            document.getElementById("IsDelHidden").value = "1";
+                                            document.getElementById("IsDelDisplay").textContent = "1";
+                                        } else {
+                                            // Trường hợp không có checkbox nào được chọn
+                                            document.getElementById("IsDelHidden").value = "";
+                                            document.getElementById("IsDelDisplay").textContent = "";
+                                        }
+                                    }
+
+                                    // Gọi hàm updateIsDelDisplay lần đầu để khởi tạo giá trị hiển thị ban đầu
+                                    updateIsDelDisplay();
+                                </script>*@
                                             <td>
                                         @if (item.Status == 0)
                                         {
@@ -350,7 +390,7 @@
                                         }
                                         else
                                         {
-                                                        <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
+                                                        <p><img src="~/image/icons8-connection-status-off18.png" /> Chưa hoạt động</p>
                                         }
                                             <td>
                                           
@@ -405,8 +445,8 @@
 
                             for (var i = 0; i < rows.length; i++) {
                                 var row = rows[i];
-                                var dateCreatedText = row.querySelector("td:nth-child(8)").innerText.trim(); // Giả sử DateCreated ở cột 8
-                                var expirationDateText = row.querySelector("td:nth-child(6)").innerText.trim(); // Giả sử ExpirationDate ở cột 6
+                                var dateCreatedText = row.querySelector("td:nth-child(9)").innerText.trim(); // Giả sử DateCreated ở cột 8
+                                var expirationDateText = row.querySelector("td:nth-child(10)").innerText.trim(); // Giả sử ExpirationDate ở cột 6
 
                                 // Chuyển đổi định dạng ngày thời gian thành ngày JavaScript
                                 var dateCreated = new Date(dateCreatedText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
