@@ -48,7 +48,7 @@
 									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
-										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
+										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - chưa hoạt động, 2- ngưng hoạt động)</label>
 									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
@@ -78,6 +78,7 @@
 										<label class="form-check-label" for="IsDelCheckbox0">Chưa kích hoạt</label>
 									</div>*@
 
+
 									<div class="form-check">
 										<div>Type:</div>
 										<input asp-for="Type" type="radio" class="form-check-input" value="0" id="Type0" />
@@ -87,6 +88,111 @@
 										<label class="form-check-label" for="Type1">Tùy chọn khách hàng</label>
 										<!-- Add more radio buttons for other options if needed -->
 									</div>
+
+								@*	<div id="customerTable" style="display: none;">
+										<table>
+											<thead>
+												<tr>
+													<th>Cột 1</th>
+													<th>Cột 2</th>
+												</tr>
+											</thead>
+											<tbody>
+												<!-- Thêm dòng dữ liệu tại đây nếu cần -->
+											</tbody>
+										</table>
+									</div>
+
+									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+									<script>
+										// Sử dụng jQuery để kiểm tra sự kiện thay đổi trạng thái radio button
+										$('input[type=radio][name=Type]').change(function () {
+											if (this.value == '1') {
+												// Nếu chọn radio "Tùy chọn khách hàng", hiển thị bảng và thêm dữ liệu
+												$('#customerTable').show();
+												// Thêm dòng dữ liệu vào bảng (ví dụ)
+												$('#customerTable tbody').html('<tr><td>Dữ liệu cột 1</td><td>Dữ liệu cột 2</td></tr>');
+											} else {
+												// Ngược lại, ẩn bảng
+												$('#customerTable').hide();
+											}
+										});
+									</script>*@
+									<div id="customerTable" style="display: none;">
+										<style>
+											/* CSS cho bảng */
+											table {
+												width: 100%;
+												border-collapse: collapse;
+												margin-top: 20px;
+											}
+
+											th, td {
+												border: 1px solid #ddd;
+												padding: 8px;
+												text-align: left;
+											}
+
+											th {
+												background-color: #f2f2f2;
+											}
+
+											tbody tr:nth-child(even) {
+												background-color: #f9f9f9;
+											}
+										</style>
+										<table>
+											<thead>
+												<tr>
+													<th>Select</th>
+													<th>Username</th>
+													<th>Email</th>
+												</tr>
+											</thead>
+											<tbody>
+												<!-- Dữ liệu sẽ được thêm vào đây từ API -->
+											</tbody>
+										</table>
+									</div>
+
+									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+									<script>
+										// Sử dụng jQuery để kiểm tra sự kiện thay đổi trạng thái radio button
+										$('input[type=radio][name=Type]').change(function () {
+											if (this.value == '1') {
+												// Nếu chọn radio "Tùy chọn khách hàng", hiển thị bảng và thực hiện yêu cầu API
+												$('#customerTable').show();
+
+												// Gửi yêu cầu GET đến API
+												$.ajax({
+													url: 'https://localhost:7036/api/Customer/get-customer',
+													type: 'GET',
+													dataType: 'json',
+													success: function (data) {
+														console.log('Data from API:', data);
+
+														var tbody = $('#customerTable tbody');
+														tbody.empty(); // Xóa dữ liệu cũ trước khi thêm mới
+
+														$.each(data, function (index, item) {
+															// Kiểm tra xem item có thuộc tính userName và email hay không
+															if (item.userName && item.email) {
+																// Thêm mỗi dòng dữ liệu vào tbody với checkbox
+																tbody.append('<tr><td><input type="checkbox" name="userCheckbox" value="' + item.userName + '"></td><td>' + item.userName + '</td><td>' + item.email + '</td></tr>');
+															}
+														});
+													},
+
+													error: function (error) {
+														console.log('Error fetching data from API:', error);
+													}
+												});
+											} else {
+												// Ngược lại, ẩn bảng
+												$('#customerTable').hide();
+											}
+										});
+									</script>
 
 
 									<div class="d-flex justify-content-center" style="padding-top:5px;">

@@ -259,6 +259,16 @@
         /* input:valid ~ .input-border{
                   width: 100%;
                 } */
+
+        .unlock {
+            color: gray; /* Màu xám hoặc màu khác bạn muốn sử dụng */
+            text-decoration: none; /* Loại bỏ gạch chân (nếu muốn) */
+        }
+
+            .unlock:hover {
+                /* Bạn có thể tùy chỉnh màu khi di chuột qua nếu cần */
+                color: darkgray; /* Màu khi di chuột qua */
+            }
     </style>
     <script>
         $(document).ready(function () {
@@ -349,52 +359,43 @@
                                            <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                           <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
-
-                                <td>@Html.DisplayFor(modelItem => item.Type)</td>
-                             @*   <td>
-                                    <input type="hidden" id="IsDelHidden" name="IsDel" value="@item.IsDel" />
-                                    <span id="IsDelDisplay">@Html.DisplayFor(modelItem => item.IsDel)</span>
+                                <td>
+                                    @if (item.Type == 0)
+                                    {
+                                        <span>Tất cả</span>
+                                    }
+                                    else if (item.Type == 1)
+                                    {
+                                        <span>Tùy chọn</span>
+                                    }
                                 </td>
 
-                                <script>
-                                    // Lắng nghe sự kiện thay đổi của checkbox
-                                    document.getElementById("IsDelCheckbox0")?.addEventListener("change", updateIsDelDisplay);
-                                    document.getElementById("IsDelCheckbox1")?.addEventListener("change", updateIsDelDisplay);
-
-                                    function updateIsDelDisplay() {
-                                        // Lấy giá trị của checkbox được chọn
-                                        var isChecked0 = document.getElementById("IsDelCheckbox0").checked;
-                                        var isChecked1 = document.getElementById("IsDelCheckbox1").checked;
-
-                                        // Kiểm tra giá trị của các checkbox và cập nhật giá trị hiển thị và hidden input
-                                        if (isChecked0 && !isChecked1) {
-                                            document.getElementById("IsDelHidden").value = "0";
-                                            document.getElementById("IsDelDisplay").textContent = "0";
-                                        } else if (!isChecked0 && isChecked1) {
-                                            document.getElementById("IsDelHidden").value = "1";
-                                            document.getElementById("IsDelDisplay").textContent = "1";
-                                        } else {
-                                            // Trường hợp không có checkbox nào được chọn
-                                            document.getElementById("IsDelHidden").value = "";
-                                            document.getElementById("IsDelDisplay").textContent = "";
-                                        }
-                                    }
-
-                                    // Gọi hàm updateIsDelDisplay lần đầu để khởi tạo giá trị hiển thị ban đầu
-                                    updateIsDelDisplay();
-                                </script>*@
                                             <td>
                                         @if (item.Status == 0)
                                         {
-                                                        <p><img src="~/image/icons8-connection-status-on-18.png" /> Đang hoạt động</p>
-                                        }
-                                        else
-                                        {
-                                                        <p><img src="~/image/icons8-connection-status-off18.png" /> Chưa hoạt động</p>
-                                        }
-                                            <td>
+                                        <p><img src="~/image/icons8-connection-status-on-18.png" /> Đang hoạt động</p>
+                                    } else if (item.ExpirationDate < DateTime.Now)
+                                    {
+                                        <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
+                                    }
+                                    else if (item.Status == 1)
+                                    {
+                                        <p style="color: cornflowerblue"><img src="~/image/icons8-connection-status-off18.png"  /> Chưa hoạt động</p>
+                                    }
+                                   
+                                    <td>
                                           
-                                            <a href="@Url.Action("EditVouchers", new { id = item.VoucherID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                                    
+                                               @if (item.MaxUsage > 0)
+    {
+        <span title="Không thể chỉnh sửa vì đã sử dụng" data-toggle="tooltip">
+            <i class="material-icons" style="color: gray;">edit</i>
+        </span>
+    }
+    else
+    {
+        <a href="@Url.Action("EditVouchers", new { id = item.VoucherID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+    }
                                            @*<a href="@Url.Action("Details", new { id = item.VoucherID})" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>*@
                                             <a href="@Url.Action("DeleteVouchers", new { id = item.VoucherID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                                             <button onclick="window.location='@Url.Action("Details", new { id = item.VoucherID})'" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></button>
@@ -402,7 +403,7 @@
                                         {
                                         <a href="@Url.Action("LockVoucher", new { id = item.VoucherID })" class="lock" title="Lock" data-toggle="tooltip"><i class="material-icons">lock</i></a>
                                         }
-                                        else
+                                        else if (item.Status == 1)
                                         {
                                         <a href="@Url.Action("UnlockVoucher", new { id = item.VoucherID })" class="unlock" title="Unlock" data-toggle="tooltip"><i class="material-icons">lock_open</i></a>
                                         }
@@ -530,3 +531,4 @@
     </div>
 </body>
 </html>
+
