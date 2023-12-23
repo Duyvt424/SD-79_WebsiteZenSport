@@ -323,6 +323,7 @@ namespace AppView.Controllers
                 DeliveryDate = DateTime.Now,
                 CancelDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
+                PaymentDay = DateTime.Now,
                 TotalPrice = totalPrice,
                 TotalPriceAfterDiscount = totalPriceAfterDiscount,
                 EmployeeID = null,

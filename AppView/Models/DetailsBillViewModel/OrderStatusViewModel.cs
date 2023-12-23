@@ -9,5 +9,6 @@
         public DateTime SuccessDate { get; set; }
         public DateTime CancelDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public DateTime PaymentDate { get; set; }
     }
 }

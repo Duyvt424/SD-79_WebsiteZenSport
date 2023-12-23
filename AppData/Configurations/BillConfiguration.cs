@@ -22,6 +22,7 @@ namespace AppData.Configurations
             builder.Property(c => c.SuccessDate).HasColumnType("Datetime");
             builder.Property(c => c.CancelDate).HasColumnType("Datetime");
             builder.Property(c => c.UpdateDate).HasColumnType("Datetime");
+            builder.Property(c => c.PaymentDay).HasColumnType("Datetime");
             builder.Property(c => c.TotalPrice).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.ShippingCosts).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.TotalPriceAfterDiscount).HasColumnType("decimal(18, 2)");

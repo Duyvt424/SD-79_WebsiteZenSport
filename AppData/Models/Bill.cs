@@ -16,6 +16,7 @@ namespace AppData.Models
         public DateTime SuccessDate { get; set; }
         public DateTime CancelDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public DateTime PaymentDay { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal ShippingCosts { get; set; }
         public decimal TotalPriceAfterDiscount { get; set; }

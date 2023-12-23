@@ -254,6 +254,7 @@ namespace AppView.Controllers
                         .Select(c => new OrderDetailsViewModel
                         {
                             BillID = objBill.BillID,
+                            ShoesDetails_SizeID = c.ShoesDetails_SizeID,
                             BillCode = objBill.BillCode,
                             CustomerId = objBill.CustomerID,
                             FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
@@ -294,7 +295,8 @@ namespace AppView.Controllers
                                     DeliveryDate = _dbContext.Bills.First(c => c.BillID == billId).DeliveryDate,
                                     SuccessDate = _dbContext.Bills.First(c => c.BillID == billId).SuccessDate,
                                     CancelDate = _dbContext.Bills.First(c => c.BillID == billId).CancelDate,
-                                    UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate
+                                    UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate,
+                                    PaymentDate = _dbContext.Bills.First(c => c.BillID == billId).PaymentDay
                                 }
                             },
                             AddressViewModels = _dbContext.Addresses.Where(c => c.CumstomerID == objBill.CustomerID).Select(a => new AddressViewModel
@@ -373,7 +375,7 @@ namespace AppView.Controllers
             if (purchaseMethod != null)
             {
                 objBill.PurchaseMethodID = purchaseMethod;
-                objBill.UpdateDate = DateTime.Now;
+                objBill.PaymentDay = DateTime.Now;
             }
             _dbContext.Update(objBill);
             _dbContext.SaveChanges();

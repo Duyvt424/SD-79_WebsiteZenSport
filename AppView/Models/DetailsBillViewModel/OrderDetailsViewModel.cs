@@ -3,6 +3,7 @@
 	public class OrderDetailsViewModel
 	{
         public Guid BillID { get; set; }
+        public Guid ShoesDetails_SizeID { get; set; }
         public string BillCode { get; set; }
         public List<OrderStatusViewModel> OrderStatuses { get; set; }
         public List<ProductViewModel> Products { get; set; }

@@ -231,5 +231,41 @@ namespace AppView.Controllers
             }
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
+
+        public IActionResult UpdateQuantityItem(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            var objSize = _dbContext.Sizes.First(c => c.Name == idSize)?.SizeID;
+            var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == idShoesDT && c.SizeID == objSize);
+            var billDetails = _dbContext.BillDetails.First(c => c.BillID == idBill && c.ShoesDetails_SizeID == ShoesDT_Size.ID);
+            //đổi trạng thái cho hóa đơn
+            var bill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (EmployeeID != null)
+            {
+                var billStatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 5,
+                    ChangeDate = DateTime.Now,
+                    Note = ghiChuUpdateSP,
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                bill.UpdateDate = DateTime.Now;
+                _dbContext.Bills.Update(bill);
+
+                var previousQuantity = billDetails.Quantity;
+                billDetails.Quantity = quanity;
+                _dbContext.BillDetails.Update(billDetails);
+
+                ShoesDT_Size.Quantity += previousQuantity - quanity;
+                _dbContext.ShoesDetails_Sizes.Update(ShoesDT_Size);
+
+                _repos.AddItem(billStatusHis);
+                _dbContext.SaveChanges();
+            }
+            return Json(new { success = true, message = "Lưu trạng thái thành công" });
+        }
     }
 }

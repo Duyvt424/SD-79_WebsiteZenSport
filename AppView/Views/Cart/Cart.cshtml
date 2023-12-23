@@ -286,7 +286,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -936,10 +936,19 @@
 			<script>
 				// Hàm để cập nhật hình thức vận chuyển và thời gian dự kiến
 				function updateShippingOptions() {
-					const selectedDistrictIdElement = document.getElementById('districtIdShow');
-					const toDistrict = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+				// Lấy giá trị từ ListQuanHuyen
+					var listQuanHuyen = document.getElementById('ListQuanHuyen');
+					var selectedOption = listQuanHuyen.options[listQuanHuyen.selectedIndex];
+					var toDistrict = selectedOption.value;
+
+					// Nếu không có giá trị mới từ ListQuanHuyen, sử dụng giá trị từ districtIdShow
+					if (!toDistrict) {
+						toDistrict = parseInt(document.getElementById('districtIdShow').textContent);
+					}
+					var toHuyen = parseInt(toDistrict);
+					console.log('Huyen oad', toHuyen);
 					// Gọi API để cập nhật hình thức vận chuyển
-					fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toDistrict}`, {
+					fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toHuyen}`, {
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',
