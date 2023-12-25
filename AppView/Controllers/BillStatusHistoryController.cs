@@ -200,7 +200,7 @@ namespace AppView.Controllers
             if (objBill != null)
             {
                 objBill.IsPaid = true;
-                objBill.UpdateDate = DateTime.Now;
+                objBill.PaymentDay = DateTime.Now;
             }
             _dbContext.Bills.Update(objBill);
             _dbContext.SaveChanges();
