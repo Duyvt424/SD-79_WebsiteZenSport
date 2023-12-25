@@ -26,32 +26,42 @@
 									community.
 								</p>
 								<form asp-action="CreateVouchers">
+									
+
 									<div class="form-floating mb-3">
-										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" required>
+										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" id="voucherValue" required>
 										<label for="floatingInputUsername">VoucherValue</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" required>
+										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" id="maxUsage" required>
 										<label for="floatingInputUsername">MaxUsage</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" required>
+										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" id="remainingUsage" required>
 										<label for="floatingInputUsername">RemainingUsage</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" id="dateCreated" required>
 										<label for="floatingInputUsername">DateCreated</label>
 									</div>
-									<div class="form-floating mb-3">
-										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" required>
-										<label for="floatingInputUsername">ExpirationDate</label>
+									<div class="form-floating mb-3" style="display: none">
+										<input asp-for="UserNameCustomer" type="text" class="form-control" placeholder="UserNameCustomer" id="userNameCustomer" required  style="background-color: #f8f9fa; opacity: 0.6; cursor: not-allowed;">
+										<label for="floatingInputUsername">UserNameCustomer</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
+										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" id="expirationDate" required>
+										<label for="floatingInputUsername">ExpirationDate</label>
+									</div>
+									@*<div class="form-floating mb-3" >
+										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" id="expirationDate" required>
+										<label for="floatingInputUsername">ExpirationDate</label>
+									</div>*@
+									<div class="form-floating mb-3">
+										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" id="status" required>
 										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - chưa hoạt động, 2- ngưng hoạt động)</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
+										<input asp-for="Total" type="text" class="form-control" placeholder="Total" id="total" required>
 										<label for="floatingInputUsername">Total</label>
 									</div>
 									@*	<div class="form-floating mb-3">
@@ -60,7 +70,7 @@
 									</div>*@
 
 <div class="form-floating mb-3">
-	<select asp-for="Exclusiveright" class="form-select" required>
+										<select asp-for="Exclusiveright" class="form-select" id="exclusiveright" required>
 											<option value="Không">Không</option>
 											<option value="Hạng vàng">Hạng vàng</option>
 											<option value="Hạng bạc">Hạng bạc</option>
@@ -89,35 +99,7 @@
 										<!-- Add more radio buttons for other options if needed -->
 									</div>
 
-								@*	<div id="customerTable" style="display: none;">
-										<table>
-											<thead>
-												<tr>
-													<th>Cột 1</th>
-													<th>Cột 2</th>
-												</tr>
-											</thead>
-											<tbody>
-												<!-- Thêm dòng dữ liệu tại đây nếu cần -->
-											</tbody>
-										</table>
-									</div>
-
-									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-									<script>
-										// Sử dụng jQuery để kiểm tra sự kiện thay đổi trạng thái radio button
-										$('input[type=radio][name=Type]').change(function () {
-											if (this.value == '1') {
-												// Nếu chọn radio "Tùy chọn khách hàng", hiển thị bảng và thêm dữ liệu
-												$('#customerTable').show();
-												// Thêm dòng dữ liệu vào bảng (ví dụ)
-												$('#customerTable tbody').html('<tr><td>Dữ liệu cột 1</td><td>Dữ liệu cột 2</td></tr>');
-											} else {
-												// Ngược lại, ẩn bảng
-												$('#customerTable').hide();
-											}
-										});
-									</script>*@
+							
 									<div id="customerTable" style="display: none;">
 										<style>
 											/* CSS cho bảng */
@@ -155,7 +137,127 @@
 										</table>
 									</div>
 
+
+
+									<!-- ... Phần mã HTML hiện tại ... -->
+
 									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+									<script>
+										$(document).ready(function () {
+											// Hàm để hiển thị/ẩn bảng khách hàng dựa trên lựa chọn nút radio
+											$('input[type=radio][name=Type]').change(function () {
+												if (this.value == '1') {
+													// Hiển thị bảng ngay từ đầu
+													$('#customerTable').show();
+
+													// Thực hiện yêu cầu API để lấy dữ liệu khách hàng
+													$.ajax({
+														url: 'https://localhost:7036/api/Customer/get-customer',
+														type: 'GET',
+														dataType: 'json',
+														success: function (data) {
+															console.log('Dữ liệu từ API:', data);
+
+															var tbody = $('#customerTable tbody');
+															tbody.empty(); // Xóa dữ liệu cũ trước khi thêm mới
+
+															// Thêm dữ liệu khách hàng vào bảng
+															$.each(data, function (index, item) {
+																if (item.userName && item.email) {
+																	tbody.append('<tr><td><input type="checkbox" class="userCheckbox" name="userCheckbox" value="' + item.userName + '"></td><td>' + item.userName + '</td><td>' + item.email + '</td></tr>');
+																}
+															});
+
+															// Thêm sự kiện onchange vào tất cả các ô input checkbox
+															$('body').off('change', 'input.userCheckbox').on('change', 'input.userCheckbox', function () {
+																if ($(this).is(':checked')) {
+																	// Checkbox được chọn
+																	console.log('Checkbox được chọn. Giá trị:', $(this).val());
+																	// Thêm mã xử lý khác nếu cần
+																} else {
+																	// Checkbox không được chọn
+																	console.log('Checkbox không được chọn. Giá trị:', $(this).val());
+																	// Thêm mã xử lý khác nếu cần
+																}
+															});
+														},
+														error: function (error) {
+															console.log('Lỗi khi lấy dữ liệu từ API:', error);
+														}
+													});
+												} else {
+													// Ngược lại, ẩn bảng
+													$('#customerTable').hide();
+												}
+											});
+
+											// Thêm sự kiện click cho nút "Create"
+											$('button.btn-success').click(function () {
+												// Kiểm tra xem bảng khách hàng có đang hiển thị hay không
+												if ($('#customerTable').is(':visible')) {
+													// Lấy danh sách các username đã được chọn
+													var selectedUsernames = [];
+													$('input.userCheckbox:checked').each(function () {
+														selectedUsernames.push($(this).val());
+													});
+
+													// Chuyển danh sách thành chuỗi, sử dụng dấu phẩy để ngăn cách
+													var userNameCustomer = selectedUsernames.join(', ');
+													console.log('userNameCustomer:', userNameCustomer);
+													var userNameCustomerInput = $('#userNameCustomer');
+            if (userNameCustomerInput.length) {
+                userNameCustomerInput.val(userNameCustomer);
+                console.log('Gán giá trị thành công:', userNameCustomerInput.val());
+            } else {
+                console.log('Không tìm thấy thẻ input với ID userNameCustomer.');
+            }
+
+													
+												} else {
+													$('#userNameCustomer').val(null);
+													console.log('Gán giá trị null cho UserNameCustomer');
+												}
+
+												// Thêm mã xử lý tiếp theo sau khi lưu username, nếu cần
+											});
+										});
+									</script>
+								
+
+
+
+
+									<div class="d-flex justify-content-center" style="padding-top:5px;">
+										<button type="submit" value="Create"
+												style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+												class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+											<p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
+										</button>
+									</div>
+								</form>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+@*<div>
+    <a asp-action="Index">Back to List</a>
+</div>*@
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}
+
+
+@*	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 									<script>
 										// Sử dụng jQuery để kiểm tra sự kiện thay đổi trạng thái radio button
 										$('input[type=radio][name=Type]').change(function () {
@@ -192,33 +294,33 @@
 												$('#customerTable').hide();
 											}
 										});
+
+										function submitForm() {
+											// Lấy tên người dùng đã chọn từ các ô đánh dấu
+											var selectedUsernames = $('input[name="userCheckbox"]:checked').map(function () {
+												return $(this).val();
+											}).get();
+
+											// Hiển thị tên người dùng đã chọn
+											alert("Tên người dùng đã chọn: " + selectedUsernames.join(', '));
+
+											// Thêm tên người dùng đã chọn vào một ô đầu vào ẩn để gửi
+											$('<input />').attr('type', 'hidden')
+												.attr('name', 'SelectedUsernames')
+												.attr('value', selectedUsernames.join(','))
+												.appendTo('#voucherForm');
+
+
+											// Lưu trữ thông tin người dùng đã chọn trong LocalStorage
+											localStorage.setItem('selectedUsernames', JSON.stringify(selectedUsernames));
+
+											// Lấy thông tin người dùng đã chọn từ LocalStorage
+											var storedUsernames = localStorage.getItem('selectedUsernames');
+											var parsedUsernames = JSON.parse(storedUsernames);
+
+
+											// Gửi form
+											$('#voucherForm').submit();
+										}
 									</script>
-
-
-									<div class="d-flex justify-content-center" style="padding-top:5px;">
-
-
-										<button type="submit" value="Create"
-												style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
-												class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-											<p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
-										</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-</div>
-@*<div>
-    <a asp-action="Index">Back to List</a>
-</div>*@
-
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-	}
+*@

@@ -44,7 +44,7 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpPost("create-voucher")]
-		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type)
+		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type, string? UserNameCustomer)
 		{
 			Voucher voucher = new Voucher();
 			voucher.VoucherID = Guid.NewGuid();
@@ -60,11 +60,12 @@ namespace AppAPI.Controllers
 			voucher.IsDel = IsDel;
 			voucher.CreateDate = DateTime.Now;
 			voucher.Type = Type;
+			voucher.UserNameCustomer= UserNameCustomer;
 			return repos.AddItem(voucher);
 		}
 
 		[HttpPut("update-voucher")]
-		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type)
+		public bool UpdateVoucher(Guid id, string code, int status, decimal value, int maxUse, int remainUse, DateTime dateTime, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type, string? UserNameCustomer)
 		{
 			Voucher voucher = repos.GetAll().First(x => x.VoucherID == id);
 			voucher.VoucherCode = code;
@@ -79,6 +80,7 @@ namespace AppAPI.Controllers
 			voucher.IsDel = IsDel;
 			voucher.CreateDate = DateTime.Now;
 			voucher.Type = Type;
+			voucher.UserNameCustomer= UserNameCustomer;
 			return repos.EditItem(voucher);
 		}
 

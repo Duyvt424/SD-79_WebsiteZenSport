@@ -1,72 +1,74 @@
 ﻿@model AppData.Models.Voucher
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Http
 
 @{
 	ViewData["Title"] = "Details";
+    string formattedValue = string.Format("{0:#,##0}", Model.VoucherValue);
+    string formattedValue1 = string.Format("{0:#,##0}", Model.Total);
 }
 
-<link href="~/css/voucher.css" rel="stylesheet" />
-<div class="container bg-white">
-	<div class="row">
-		<div class="col-md-5">
-			<div id="left">
-				<div id="image-section"> <img src="~/image/nike-just-do-it.jpg" alt=""> </div>
-				<div class="brand">
-					<div id="coupon">
-						<div class="h4 text-uppercase">voucher</div>
-					</div>
-					<h1 class="text-uppercase">zens</h1>
-					<h1 class="text-uppercase pl-md-4 pl-sm-2">sport</h1>
-				</div>
-				<div class="d-md-flex flex-md-row" id="validity">
-					<div class="px-lg-5 px-md-3">Valid upto</div>
-					<div class="px-md-3 ml-auto">@Html.DisplayFor(model => model.ExpirationDate)</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2">
-			<div id="line"></div>
-		</div>
-		<div class="col-md-5 col-sm-12">
-			<div class="h3 text-uppercase pt-md-4" id="offer">giảm tới @string.Format("{0:N0}đ", Model.VoucherValue) cho đơn hàng của bạn</div>
-			@*     <div id="offer-description">
-			<p>Tap offer to copy the voucher code  @Html.DisplayFor(model => model.VoucherCode) </p>
-			<p>Remember to paste when you checkout</p>
-			<p> ExpirationDate</p>
-			</div>*@
-			<div id="offer-description">
-				<p>Tap the offer to copy the voucher code: <strong>@Html.DisplayFor(model => model.VoucherCode)</strong></p>
 
-				<p>It can be used a maximum of: <strong>@Html.DisplayFor(model => model.MaxUsage)</strong> times</p>
-				<p>Remaining usage: <strong>@Html.DisplayFor(model => model.RemainingUsage)</strong></p>
-				<p>Expires on: <strong>@Html.DisplayFor(model => model.ExpirationDate)</strong></p>
-				<p>Remember to paste the code when you proceed to checkout</p>
-			</div>
-			<div class="d-flex flex-row justify-content-center rounded mt-4">
-				<div class="btn px-xl-5 px-lg-4 px-md-3 px-sm-5 px-4">
-					<div class="d-flex flex-column">
-						<div><span class="fa fa-share-alt fa-2x"></span></div>
-						<div class="text-uppercase font-weight-bold">share</div>
-					</div>
-				</div>
-				<div class="btn px-xl-5 px-lg-4 px-md-3 px-sm-5 px-4">
-					<div class="d-flex flex-column">
-						<div><span class="fa fa-envelope-o fa-2x"></span></div>
-						<div class="text-uppercase font-weight-bold">mail</div>
-					</div>
-				</div>
-				<div class="btn px-xl-5 px-lg-4 px-md-3 px-sm-5 px-4">
-					<div class="d-flex flex-column">
-						<div><span class="fa fa-star-o fa-2x"></span></div>
-						<div class="text-uppercase font-weight-bold">save</div>
-					</div>
-				</div>
-			</div>
-			<div id="expiry" class="font-weight-bold">
-				<div class="px-3">Valid upto</div>
-				<div class="px-3">September 10</div>
-			</div>
-			<div class="border-bottom text-muted pt-5 d-flex justify-content-center">Copy and paste the code</div>
-			<div class="d-flex justify-content-center text-uppercase" id="code">alliswell</div>
-		</div>
-	</div>
-</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        .coupon {
+            border: 5px dotted #bbb;
+            width: 80%;
+            border-radius: 15px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .container {
+            padding: 2px 16px;
+            background-color: #f1f1f1;
+        }
+
+        .promo {
+            background: #ccc;
+            padding: 3px;
+        }
+
+        .expire {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="coupon">
+        <div class="container">
+            <h3>ZENSPORT LOGO</h3>
+        </div>
+        <img src="/image/79cf6b2d-1216-4d22-a3cd-e9fca50ddebe.png" alt="Avatar" style="width:100%;">
+       <br />
+       <br />
+        <div class="container" style="background-color:white">
+            <h2><b>@Html.Raw(formattedValue)Đ OFF YOUR PURCHASE OF INVOICE VALUE @Html.Raw(formattedValue1)Đ </b></h2>
+            <br />
+           
+            
+            <p>Lorem ipsum dolor sit amet, et nam pertinax gloriatur. Sea te minim soleat senserit, ex quo luptatum tacimates voluptatum, salutandi delicatissimi eam ea. In sed nullam laboramus appellantur, mei ei omnis dolorem mnesarchum.</p>
+            <p>Exclusiveright: <span  >@Html.DisplayFor(model => model.Exclusiveright)</span></p>
+            <p>Intended for: <span >@Html.DisplayFor(model => model.UserNameCustomer)</span></p>
+
+        </div>
+        <br />
+        <div class="container">
+            <p>Use Promo Code: <span class="promo">@Html.DisplayFor(model => model.VoucherCode)</span></p>
+            <p class="expire">Expires: @Html.DisplayFor(model => model.ExpirationDate)</p>
+        </div>
+    </div>
+
+</body>
+</html>
+
+

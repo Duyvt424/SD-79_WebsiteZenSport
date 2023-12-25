@@ -27,6 +27,7 @@ namespace AppData.Configurations
 			builder.Property(c => c.CreateDate).HasColumnType("Datetime");
 			//builder.Property(c => c.IsDel).HasColumnType("bool").IsRequired(false);
 			builder.Property(c => c.DateCreated).HasColumnType("Datetime");
-        }
+			builder.Property(c => c.UserNameCustomer).HasColumnType("nvarchar(100)").IsRequired(false);
+		}
     }
 }

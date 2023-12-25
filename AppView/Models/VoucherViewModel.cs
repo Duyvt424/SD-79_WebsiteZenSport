@@ -17,5 +17,6 @@ namespace AppView.Models
 		public bool IsDel { get; set; }
 		public DateTime CreateDate { get; set; }
 		public int? Type { get; set; }
+		public string? UserNameCustomer { get; set; }
 	}
 }

@@ -21,6 +21,7 @@ namespace AppData.Models
 		public DateTime ExpirationDate { get; set; }
         public int Status { get; set; }
 		public bool IsDel { get; set; }
+		public string? UserNameCustomer { get; set; }
 		public DateTime DateCreated { get; set; }
         public virtual List<Bill> Bills { get; set; }
     }

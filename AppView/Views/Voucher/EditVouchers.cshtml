@@ -37,40 +37,42 @@
 										<span asp-validation-for="VoucherCode" class="text-danger"></span>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" required>
+										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" id="voucherValue" required>
 										<label for="floatingInputUsername">VoucherValue</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" required>
+										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" id="maxUsage" required>
 										<label for="floatingInputUsername">MaxUsage</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" required>
+										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" id="remainingUsage" required>
 										<label for="floatingInputUsername">RemainingUsage</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" id="dateCreated" required>
 										<label for="floatingInputUsername">DateCreated</label>
 									</div>
+									<div class="form-floating mb-3" style="display: none">
+										<input asp-for="UserNameCustomer" type="text" class="form-control" placeholder="UserNameCustomer" id="userNameCustomer" required  style="background-color: #f8f9fa; opacity: 0.6; cursor: not-allowed;">
+										<label for="floatingInputUsername">UserNameCustomer</label>
+									</div>
+
 									<div class="form-floating mb-3">
-										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" required>
+										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" id="expirationDate" required>
 										<label for="floatingInputUsername">ExpirationDate</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" required>
-										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
+										<input asp-for="Status" type="text" class="form-control" placeholder="Trạng thái" id="status" required>
+										<label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - chưa hoạt động, 2- ngưng hoạt động)</label>
 									</div>
 									<div class="form-floating mb-3">
-										<input asp-for="Total" type="text" class="form-control" placeholder="Total" required>
+										<input asp-for="Total" type="text" class="form-control" placeholder="Total" id="total" required>
 										<label for="floatingInputUsername">Total</label>
 									</div>
-									@*	<div class="form-floating mb-3">
-									<input asp-for="Exclusiveright" type="text" class="form-control" placeholder="Exclusiveright" required>
-									<label for="floatingInputUsername">Exclusiveright</label>
-									</div>*@
+								
 
 									<div class="form-floating mb-3">
-										<select asp-for="Exclusiveright" class="form-select" required>
+										<select asp-for="Exclusiveright" class="form-select" id="exclusiveright" required>
 											<option value="Không">Không</option>
 											<option value="Hạng vàng">Hạng vàng</option>
 											<option value="Hạng bạc">Hạng bạc</option>
@@ -79,14 +81,8 @@
 										<label for="Exclusiveright">Exclusiveright</label>
 									</div>
 
-									@*<<div class="form-check">
-									<input asp-for="IsDel" type="checkbox" class="form-check-input" value="1" id="IsDelCheckbox1" />
-									<label class="form-check-label" for="IsDelCheckbox1">Kích hoạt</label>
-									</div>
-									<div class="form-check">
-									<input asp-for="IsDel" type="checkbox" class="form-check-input" value="0" id="IsDelCheckbox0" />
-									<label class="form-check-label" for="IsDelCheckbox0">Chưa kích hoạt</label>
-									</div>*@
+							
+
 
 									<div class="form-check">
 										<div>Type:</div>
@@ -97,6 +93,134 @@
 										<label class="form-check-label" for="Type1">Tùy chọn khách hàng</label>
 										<!-- Add more radio buttons for other options if needed -->
 									</div>
+
+
+									<div id="customerTable" style="display: none;">
+										<style>
+											/* CSS cho bảng */
+											table {
+												width: 100%;
+												border-collapse: collapse;
+												margin-top: 20px;
+											}
+
+											th, td {
+												border: 1px solid #ddd;
+												padding: 8px;
+												text-align: left;
+											}
+
+											th {
+												background-color: #f2f2f2;
+											}
+
+											tbody tr:nth-child(even) {
+												background-color: #f9f9f9;
+											}
+										</style>
+										<table>
+											<thead>
+												<tr>
+													<th>Select</th>
+													<th>Username</th>
+													<th>Email</th>
+												</tr>
+											</thead>
+											<tbody>
+												<!-- Dữ liệu sẽ được thêm vào đây từ API -->
+											</tbody>
+										</table>
+									</div>
+
+
+
+									<!-- ... Phần mã HTML hiện tại ... -->
+
+									<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+									<script>
+										$(document).ready(function () {
+											// Hàm để hiển thị/ẩn bảng khách hàng dựa trên lựa chọn nút radio
+											$('input[type=radio][name=Type]').change(function () {
+												if (this.value == '1') {
+													// Hiển thị bảng ngay từ đầu
+													$('#customerTable').show();
+
+													// Thực hiện yêu cầu API để lấy dữ liệu khách hàng
+													$.ajax({
+														url: 'https://localhost:7036/api/Customer/get-customer',
+														type: 'GET',
+														dataType: 'json',
+														success: function (data) {
+															console.log('Dữ liệu từ API:', data);
+
+															var tbody = $('#customerTable tbody');
+															tbody.empty(); // Xóa dữ liệu cũ trước khi thêm mới
+
+															// Thêm dữ liệu khách hàng vào bảng
+															$.each(data, function (index, item) {
+																if (item.userName && item.email) {
+																	tbody.append('<tr><td><input type="checkbox" class="userCheckbox" name="userCheckbox" value="' + item.userName + '"></td><td>' + item.userName + '</td><td>' + item.email + '</td></tr>');
+																}
+															});
+
+															// Thêm sự kiện onchange vào tất cả các ô input checkbox
+															$('body').off('change', 'input.userCheckbox').on('change', 'input.userCheckbox', function () {
+																if ($(this).is(':checked')) {
+																	// Checkbox được chọn
+																	console.log('Checkbox được chọn. Giá trị:', $(this).val());
+																	// Thêm mã xử lý khác nếu cần
+																} else {
+																	// Checkbox không được chọn
+																	console.log('Checkbox không được chọn. Giá trị:', $(this).val());
+																	// Thêm mã xử lý khác nếu cần
+																}
+															});
+														},
+														error: function (error) {
+															console.log('Lỗi khi lấy dữ liệu từ API:', error);
+														}
+													});
+												} else {
+													// Ngược lại, ẩn bảng
+													$('#customerTable').hide();
+												}
+											});
+
+											// Thêm sự kiện click cho nút "Create"
+											$('button.btn-success').click(function () {
+												// Kiểm tra xem bảng khách hàng có đang hiển thị hay không
+												if ($('#customerTable').is(':visible')) {
+													// Lấy danh sách các username đã được chọn
+													var selectedUsernames = [];
+													$('input.userCheckbox:checked').each(function () {
+														selectedUsernames.push($(this).val());
+													});
+
+													// Chuyển danh sách thành chuỗi, sử dụng dấu phẩy để ngăn cách
+													var userNameCustomer = selectedUsernames.join(', ');
+													console.log('userNameCustomer:', userNameCustomer);
+													var userNameCustomerInput = $('#userNameCustomer');
+													if (userNameCustomerInput.length) {
+														userNameCustomerInput.val(userNameCustomer);
+														console.log('Gán giá trị thành công:', userNameCustomerInput.val());
+													} else {
+														console.log('Không tìm thấy thẻ input với ID userNameCustomer.');
+													}
+
+
+												} else {
+													$('#userNameCustomer').val(null);
+													console.log('Gán giá trị null cho UserNameCustomer');
+												}
+
+												// Thêm mã xử lý tiếp theo sau khi lưu username, nếu cần
+											});
+										});
+									</script>
+
 
 
 									<div class="d-flex justify-content-center" style="padding-top:5px;">

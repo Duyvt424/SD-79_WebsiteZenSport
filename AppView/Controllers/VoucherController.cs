@@ -33,6 +33,17 @@ namespace AppView.Controllers
 			}
 			return "VC001"; // Trường hợp không có ColorCode trong cơ sở dữ liệu, trả về giá trị mặc định "CL001"
 		}
+
+		public async Task<IActionResult> YourAction()
+		{
+			// Lấy mã voucher bằng cách sử dụng phương thức private
+			var voucherCode = GenerateVoucherCode();
+
+			// Truyền mã voucher đến view
+			ViewData["VoucherCode"] = voucherCode;
+
+			return View();
+		}
 		public async Task<IActionResult> GetAllVouchers()
 		{
 			string apiUrl = "https://localhost:7036/api/Voucher/get-voucher";
@@ -57,7 +68,7 @@ namespace AppView.Controllers
 		public async Task<IActionResult> CreateVouchers(Voucher voucher)
 		{
             var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&exclusiveright={voucher.Exclusiveright}&status={voucher.Status}&total={voucher.Total}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&Type={voucher.Type}&CreateDate={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&IsDel={voucher.IsDel}";
+			string apiUrl = $"https://localhost:7036/api/Voucher/create-voucher?code={GenerateVoucherCode()}&exclusiveright={voucher.Exclusiveright}&status={voucher.Status}&total={voucher.Total}&value={voucher.VoucherValue}&maxUse={voucher.MaxUsage}&remainUse={voucher.RemainingUsage}&expireDate={voucher.ExpirationDate.ToString("yyyy-MM-ddTHH:mm:ss")}&DateCreated={voucher.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&Type={voucher.Type}&CreateDate={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&IsDel={voucher.IsDel}&UserNameCustomer={voucher.UserNameCustomer}";
 			var response = await httpClient.PostAsync(apiUrl, null);
 			return RedirectToAction("GetAllVouchers"); 
         }
