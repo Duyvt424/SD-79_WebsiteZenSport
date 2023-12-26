@@ -290,14 +290,14 @@
 											}
 										</p>
 										<script>
-											window.addEventListener('DOMContentLoaded', function () {
+											window.addEventListener('load', function () {
 												// Lấy danh sách tất cả các input
 												const quantityInputs = document.querySelectorAll('.quantity-input');
 
 												// Khởi tạo tổng tiền của cả giỏ hàng
 												let totalPrice = 0;
 
-												var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+												var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 												const selectedDistrictId = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen) : parseInt(document.getElementById('ListQuanHuyen').value);
 												const selectedWardCode = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idXa) : parseInt(document.getElementById('ListPhuongXa').value);
 												// Gọi hàm tính toán phí vận chuyển
