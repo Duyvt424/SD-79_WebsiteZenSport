@@ -3,9 +3,11 @@ using System.Web.Http.Results;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace AppAPI.Controllers
 {
@@ -30,6 +32,43 @@ namespace AppAPI.Controllers
 			return repos.GetAll().Where(x => x.ExpirationDate > x.DateCreated && x.RemainingUsage > 0);
 		}
 
+		[HttpGet("get-voucher-for-username")]
+        public IEnumerable<Voucher> GetVoucherForUsername(string username)
+        {
+            var vouchers = repos.GetAll().Where(c =>
+                (c.UserNameCustomer == null) ||
+                (username != null && c.UserNameCustomer != null && IsUsernameInList(username, c.UserNameCustomer))
+            );
+
+            return vouchers;
+        }
+
+        private bool IsUsernameInList(string username, string userList)
+        {
+            var usernames = userList.Split(',').Select(u => u.Trim());
+
+            // Kiểm tra xem username có trong danh sách hay không
+            return usernames.Contains(username);
+        }
+
+
+        [HttpGet("get-voucher1")]
+		public IEnumerable<Voucher> GetAllVouchers()
+		{
+			var vouchers = repos.GetAll().Where(c =>c.UserNameCustomer == null ).ToList(); // Lấy tất cả voucher
+
+			return vouchers;
+		}
+
+
+		//[HttpGet("get-username")]
+		//public IActionResult GetUsername()
+		//{
+		//	var userName = @Html.Raw(Json.Serialize(HttpContextAccessor.HttpContext.Session.GetString("UserName")))
+		//	return username;
+		//}
+
+
 		[HttpGet("find-voucher")]
 		public IEnumerable<Voucher> GetVoucher(string code)
 		{
@@ -43,6 +82,8 @@ namespace AppAPI.Controllers
 			return voucher;
 		}
 
+
+		
 		[HttpPost("create-voucher")]
 		public bool CreateVoucher(string code, int status, decimal value, int maxUse, int remainUse, DateTime expireDate, DateTime DateCreated, decimal Total, string Exclusiveright, bool IsDel, DateTime CreateDate, int? Type, string? UserNameCustomer)
 		{
@@ -91,6 +132,8 @@ namespace AppAPI.Controllers
 			
 			return repos.RemoveItem(role);
 		}
+
+		
 
 		[HttpGet("update-quantity")]
 		public bool UpdateVoucherQuantity([FromQuery(Name = "voucherId")] Guid voucherId)

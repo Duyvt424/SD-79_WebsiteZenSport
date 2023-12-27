@@ -14,8 +14,9 @@ namespace AppView.Controllers
 		private readonly IAllRepositories<Voucher> repos;
 		private ShopDBContext context = new ShopDBContext();
 		private DbSet<Voucher> voucher;
+	
 
-		public VoucherController()
+		public VoucherController(IHttpContextAccessor httpContextAccessor)
 		{
 			voucher = context.Vouchers;
 			AllRepositories<Voucher> all = new AllRepositories<Voucher>(context, voucher);
@@ -53,11 +54,42 @@ namespace AppView.Controllers
 			var styles = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
 			/*ShoppingCartViewModel s = new ShoppingCartViewModel();
 			s.Vouchers = styles.ToList();*/
-		
+
 
 			return View(styles);
-       
-        }
+
+		}
+		public async Task<IActionResult> GetAllVoucherss()
+		{
+			// Lấy username từ session
+			var username = HttpContext.Session.GetString("UserName");
+
+			// Kiểm tra nếu username có giá trị
+			if (!string.IsNullOrEmpty(username))
+			{
+				// Gọi API và truyền username
+				string apiUrl = $"https://localhost:7036/api/Voucher/get-voucher-for-username?username={username}";
+				var httpClient = new HttpClient();
+				var response = await httpClient.GetAsync(apiUrl);
+				string apiData = await response.Content.ReadAsStringAsync();
+				var vouchers = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
+
+				return View(vouchers);
+			}
+			else
+			{
+				// Nếu username không có giá trị, gọi API mà không truyền thêm thông tin
+				string apiUrl = "https://localhost:7036/api/Voucher/get-voucher1";
+				var httpClient = new HttpClient();
+				var response = await httpClient.GetAsync(apiUrl);
+				string apiData = await response.Content.ReadAsStringAsync();
+				var vouchers = JsonConvert.DeserializeObject<List<VoucherViewModel>>(apiData);
+
+				return View(vouchers);
+			}
+		}
+
+	
 
 		public async Task<IActionResult> CreateVouchers()
 		{
@@ -82,7 +114,9 @@ namespace AppView.Controllers
 		}
 
 
-
+		
+		// Hàm giả định để lấy giá trị usernamecustomer từ Session
+		
 		public async Task<IActionResult> EditVouchers(Voucher voucher)
 		{
             var httpClient = new HttpClient();
@@ -100,10 +134,14 @@ namespace AppView.Controllers
             return RedirectToAction("GetAllVouchers");
         }
 		public async Task<IActionResult> FindVouchers(string searchQuery)
-        {
-            var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));
-            return View(color);
-        }
+		{
+			var color = repos.GetAll().Where(c => c.VoucherCode.ToLower().Contains(searchQuery.ToLower()));
+
+			return View(color);
+		}
+
+
+
 
 		public IActionResult UseVoucher(string voucherCode)
 		{
