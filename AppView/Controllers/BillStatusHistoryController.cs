@@ -267,5 +267,19 @@ namespace AppView.Controllers
             }
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
+
+        public IActionResult UpdateShippinginBill(Guid BillID, decimal ShippingCost)
+        {
+            var bill = _dbContext.Bills.First(c => c.BillID == BillID);
+            var totalPriceBefore = bill.TotalPrice;
+            var shippingCostBefore = bill.ShippingCosts;
+            var totalPrice = totalPriceBefore - shippingCostBefore;
+            var newPrice = totalPrice + ShippingCost;
+            bill.TotalPrice = newPrice;
+            bill.ShippingCosts = ShippingCost;
+            _dbContext.Bills.Update(bill);
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
     }
 }

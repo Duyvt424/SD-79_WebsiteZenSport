@@ -1091,7 +1091,7 @@
 							<hr style="width:96%;" />
 							<div class="container" style="margin-left:12%;">
 								<button type="button" id="minus" class="buttonA">-</button>
-								<input id="quantityInput" class="inputTang" type="number" name="quanity" value="@Model.First().Products.First().Quantity" min="1" max="10" data-productid="" data-price="" data-size="" readonly>
+								<input id="quantityInput" class="inputTang" type="number" name="quanity" value="@Model.First().Products.First().Quantity" min="1" max="10" data-productid="" data-price="" data-size="">
 								<button type="button" id="plus" class="buttonA">+</button>
 							</div>
 							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
@@ -1108,21 +1108,30 @@
 	</div>
 </div>
 <script>
-	window.addEventListener('DOMContentLoaded', function () {
+	window.addEventListener('load', function () {
 		const updateButtons = document.querySelectorAll('.btn-updateProduct');
 		const quantityInput = document.getElementById('quantityInput');
+		const quantityInputs = document.querySelectorAll('.inputTang');
 		const plusButton = document.getElementById('plus');
 		const minusButton = document.getElementById('minus');
 		const closeForm = document.getElementById('close-btn');
 		const modalUpdateProduct = document.getElementById('modalUpdateProduct');
 		//lấy id địa chỉ
-		const selectedDistrictIdElement = document.getElementById('districtIdShow');
-		const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
-
-		const selectedWardCodeElement = document.getElementById('wardCodeShow');
-		const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
+		var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
+		const selectedDistrictId = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen) : parseInt(document.getElementById('ListQuanHuyen').value);
+		const selectedWardCode = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idXa) : parseInt(document.getElementById('ListPhuongXa').value);
 		calculateShippingFee(selectedWardCode, selectedDistrictId);
 
+		setTimeout(function () {
+			var phivanchuyenElement1 = document.getElementById('phivanchuyen');
+			var shippingCostString1 = phivanchuyenElement1.textContent;
+			var match1 = shippingCostString1.match(/([\d,.]+)/);
+			var phivanchuyen1 = match1 ? parseFloat(match1[1].replace(/[,.]/g, '')) : 0;
+			updateShippinginBill('@Model.First().BillID.ToString()', phivanchuyen1);
+		}, 300);
+
+		// Khởi tạo tổng tiền của cả giỏ hàng
+		let totalPrice = 0;
 		updateButtons.forEach(button => {
 			button.addEventListener('click', function () {
 				// Lấy thông tin sản phẩm từ thuộc tính data
@@ -1181,6 +1190,54 @@
 			$('#modalUpdateProduct').modal('hide');
 		});
 
+		quantityInputs.forEach(input => {
+			input.addEventListener('change', function () {
+				const shoesDetailsId = $(modalUpdateProduct).attr('data-productid');
+				const sizeId = $(modalUpdateProduct).attr('data-size');
+				const price = $(modalUpdateProduct).attr('data-price');
+				const quantity = parseInt(input.value);
+				// Cập nhật giá tiền tương ứng
+				const total = price * quantity;
+				const totalElement = document.querySelector(`.priceTotalItem[data-shoesdetailsid="${shoesDetailsId}"][data-size="${sizeId}"]`);
+				totalElement.textContent = total.toLocaleString() + "đ";
+
+				// Lấy tất cả các phần tử có class 'priceTotalItem'
+				const totalElements = document.querySelectorAll('.priceTotalItem');
+
+				// Khởi tạo tổng giá trị
+				let totalPrice = 0;
+
+				// Lặp qua tất cả các phần tử để tính tổng giá trị
+				totalElements.forEach(element => {
+					// Lấy giá trị textContent từ phần tử
+					const priceText = element.textContent;
+
+					// Chuyển đổi giá trị text thành số (loại bỏ ký tự không phải số)
+					const price = parseFloat(priceText.replace(/[^\d]/g, ''));
+
+					// Tính tổng giá trị từ giá và số lượng
+					totalPrice += price;
+				});
+
+				// Cập nhật tổng tiền cả giỏ hàng
+				const totalPriceElement = document.getElementById('totalPrice');
+				totalPriceElement.textContent = totalPrice.toLocaleString() + "đ";
+
+				calculateShippingFee(selectedWardCode, selectedDistrictId);
+				var phivanchuyenElement = document.getElementById('phivanchuyen');
+				var shippingCostString = phivanchuyenElement.textContent;
+				var match = shippingCostString.match(/([\d,.]+)/);
+				var phivanchuyen = match ? parseFloat(match[1].replace(/[,.]/g, '')) : 0;
+				console.log('okkdkd', phivanchuyen);
+
+				var totalOk = totalPrice + phivanchuyen;
+				console.log('okkdkd', totalOk);
+
+				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
+				tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+			});
+		});
+
 		const submitForm = document.querySelectorAll('.btn-updateItem');
 		// Bắt sự kiện click trên nút "Thêm"
 		submitForm.forEach(buttonSub => {
@@ -1191,6 +1248,10 @@
 				const idSize = $(modalUpdateProduct).attr('data-size');
 				var ghiChuUpdateSP = $('input[name="ghiChuUpdateSP"]').val();
 				var quanity = document.getElementById('quantityInput').value;
+				var phivanchuyenElement = document.getElementById('phivanchuyen');
+				var shippingCostString = phivanchuyenElement.textContent;
+				var match = shippingCostString.match(/([\d,.]+)/);
+				var phivanchuyen = match ? parseFloat(match[1].replace(/[,.]/g, '')) : 0;
 				// Gửi dữ liệu lên server sử dụng Ajax
 				$.ajax({
 					url: '@Url.Action("UpdateQuantityItem", "BillStatusHistory")',
@@ -1200,7 +1261,8 @@
 						idShoesDT: idShoesDT,
 						idSize: idSize,
 						ghiChuUpdateSP: ghiChuUpdateSP,
-						quanity: quanity
+						quanity: quanity,
+						phivanchuyen: phivanchuyen
 					},
 					success: function (response) {
 						$('#modalUpdateProduct').modal('hide');
@@ -1213,49 +1275,20 @@
 			});
 		});
 	});
-</script>
 
-<script>
-	window.addEventListener('DOMContentLoaded', function () {
-		const quantityInputs = document.querySelectorAll('.inputTang');
-		let totalPrice = 0;
-		quantityInputs.forEach(input => {
-			const shoesDetailsId = input.getAttribute('data-productid');
-			const size = input.getAttribute('data-size');
-			input.addEventListener('change', function () {
-				const price = parseFloat(input.getAttribute('data-price'));
-				const quantity = parseInt(input.value);
-				console.log('id sp', shoesDetailsId);
-				console.log('size', size);
-				console.log('gia', price);
-				console.log('so luong', quantity);
-				// Cập nhật giá tiền tương ứng
-				const total = price * quantity;
-				const totalElement = document.querySelector(`.priceTotalItem[data-shoesdetailsid="${shoesDetailsId}"][data-size="${size}"]`);
-				totalElement.textContent = total.toLocaleString() + "đ";
-
-				// Cập nhật tổng tiền
-				totalPrice = 0; // Đặt tổng tiền về 0 trước khi tính toán lại
-				quantityInputs.forEach(input => {
-					const price = parseFloat(input.getAttribute('data-price'));
-					const quantity = parseInt(input.value);
-					totalPrice += price * quantity;
-				});
-				console.log(totalPrice);
-				// Cập nhật tổng tiền cả giỏ hàng
-				const totalPriceElement = document.getElementById('totalPrice');
-				totalPriceElement.textContent = totalPrice.toLocaleString() + "đ";
-
-				var phivanchuyenElement = document.getElementById('phivanchuyen');
-				var phivanchuyen = parseFloat(phivanchuyenElement.textContent.replace(/[,.]/g, ''));
-
-				var totalOk = totalPrice + phivanchuyen;
-
-				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
-				tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
-			});
+	function updateShippinginBill(BillID, ShippingCost) {
+		$.ajax({
+			url: '@Url.Action("UpdateShippinginBill", "BillStatusHistory")',
+			type: 'POST',
+			data: { BillID: BillID, ShippingCost: ShippingCost },
+			success: function (response) {
+				// Xử lý thành công nếu cần
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				// Xử lý lỗi nếu cần
+			}
 		});
-	});
+	}
 </script>
 <script>
 	$(document).ready(function () {
@@ -2123,7 +2156,7 @@
 					firstLabel.style.fontSize = '16px';
 					firstLabel.style.fontWeight = 'bold';
 					selectedShippingMethodID = shippingMethods[0].service_id;
-					console.log(selectedShippingMethodID);
+					console.log('siuuuu', selectedShippingMethodID);
 					// Ẩn dòng thứ hai
 					var secondLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(2)');
 					secondLabel.style.display = 'none';
@@ -2225,8 +2258,9 @@
 			var totalWeight = '@totalWeight';
 			var totalWeightSum = parseInt(totalWeight.replace(/[^\d]/g, ''));
 			// lấy id hình thức giao từ db
-			var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 			const ShippingMethodID = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingId) : "0";
+			console.log('osdif', ShippingMethodID);
 			// Xây dựng URL dựa trên việc người dùng có click "Thêm mới" hay không
 			const url = isNewAddressClicked
 				? `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`
