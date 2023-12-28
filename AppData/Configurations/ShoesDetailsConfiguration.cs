@@ -26,6 +26,7 @@ namespace AppData.Configurations
             builder.HasOne(c => c.Style).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.StyleID);
             builder.HasOne(c => c.Product).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.ProductID);
             builder.HasOne(c => c.Color).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.ColorID);
+            builder.HasOne(c => c.Sex).WithMany(c => c.ShoesDetails).HasForeignKey(c => c.SexID);
         }
     }
 }

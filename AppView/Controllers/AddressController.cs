@@ -4,13 +4,12 @@ using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
 using Address = AppData.Models.Address;
 
 namespace AppView.Controllers
 {
-	public class AddressController : Controller
+    public class AddressController : Controller
 	{
         private readonly IAllRepositories<Address> _repos;
         private ShopDBContext _dbContext = new ShopDBContext();

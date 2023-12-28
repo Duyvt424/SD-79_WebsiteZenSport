@@ -19,7 +19,6 @@ namespace AppData.Models
         public Guid? ProductID { get; set; }
         public Guid? SoleID { get; set; }
         public Guid? StyleID { get; set; }
-
         public Guid? SexID { set; get; }
         public string? ImageUrl { get; set; }
         public virtual Color Color { get; set; }

@@ -12,7 +12,7 @@ using AppView.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Owin.BuilderProperties;
+//using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
 using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
 using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;

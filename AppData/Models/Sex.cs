@@ -10,5 +10,6 @@ namespace AppData.Models
     {
         public Guid SexID { set; get; }
         public string SexName { set; get;}
+        public virtual List<ShoesDetails> ShoesDetails { get; set; }
     }
 }

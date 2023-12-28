@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AppAPI\AppAPI.csproj" />
     <ProjectReference Include="..\AppData\AppData.csproj" />
   </ItemGroup>
 
