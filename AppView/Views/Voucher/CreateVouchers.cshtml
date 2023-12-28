@@ -1,7 +1,7 @@
 ﻿@model AppData.Models.Voucher
 
 @{
-    ViewData["Title"] = "CreateVouchers";
+	ViewData["Title"] = "CreateVouchers";
 }
 
 
@@ -26,7 +26,7 @@
 									community.
 								</p>
 								<form asp-action="CreateVouchers">
-									
+
 
 									<div class="form-floating mb-3">
 										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" id="voucherValue" required>
@@ -99,7 +99,7 @@
 										<!-- Add more radio buttons for other options if needed -->
 									</div>
 
-							
+
 									<div id="customerTable" style="display: none;">
 										<style>
 											/* CSS cho bảng */
@@ -194,37 +194,63 @@
 											});
 
 											// Thêm sự kiện click cho nút "Create"
+											// Thêm sự kiện click cho nút "Create"
 											$('button.btn-success').click(function () {
 												// Kiểm tra xem bảng khách hàng có đang hiển thị hay không
 												if ($('#customerTable').is(':visible')) {
 													// Lấy danh sách các username đã được chọn
 													var selectedUsernames = [];
+													var selectedUsers = [];
+
 													$('input.userCheckbox:checked').each(function () {
-														selectedUsernames.push($(this).val());
+														var username = $(this).val();
+														var email = $(this).closest('tr').find('td:eq(2)').text(); // Điều chỉnh vị trí cột tương ứng với email
+														selectedUsers.push(email);
+														selectedUsernames.push(username); // Thêm username vào danh sách
+
+														console.log('Email của người được chọn:', email);
 													});
+													console.log('Danh sách người được chọn:', selectedUsers);
+													// Lưu danh sách người dùng được chọn vào hidden field
+													$('#selectedUsers').val(JSON.stringify(selectedUsers));
 
 													// Chuyển danh sách thành chuỗi, sử dụng dấu phẩy để ngăn cách
 													var userNameCustomer = selectedUsernames.join(', ');
 													console.log('userNameCustomer:', userNameCustomer);
 													var userNameCustomerInput = $('#userNameCustomer');
-            if (userNameCustomerInput.length) {
-                userNameCustomerInput.val(userNameCustomer);
-                console.log('Gán giá trị thành công:', userNameCustomerInput.val());
-            } else {
-                console.log('Không tìm thấy thẻ input với ID userNameCustomer.');
-            }
+													if (userNameCustomerInput.length) {
+														userNameCustomerInput.val(userNameCustomer);
+														console.log('Gán giá trị thành công:', userNameCustomerInput.val());
+													} else {
+														console.log('Không tìm thấy thẻ input với ID userNameCustomer.');
+													}
 
-													
+													sendEmails(selectedUsers);
+
 												} else {
 													$('#userNameCustomer').val(null);
 													console.log('Gán giá trị null cho UserNameCustomer');
 												}
 
-												// Thêm mã xử lý tiếp theo sau khi lưu username, nếu cần
 											});
+
+											function sendEmails(emails) {
+												var toEmail = emails.join(',');
+												var subject = 'CHƯƠNG TRÌNH "XUÂN GẮN KẾT - TẾT TRI ÂN" MỪNG XUÂN GIÁP THÌN 2024 CHÍNH THỨC BẮT ĐẦU!';
+												var body = 'Kính gửi: Quý khách hàng, \nChuẩn bị chào đón xuân Giáp Thìn năm 2024, ZENSPORTS xin gửi tới khách hàng và đối tác chương trình "XUÂN GẮN KẾT - TẾT TRI ÂN". Tặng ngay voucher giảm giá cho đơn hàng tiếp theo của bạn!\n\nĐây là cơ hội lớn để trải nghiệm sản phẩm và dịch vụ tuyệt vời của chúng tôi. Hãy sử dụng mã voucher khi thanh toán.\nChúc quý khách có một mùa xuân tràn đầy niềm vui và hạnh phúc!';
+
+												// Tạo mailto link
+												var mailtoLink = 'mailto:' + toEmail +
+													'?subject=' + encodeURIComponent(subject) +
+													'&body=' + encodeURIComponent(body);
+
+												// Mở trình gửi email mặc định
+												window.location.href = mailtoLink;
+											}
+
 										});
 									</script>
-								
+
 
 
 
@@ -237,7 +263,7 @@
 										</button>
 									</div>
 								</form>
-								
+
 							</div>
 						</div>
 					</div>

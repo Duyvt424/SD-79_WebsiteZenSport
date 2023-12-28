@@ -33,17 +33,18 @@ namespace AppAPI.Controllers
 		}
 
 		[HttpGet("get-voucher-for-username")]
-        public IEnumerable<Voucher> GetVoucherForUsername(string username)
-        {
-            var vouchers = repos.GetAll().Where(c =>
-                (c.UserNameCustomer == null) ||
-                (username != null && c.UserNameCustomer != null && IsUsernameInList(username, c.UserNameCustomer))
-            );
+		public IEnumerable<Voucher> GetVoucherForUsername(string username)
+		{
+			var vouchers = repos.GetAll().Where(c => c.DateCreated <= DateTime.Now && c.Status == 0 &&
+				((c.UserNameCustomer == null) ||
+				(username != null && c.UserNameCustomer != null && IsUsernameInList(username, c.UserNameCustomer)))
+			);
 
-            return vouchers;
-        }
+			return vouchers;
+		}
 
-        private bool IsUsernameInList(string username, string userList)
+
+		private bool IsUsernameInList(string username, string userList)
         {
             var usernames = userList.Split(',').Select(u => u.Trim());
 
@@ -52,13 +53,13 @@ namespace AppAPI.Controllers
         }
 
 
-        [HttpGet("get-voucher1")]
-		public IEnumerable<Voucher> GetAllVouchers()
-		{
-			var vouchers = repos.GetAll().Where(c =>c.UserNameCustomer == null ).ToList(); // Lấy tất cả voucher
+  //      [HttpGet("get-voucher1")]
+		//public IEnumerable<Voucher> GetAllVouchers()
+		//{
+		//	var vouchers = repos.GetAll().Where(c =>c.UserNameCustomer == null ).ToList(); // Lấy tất cả voucher
 
-			return vouchers;
-		}
+		//	return vouchers;
+		//}
 
 
 		//[HttpGet("get-username")]
