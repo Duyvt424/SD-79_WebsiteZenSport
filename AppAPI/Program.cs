@@ -1,8 +1,12 @@
 using System.Text;
+using AppAPI.Interfaces;
+using AppAPI.Repository;
 using AppData.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +17,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddHttpContextAccessor();
+
+
 //builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IProduct, ProductRepository>();
+
 builder.Services.AddSwaggerGen(); /*
 builder.Services.AddIdentity<Employee, Role>().AddDefaultTokenProviders();
 
@@ -56,6 +64,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(option =>
 {
     option.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
 });
+
+
+
+builder.Services.AddDbContext<ShopDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -76,3 +93,4 @@ app.UseForwardedHeaders();
 app.MapControllers();
 
 app.Run();
+

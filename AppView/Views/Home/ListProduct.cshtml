@@ -1,8 +1,9 @@
 ﻿@using AppData.Models;
-@model IEnumerable<AppData.Models.ShoesDetails>
+@using AppAPI.DTO;
+@model IEnumerable<AppAPI.DTO.shoesDetailsDTO>
 @{
 	ViewData["Title"] = "Sản phẩm";
-	var shoesDetails = ViewBag.shoesList as List<ShoesDetails>;
+	var shoesDetails = ViewBag.shoesList as List<shoesDetailsDTO>;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -27,24 +28,24 @@
 </head>
 
 <body>
-	<section id="sidebar" style="float: left" ;>
+	<section id="sidebar" style="float: left;">
 		<div class="border-bottom pb-2 ml-2">
 			<h4 id="burgundy">Bộ lọc</h4>
 		</div>
-		<form asp-controller="Home" asp-action="ListProduct1" method="post">
+		<form asp-controller="Home" asp-action="ListProduct1" method="post" id="myForm">
 			<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
 				<h6 class="font-weight-bold">Giới tính</h6>
 				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
-					<input type="checkbox" name="genders" id="male" value="male">
+					<input type="checkbox" name="genders" id="male" value="Nam">
 					<label for="male" id="male">Nam</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="genders" id="female" value="female">
+					<input type="checkbox" name="genders" id="female" value="Nữ">
 					<label for="female" id="female">Nữ</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="genders" id="unisex" value="unisex">
+					<input type="checkbox" name="genders" id="unisex" value="Unisex">
 					<label for="unisex" id="unisex">Unisex</label>
 				</div>
 			</div>
@@ -54,15 +55,15 @@
 				<h6 class="font-weight-bold">Khoảng giá</h6>
 				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
-					<input type="checkbox" id="price1" name="minPrice" value="0">
+					<input type="checkbox" id="price1" name="minPrice" value="0,1000000">
 					<label for="price1">Dưới 1.000.000đ</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="price2" name="minPrice" value="1001000">
+					<input type="checkbox" id="price2" name="minPrice" value="1001000,2700000">
 					<label for="price2">1.001.00đ-2.700.000</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" id="price3" name="minPrice" value="2701000">
+					<input type="checkbox" id="price3" name="minPrice" value="2701000,3999000">
 					<label for="price3">2.701.000-3.999.000</label>
 				</div>
 				<div class="form-group">
@@ -77,35 +78,35 @@
 				<h6 class="font-weight-bold">Thương hiệu</h6>
 				<div id="orange"><span class="fa fa-minus"></span></div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="nike" value="nike">
+					<input type="checkbox" name="brands" id="nike" value="Nike">
 					<label for="nike">Nike</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="jordan" value="jordan">
+					<input type="checkbox" name="brands" id="jordan" value="Jordan">
 					<label for="jordan">Jordan</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="mlb" value="mlb">
+					<input type="checkbox" name="brands" id="mlb" value="MLB">
 					<label for="mlb">MLB</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="adidas" value="adidas">
+					<input type="checkbox" name="brands" id="adidas" value="Adidas">
 					<label for="adidas">Adidas</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="reebok" value="reebok">
+					<input type="checkbox" name="brands" id="reebok" value="Reebok">
 					<label for="reebok">Reebok</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="vans" value="vans">
+					<input type="checkbox" name="brands" id="vans" value="Vans">
 					<label for="vans">Vans</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="converse" value="converse">
+					<input type="checkbox" name="brands" id="converse" value="Converse">
 					<label for="converse">Converse</label>
 				</div>
 				<div class="form-group">
-					<input type="checkbox" name="brands" id="puma" value="puma">
+					<input type="checkbox" name="brands" id="puma" value="Puma">
 					<label for="puma">Puma</label>
 				</div>
 			</div>
@@ -185,15 +186,11 @@
 					<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
 					<input type="checkbox" id="brownChk" name="colors" value="brown" />
 				</div>
-				<div class="form-group" style="float: right; padding-right: 9px; padding-top: 15px">
-					<button type="submit">Tìm kiếm</button>
-				</div>
+				@* <div class="form-group" style="float: right; padding-right: 9px; padding-top: 15px">
+					<button id="filter-btn" type="submit">Tìm kiếm</button>
+				</div> *@
 			</div>
 		</form>
-
-
-
-
 	</section>
 	<div id="filtered-products">
 		<!-- Dữ liệu sản phẩm lọc sẽ được hiển thị ở đây -->
@@ -234,4 +231,60 @@
 	<!-- <footer class="footer">My footer</footer> -->
 </body>
 
+
+<script>
+	var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+	
+
+	// Lưu trạng thái của các checkbox đã chọn
+	function saveCheckboxState(checkboxes) {
+		var checkboxState = {};
+
+		checkboxes.forEach(function (checkbox) {
+			console.log(checkbox)
+			checkboxState[checkbox.id] = checkbox.checked;
+		});
+
+
+
+		localStorage.setItem('checkboxState', JSON.stringify(checkboxState));
+	}
+
+	//// Khôi phục trạng thái của các checkbox đã chọn sau khi form tải lại
+	function restoreCheckboxState() {
+		var checkboxState = localStorage.getItem('checkboxState');
+
+		if (checkboxState) {
+			checkboxState = JSON.parse(checkboxState);
+			var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+			checkboxes.forEach(function (checkbox) {
+				if (checkbox.id in checkboxState) {
+					checkbox.checked = checkboxState[checkbox.id];
+				}
+			});
+		}
+	}
+
+	//// Gửi form và lưu trạng thái checkbox trước khi submit
+	function submitForm() {
+		saveCheckboxState(checkboxes);
+		document.getElementById('myForm').submit();
+	}
+
+	checkboxes.forEach(function (checkbox) {
+		checkbox.addEventListener('change', function () {
+			submitForm();
+		});
+	});
+	//// Khôi phục trạng thái checkbox sau khi form tải lại
+	window.onload = function () {
+		restoreCheckboxState();
+	};
+
+</script>
+
+
 </html>
+
+

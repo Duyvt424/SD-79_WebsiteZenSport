@@ -1,4 +1,5 @@
-﻿using AppData.IServices;
+﻿using AppAPI.DTO;
+using AppData.IServices;
 using AppData.Models;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,37 @@ namespace AppData.Services
             {
                 return false;
             }
+        }
+
+        public List<shoesDetailsDTO> GetallShoedetailDtO()
+        {
+            var querry = from shoe in dBContext.ShoesDetails.AsQueryable()
+
+                         join product in dBContext.Products.AsQueryable()
+                         on shoe.ProductID equals product.ProductID into Product
+                         from pro in Product.DefaultIfEmpty()
+
+
+                         select new shoesDetailsDTO
+                         {
+                             ShoesDetailsId = shoe.ShoesDetailsId,
+                             ShoesDetailsCode = shoe.ShoesDetailsCode,
+                             DateCreated = shoe.DateCreated,
+                             Price = shoe.Price,
+                             ImportPrice = shoe.ImportPrice,
+                             Description = shoe.Description,
+                             Status = shoe.Status,
+                             ColorID = shoe.ColorID,
+                             ProductID = pro.ProductID,
+                             SoleID = shoe.SoleID,
+                             StyleID = shoe.StyleID,
+                             SexID = shoe.SexID,
+                             ImageUrl = shoe.ImageUrl,
+                             Name = pro.Name,
+                             SupplierID = pro.SupplierID
+
+                             };
+            return querry.ToList();
         }
 
         public List<ShoesDetails> GetAllShoesDetails()

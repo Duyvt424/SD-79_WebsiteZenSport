@@ -1,5 +1,6 @@
 ﻿using AppData.IServices;
 using AppData.Models;
+using AppAPI.DTO;
 using AppData.Services;
 using AppView.IServices;
 using AppView.Services;
@@ -10,6 +11,7 @@ using NuGet.Packaging;
 using System.Diagnostics;
 using System.Linq;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
+using System.Text;
 
 namespace AppView.Controllers
 {
@@ -110,7 +112,7 @@ namespace AppView.Controllers
         }
         public IActionResult ListProduct()
 		{
-			var shoesList = _shoesDT.GetAllShoesDetails();
+			var shoesList = _shoesDT.GetallShoedetailDtO();
 
 
 			ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
@@ -139,32 +141,140 @@ namespace AppView.Controllers
 			}
 			ViewBag.NameStyle = productStyles;
 			ViewBag.NameSP = productNames;
+
+
+
 			ViewBag.shoesList = shoesList;
 
 
 
 			return View();
 		}
+
+		//public async Task<ActionResult> ListProduct1(decimal price)
+		//{
+		//	// Địa chỉ URL của API
+		//	string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
+
+		//	using (HttpClient client = new HttpClient())
+		//	{
+		//		// Gọi API bằng HTTP GET với giá tiền cần tìm kiếm
+		//		HttpResponseMessage response = client.GetAsync($"{apiUrl}/{price}").Result;
+
+		//		if (response.IsSuccessStatusCode)
+		//		{
+		//			// Đọc kết quả từ API
+		//			var content = response.Content.ReadAsStringAsync().Result;
+		//			var shoesDetails = JsonConvert.DeserializeObject<IEnumerable<ShoesDetails>>(content);
+
+		//			ViewBag.shoesList = shoesDetails;
+
+		//			return View("ListProduct");
+		//		}
+		//		else
+		//		{
+		//			// Xử lý trường hợp lỗi
+		//			return View("Error");
+		//		}
+		//	}
+		//}
+
+
 		[HttpPost]
 		[HttpGet]
-		public async Task<ActionResult> ListProduct1(decimal price)
+		public async Task<ActionResult> ListProduct1(string[] colors, string[] genders, string[] brands, string[] styles, string[] minPrice)
 		{
 			// Địa chỉ URL của API
-			string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
-
+			//string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
+			string apiUrlV1 = "https://localhost:7036/api/ShoesDetails/filter-allProduct";
+			var rangeItems = new List<RangeItemcs>();
 			using (HttpClient client = new HttpClient())
 			{
+				string query = "";
+				string instanceSex = "", instanceBranch = "", instanceStyle = "", instanceColor = "";
+				foreach (var item in genders)
+				{
+					instanceSex += "instanceSex=" + item.ToString() + "&";
+				}
+				foreach (var item in brands)
+				{
+					instanceBranch += "instacneBranch=" + item.ToString() + "&";
+				}
+				foreach (var item in styles)
+				{
+					instanceStyle += "instanceStyle=" + item.ToString() + "&";
+				}
+				foreach (var item in colors)
+				{
+					instanceColor += "instanceColor=" + item.ToString() + "&";
+				}
+
+				foreach (var item in minPrice)
+				{
+					if (item.Split(",").Length == 1)
+					{
+						var priceData = new RangeItemcs
+						{
+							min = int.Parse(item.Split(",")[0]),
+							max = decimal.MaxValue,
+						};
+						rangeItems.Add(priceData);
+					}
+					else
+					{
+						var priceData = new RangeItemcs
+						{
+							min = decimal.Parse(item.Split(",")[0]),
+							max = decimal.Parse(item.Split(",")[1])
+						};
+						rangeItems.Add(priceData);
+					}
+
+				}
+				query = instanceStyle + instanceColor + instanceBranch + instanceSex;
+
+				var body = JsonConvert.SerializeObject(rangeItems);
+
+				var content = new StringContent(body, Encoding.UTF8, "application/json");
 				// Gọi API bằng HTTP GET với giá tiền cần tìm kiếm
-				HttpResponseMessage response = client.GetAsync($"{apiUrl}/{price}").Result;
+				HttpResponseMessage response = client.PostAsync($"{apiUrlV1}?{query}", content).Result;
 
 				if (response.IsSuccessStatusCode)
 				{
 					// Đọc kết quả từ API
-					var content = response.Content.ReadAsStringAsync().Result;
-					var shoesDetails = JsonConvert.DeserializeObject<IEnumerable<ShoesDetails>>(content);
+					var rescontent = response.Content.ReadAsStringAsync().Result;
+					var result = JsonConvert.DeserializeObject<ProductDTO>(rescontent);
+					var shoesDetails = result.Shoe_Details;
+
+					ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
+					Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+					ViewBag.NameStyle = "";
+					Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
+					foreach (var shoes in shoesDetails)
+					{
+						var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+						if (firstImage != null)
+						{
+							shoes.ImageUrl = firstImage.Image1;
+						}
+
+						var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+						if (product != null)
+						{
+							productNames[shoes.ShoesDetailsId] = product.Name;
+						}
+
+						var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
+						if (style != null)
+						{
+							productStyles[shoes.ShoesDetailsId] = style.Name;
+						}
+					}
+					ViewBag.NameStyle = productStyles;
+					ViewBag.NameSP = productNames;
+
 
 					ViewBag.shoesList = shoesDetails;
-
 					return View("ListProduct");
 				}
 				else
@@ -385,10 +495,11 @@ namespace AppView.Controllers
 					}
 				}
 
-				/*//Filter hãng
-				var brandList = _supplier.GetAllSuppliers().Where(suppliers => brands.Contains(suppliers.Name.ToLower())).ToList();
-				var filteredBrandsList = comparingShoesList.Where(shoes => brandList.Any(brand => brand.SupplierID == shoes.SupplierID)).ToList();
-				AddRangeIfNotExist(combinedShoesList, (List<ShoesDetails>)filteredBrandsList);*/
+				////Filter hãng
+				//var brandList = _supplier.GetAllSuppliers().Where(suppliers => brands.Contains(suppliers.Name.ToLower())).ToList();
+				//var filteredBrandsList = comparingShoesList.Where(shoes => brandList.Any(brand => brand.SupplierID == shoes.SupplierID)).ToList();
+				//AddRangeIfNotExist(combinedShoesList, (List<ShoesDetails>)filteredBrandsList);
+				
 
 				//Filter style
 				var stylesList = _style.GetAllStyles().Where(s => styles.Contains(s.Name.ToLower())).ToList();

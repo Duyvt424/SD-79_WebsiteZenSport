@@ -42,6 +42,7 @@ namespace AppData.Models
         public DbSet<Rank> Ranks { get; set; }
         public DbSet<ShoesDetails_Size> ShoesDetails_Sizes { get; set; }
         public DbSet<BillStatusHistory> BillStatusHistories { get; set; }
+        public DbSet<Sex> Sex { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

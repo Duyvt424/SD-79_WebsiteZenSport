@@ -19,11 +19,14 @@ namespace AppData.Models
         public Guid? ProductID { get; set; }
         public Guid? SoleID { get; set; }
         public Guid? StyleID { get; set; }
+
+        public Guid? SexID { set; get; }
         public string? ImageUrl { get; set; }
         public virtual Color Color { get; set; }
         public virtual Sole Sole { get; set; }
         public virtual Product Product { get; set; }
         public virtual Style Style { get; set; }
+        public virtual Sex Sex { get; set; }
         public virtual List<Image> Images { get; set; }
         public virtual List<ShoesDetails_Size> ShoesDetails_Size { get; set; }
         public virtual List<FavoriteShoes> FavoriteShoes { get; set; }

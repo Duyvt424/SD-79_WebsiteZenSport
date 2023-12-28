@@ -1,4 +1,6 @@
 ﻿using AppData.Models;
+using AppAPI.DTO;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,9 @@ namespace AppData.IServices
         public bool UpdateShoesDetails(ShoesDetails shoesDetails);
         public bool DeleteShoesDetails(Guid id);
         public List<ShoesDetails> GetAllShoesDetails();
+
+        public List<shoesDetailsDTO> GetallShoedetailDtO();
+
         public ShoesDetails GetShoesDetailsById(Guid id);
     }
 }
