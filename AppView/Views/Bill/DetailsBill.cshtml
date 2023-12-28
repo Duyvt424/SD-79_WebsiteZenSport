@@ -1252,6 +1252,10 @@
 				var shippingCostString = phivanchuyenElement.textContent;
 				var match = shippingCostString.match(/([\d,.]+)/);
 				var phivanchuyen = match ? parseFloat(match[1].replace(/[,.]/g, '')) : 0;
+				//lấy giá giảm voucher
+				var priceVoucherElement = document.getElementById('giamgia');
+				var priceVoucherText = priceVoucherElement.innerText;
+				var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
 				// Gửi dữ liệu lên server sử dụng Ajax
 				$.ajax({
 					url: '@Url.Action("UpdateQuantityItem", "BillStatusHistory")',
@@ -1266,6 +1270,7 @@
 					},
 					success: function (response) {
 						$('#modalUpdateProduct').modal('hide');
+						updatePriceShippingInBill(idBill, phivanchuyen, priceVoucher);
 						location.reload();
 					},
 					error: function (error) {
@@ -1275,20 +1280,6 @@
 			});
 		});
 	});
-
-	function updateShippinginBill(BillID, ShippingCost) {
-		$.ajax({
-			url: '@Url.Action("UpdateShippinginBill", "BillStatusHistory")',
-			type: 'POST',
-			data: { BillID: BillID, ShippingCost: ShippingCost },
-			success: function (response) {
-				// Xử lý thành công nếu cần
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				// Xử lý lỗi nếu cần
-			}
-		});
-	}
 </script>
 <script>
 	$(document).ready(function () {
@@ -1818,10 +1809,8 @@
 	</script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			// Lấy giá tiền vận chuyển mặc định khi trang được tải
-			var defaultShippingCostElement = $('.existing-address[data-isdefault="True"] .shipping-cost');
-			var defaultShippingCost = parseFloat(defaultShippingCostElement.text());
 			// lấy giá tiền gốc
+			var idBill = '@Model.First().BillID.ToString()';
 			var totalPriceElement = document.getElementById('totalPrice');
 			var totalPriceText = totalPriceElement.innerText;
 			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
@@ -1829,11 +1818,12 @@
 			var priceVoucherElement = document.getElementById('giamgia');
 			var priceVoucherText = priceVoucherElement.innerText;
 			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
-			// Hiển thị giá tiền mặc định
-			var phivanchuyenElement = document.getElementById('phivanchuyen');
-			phivanchuyenElement.innerText = "+ " + defaultShippingCost.toLocaleString('vi-VN') + "đ";
+			//lấy id địa chỉ
+			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
+			const shippingCost123 = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost) : "0";
+			console.log('dsfjksfdg11', shippingCost123);
 			// hiển thị tổng giá tiền khi trang đc load
-			var totalOk = (totalPrice + defaultShippingCost) - priceVoucher;
+			var totalOk = (totalPrice + shippingCost123) - priceVoucher;
 			var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
 			tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			// Lắng nghe sự kiện change của tất cả các checkbox
@@ -1841,16 +1831,8 @@
 			checkboxes.forEach(function (checkbox) {
 				checkbox.addEventListener('change', function () {
 					updateShippingCost();
-					setTimeout(function () {
-						// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
-						const existingAddressChecked = document.querySelector('.existing-address input[type="checkbox"]:checked');
-						if (existingAddressChecked) {
-							var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-							var shippingCostHTML = document.getElementById('shippingCost').value;
-							var shippingCost = parseFloat(shippingCostHTML);
-							updatePriceShipping(addressId, shippingCost);
-						}
-					}, 300);
+					console.log('aaaaaa', shippingCost123);
+					updatePriceShippingInBill(idBill, shippingCost123, priceVoucher);
 				});
 			});
 
@@ -1867,17 +1849,14 @@
 			var priceVoucherText = priceVoucherElement.innerText;
 			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
 			// Tìm checkbox được chọn
-			var selectedCheckbox = document.querySelector('.existing-address input[type="checkbox"]:checked');
+			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 			if (selectedCheckbox) {
 				var wardCode = parseFloat(selectedCheckbox.closest('.existing-address').dataset.idXa);
 				var idDistrict = parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen);
 				calculateShippingFee(wardCode, idDistrict);
-				// Lấy giá trị vận chuyển từ thuộc tính data
-				var shippingCost = parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost);
-
 				// Cập nhật giá trị vận chuyển trên trang
-				var phivanchuyenElement = document.getElementById('phivanchuyen');
-				phivanchuyenElement.innerText = "+ " + shippingCost.toLocaleString('vi-VN') + "đ";
+				const shippingCost = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost) : "0";
+				console.log('aaaaaaaaa', shippingCost);
 				// tính tổng tiền khi ng dùng đổi checkbox
 				var totalOk = totalPrice + shippingCost - priceVoucher;
 				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
@@ -1913,19 +1892,6 @@
 
 		// Biến để lưu trữ trạng thái của checkbox
 		var lastCheckedCheckbox = null;
-		setTimeout(function () {
-			// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
-			const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
-			var objBill = '@Model.First().BillID.ToString()';
-			var voucherObjHTML = '@Model.First().PriceVoucher';
-			var voucherObj = parseFloat(voucherObjHTML);
-			if (existingAddressChecked) {
-				var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
-				var shippingCost = parseFloat(existingAddressChecked.closest('.existing-address').dataset.shippingCost);
-				updatePriceShippingInBill(objBill, shippingCost, voucherObj);
-			}
-		}, 500);
-
 		function setDefaultAddress(addressId) {
 			// Lấy checkbox tương ứng với địa chỉ được chọn
 			var selectedCheckbox = document.getElementById('cbx_' + addressId);
@@ -2260,7 +2226,6 @@
 			// lấy id hình thức giao từ db
 			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 			const ShippingMethodID = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingId) : "0";
-			console.log('osdif', ShippingMethodID);
 			// Xây dựng URL dựa trên việc người dùng có click "Thêm mới" hay không
 			const url = isNewAddressClicked
 				? `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${totalPrice}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${totalWeightSum}&length=38&width=15&height=15`
