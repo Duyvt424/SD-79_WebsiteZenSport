@@ -415,16 +415,18 @@ namespace AppAPI.Repository
                 {
                     var query = (from shoe in shoeList
 
-                                 join supplier in _dbContext.Suppliers.AsQueryable()
-                                 on shoe.ProductID equals supplier.SupplierID into Supplier
-                                 from sp in Supplier.DefaultIfEmpty()
 
-                                 join protbl in  _dbContext.Products.AsQueryable()
+
+                                 join protbl in _dbContext.Products.AsQueryable()
                                  on shoe.ProductID equals protbl.ProductID into Product
                                  from product in Product.DefaultIfEmpty()
 
+                                 join supplier in _dbContext.Suppliers.AsQueryable()
+                                 on product.SupplierID equals supplier.SupplierID into Supplier
+                                 from sp in Supplier.DefaultIfEmpty()
 
-                                  where sp.Name == branch
+
+                                 where sp.Name == branch
                                  select new
                                  {
                                      shoe.ShoesDetailsId,
@@ -442,6 +444,10 @@ namespace AppAPI.Repository
                                      product.Name,
                                      shoe.SexID,
                                  });
+
+
+
+
                     if (query.Count() > 0)
                     {
                         foreach (var item in query.ToList())
