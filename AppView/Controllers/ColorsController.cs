@@ -75,7 +75,7 @@ namespace AppView.Controllers
         public async Task<IActionResult> EditColor(Color color) // Thực hiện việc Tạo mới
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Color/update-color?ColorCode={color.ColorCode}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}&ColorID={color.ColorID.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            string apiUrl = $"https://localhost:7036/api/Color/update-color?ColorCode={color.ColorCode}&Name={color.Name}&Status={color.Status}&DateCreated={color.DateCreated}&ColorID={color.ColorID}";/*&ColorID={color.ColorID.ToString("yyyy-MM-ddTHH:mm:ss")}*/
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllColor");
         }
