@@ -2,9 +2,12 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using AppAPI.Interfaces;
 using AppData.IRepositories;
+using AppData.IServices;
 using AppData.Models;
 using AppData.Repositories;
+using AppData.Services;
 using AppView.IServices;
 using AppView.Models;
 using AppView.Models.DetailsBillViewModel;
@@ -24,9 +27,13 @@ namespace AppView.Controllers
         private readonly IAllRepositories<Bill> _repos;
         private readonly IAllRepositories<Customer> customer;
         private readonly IAllRepositories<Voucher> voucher;
-		private readonly IAllRepositories<ShippingVoucher> shippingvoucher;
-		private readonly IAllRepositories<Employee> employee;
+        private readonly IAllRepositories<ShippingVoucher> shippingvoucher;
+        private readonly IAllRepositories<Employee> employee;
         private readonly IAllRepositories<PurchaseMethod> purchaseMethod;
+        private readonly IShoesDetailsService _shoesDT;
+        private readonly IProductService _product;
+        private readonly IImageService _image;
+        private readonly IStyleService _style;
         // private readonly IAllRepositories<Supplier> supplierRepos;
         ShopDBContext _dbContext = new ShopDBContext();
         DbSet<Employee> _employee;
@@ -58,11 +65,15 @@ namespace AppView.Controllers
             purchaseMethod = pu;
 
 
-			_shipVoucher = _dbContext.ShippingVoucher;
-			AllRepositories<ShippingVoucher> pu1 = new AllRepositories<ShippingVoucher>(_dbContext, _shipVoucher);
-			shippingvoucher = pu1;
+            _shipVoucher = _dbContext.ShippingVoucher;
+            AllRepositories<ShippingVoucher> pu1 = new AllRepositories<ShippingVoucher>(_dbContext, _shipVoucher);
+            shippingvoucher = pu1;
 
-		}
+            _shoesDT = new ShoesDetailsService();
+            _product = new ProductService();
+            _image = new ImageService();
+            _style = new StyleService();
+        }
         private string GenerateBillCode()
         {
             var lastProduct = _dbContext.Bills.OrderByDescending(c => c.BillCode).FirstOrDefault();
@@ -108,8 +119,8 @@ namespace AppView.Controllers
                 Status = bills.Status,
                 CustomerName = cus.FirstOrDefault(s => s.CumstomerID == bills.CustomerID)?.FullName,
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
-				ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
-				EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
+                ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
+                EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
                 PurchaseMethodName = pu.FirstOrDefault(p => p.PurchaseMethodID == bills.PurchaseMethodID).MethodName,
 
                 //  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
@@ -134,11 +145,11 @@ namespace AppView.Controllers
                 SelectList selectListVC = new SelectList(vc, "VoucherID", "VoucherCode");
                 ViewBag.VCList = selectListVC;
 
-				var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
-				SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
-				ViewBag.SVCList = selectListVC;
+                var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
+                SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
+                ViewBag.SVCList = selectListVC;
 
-				var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
+                var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
                 SelectList selectListPu = new SelectList(pu, "PurchaseMethodID", "MethodName");
                 ViewBag.PuList = selectListPu;
             }
@@ -172,11 +183,11 @@ namespace AppView.Controllers
                 SelectList selectListVC = new SelectList(vc, "VoucherID", "VoucherCode");
                 ViewBag.VCList = selectListVC;
 
-				var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
-				SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
-				ViewBag.SVCList = selectListVC;
+                var sv = dBContext.ShippingVoucher.Where(c => c.IsShippingVoucher == 0).ToList();
+                SelectList selectListSVC = new SelectList(vc, "ShippingVoucherID", "VoucherShipCode");
+                ViewBag.SVCList = selectListVC;
 
-				var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
+                var pu = dBContext.PurchaseMethods.Where(c => c.Status == 0).ToList();
                 SelectList selectListPu = new SelectList(pu, "PurchaseMethodID", "MethodName");
                 ViewBag.PuList = selectListPu;
             }
@@ -229,10 +240,10 @@ namespace AppView.Controllers
                 VoucherName = vc.FirstOrDefault(c => c.VoucherID == bills.VoucherID).VoucherCode,
                 EmployeeName = em.FirstOrDefault(e => e.EmployeeID == bills.EmployeeID).FullName,
                 PurchaseMethodName = pu.FirstOrDefault(p => p.PurchaseMethodID == bills.PurchaseMethodID).MethodName,
-				ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
+                ShippingVoucherName = sv.FirstOrDefault(c => c.ShippingVoucherID == bills.ShippingVoucherID).VoucherShipCode,
 
-				//  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
-			}).ToList();
+                //  MaterialName = materials.VoucherName(m => m.MaterialId == product.MaterialId)?.Name
+            }).ToList();
 
             return View(billViewModels);
         }
@@ -268,9 +279,9 @@ namespace AppView.Controllers
                             TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
                             TotalPriceAfterDiscount = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPriceAfterDiscount,
                             PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
-							PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
+                            PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
                             PriceProduct = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price,
-							IsPaid = objBill.IsPaid,
+                            IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             Products = new List<ProductViewModel>
                             {
@@ -324,50 +335,78 @@ namespace AppView.Controllers
                         })
                         .ToListAsync();
 
-					var sharedData = new { BillId = billId, DetailsBill = detailsBill };
-					var sharedDataString = JsonConvert.SerializeObject(sharedData);
-					HttpContext.Session.SetString("SharedDataKey", sharedDataString);
-					return View(detailsBill);
-				}
+                    var sharedData = new { BillId = billId, DetailsBill = detailsBill };
+                    var sharedDataString = JsonConvert.SerializeObject(sharedData);
+                    HttpContext.Session.SetString("SharedDataKey", sharedDataString);
+
+                    var shoesList = _shoesDT.GetallShoedetailDtO();
+                    ViewBag.NameSP = "";
+                    Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+                    ViewBag.NameStyle = "";
+                    Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
+                    foreach (var shoes in shoesList)
+                    {
+                        var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+                        if (firstImage != null)
+                        {
+                            shoes.ImageUrl = firstImage.Image1;
+                        }
+                        var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+                        if (product != null)
+                        {
+                            productNames[shoes.ShoesDetailsId] = product.Name;
+                        }
+                        var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
+                        if (style != null)
+                        {
+                            productStyles[shoes.ShoesDetailsId] = style.Name;
+                        }
+                    }
+                    ViewBag.NameStyle = productStyles;
+                    ViewBag.NameSP = productNames;
+                    ViewBag.shoesList = shoesList;
+
+                    return View(detailsBill);
+                }
             }
             return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
         }
 
-		public async Task<IActionResult> BillDetail(Guid? customerID)
-		{
-			// Lấy dữ liệu từ TempData
-			var tempBillId = TempData["BillId"] as Guid?;
-			var tempDetailsBill = TempData["DetailsBill"] as List<OrderDetailsViewModel>;
+        public async Task<IActionResult> BillDetail(Guid? customerID)
+        {
+            // Lấy dữ liệu từ TempData
+            var tempBillId = TempData["BillId"] as Guid?;
+            var tempDetailsBill = TempData["DetailsBill"] as List<OrderDetailsViewModel>;
 
-			var userIdString = HttpContext.Session.GetString("UserId");
-			var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-			var customerId = customerID ?? customerIdSession;
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var customerId = customerID ?? customerIdSession;
 
-			var sharedDataString = HttpContext.Session.GetString("SharedDataKey");
+            var sharedDataString = HttpContext.Session.GetString("SharedDataKey");
 
-			if (!string.IsNullOrEmpty(sharedDataString))
-			{
-				var sharedData = JsonConvert.DeserializeObject<dynamic>(sharedDataString);
+            if (!string.IsNullOrEmpty(sharedDataString))
+            {
+                var sharedData = JsonConvert.DeserializeObject<dynamic>(sharedDataString);
 
-				// Truy xuất dữ liệu
-				var billId = (Guid)sharedData.BillId;
-				var detailsBill = sharedData.DetailsBill.ToObject<List<OrderDetailsViewModel>>(); // Chuyển đổi thành List<OrderDetailsViewModel>
+                // Truy xuất dữ liệu
+                var billId = (Guid)sharedData.BillId;
+                var detailsBill = sharedData.DetailsBill.ToObject<List<OrderDetailsViewModel>>(); // Chuyển đổi thành List<OrderDetailsViewModel>
 
-				// Sử dụng dữ liệu đã lấy để hiển thị hoặc thực hiện các công việc khác cần thiết
-				ViewBag.BillId = billId;
-				ViewBag.DetailsBill = detailsBill;
+                // Sử dụng dữ liệu đã lấy để hiển thị hoặc thực hiện các công việc khác cần thiết
+                ViewBag.BillId = billId;
+                ViewBag.DetailsBill = detailsBill;
 
                 ViewBag.GeneratePdfUrl = Url.Action("GeneratePdf", "PDF", new { billId });
 
 
                 return View(detailsBill);
-			}
+            }
 
-			return View(new List<OrderDetailsViewModel>());
-		}
+            return View(new List<OrderDetailsViewModel>());
+        }
 
-       
-		public IActionResult SaveStatusBill(Guid billID)
+
+        public IActionResult SaveStatusBill(Guid billID)
         {
             string DOCUMENT = "Thanh toán trực tuyến VNPay";
             var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billID);
@@ -402,6 +441,34 @@ namespace AppView.Controllers
             _dbContext.Update(objBill);
             _dbContext.SaveChanges();
             return Ok(new { success = true });
+        }
+
+        public IActionResult DetailsProduct(Guid id)
+        {
+            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+            var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
+            var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
+            if (NameProduct != null)
+            {
+                ViewBag.nameProduct = NameProduct.Name;
+            }
+            if (StyleProduct != null)
+            {
+                ViewBag.styleProduct = StyleProduct.Name;
+            }
+            var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
+            ViewBag.ImageGolden1 = ImageGoldens.Image1;
+            ViewBag.ImageGolden2 = ImageGoldens.Image2;
+            ViewBag.ImageGolden3 = ImageGoldens.Image3;
+            ViewBag.ImageGolden4 = ImageGoldens.Image4;
+            ViewBag.Price = ShoesDT.Price;
+            return Json(new
+            {
+                nameproduct = ViewBag.nameProduct,
+                styleproduct = ViewBag.styleProduct,
+                imagegolden1 = ViewBag.ImageGolden1,
+                price = ViewBag.Price
+            });
         }
     }
 }

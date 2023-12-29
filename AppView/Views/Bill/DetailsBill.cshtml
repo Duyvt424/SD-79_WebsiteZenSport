@@ -1,9 +1,11 @@
-﻿@model List<AppView.Models.DetailsBillViewModel.OrderDetailsViewModel>
+﻿@using AppAPI.DTO;
+@model List<AppView.Models.DetailsBillViewModel.OrderDetailsViewModel>
 @{
 	ViewData["Title"] = "Chi tiết đơn hàng";
 	var selectedShippingMethodID = 0;
 	var totalWeightShow = Model.First().Products.First().Quantity;
 	var totalWeight = totalWeightShow * 500;
+	var shoesDetails = ViewBag.shoesList as List<shoesDetailsDTO>;
 }
 @{
 	var billStatusHis = Model.First().BillStatusHistories;
@@ -58,6 +60,7 @@
 	<link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" />
 	<link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
 	<link rel="stylesheet" href="~/assets/css/main.css" />
+	<link rel="stylesheet" href="~/css/detail.css" />
 	<style>
 		body {
 			background-color: whitesmoke;
@@ -1107,8 +1110,443 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalAddProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document" style="max-width:70%; width:70%;">
+			<div class="modal-content">
+				<button id="close-btn" type="button" class="close quay-lai-addproduct" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<div class="row">
+						<!-- Phần bên trái (col-md-3) để hiển thị các checkbox lọc -->
+						<section id="sidebar" class="col-md-3">
+							<div class="border-bottom pb-2 ml-2">
+								<h4 id="burgundy">Bộ lọc</h4>
+							</div>
+							<form asp-controller="Home" asp-action="ListProduct1" method="post" id="myForm">
+								<div class="py-2 border-bottom ml-3" style="margin-top: 25px;">
+									<h6 class="font-weight-bold">Giới tính</h6>
+									<div id="orange"><span class="fa fa-minus"></span></div>
+									<div class="form-group">
+										<input type="checkbox" name="genders" id="male" value="Nam">
+										<label for="male" id="male">Nam</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="genders" id="female" value="Nữ">
+										<label for="female" id="female">Nữ</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="genders" id="unisex" value="Unisex">
+										<label for="unisex" id="unisex">Unisex</label>
+									</div>
+								</div>
+
+
+								<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+									<h6 class="font-weight-bold">Khoảng giá</h6>
+									<div id="orange"><span class="fa fa-minus"></span></div>
+									<div class="form-group">
+										<input type="checkbox" id="price1" name="minPrice" value="0,1000000">
+										<label for="price1">Dưới 1.000.000đ</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="price2" name="minPrice" value="1001000,2700000">
+										<label for="price2">1.001.00đ-2.700.000</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="price3" name="minPrice" value="2701000,3999000">
+										<label for="price3">2.701.000-3.999.000</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="price4" name="minPrice" value="4000000">
+										<label for="price4">Trên 4.000.000đ</label>
+									</div>
+								</div>
+
+
+								<hr>
+								<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+									<h6 class="font-weight-bold">Thương hiệu</h6>
+									<div id="orange"><span class="fa fa-minus"></span></div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="nike" value="nike">
+										<label for="nike">Nike</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="jordan" value="jordan">
+										<label for="jordan">Jordan</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="mlb" value="mlb">
+										<label for="mlb">MLB</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="adidas" value="adidas">
+										<label for="adidas">Adidas</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="reebok" value="reebok">
+										<label for="reebok">Reebok</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="vans" value="vans">
+										<label for="vans">Vans</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="converse" value="converse">
+										<label for="converse">Converse</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" name="brands" id="puma" value="puma">
+										<label for="puma">Puma</label>
+									</div>
+								</div>
+								<hr>
+								<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+									<h6 class="font-weight-bold">Phong cách</h6>
+									<div id="orange"><span class="fa fa-minus"></span></div>
+									<div class="form-group">
+										<input type="checkbox" id="name1" name="styles" value="walking">
+										<label for="name1">Walking</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="name2" name="styles" value="training">
+										<label for="name3">Training & Gym</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="name3" name="styles" value="basketball">
+										<label for="name4">Basketball</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="name4" name="styles" value="golf">
+										<label for="name7">Golf</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="name5" name="styles" value="tennis">
+										<label for="name8">Tennis</label>
+									</div>
+									<div class="form-group">
+										<input type="checkbox" id="name6" name="styles" value="athletic">
+										<label for="name9">Athletic</label>
+									</div>
+								</div>
+								<hr>
+								<div class="py-2 ml-3 bottom ml-3" style="margin-top: 25px;">
+									<h6 class="font-weight-bold">Màu sắc</h6>
+									<div id="orange">
+										<span class="fa fa-minus"></span>
+									</div>
+									<div class="" style="float: left;">
+										<button type="button" id="redBtn" name="colors" value="red" class="color-button color-red" style="background-color: rgb(205, 9, 9); width: 25px; height: 25px; border-radius: 50%; border: none;"></button>
+										<p style="font-size: 11px; padding-left: 5px;">Đỏ</p>
+										<input type="checkbox" id="redChk" name="colors" value="red" />
+									</div>
+									<div class="" style="float: left; padding-left: 10px;">
+										<button type="button" id="blackBtn" name="colors" value="black" class="color-button color-black" style="background-color: black; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Đen</p>
+										<input type="checkbox" id="blackChk" name="colors" value="black" />
+									</div>
+									<div class="" style="float: left; padding-left: 10px;">
+										<button type="button" id="yellowBtn" name="colors" value="yellow" class="color-button color-orange" style="background-color: yellow; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Vàng</p>
+										<input type="checkbox" id="yellowChk" name="colors" value="yellow" />
+									</div>
+									<div class="" style="float: left; padding-left: 10px;">
+										<button type="button" id="pinkBtn" name="colors" value="pink" class="color-button color-violet" style="background-color: pink; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Hồng</p>
+										<input type="checkbox" id="pinkChk" name="colors" value="pink" />
+									</div>
+									<br>
+									<div class="" style="float: right; padding-top: 15px; padding-right: 69px;">
+										<button type="button" id="greenBtn" name="colors" value="green" class="color-button color-green" style="background-color: green; width: 25px; height: 25px; border-radius: 50%; border: none; "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Xanh</p>
+										<input type="checkbox" id="greenChk" name="colors" value="green" />
+									</div>
+									<div class="" style="float: right; padding-right: 7px; padding-top: 15px">
+										<button type="button" id="whiteBtn" name="colors" value="white" class="color-button color-white" style="background-color: white; width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Trắng</p>
+										<input type="checkbox" id="whiteChk" name="colors" value="white" />
+									</div>
+									<div class="" style="float: right; padding-right: 8px; padding-top: 15px">
+										<button type="button" id="orangeBtn" name="colors" value="orange" class="color-button color-orange" style="width: 25px; height: 25px; background-color: rgb(255, 85, 23); border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Cam</p>
+										<input type="checkbox" id="orangeChk" name="colors" value="orange" />
+									</div>
+									<div class="" style="float: right; padding-right: 9px; padding-top: 15px">
+										<button type="button" id="brownBtn" name="colors" value="brown" class="color-button color-brown" style="width: 25px; height: 25px; background-color: brown; border-radius: 50%; border: 1px solid rgb(120, 117, 117); "></button>
+										<p style="font-size: 11px; padding-left: 5px;">Nâu</p>
+										<input type="checkbox" id="brownChk" name="colors" value="brown" />
+									</div>
+								</div>
+							</form>
+						</section>
+						<section id="products" class="col-md-9">
+							<div class="container mt-4 d-flex justify-content-center" style="padding-top: 15px;">
+								<div class="row g-0">
+									@foreach (var item in shoesDetails)
+									{
+										<div class="col-sm-6 col-md-4" style="padding-top: 5px;">
+											<div class="cards">
+												<div class="first bg-white p-4 text-center">
+													<!-- Thêm data-id để lưu ShoesDetailsId -->
+													<a href="#" id="product-link" class="product-link" data-toggle="modal" data-target="#modalDetailsProduct" data-id="@item.ShoesDetailsId">
+														<img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;">
+													</a>
+													<h5 class="line1" style="padding-top:5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h5>
+													<p class="line1">@ViewBag.NameStyle[item.ShoesDetailsId]</p>
+													<p style="font-size: 13px;">@item.Price.ToString("N0")đ</p>
+												</div>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+		$(".product-link").on("click", function (e) {
+			e.preventDefault();
+
+			// Lấy ShoesDetailsId từ thuộc tính data-id
+			var shoesDetailsId = $(this).data("id");
+
+			// Gọi phương thức DetailsProduct sử dụng AJAX
+			$.ajax({
+				url: '@Url.Action("DetailsProduct", "Bill")',
+				type: 'GET',
+				data: { id: shoesDetailsId },
+				success: function (data) {
+					// Cập nhật nội dung modal với dữ liệu nhận được
+					updateModalContent(data);
+
+					// Mở modal
+					$("#modalAddProduct").modal("hide");
+					$("#modalDetailsProduct").modal("show");
+				},
+				error: function () {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		});
+
+		// Hàm cập nhật nội dung modal với dữ liệu chi tiết sản phẩm
+		function updateModalContent(data) {
+			console.log('sssss', data.nameproduct);
+			// Lấy các phần tử trong modal dựa trên id
+			const modalContent = document.querySelector('.details-product');
+			const nameProductElement = modalContent.querySelector('.nameDetails');
+			const styleProductElement = modalContent.querySelector('.styleDetails');
+			const imageGolden1Element = modalContent.querySelector('.image1');
+			const priceElement = modalContent.querySelector('.priceDetails');
+
+			// Cập nhật nội dung của các phần tử dựa trên dữ liệu nhận được từ server
+			nameProductElement.textContent = data.nameproduct;
+			styleProductElement.textContent = data.styleproduct;
+			imageGolden1Element.src = "/image/" + data.imagegolden1;
+			priceElement.textContent = data.price.toLocaleString('vi-VN') + "đ";
+		}
+	});
+</script>
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalDetailsProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document" style="max-width:70%; width:70%;">
+			<div class="modal-content details-product">
+				<button id="close-btn" type="button" class="close quay-lai-addproduct" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<div class="container mt-4 d-flex justify-content-center" style="padding-top: 45px;">
+						<div class="row g-0">
+							<!-- src="image/anh11.png" -->
+							<div class="col-12 col-sm-12 col-md-7 col-lg-7">
+								<div class="product">
+									<div class="product-small-img d-none d-sm-none d-md-none d-lg-none d-xl-block">
+										<img src="" alt="Product Image" class="img-fluid image1" style="width: 100%;">
+									</div>
+								</div>
+							</div>
+							<!-- src="image/video1.mp4" -->
+							<div class="col-12 col-sm-12 col-md-5 col-lg-5">
+								<div class="product p-6 p-md-5">
+									<div class="mt-4 mb-3">
+										<span class="text-uppercase text-muted brand" style="font-size: 11px;">
+											Thông tin sản phẩm
+										</span>
+										<h5 class="text-uppercase nameDetails" style="padding-top: 5px;"></h5>
+										<!-- Nike SuperRep Cycle 2 Next Nature -->
+										<!-- Indoor Cycling Shoes -->
+										<p class="styleDetails" style="padding-top: 5px; font-weight:bold;">Kiểu dáng: </p>
+										<p class="priceDetails" style="font-size: 14px; padding-top: 5px; font-weight:bold;">Giá:</p>
+										<p class="quanityDetals" style="font-size: 14px; padding-top: 5px;">Sản phẩm có sẵn: <span style="font-weight:bold;" id="quantity"></span></p>
+										<p style="font-size: 14px; padding-top: 5px;">Chiều dài chân phù hợp: <span style="font-weight:bold;" id="result"></span></p>
+									</div>
+									<h6 class="text-uppercase" style="font-size: 12px;">Select Size</h6>
+									<div class="cart mt-4 align-items-center">
+										<form method="post" action="">
+											<div class="label1" style="padding-top: 5px;">
+												<label class="radio">
+													<input type="radio" name="size" value="34" checked> <span class="span1">34</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="35"> <span class="span1">35</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="36"> <span class="span1">36</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="37"> <span class="span2">37</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="38"> <span class="span2">38</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="39"> <span class="span2">39</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="40"> <span class="span3">40</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="41"> <span class="span3">41</span>
+												</label>
+												<label class="radio">
+													<input type="radio" name="size" value="42"> <span class="span3">42</span>
+												</label>
+											</div>
+											<button type="submit" id="addToCartButton" class="btn btn-danger text mr-2 px-4" style="width: 79%; border-radius: 10px; color: white; margin-top:10px;">Add to bill</button>
+										</form>
+										<script>
+											document.addEventListener("DOMContentLoaded", function () {
+												// Lấy tất cả các thẻ a có class "product-link"
+												const modalUpdateProduct = document.getElementById('product-link');
+												const shoesId = $(modalUpdateProduct).attr('data-id');
+												// Lấy danh sách radio button theo tên "size"
+												const sizeRadios = document.getElementsByName("size");
+												// Lựa chọn size mặc định (ví dụ: size đầu tiên)
+												const defaultSize = sizeRadios[0].value;
+
+												// Gọi hàm để cập nhật thông tin số lượng và chiều dài chân ngay khi trang được load
+												updateQuantityAndFootLength(defaultSize);
+
+												// Lắng nghe sự kiện click trên radio button
+												for (let i = 0; i < sizeRadios.length; i++) {
+													sizeRadios[i].addEventListener("click", function () {
+														const selectedSize = this.value;
+														// Gọi hàm để cập nhật thông tin số lượng và chiều dài chân dựa trên size đã chọn
+														console.log('sddsdds', shoesId);
+														updateQuantityAndFootLength(selectedSize, shoesId);
+													});
+												}
+											});
+
+											function updateQuantityAndFootLength(size, shoesDetailsId) {
+												const quantitySpan = document.getElementById('quantity');
+												const addToCartButton = document.getElementById('addToCartButton');
+												// Gửi yêu cầu Ajax để lấy số lượng và chiều dài chân dựa trên kích thước và ShoesDetailsId
+												$.get('@Url.Action("GetQuantityForSize", "Home")', { shoesDetailsId: shoesDetailsId, sizeForm: size }, function (data) {
+													// Cập nhật nội dung của quantitySpan bằng số lượng tồn từ phản hồi.
+													quantitySpan.textContent = data.quantity;
+													const soluong = data.quantity;
+													if (soluong <= 0) {
+														addToCartButton.disabled = true;
+														addToCartButton.textContent = "Hết hàng";
+													} else {
+														addToCartButton.disabled = false;
+														addToCartButton.textContent = "Add To Cart";
+													}
+
+													const result = document.getElementById("result");
+													result.textContent = getFootLength(size) + " cm";
+												});
+											}
+
+											function getFootLength(size) {
+												const footLengths = {
+													"34": 21.5,
+													"35": 22,
+													"36": 23,
+													"37": 23.5,
+													"38": 24,
+													"39": 25,
+													"40": 25.5,
+													"41": 26,
+													"42": 27,
+												};
+												return footLengths[size] || "Không rõ";
+											}
+										</script>
+									</div>
+									<div class="chu1">
+										<hr style="width:77%;" />
+										<h5 onclick="toggleDescription()" style="width:77%;">Thông tin chi tiết sản phẩm <img src="~/image/icons8-chevron-down-11.png" style="float:right; padding-top:5px;" id="imgMoTa" /></h5>
+										<p class="about" style="font-size: 13px; margin-top: 5px; text-align: justify; display:none; width:77%;" id="description">
+											<strong>Mô tả:</strong><br />
+											<div class="additional-info">
+												<strong>🎀 Đặc tính nổi bật:</strong>
+												<ul>
+													<li>Kháng nước nhẹ khi đi mưa</li>
+													<li>Đế và lót được khâu toàn bộ tránh bung keo</li>
+													<li>Nhiều phiên bản màu sắc</li>
+													<li>Thích hợp sử dụng với nhiều hoạt động thể thao, vui chơi,...</li>
+												</ul>
+												<strong>🎀 Hướng dẫn sử dụng:</strong>
+												<ul>
+													<li>Bảo quản nơi khô ráo tránh ẩm mốc sản phẩm</li>
+													<li>Không giặt giày với nước nhiệt độ cao</li>
+													<li>Khuyến cáo sử dụng thêm sản phẩm vệ sinh giày của shop để tăng tuổi thọ cho sản phẩm</li>
+												</ul>
+												<strong>🎀 Cách tìm mua sản phẩm @ViewBag.nameProduct:</strong> Vào ô tìm kiếm của Shop gõ từ khóa "@ViewBag.nameProduct". <br />
+												<strong>🎀 Hotline:</strong> 0766900008
+											</div>
+										</p>
+									</div>
+									<script>
+										function toggleDescription() {
+											var description = document.getElementById("description");
+											var img = document.getElementById("imgMoTa");
+											if (description.style.display === "none") {
+												description.style.display = "block";
+												img.src = "/image/icons8-chevron-up-11.png";
+											} else {
+												description.style.display = "none";
+												img.src = "/image/icons8-chevron-down-11.png";
+											}
+										}
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('.btn-add-product').click(function () {
+			$('#modalAddProduct').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.quay-lai-addproduct').click(function () {
+			$('#modalAddProduct').modal('hide');
+		});
+	});
+</script>
 <script>
 	window.addEventListener('load', function () {
+		var idBill = '@Model.First().BillID.ToString()';
 		const updateButtons = document.querySelectorAll('.btn-updateProduct');
 		const quantityInput = document.getElementById('quantityInput');
 		const quantityInputs = document.querySelectorAll('.inputTang');
@@ -1127,7 +1565,7 @@
 			var shippingCostString1 = phivanchuyenElement1.textContent;
 			var match1 = shippingCostString1.match(/([\d,.]+)/);
 			var phivanchuyen1 = match1 ? parseFloat(match1[1].replace(/[,.]/g, '')) : 0;
-			updateShippinginBill('@Model.First().BillID.ToString()', phivanchuyen1);
+			updatePriceShippingInBill(idBill, phivanchuyen1);
 		}, 300);
 
 		// Khởi tạo tổng tiền của cả giỏ hàng
@@ -1584,7 +2022,7 @@
 			<h5 class="mb-0">Sản phẩm</h5>
 			@if (userName != null)
 			{
-				<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thêm sản phẩm</a>
+				<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-add-product">Thêm sản phẩm</a>
 			}
 		</div>
 		<div class="card-body">
@@ -1814,28 +2252,26 @@
 			var totalPriceElement = document.getElementById('totalPrice');
 			var totalPriceText = totalPriceElement.innerText;
 			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+
+			var phivanchuyenElement = document.getElementById('phivanchuyen');
+			var shippingCostString = phivanchuyenElement.textContent;
+			var match = shippingCostString.match(/([\d,.]+)/);
+			var phivanchuyen = match ? parseFloat(match[1].replace(/[,.]/g, '')) : 0;
 			//lấy giá giảm voucher
 			var priceVoucherElement = document.getElementById('giamgia');
 			var priceVoucherText = priceVoucherElement.innerText;
 			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
-			//lấy id địa chỉ
-			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
-			const shippingCost123 = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost) : "0";
-			console.log('dsfjksfdg11', shippingCost123);
 			// hiển thị tổng giá tiền khi trang đc load
-			var totalOk = (totalPrice + shippingCost123) - priceVoucher;
+			var totalOk = (totalPrice + phivanchuyen) - priceVoucher;
 			var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
 			tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			// Lắng nghe sự kiện change của tất cả các checkbox
 			var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
 			checkboxes.forEach(function (checkbox) {
 				checkbox.addEventListener('change', function () {
-					updateShippingCost();
-					console.log('aaaaaa', shippingCost123);
-					updatePriceShippingInBill(idBill, shippingCost123, priceVoucher);
+					updatePriceShippingInBill(idBill, phivanchuyen, priceVoucher);
 				});
 			});
-
 			// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
 			updateShippingCost();
 		});
@@ -1844,6 +2280,11 @@
 			var totalPriceElement = document.getElementById('totalPrice');
 			var totalPriceText = totalPriceElement.innerText;
 			var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+			//lấy giá ship
+			var phivanchuyenElement = document.getElementById('phivanchuyen');
+			var shippingCostString = phivanchuyenElement.textContent;
+			var match = shippingCostString.match(/([\d,.]+)/);
+			var phivanchuyen = match ? parseFloat(match[1].replace(/[,.]/g, '')) : 0;
 			//lấy giá giảm voucher
 			var priceVoucherElement = document.getElementById('giamgia');
 			var priceVoucherText = priceVoucherElement.innerText;
@@ -1854,11 +2295,9 @@
 				var wardCode = parseFloat(selectedCheckbox.closest('.existing-address').dataset.idXa);
 				var idDistrict = parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen);
 				calculateShippingFee(wardCode, idDistrict);
-				// Cập nhật giá trị vận chuyển trên trang
-				const shippingCost = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingCost) : "0";
-				console.log('aaaaaaaaa', shippingCost);
+
 				// tính tổng tiền khi ng dùng đổi checkbox
-				var totalOk = totalPrice + shippingCost - priceVoucher;
+				var totalOk = totalPrice + phivanchuyen - priceVoucher;
 				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
 				tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			}
