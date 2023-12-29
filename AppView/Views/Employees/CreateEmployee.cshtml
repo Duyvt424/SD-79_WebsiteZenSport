@@ -1,0 +1,97 @@
+﻿@model AppData.Models.Employee
+
+@{
+    ViewData["Title"] = "CreateEmployee";
+}
+
+
+<link rel="stylesheet" href="~/css/FormInput.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="container">
+    <section class="vh-100 bg-image">
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+            <div class="container h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="">
+                            <div class="card-body p-5">
+                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 250px;">
+                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+                                    BECOME A
+                                    NIKE MEMBER
+                                </h2>
+                                <p style="text-align: center; font-size: 14px;">
+                                    Create your Nike Member profile and
+                                    get first <br> access to the very best of Nike products, inspiration <br> and
+                                    community.
+                                </p>
+                                <form asp-action="CreateEmployee" enctype="multipart/form-data" style="margin-top:10px;" id="register-form">
+                                    <div class="form-group">
+                                        <input type="file" name="imageFile1" class="form-control" accept="image/*" />
+                                    </div>
+                                    <div class="form-floating mb-3" style="margin-top:3%;">
+                                        <input asp-for="FullName" type="text" class="form-control" placeholder="FullName" required>
+                                        <label for="floatingInputUsername">FullName</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="UserName" type="text" class="form-control" placeholder="UserName" required>
+                                        <label for="floatingInputUsername">UserName</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
+                                        <label for="floatingInputUsername">Password</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Email" type="text" class="form-control" placeholder="Email" required>
+                                        <label for="floatingInputUsername">Email</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Sex" type="text" class="form-control" placeholder="Sex" required>
+                                        <label for="floatingInputUsername">Sex</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="ResetPassword" type="text" class="form-control" placeholder="ResetPassword" required>
+                                        <label for="floatingInputUsername">ResetPassword</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="PhoneNumber" required>
+                                        <label for="floatingInputUsername">PhoneNumber</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="IdentificationCode" type="text" class="form-control" placeholder="IdentificationCode" required>
+                                        <label for="floatingInputUsername">Số CCCD</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Address" type="text" class="form-control" placeholder="Address" required>
+                                        <label for="floatingInputUsername">Địa chỉ</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="Status" type="number" class="form-control" placeholder="Trạng thái" required>
+                                        <label for="floatingInputUsername">Trạng thái (0 - hoạt động, 1 - ngưng hoạt động)</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" required>
+                                        <label for="floatingInputUsername">Ngày tạo</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="RoleID" class="form-control" asp-items="@ViewBag.RoleList"></select>
+                                        <label for="floatingInputEmail">Role</label>
+                                        <span asp-validation-for="RoleID" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center" style="padding-top:5px;">
+                                        <button type="submit" value="Create"
+                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+                                            <p style="color: white; font-size: 15px; text-decoration: none;">Create</p>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
