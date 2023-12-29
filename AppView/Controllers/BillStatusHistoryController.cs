@@ -134,6 +134,7 @@ namespace AppView.Controllers
                 };
                 bill.Status = 1;
                 bill.ConfirmationDate = DateTime.Now;
+                bill.EmployeeID = EmployeeID;
                 _dbContext.Bills.Update(bill);
                 _repos.AddItem(billStatusHis);
                 _dbContext.SaveChanges();
@@ -160,6 +161,7 @@ namespace AppView.Controllers
                 };
                 bill.Status = 2;
                 bill.DeliveryDate = DateTime.Now;
+                bill.EmployeeID = EmployeeID;
                 _dbContext.Bills.Update(bill);
                 _repos.AddItem(billStatusHis);
                 _dbContext.SaveChanges();
@@ -186,6 +188,7 @@ namespace AppView.Controllers
                 };
                 bill.Status = 3;
                 bill.SuccessDate = DateTime.Now;
+                bill.EmployeeID = EmployeeID;
                 _dbContext.Bills.Update(bill);
                 _repos.AddItem(billStatusHis);
                 _dbContext.SaveChanges();
@@ -225,6 +228,7 @@ namespace AppView.Controllers
                 };
                 objBill.Status = 4;
                 objBill.CancelDate = DateTime.Now;
+                objBill.EmployeeID = EmployeeID;
                 _dbContext.Bills.Update(objBill);
                 _repos.AddItem(billStatusHis);
                 _dbContext.SaveChanges();
@@ -253,6 +257,7 @@ namespace AppView.Controllers
                     EmployeeID = EmployeeID
                 };
                 bill.UpdateDate = DateTime.Now;
+                bill.EmployeeID = EmployeeID;
                 _dbContext.Bills.Update(bill);
 
                 var previousQuantity = billDetails.Quantity;
