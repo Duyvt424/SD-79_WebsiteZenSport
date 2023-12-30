@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -18,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 //using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
 using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
+using IShoesDetailsService = AppView.IServices.IShoesDetailsService;
 using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;
 
 namespace AppView.Controllers
@@ -469,6 +471,56 @@ namespace AppView.Controllers
                 imagegolden1 = ViewBag.ImageGolden1,
                 price = ViewBag.Price
             });
+        }
+
+        public IActionResult AddToBill(Guid ShoesDetailsId, string Size, Guid BillId)
+        {
+            var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == Size)?.SizeID;
+            var shoesDT_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId && c.SizeID == objSize);
+            if (shoesDT_Size == null) // nếu chưa tồn tại bản ghi nào thỏa mãn đk thì báo lỗi
+            {
+                return Content("Error");
+            }
+            var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId);
+            if (ShoesDT == null)
+            {
+                return Content("Sản phẩm không tồn tại");
+            }
+            var existingBillItem = _dbContext.BillDetails.FirstOrDefault(c => c.BillID == BillId && c.ShoesDetails_SizeID == shoesDT_Size.ID);
+            if (existingBillItem != null) // Sản phẩm đã tồn tại trong bill, tăng số lượng lên 1
+            {
+                existingBillItem.Quantity++;
+                _dbContext.BillDetails.Update(existingBillItem);
+            }
+            else
+            {
+                // Sản phẩm chưa tồn tại trong giỏ hàng, thêm mới vào bill
+                var billDetails = new BillDetails
+                {
+                    ID = Guid.NewGuid(),
+                    BillID = BillId,
+                    ShoesDetails_SizeID = shoesDT_Size.ID,
+                    Quantity = 1
+                };
+                _dbContext.BillDetails.Add(billDetails);
+            }
+            _dbContext.Update(shoesDT_Size);
+            shoesDT_Size.Quantity--;
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
+
+        public IActionResult RemoveItemInBill(Guid ShoesDetailsId, string sizeName, Guid BillId)
+        {
+            var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == sizeName)?.SizeID;
+            var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId && c.SizeID == objSize);
+            var billItem = _dbContext.BillDetails.FirstOrDefault(c => c.ShoesDetails_SizeID == ShoesDT_Size.ID && c.BillID == BillId);
+            ShoesDT_Size.Quantity += billItem.Quantity;
+            _dbContext.BillDetails.Remove(billItem);
+            _dbContext.SaveChanges();
+            _dbContext.Update(ShoesDT_Size);
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
         }
     }
 }

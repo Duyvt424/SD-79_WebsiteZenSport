@@ -1,14 +1,13 @@
 ﻿using AppAPI.DTO;
-using AppData.IServices;
+using AppAPI.Interfaces;
 using AppData.Models;
-using AppView.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppView.Services
+namespace AppAPI.Services
 {
     public class ShoesDetailsService : IShoesDetailsService
     {

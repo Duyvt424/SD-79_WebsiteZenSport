@@ -1318,7 +1318,9 @@
 
 			// Lấy ShoesDetailsId từ thuộc tính data-id
 			var shoesDetailsId = $(this).data("id");
-
+			var inputShoesId = document.getElementById('shoesDetailsIdHide');
+			inputShoesId.value = shoesDetailsId;
+			console.log('eeeee', inputShoesId.value);
 			// Gọi phương thức DetailsProduct sử dụng AJAX
 			$.ajax({
 				url: '@Url.Action("DetailsProduct", "Bill")',
@@ -1389,10 +1391,11 @@
 										<p class="priceDetails" style="font-size: 14px; padding-top: 5px; font-weight:bold;">Giá:</p>
 										<p class="quanityDetals" style="font-size: 14px; padding-top: 5px;">Sản phẩm có sẵn: <span style="font-weight:bold;" id="quantity"></span></p>
 										<p style="font-size: 14px; padding-top: 5px;">Chiều dài chân phù hợp: <span style="font-weight:bold;" id="result"></span></p>
+										<input id="shoesDetailsIdHide" style="display:none;" />
 									</div>
 									<h6 class="text-uppercase" style="font-size: 12px;">Select Size</h6>
 									<div class="cart mt-4 align-items-center">
-										<form method="post" action="">
+										<form>
 											<div class="label1" style="padding-top: 5px;">
 												<label class="radio">
 													<input type="radio" name="size" value="34" checked> <span class="span1">34</span>
@@ -1422,13 +1425,10 @@
 													<input type="radio" name="size" value="42"> <span class="span3">42</span>
 												</label>
 											</div>
-											<button type="submit" id="addToCartButton" class="btn btn-danger text mr-2 px-4" style="width: 79%; border-radius: 10px; color: white; margin-top:10px;">Add to bill</button>
+											<button type="button" id="addToBill" class="btn btn-danger text mr-2 px-4" style="width: 79%; border-radius: 10px; color: white; margin-top:10px;">Add to bill</button>
 										</form>
 										<script>
 											document.addEventListener("DOMContentLoaded", function () {
-												// Lấy tất cả các thẻ a có class "product-link"
-												const modalUpdateProduct = document.getElementById('product-link');
-												const shoesId = $(modalUpdateProduct).attr('data-id');
 												// Lấy danh sách radio button theo tên "size"
 												const sizeRadios = document.getElementsByName("size");
 												// Lựa chọn size mặc định (ví dụ: size đầu tiên)
@@ -1440,12 +1440,39 @@
 												// Lắng nghe sự kiện click trên radio button
 												for (let i = 0; i < sizeRadios.length; i++) {
 													sizeRadios[i].addEventListener("click", function () {
+														// Lấy tất cả các thẻ a có class "product-link"
+														const modalUpdateProduct = document.getElementById('shoesDetailsIdHide');
+														const shoesId = modalUpdateProduct.value;
 														const selectedSize = this.value;
-														// Gọi hàm để cập nhật thông tin số lượng và chiều dài chân dựa trên size đã chọn
-														console.log('sddsdds', shoesId);
 														updateQuantityAndFootLength(selectedSize, shoesId);
 													});
 												}
+											});
+
+											document.getElementById("addToBill").addEventListener("click", function () {
+									            const billId = '@Model.First().BillID.ToString()';
+												const modalUpdateProduct = document.getElementById('shoesDetailsIdHide');
+												const shoesId = modalUpdateProduct.value;;
+												const selectedSize = getSelectedSize();
+												AddToBill(shoesId, selectedSize, billId);
+											});
+
+											function getSelectedSize() {
+												const sizeRadios = document.getElementsByName("size");
+												for (let i = 0; i < sizeRadios.length; i++) {
+													if (sizeRadios[i].checked) {
+														return sizeRadios[i].value;
+													}
+												}
+												return null;
+											}
+
+											document.getElementById('removeItemBill').addEventListener("click", function () {
+									            const billId = '@Model.First().BillID.ToString()';
+												const modalUpdateProduct = document.getElementById('shoesDetailsIdHide');
+												const shoesId = modalUpdateProduct.value;;
+												const selectedSize = getSelectedSize();
+												RemoveItemInBill(shoesId, selectedSize, billId);
 											});
 
 											function updateQuantityAndFootLength(size, shoesDetailsId) {
@@ -1482,6 +1509,32 @@
 													"42": 27,
 												};
 												return footLengths[size] || "Không rõ";
+											}
+
+											function AddToBill(shoesDetailsId, size, billId) {
+												$.ajax({
+													url: '@Url.Action("AddToBill", "Bill")',
+													type: 'POST',
+													data: { ShoesDetailsId: shoesDetailsId, Size: size, BillId: billId },
+													success: function (data) {
+														location.reload();
+													},
+													error: function () {
+													}
+												});
+											}
+
+											function RemoveItemInBill(shoesDetailsId, size, billId) {
+												$.ajax({
+													url: '@Url.Action("RemoveItemInBill", "Bill")',
+													type: 'POST',
+													data: { ShoesDetailsId: shoesDetailsId, sizeName: size, BillId: billId },
+													success: function (data) {
+														location.reload();
+													},
+													error: function () {
+													}
+												});
 											}
 										</script>
 									</div>
@@ -2062,7 +2115,7 @@
 								<i class="fa fa-pencil" style="padding-top:1%; font-size:15px;"></i>
 							</button>
 
-							<button type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;">
+							<button id="removeItemBill" type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;" data-shoes-id="@item.Products.First().ProductID" data-size="@item.Products.First().Size">
 								<i class="fa fa-trash" style="padding-top:1%; font-size:15px;"></i>
 							</button>
 						}

@@ -1,5 +1,6 @@
 ﻿using AppAPI.DTO;
 using AppAPI.Interfaces;
+using AppAPI.Services;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
@@ -17,7 +18,7 @@ namespace AppAPI.Controllers
         private readonly IAllRepositories<ShoesDetails> repos;
         ShopDBContext context = new ShopDBContext();
         DbSet<ShoesDetails> shoesdt;
-
+        private readonly IShoesDetailsService _shoesDT;
 
         private readonly IProduct _product;
         public ShoesDetailsController(IProduct product)
@@ -26,13 +27,13 @@ namespace AppAPI.Controllers
             AllRepositories<ShoesDetails> all = new AllRepositories<ShoesDetails>(context, shoesdt);
             repos = all;
             _product = product;
-
+            _shoesDT = new ShoesDetailsService();
         }
 
         [HttpGet("get-shoesdetails")]
-        public IEnumerable<ShoesDetails> GetAllShoesDetails()
+        public IEnumerable<shoesDetailsDTO> GetAllShoesDetails()
         {
-            return repos.GetAll();
+            return _shoesDT.GetallShoedetailDtO().ToList();
         }
 
         [HttpGet("find-shoesdetails")]
@@ -63,7 +64,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<ShoesDetailsController>/5
         [HttpPut("edit-shoesdetail")]
-        public bool Put(Guid id, string shoesdetailsCode, DateTime dateCreated, decimal price, decimal importprice, string description, int status, Guid colorId, Guid productId, Guid soleId, Guid styleId)
+        public bool Put(Guid id, string shoesdetailsCode, DateTime dateCreated, decimal price, decimal importprice, string description, int status, Guid colorId, Guid productId, Guid soleId, Guid styleId, Guid SexID)
         {
             var shoesdt = repos.GetAll().First(p => p.ShoesDetailsId == id);
             shoesdt.ShoesDetailsCode = shoesdetailsCode;
@@ -76,6 +77,7 @@ namespace AppAPI.Controllers
             shoesdt.ProductID = productId;
             shoesdt.SoleID = soleId;
             shoesdt.StyleID = styleId;
+            shoesdt.SexID = SexID;
             return repos.EditItem(shoesdt);
         }
         [HttpDelete("delete-shoesdetail")]

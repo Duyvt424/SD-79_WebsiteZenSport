@@ -80,6 +80,11 @@
                                         <label for="floatingInputEmail">Chọn kiểu dáng</label>
                                         <span asp-validation-for="Style" class="text-danger"></span>
                                     </div>
+                                    <div class="form-floating mb-3">
+                                        <select asp-for="SexID" class="form-control" asp-items="@ViewBag.SexList"></select>
+                                        <label for="floatingInputEmail">Chọn giới tính</label>
+                                        <span asp-validation-for="Sex" class="text-danger"></span>
+                                    </div>
                                     <div class="d-flex justify-content-center">
                                         <button type="submit" value="Create"
                                                 style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"

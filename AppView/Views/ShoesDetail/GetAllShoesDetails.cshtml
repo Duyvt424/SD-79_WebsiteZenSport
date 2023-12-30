@@ -300,6 +300,7 @@
                             <th>Tên sản phẩm</th>
                             <th>Loại đế</th>
                             <th>Kiểu dáng</th>
+                            <th>Giới tính</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -328,6 +329,7 @@
                                     <td>@item.ProductName</td>
                                     <td>@item.SoleName</td>
                                     <td>@item.StyleName</td>
+                                    <td>@item.SexName</td>
                                     <td>
                                         <a href="@Url.Action("UpdateShoesDetails", new { id = item.ShoesDetailsId})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
                                         <a href="@Url.Action("DeleteShoesDetails", new { id = item.ShoesDetailsId})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>

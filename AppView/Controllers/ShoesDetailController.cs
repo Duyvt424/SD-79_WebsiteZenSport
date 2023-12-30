@@ -1,4 +1,5 @@
-﻿using AppData.IRepositories;
+﻿using AppAPI.DTO;
+using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
 using AppView.Models;
@@ -17,12 +18,14 @@ namespace AppView.Controllers
         private readonly IAllRepositories<Product> _productRepos;
         private readonly IAllRepositories<Sole> _soleRepos;
         private readonly IAllRepositories<Style> _styleRepos;
+        private readonly IAllRepositories<Sex> _sexRepos;
         private ShopDBContext _context = new ShopDBContext();
         private DbSet<ShoesDetails> _shoesdt;
         private DbSet<Color> _color;
         private DbSet<Product> _product;
         private DbSet<Sole> _sole;
         private DbSet<Style> _style;
+        private DbSet<Sex> _sex;
 
         public ShoesDetailController()
         {
@@ -45,6 +48,10 @@ namespace AppView.Controllers
             _style = _context.Styles;
             AllRepositories<Style> styleAll = new AllRepositories<Style>(_context, _style);
             _styleRepos = styleAll;
+
+            _sex = _context.Sex;
+            AllRepositories<Sex> sexAll = new AllRepositories<Sex>(_context, _sex);
+            _sexRepos = sexAll;
         }
 
         private string GenerateShoesDetailsCode()
@@ -65,11 +72,12 @@ namespace AppView.Controllers
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
             string apiData = await response.Content.ReadAsStringAsync();
-            var shoesdt = JsonConvert.DeserializeObject<List<ShoesDetails>>(apiData);
+            var shoesdt = JsonConvert.DeserializeObject<List<shoesDetailsDTO>>(apiData);
             var color = _colorRepos.GetAll();
             var product = _productRepos.GetAll();
             var sole = _soleRepos.GetAll();
             var style = _styleRepos.GetAll();
+            var sex = _sexRepos.GetAll();
 
             // Tạo danh sách ProductViewModel với thông tin Supplier và Material
             var shoesDetailsViewModels = shoesdt.Select(shoesdt => new ShoesDetailsViewModel
@@ -84,7 +92,8 @@ namespace AppView.Controllers
                 ColorName = color.FirstOrDefault(s => s.ColorID == shoesdt.ColorID)?.Name,
                 ProductName = product.FirstOrDefault(m => m.ProductID == shoesdt.ProductID)?.Name,
                 SoleName = sole.FirstOrDefault(c => c.SoleID == shoesdt.SoleID)?.Name,
-                StyleName = style.FirstOrDefault(m => m.StyleID == shoesdt.StyleID)?.Name
+                StyleName = style.FirstOrDefault(m => m.StyleID == shoesdt.StyleID)?.Name,
+                SexName = sex.FirstOrDefault(m => m.SexID == shoesdt.SexID)?.SexName
             }).ToList();
             return View(shoesDetailsViewModels);
         }
@@ -107,6 +116,10 @@ namespace AppView.Controllers
                 var style = shopDBContext.Styles.Where(c => c.Status == 0).ToList();
                 SelectList selectListStyle = new SelectList(style, "StyleID", "Name");
                 ViewBag.StyleList = selectListStyle;
+
+                var sex = _sexRepos.GetAll();
+                SelectList selectListSex = new SelectList(sex, "SexID", "SexName");
+                ViewBag.SexList = selectListSex;
             }
             return View();
         }
@@ -114,10 +127,11 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?shoesdetailsCode={GenerateShoesDetailsCode()}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/create-shoesdetail?shoesdetailsCode={GenerateShoesDetailsCode()}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}&SexID={shoesdt.SexID}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllShoesDetails");
         }
+
         [HttpGet]
         public IActionResult UpdateShoesDetails(Guid id) // Khi ấn vào Create thì hiển thị View
         {
@@ -141,13 +155,17 @@ namespace AppView.Controllers
                 var style = shopDBContext.Styles.ToList();
                 SelectList selectListStyle = new SelectList(style, "StyleID", "Name");
                 ViewBag.StyleList = selectListStyle;
+
+                var sex = _sexRepos.GetAll();
+                SelectList selectListSex = new SelectList(sex, "SexID", "SexName");
+                ViewBag.SexList = selectListSex;
             }
             return View(shoesdt);
         }
         public async Task<IActionResult> UpdateShoesDetails(ShoesDetails shoesdt)
         {
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&shoesdetailsCode={shoesdt.ShoesDetailsCode}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}";
+            string apiUrl = $"https://localhost:7036/api/ShoesDetails/edit-shoesdetail?id={shoesdt.ShoesDetailsId}&shoesdetailsCode={shoesdt.ShoesDetailsCode}&dateCreated={shoesdt.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}&price={shoesdt.Price}&importprice={shoesdt.ImportPrice}&description={shoesdt.Description}&status={shoesdt.Status}&colorId={shoesdt.ColorID}&productId={shoesdt.ProductID}&soleId={shoesdt.SoleID}&styleId={shoesdt.StyleID}&SexID={shoesdt.SexID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllShoesDetails");
         }

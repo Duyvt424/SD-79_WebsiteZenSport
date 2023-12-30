@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppView.IServices
+namespace AppAPI.Interfaces
 {
     public interface IShoesDetailsService
     {
@@ -15,9 +15,7 @@ namespace AppView.IServices
         public bool UpdateShoesDetails(ShoesDetails shoesDetails);
         public bool DeleteShoesDetails(Guid id);
         public List<ShoesDetails> GetAllShoesDetails();
-
         public List<shoesDetailsDTO> GetallShoedetailDtO();
-
         public ShoesDetails GetShoesDetailsById(Guid id);
     }
 }

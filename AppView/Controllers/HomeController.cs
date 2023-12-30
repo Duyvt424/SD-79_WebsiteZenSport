@@ -113,8 +113,6 @@ namespace AppView.Controllers
         public IActionResult ListProduct()
 		{
 			var shoesList = _shoesDT.GetallShoedetailDtO();
-
-
 			ViewBag.NameSP = ""; // Initialize the ViewBag.NameSP with an empty string before the loop
 			Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
 			ViewBag.NameStyle = "";
@@ -126,13 +124,11 @@ namespace AppView.Controllers
 				{
 					shoes.ImageUrl = firstImage.Image1;
 				}
-
 				var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
 				if (product != null)
 				{
 					productNames[shoes.ShoesDetailsId] = product.Name;
 				}
-
 				var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
 				if (style != null)
 				{
@@ -141,13 +137,7 @@ namespace AppView.Controllers
 			}
 			ViewBag.NameStyle = productStyles;
 			ViewBag.NameSP = productNames;
-
-
-
 			ViewBag.shoesList = shoesList;
-
-
-
 			return View();
 		}
 

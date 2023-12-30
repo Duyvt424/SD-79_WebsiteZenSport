@@ -13,5 +13,6 @@
         public string? ProductName { get; set; }
         public string? SoleName { get; set; }
         public string? StyleName { get; set; }
+        public string? SexName { get; set; }
     }
 }
