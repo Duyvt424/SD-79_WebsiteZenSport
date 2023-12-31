@@ -236,7 +236,7 @@ namespace AppView.Controllers
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
 
-        public IActionResult UpdateQuantityItem(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity)
+        public IActionResult UpdateQuantityItem(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct)
         {
             var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
             var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
@@ -252,7 +252,7 @@ namespace AppView.Controllers
                     BillStatusHistoryID = Guid.NewGuid(),
                     Status = 5,
                     ChangeDate = DateTime.Now,
-                    Note = ghiChuUpdateSP,
+                    Note = $"{ghiChuUpdateSP} sản phẩm [{nameProduct}] - kích cỡ [{idSize}] với số lượng: [{quanity}]",
                     BillID = idBill,
                     EmployeeID = EmployeeID
                 };

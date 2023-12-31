@@ -1116,7 +1116,7 @@
 	<div class="modal fade" id="modalAddProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog modal-xl" role="document" style="max-width:70%; width:70%;">
 			<div class="modal-content">
-				<button id="close-btn" type="button" class="close quay-lai-addproduct" data-dismiss="modal" aria-label="Close">
+				<button id="close-btn" type="button" class="close quay-lai-listproduct" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">×</span>
 				</button>
 				<div class="modal-body">
@@ -1292,7 +1292,7 @@
 											<div class="cards">
 												<div class="first bg-white p-4 text-center">
 													<!-- Thêm data-id để lưu ShoesDetailsId -->
-													<a href="#" id="product-link" class="product-link" data-toggle="modal" data-target="#modalDetailsProduct" data-id="@item.ShoesDetailsId">
+													<a href="#" id="product-link" class="product-link" data-toggle="modal" data-target="#modalDetailsProduct" data-id="@item.ShoesDetailsId" data-name="@item.ProductID">
 														<img src="@Url.Content("~/image/" + item.ImageUrl)" style="width: 100%;">
 													</a>
 													<h5 class="line1" style="padding-top:5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h5>
@@ -1318,9 +1318,13 @@
 
 			// Lấy ShoesDetailsId từ thuộc tính data-id
 			var shoesDetailsId = $(this).data("id");
+			var shoesDetailsName = $(this).data("name");
+
 			var inputShoesId = document.getElementById('shoesDetailsIdHide');
 			inputShoesId.value = shoesDetailsId;
-			console.log('eeeee', inputShoesId.value);
+
+			var inputShoesName = document.getElementById('shoesDetailsNameHide');
+			inputShoesName.value = shoesDetailsName;
 			// Gọi phương thức DetailsProduct sử dụng AJAX
 			$.ajax({
 				url: '@Url.Action("DetailsProduct", "Bill")',
@@ -1392,6 +1396,7 @@
 										<p class="quanityDetals" style="font-size: 14px; padding-top: 5px;">Sản phẩm có sẵn: <span style="font-weight:bold;" id="quantity"></span></p>
 										<p style="font-size: 14px; padding-top: 5px;">Chiều dài chân phù hợp: <span style="font-weight:bold;" id="result"></span></p>
 										<input id="shoesDetailsIdHide" style="display:none;" />
+										<input id="shoesDetailsNameHide" style="display:none;" />
 									</div>
 									<h6 class="text-uppercase" style="font-size: 12px;">Select Size</h6>
 									<div class="cart mt-4 align-items-center">
@@ -1450,11 +1455,13 @@
 											});
 
 											document.getElementById("addToBill").addEventListener("click", function () {
-									            const billId = '@Model.First().BillID.ToString()';
+												const billId = '@Model.First().BillID.ToString()';
 												const modalUpdateProduct = document.getElementById('shoesDetailsIdHide');
-												const shoesId = modalUpdateProduct.value;;
+												const ProductIdHTML = document.getElementById('shoesDetailsNameHide');
+												const productId = ProductIdHTML.value;
+												const shoesId = modalUpdateProduct.value;
 												const selectedSize = getSelectedSize();
-												AddToBill(shoesId, selectedSize, billId);
+												AddToBill(shoesId, selectedSize, billId, productId);
 											});
 
 											function getSelectedSize() {
@@ -1466,14 +1473,6 @@
 												}
 												return null;
 											}
-
-											document.getElementById('removeItemBill').addEventListener("click", function () {
-									            const billId = '@Model.First().BillID.ToString()';
-												const modalUpdateProduct = document.getElementById('shoesDetailsIdHide');
-												const shoesId = modalUpdateProduct.value;;
-												const selectedSize = getSelectedSize();
-												RemoveItemInBill(shoesId, selectedSize, billId);
-											});
 
 											function updateQuantityAndFootLength(size, shoesDetailsId) {
 												const quantitySpan = document.getElementById('quantity');
@@ -1511,24 +1510,11 @@
 												return footLengths[size] || "Không rõ";
 											}
 
-											function AddToBill(shoesDetailsId, size, billId) {
+											function AddToBill(shoesDetailsId, size, billId, productId) {
 												$.ajax({
 													url: '@Url.Action("AddToBill", "Bill")',
 													type: 'POST',
-													data: { ShoesDetailsId: shoesDetailsId, Size: size, BillId: billId },
-													success: function (data) {
-														location.reload();
-													},
-													error: function () {
-													}
-												});
-											}
-
-											function RemoveItemInBill(shoesDetailsId, size, billId) {
-												$.ajax({
-													url: '@Url.Action("RemoveItemInBill", "Bill")',
-													type: 'POST',
-													data: { ShoesDetailsId: shoesDetailsId, sizeName: size, BillId: billId },
+													data: { ShoesDetailsId: shoesDetailsId, Size: size, BillId: billId, ProductId: productId },
 													success: function (data) {
 														location.reload();
 													},
@@ -1584,7 +1570,136 @@
 		</div>
 	</div>
 </div>
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalRemoveItem" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<button id="close-btn" type="button" class="close quay-lai remove-item" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<form class="formUpdateItem">
+						<div class="row">
+							<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
+								<!-- Image -->
+								<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+									<img src="" class="w-80" alt="Blue Jeans Jacket" />
+									<a href="#!">
+										<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+									</a>
+								</div>
+								<!-- Image -->
+							</div>
+							<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+								<!-- Data -->
+								<p><strong style="font-size:20px;"></strong></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p class="price" style="font-size:15px; padding-top:1%; color:red;"></p>
+							</div>
+							<hr style="width:96%;" />
+							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
+							<input type="text" name="ghiChuRemoveSP" class="form-control" required />
+							<input type="text" id="idShoesDT" name="idShoesDT" class="form-control" value="@Model.First().Products.First().ProductID" style="display:none;" />
+							<input type="text" id="idSize" name="idSize" class="form-control" value="@Model.First().Products.First().Size" style="display:none;" />
+							<input type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;" />
+							<button type="button" class="main-btn success-btn square-btn btn-hover btn-removeItem" style="font-size:16px; padding:5px 10px; margin:2px; width:20%; float:left; margin-top:2%;" data-productid="" data-size="">Xác nhận</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
+<script>
+	window.addEventListener('load', function () {
+		var idBill = '@Model.First().BillID.ToString()';
+		const removeButtons = document.querySelectorAll('.btn-removeProduct');
+		const modalRemoveProduct = document.getElementById('modalRemoveItem');
+		const closeForm = document.querySelector('.remove-item');
+
+		removeButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				// Lấy thông tin sản phẩm từ thuộc tính data
+				const productId = button.dataset.productid;
+				const imageUrl = button.dataset.image;
+				const name = button.dataset.name;
+				const description = button.dataset.description;
+				const size = button.dataset.size;
+				const quantity = button.dataset.quantity;
+				const price = parseFloat(button.dataset.price);  // Chuyển đổi giá về kiểu số (nếu chưa là kiểu số)
+				const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+				// Gọi hàm để hiển thị thông tin sản phẩm trong modal
+				showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice);
+			});
+		});
+
+		function showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice) {
+			// Sử dụng thông tin sản phẩm để cập nhật nội dung modal
+			const modalProductImage = modalRemoveProduct.querySelector('.bg-image img');
+			const modalProductName = modalRemoveProduct.querySelector('.modal-body p strong');
+			const modalProductDescription = modalRemoveProduct.querySelector('.modal-body p:nth-child(2)');
+			const modalProductSize = modalRemoveProduct.querySelector('.modal-body p:nth-child(3)');
+			const modalProductQuantity = modalRemoveProduct.querySelector('.modal-body p:nth-child(4)');
+			const modalProductPrice = modalRemoveProduct.querySelector('.modal-body p:nth-child(5)');
+
+			modalProductImage.src = "/image/" + imageUrl;
+			modalProductName.textContent = name;
+			modalProductDescription.textContent = description;
+			modalProductSize.textContent = "Size: " + size;
+			modalProductQuantity.textContent = "Số lượng: x" + quantity;
+			modalProductPrice.textContent = formattedPrice;
+			// Gán giá trị từ dataset của nút cho các thuộc tính data- của các phần tử trong modal
+			$(modalRemoveProduct).attr('data-productid', productId);
+			$(modalRemoveProduct).attr('data-size', size);
+			const numericPriceString = formattedPrice.replace(/[^\d]/g, '');
+			const numericPrice = parseFloat(numericPriceString);
+			$(modalRemoveProduct).attr('data-price', numericPrice);
+			// Hiển thị modal
+			$(modalRemoveProduct).modal('show');
+		}
+
+		closeForm.addEventListener('click', function () {
+			$('#modalRemoveItem').modal('hide');
+		});
+
+		const submitForm = document.querySelectorAll('.btn-removeItem');
+		// Bắt sự kiện click trên nút "Thêm"
+		submitForm.forEach(buttonSub => {
+			buttonSub.addEventListener('click', function (e) {
+				e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+				var idBill = '@Model.First().BillID.ToString()';
+				const idShoesDT = $(modalRemoveProduct).attr('data-productid');
+				const idSize = $(modalRemoveProduct).attr('data-size');
+				var ghiChuUpdateSP = $('input[name="ghiChuRemoveSP"]').val();
+				const nameProductHTML = modalRemoveProduct.querySelector('.modal-body p strong');
+				const nameProduct = nameProductHTML.textContent;
+				// Gửi dữ liệu lên server sử dụng Ajax
+				$.ajax({
+					url: '@Url.Action("RemoveItemInBill", "Bill")',
+					type: 'POST',
+					data: {
+						ShoesDetailsId: idShoesDT,
+						sizeName: idSize,
+						BillId: idBill,
+						ghiChu: ghiChuUpdateSP,
+						nameProduct: nameProduct
+					},
+					success: function (response) {
+						$('#modalRemoveItem').modal('hide');
+						location.reload();
+					},
+					error: function (error) {
+						// Xử lý lỗi nếu cần
+					}
+				});
+			});
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.btn-add-product').click(function () {
@@ -1592,7 +1707,7 @@
 		});
 
 		// Đóng modal khi click nút x (close)
-		$('.quay-lai-addproduct').click(function () {
+		$('.quay-lai-listproduct').click(function () {
 			$('#modalAddProduct').modal('hide');
 		});
 	});
@@ -1747,6 +1862,8 @@
 				var priceVoucherElement = document.getElementById('giamgia');
 				var priceVoucherText = priceVoucherElement.innerText;
 				var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
+				const nameProductHTML = modalUpdateProduct.querySelector('.modal-body p strong');
+				const nameProduct = nameProductHTML.textContent;
 				// Gửi dữ liệu lên server sử dụng Ajax
 				$.ajax({
 					url: '@Url.Action("UpdateQuantityItem", "BillStatusHistory")',
@@ -1757,7 +1874,8 @@
 						idSize: idSize,
 						ghiChuUpdateSP: ghiChuUpdateSP,
 						quanity: quanity,
-						phivanchuyen: phivanchuyen
+						phivanchuyen: phivanchuyen,
+						nameProduct: nameProduct
 					},
 					success: function (response) {
 						$('#modalUpdateProduct').modal('hide');
@@ -2115,7 +2233,16 @@
 								<i class="fa fa-pencil" style="padding-top:1%; font-size:15px;"></i>
 							</button>
 
-							<button id="removeItemBill" type="button" class="btn btn-primary" style="background-color:black; border:1px solid white;" data-shoes-id="@item.Products.First().ProductID" data-size="@item.Products.First().Size">
+							<button type="button" id="BtnRemove_@item.Products.First().ProductID"
+							class="btn btn-primary btn-removeProduct"
+							data-productid="@item.Products.First().ProductID"
+							data-image="@item.Products.First().ImageUrl"
+							data-name="@item.Products.First().Name"
+							data-description="@item.Products.First().Description"
+							data-size="@item.Products.First().Size"
+							data-quantity="@item.Products.First().Quantity"
+							data-price="@item.PriceProduct"
+							style="background-color:black; border:1px solid white;">
 								<i class="fa fa-trash" style="padding-top:1%; font-size:15px;"></i>
 							</button>
 						}

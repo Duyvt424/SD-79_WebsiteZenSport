@@ -473,10 +473,13 @@ namespace AppView.Controllers
             });
         }
 
-        public IActionResult AddToBill(Guid ShoesDetailsId, string Size, Guid BillId)
+        public IActionResult AddToBill(Guid ShoesDetailsId, string Size, Guid BillId, Guid ProductId)
         {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
             var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == Size)?.SizeID;
             var shoesDT_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId && c.SizeID == objSize);
+            var nameProduct = _dbContext.Products.First(c => c.ProductID == ProductId).Name;
             if (shoesDT_Size == null) // nếu chưa tồn tại bản ghi nào thỏa mãn đk thì báo lỗi
             {
                 return Content("Error");
@@ -503,19 +506,41 @@ namespace AppView.Controllers
                     Quantity = 1
                 };
                 _dbContext.BillDetails.Add(billDetails);
-            }
+            } 
+            var billStatusHis = new BillStatusHistory()
+            {
+                BillStatusHistoryID = Guid.NewGuid(),
+                Status = 5,
+                ChangeDate = DateTime.Now,
+                Note = $"Thêm sản phẩm [{nameProduct}] - kích cỡ [{Size}] vào đơn hàng",
+                BillID = BillId,
+                EmployeeID = EmployeeID
+            };
             _dbContext.Update(shoesDT_Size);
             shoesDT_Size.Quantity--;
+            _dbContext.BillStatusHistories.Add(billStatusHis);
             _dbContext.SaveChanges();
             return Ok(new { success = true });
         }
 
-        public IActionResult RemoveItemInBill(Guid ShoesDetailsId, string sizeName, Guid BillId)
+        public IActionResult RemoveItemInBill(Guid ShoesDetailsId, string sizeName, Guid BillId, string ghiChu, string nameProduct)
         {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
             var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == sizeName)?.SizeID;
             var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == ShoesDetailsId && c.SizeID == objSize);
             var billItem = _dbContext.BillDetails.FirstOrDefault(c => c.ShoesDetails_SizeID == ShoesDT_Size.ID && c.BillID == BillId);
             ShoesDT_Size.Quantity += billItem.Quantity;
+            var billStatusHis = new BillStatusHistory()
+            {
+                BillStatusHistoryID = Guid.NewGuid(),
+                Status = 5,
+                ChangeDate = DateTime.Now,
+                Note = $"{ghiChu} [{nameProduct}] - kích cỡ [{sizeName}] khỏi đơn hàng",
+                BillID = BillId,
+                EmployeeID = EmployeeID
+            };
+            _dbContext.BillStatusHistories.Add(billStatusHis);
             _dbContext.BillDetails.Remove(billItem);
             _dbContext.SaveChanges();
             _dbContext.Update(ShoesDT_Size);
