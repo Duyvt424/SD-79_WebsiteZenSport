@@ -32,10 +32,10 @@
 										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" id="voucherValue" required>
 										<label for="floatingInputUsername">VoucherValue</label>
 									</div>
-									<div class="form-floating mb-3">
+								@*	<div class="form-floating mb-3">
 										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" id="maxUsage" required>
 										<label for="floatingInputUsername">MaxUsage</label>
-									</div>
+									</div>*@
 									<div class="form-floating mb-3">
 										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" id="remainingUsage" required>
 										<label for="floatingInputUsername">RemainingUsage</label>
@@ -146,6 +146,8 @@
 
 									<script>
 										$(document).ready(function () {
+											var voucherValue;
+
 											// Hàm để hiển thị/ẩn bảng khách hàng dựa trên lựa chọn nút radio
 											$('input[type=radio][name=Type]').change(function () {
 												if (this.value == '1') {
@@ -224,8 +226,8 @@
 													} else {
 														console.log('Không tìm thấy thẻ input với ID userNameCustomer.');
 													}
-
-													sendEmails(selectedUsers);
+													voucherValue = $('#voucherValue').val();
+													sendEmails(selectedUsers, voucherValue);
 
 												} else {
 													$('#userNameCustomer').val(null);
@@ -234,10 +236,10 @@
 
 											});
 
-											function sendEmails(emails) {
+											function sendEmails(emails, voucherValue) {
 												var toEmail = emails.join(',');
 												var subject = 'CHƯƠNG TRÌNH "XUÂN GẮN KẾT - TẾT TRI ÂN" MỪNG XUÂN GIÁP THÌN 2024 CHÍNH THỨC BẮT ĐẦU!';
-												var body = 'Kính gửi: Quý khách hàng, \nChuẩn bị chào đón xuân Giáp Thìn năm 2024, ZENSPORTS xin gửi tới khách hàng và đối tác chương trình "XUÂN GẮN KẾT - TẾT TRI ÂN". Tặng ngay voucher giảm giá cho đơn hàng tiếp theo của bạn!\n\nĐây là cơ hội lớn để trải nghiệm sản phẩm và dịch vụ tuyệt vời của chúng tôi. Hãy sử dụng mã voucher khi thanh toán.\nChúc quý khách có một mùa xuân tràn đầy niềm vui và hạnh phúc!';
+												var body = 'Kính gửi: Quý khách hàng, \nChuẩn bị chào đón xuân Giáp Thìn năm 2024, ZENSPORTS xin gửi tới khách hàng và đối tác chương trình "XUÂN GẮN KẾT - TẾT TRI ÂN". Tặng ngay voucher giảm giá ' + voucherValue + 'Đ cho đơn hàng tiếp theo của bạn!\n\nĐây là cơ hội lớn để trải nghiệm sản phẩm và dịch vụ tuyệt vời của chúng tôi. Hãy sử dụng mã voucher khi thanh toán.\nChúc quý khách có một mùa xuân tràn đầy niềm vui và hạnh phúc!';
 
 												// Tạo mailto link
 												var mailtoLink = 'mailto:' + toEmail +
