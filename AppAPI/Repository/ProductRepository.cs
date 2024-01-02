@@ -496,7 +496,7 @@ namespace AppAPI.Repository
                 {
                     // get value from
                     
-                    if (rangceitem.min == decimal.Parse(40000000.ToString()))
+                    if (rangceitem.min == decimal.Parse(4000000.ToString()))
                     {
                         var query = (from shoe in shoeList
 
@@ -521,7 +521,6 @@ namespace AppAPI.Repository
                                          shoe.ImageUrl,
                                          product.Name,
                                          shoe.SexID,
-
                                      });
 
                         foreach(var item in query.ToList())
