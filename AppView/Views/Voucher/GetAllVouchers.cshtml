@@ -398,7 +398,7 @@
                                         }
                                         @*<a href="@Url.Action("Details", new { id = item.VoucherID})" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>*@
                                                 <a href="@Url.Action("DeleteVouchers", new { id = item.VoucherID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
-                                                <button onclick="window.location='@Url.Action("Details", new { id = item.VoucherID})'" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></button>
+                                                <button onclick="window.location='@Url.Action("Details1", new { id = item.VoucherID})'" class="details-btn" title="Details" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></button>
                                         @if (item.Status == 0)
                                         {
                                                 <a href="@Url.Action("LockVoucher", new { id = item.VoucherID })" class="lock" title="Lock" data-toggle="tooltip"><i class="material-icons">lock</i></a>

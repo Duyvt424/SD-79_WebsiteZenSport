@@ -92,6 +92,14 @@
 			display: inline-block;
 		}
 
+
+		#closeVoucherDetails {
+			display: inline-block; /* hoặc display: block; */
+		}
+
+		#voucherDetailsContainer {
+    display: block; /* hoặc display: inline-block; */
+}
 			/* Input */
 			.cl-checkbox > input {
 				appearance: none;
@@ -1219,6 +1227,12 @@
 												</div>
 											</div>
 										</div>
+
+										<div id="voucherDetailsContainer">
+											
+										</div>
+
+										
 										<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 										<script>
@@ -1268,7 +1282,7 @@
 																				<p style="display:none">Create Date: ${voucher.CreateDate}</p>
 																				<p style="display:none">Type: ${voucher.Type}</p>
 																				<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																				<p><a href="/Voucher/Details/${voucher.voucherID}" class="button-details">Chi tiết</a></p>
+																															<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
 
 																			</div>
 																		</div>
@@ -1290,6 +1304,38 @@
 													});
 
 												});
+
+											$("#voucherList").on("click", ".button-details", function (event) {
+        event.preventDefault();
+
+        // Lấy ID của voucher từ thuộc tính data
+        var voucherId = $(this).data("voucher-id");
+
+        // Thực hiện Ajax request để lấy chi tiết voucher
+        $.ajax({
+            type: "GET",
+            url: "https://localhost:7120/Voucher/Details/" + voucherId,
+            success: function (data) {
+                // Xóa nội dung hiện tại (nếu cần)
+                // $("#voucherDetailsContainer").empty();
+
+                // Chèn chi tiết voucher vào container
+                $("#voucherDetailsContainer").html($(data).find(".voucher-details"));
+
+                // Always show the close button
+                $("#voucherDetailsContainer").append('<button id="closeVoucherDetails">Đóng</button>');
+            },
+            error: function (error) {
+                console.error("Lỗi khi lấy chi tiết voucher:", error);
+            }
+        });
+    });
+
+    $("#voucherDetailsContainer").on("click", "#closeVoucherDetails", function () {
+        // Hide the voucher details container
+        $("#voucherDetailsContainer").hide();
+    });
+
 												function formatDate(dateString) {
 													const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
@@ -1433,7 +1479,7 @@
 																						<p style="display:none">Create Date: ${voucher.CreateDate}</p>
 																						<p style="display:none">Type: ${voucher.Type}</p>
 																						<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																																	<p><a href="/Voucher/Details/${voucher.voucherID}" class="details-link">Chi tiết</a></p>
+																																		<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
 
 																					</div>
 																				</div>
@@ -1507,9 +1553,13 @@
 									Giảm giá
 									<span id="giamgia">0đ</span>
 								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi" style="display:none;">
-									@Html.Raw(userName?.Replace("\"", ""))
+								<div >
+
+								<li style="display:none;" class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi">
+										@Html.Raw(userName?.Replace("\"", ""))
 								</li>
+								</div>
+								
 
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
 									<div>
