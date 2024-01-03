@@ -98,139 +98,139 @@
 		}
 
 		#voucherDetailsContainer {
-    display: block; /* hoặc display: inline-block; */
-}
-			/* Input */
-			.cl-checkbox > input {
-				appearance: none;
-				-moz-appearance: none;
-				-webkit-appearance: none;
-				z-index: -1;
-				position: absolute;
-				left: -10px;
-				top: -8px;
-				display: block;
-				margin: 0;
-				border-radius: 50%;
-				width: 40px;
-				height: 40px;
-				background-color: rgba(0, 0, 0, 0.6);
-				box-shadow: none;
-				outline: none;
-				opacity: 0;
-				transform: scale(1);
-				pointer-events: none;
-				transition: opacity 0.3s, transform 0.2s;
-			}
+			display: block; /* hoặc display: inline-block; */
+		}
+		/* Input */
+		.cl-checkbox > input {
+			appearance: none;
+			-moz-appearance: none;
+			-webkit-appearance: none;
+			z-index: -1;
+			position: absolute;
+			left: -10px;
+			top: -8px;
+			display: block;
+			margin: 0;
+			border-radius: 50%;
+			width: 40px;
+			height: 40px;
+			background-color: rgba(0, 0, 0, 0.6);
+			box-shadow: none;
+			outline: none;
+			opacity: 0;
+			transform: scale(1);
+			pointer-events: none;
+			transition: opacity 0.3s, transform 0.2s;
+		}
 
-			/* Span */
-			.cl-checkbox > span {
+		/* Span */
+		.cl-checkbox > span {
+			display: inline-block;
+			width: 100%;
+			cursor: pointer;
+		}
+
+			/* Box */
+			.cl-checkbox > span::before {
+				content: "";
 				display: inline-block;
-				width: 100%;
-				cursor: pointer;
+				box-sizing: border-box;
+				margin: 3px 11px 3px 1px;
+				border: solid 2px;
+				/* Safari */
+				border-color: rgba(0, 0, 0, 0.6);
+				border-radius: 2px;
+				width: 18px;
+				height: 18px;
+				vertical-align: top;
+				transition: border-color 0.2s, background-color 0.2s;
 			}
 
-				/* Box */
-				.cl-checkbox > span::before {
-					content: "";
-					display: inline-block;
-					box-sizing: border-box;
-					margin: 3px 11px 3px 1px;
-					border: solid 2px;
-					/* Safari */
-					border-color: rgba(0, 0, 0, 0.6);
-					border-radius: 2px;
-					width: 18px;
-					height: 18px;
-					vertical-align: top;
-					transition: border-color 0.2s, background-color 0.2s;
-				}
+			/* Checkmark */
+			.cl-checkbox > span::after {
+				content: "";
+				display: block;
+				position: absolute;
+				top: 3px;
+				left: 1px;
+				width: 10px;
+				height: 5px;
+				border: solid 2px transparent;
+				border-right: none;
+				border-top: none;
+				transform: translate(3px, 4px) rotate(-45deg);
+			}
 
-				/* Checkmark */
-				.cl-checkbox > span::after {
-					content: "";
-					display: block;
-					position: absolute;
-					top: 3px;
-					left: 1px;
-					width: 10px;
-					height: 5px;
-					border: solid 2px transparent;
-					border-right: none;
-					border-top: none;
-					transform: translate(3px, 4px) rotate(-45deg);
-				}
+		/* Checked, Indeterminate */
+		.cl-checkbox > input:checked,
+		.cl-checkbox > input:indeterminate {
+			background-color: #018786;
+		}
 
-			/* Checked, Indeterminate */
-			.cl-checkbox > input:checked,
-			.cl-checkbox > input:indeterminate {
+			.cl-checkbox > input:checked + span::before,
+			.cl-checkbox > input:indeterminate + span::before {
+				border-color: #018786;
 				background-color: #018786;
 			}
 
-				.cl-checkbox > input:checked + span::before,
-				.cl-checkbox > input:indeterminate + span::before {
-					border-color: #018786;
-					background-color: #018786;
+			.cl-checkbox > input:checked + span::after,
+			.cl-checkbox > input:indeterminate + span::after {
+				border-color: #fff;
+			}
+
+			.cl-checkbox > input:indeterminate + span::after {
+				border-left: none;
+				transform: translate(4px, 3px);
+			}
+
+		/* Hover, Focus */
+		.cl-checkbox:hover > input {
+			opacity: 0.04;
+		}
+
+		.cl-checkbox > input:focus {
+			opacity: 0.12;
+		}
+
+		.cl-checkbox:hover > input:focus {
+			opacity: 0.16;
+		}
+
+		/* Active */
+		.cl-checkbox > input:active {
+			opacity: 1;
+			transform: scale(0);
+			transition: transform 0s, opacity 0s;
+		}
+
+			.cl-checkbox > input:active + span::before {
+				border-color: #85b8b7;
+			}
+
+		.cl-checkbox > input:checked:active + span::before {
+			border-color: transparent;
+			background-color: rgba(0, 0, 0, 0.6);
+		}
+
+		/* Disabled */
+		.cl-checkbox > input:disabled {
+			opacity: 0;
+		}
+
+			.cl-checkbox > input:disabled + span {
+				color: rgba(0, 0, 0, 0.38);
+				cursor: initial;
+			}
+
+				.cl-checkbox > input:disabled + span::before {
+					border-color: currentColor;
 				}
 
-				.cl-checkbox > input:checked + span::after,
-				.cl-checkbox > input:indeterminate + span::after {
-					border-color: #fff;
-				}
-
-				.cl-checkbox > input:indeterminate + span::after {
-					border-left: none;
-					transform: translate(4px, 3px);
-				}
-
-			/* Hover, Focus */
-			.cl-checkbox:hover > input {
-				opacity: 0.04;
-			}
-
-			.cl-checkbox > input:focus {
-				opacity: 0.12;
-			}
-
-			.cl-checkbox:hover > input:focus {
-				opacity: 0.16;
-			}
-
-			/* Active */
-			.cl-checkbox > input:active {
-				opacity: 1;
-				transform: scale(0);
-				transition: transform 0s, opacity 0s;
-			}
-
-				.cl-checkbox > input:active + span::before {
-					border-color: #85b8b7;
-				}
-
-			.cl-checkbox > input:checked:active + span::before {
-				border-color: transparent;
-				background-color: rgba(0, 0, 0, 0.6);
-			}
-
-			/* Disabled */
-			.cl-checkbox > input:disabled {
-				opacity: 0;
-			}
-
-				.cl-checkbox > input:disabled + span {
-					color: rgba(0, 0, 0, 0.38);
-					cursor: initial;
-				}
-
-					.cl-checkbox > input:disabled + span::before {
-						border-color: currentColor;
-					}
-
-			.cl-checkbox > input:checked:disabled + span::before,
-			.cl-checkbox > input:indeterminate:disabled + span::before {
-				border-color: transparent;
-				background-color: currentColor;
-			}
+		.cl-checkbox > input:checked:disabled + span::before,
+		.cl-checkbox > input:indeterminate:disabled + span::before {
+			border-color: transparent;
+			background-color: currentColor;
+		}
 
 
 		/* CSS cho nút "Chi tiết" */
@@ -252,7 +252,6 @@
 				background-color: #0056b3;
 				color: #fff;
 			}
-
 
 	</style>
 </head>
@@ -319,7 +318,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -1198,21 +1197,21 @@
 															data-bs-dismiss="modal"
 															aria-label="Close"></button>
 												</div>
-										
+
 												<div class="modal-body">
-    <form id="searchForm" class="row g-2">
-        <div class="col">
-            <input type="text" class="form-control" id="voucherCodeInput" name="voucherCode" />
-        </div>
-        <div class="col-auto">
-            <button type="button" class="btn btn-primary" id="searchVoucherBtn">Tìm kiếm</button>
-        </div>
-    </form>
-    <br />
-    <ul class="list-group" id="voucherList">
-        <!-- Danh sách voucher sẽ được thêm vào đây bằng JavaScript -->
-    </ul>
-</div>
+													<form id="searchForm" class="row g-2">
+														<div class="col">
+															<input type="text" class="form-control" id="voucherCodeInput" name="voucherCode" />
+														</div>
+														<div class="col-auto">
+															<button type="button" class="btn btn-primary" id="searchVoucherBtn">Tìm kiếm</button>
+														</div>
+													</form>
+													<br />
+													<ul class="list-group" id="voucherList">
+														<!-- Danh sách voucher sẽ được thêm vào đây bằng JavaScript -->
+													</ul>
+												</div>
 												<div class="modal-footer">
 													<button type="button"
 															class="btn btn-secondary"
@@ -1229,15 +1228,14 @@
 										</div>
 
 										<div id="voucherDetailsContainer">
-											
 										</div>
 
-										
+
 										<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 										<script>
 											$(document).ready(function () {
-												 
+
 												$("#searchVoucherBtn1").click(function () {
 													var username = $("#userNameLi").html().trim();
 													if (!username) {
@@ -1257,44 +1255,42 @@
 															for (var i = 0; i < data.length; i++) {
 																var voucher = data[i];
 																console.log("Current Voucher:", voucher);
-
-
 																var voucherHtml = `
-																	<li class="list-group-item d-flex justify-content-between align-items-center">
-																		<div style="display: flex">
-																			<img src="/image/voucher.jpg"
-																												 width="85"
-																												 alt="totoprayogo.com"
-																												 class="" />
-																				<div style="margin-left: 10px ">
-																				<p style="display:none">ID: ${voucher.voucherID}</p>
-																				<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
-																																																					<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																				<p>Hạng: ${voucher.exclusiveright}</p>
-																				<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																				<p style="display:none">Total: ${voucher.Total}</p>
-																				<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																				<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
-																															
-																				<p style="display:none">Status: ${voucher.Status}</p>
-																				<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																				<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																				<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																				<p style="display:none">Type: ${voucher.Type}</p>
-																				<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																															<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
+																												<li class="list-group-item d-flex justify-content-between align-items-center">
+																													<div style="display: flex">
+																														<img src="/image/voucher.jpg"
+																															width="85"
+																															alt="totoprayogo.com"
+																															class="" />
+																															<div style="margin-left: 10px ">
+																															<p style="display:none">ID: ${voucher.voucherID}</p>
+																															<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
+																															<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																															<p>Hạng: ${voucher.exclusiveright}</p>
+																															<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																															<p style="display:none">Total: ${voucher.Total}</p>
+																															<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																															<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
 
-																			</div>
-																		</div>
-																		<div style="margin-top: 25px">
-																		<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
-																		</div>
-																	</li>`;
+																															<p style="display:none">Status: ${voucher.Status}</p>
+																															<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																															<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																															<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																															<p style="display:none">Type: ${voucher.Type}</p>
+																															<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																										<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
+
+																														</div>
+																													</div>
+																													<div style="margin-top: 25px">
+																													<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
+																													</div>
+																												</li>`;
 
 																$("#voucherList").append(voucherHtml);
 															}
 														},
-														
+
 														error: function (error) {
 															console.error("Lỗi khi lấy voucher:", error);
 														},
@@ -1302,39 +1298,38 @@
 															console.log("Request hoàn tất.");
 														}
 													});
-
 												});
 
-											$("#voucherList").on("click", ".button-details", function (event) {
-        event.preventDefault();
+												$("#voucherList").on("click", ".button-details", function (event) {
+													event.preventDefault();
 
-        // Lấy ID của voucher từ thuộc tính data
-        var voucherId = $(this).data("voucher-id");
+													// Lấy ID của voucher từ thuộc tính data
+													var voucherId = $(this).data("voucher-id");
 
-        // Thực hiện Ajax request để lấy chi tiết voucher
-        $.ajax({
-            type: "GET",
-            url: "https://localhost:7120/Voucher/Details/" + voucherId,
-            success: function (data) {
-                // Xóa nội dung hiện tại (nếu cần)
-                // $("#voucherDetailsContainer").empty();
+													// Thực hiện Ajax request để lấy chi tiết voucher
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7120/Voucher/Details/" + voucherId,
+														success: function (data) {
+															// Xóa nội dung hiện tại (nếu cần)
+															// $("#voucherDetailsContainer").empty();
 
-                // Chèn chi tiết voucher vào container
-                $("#voucherDetailsContainer").html($(data).find(".voucher-details"));
+															// Chèn chi tiết voucher vào container
+															$("#voucherDetailsContainer").html($(data).find(".voucher-details"));
 
-                // Always show the close button
-                $("#voucherDetailsContainer").append('<button id="closeVoucherDetails">Đóng</button>');
-            },
-            error: function (error) {
-                console.error("Lỗi khi lấy chi tiết voucher:", error);
-            }
-        });
-    });
+															// Always show the close button
+															$("#voucherDetailsContainer").append('<button id="closeVoucherDetails">Đóng</button>');
+														},
+														error: function (error) {
+															console.error("Lỗi khi lấy chi tiết voucher:", error);
+														}
+													});
+												});
 
-    $("#voucherDetailsContainer").on("click", "#closeVoucherDetails", function () {
-        // Hide the voucher details container
-        $("#voucherDetailsContainer").hide();
-    });
+												$("#voucherDetailsContainer").on("click", "#closeVoucherDetails", function () {
+													// Hide the voucher details container
+													$("#voucherDetailsContainer").hide();
+												});
 
 												function formatDate(dateString) {
 													const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -1353,7 +1348,7 @@
 													return formattedDate;
 												}
 
-										
+
 												$("#apply-voucher-btn").off("click").on("click", function () {
 													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 
@@ -1411,12 +1406,12 @@
 																						$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
 																						$("#code-voucher").text(result[0].voucherCode);
 																						$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
-																						
+
 																						alert("Áp dụng voucher thành công!");
 
 																						var idVoucher = $("#voucherId");
 																						idVoucher.val(result[0].voucherID);
-																					
+
 																					} else {
 																						alert("Bạn không đủ điều kiện để sử dụng voucher này.");
 																					}
@@ -1458,35 +1453,34 @@
 																	result.forEach(function (voucher) {
 																		if (voucher.voucherCode === voucherCode) {
 																			var voucherHtml = `
-																			<li class="list-group-item d-flex justify-content-between align-items-center">
-																				<div style="display: flex">
-																																<img src="/image/voucher.jpg"
-																												 width="85"
-																												 alt="totoprayogo.com"
-																												 class="" />
-																					<div style="margin-left: 10px">
-																						<p style="display:none">ID: ${voucher.voucherID}</p>
+																															<li class="list-group-item d-flex justify-content-between align-items-center">
+																																 <div style="display: flex">
+																																		<img src="/image/voucher.jpg"
+																																		width="85"
+																																		alt="totoprayogo.com"
+																																		class="" />
+																																		<div style="margin-left: 10px">
+																																		<p style="display:none">ID: ${voucher.voucherID}</p>
 																																		<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue} đ trên hóa đơn  ${voucher.total} đ</p>
-																						<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																						<p>Hạng: ${voucher.exclusiveright}</p>
-																						<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																						<p style="display:none">Total: ${voucher.Total}</p>
-																						<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																						<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
-																						<p style="display:none">Status: ${voucher.Status}</p>
-																						<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																						<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																						<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																						<p style="display:none">Type: ${voucher.Type}</p>
-																						<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																		<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																		<p>Hạng: ${voucher.exclusiveright}</p>
+																																		<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																		<p style="display:none">Total: ${voucher.Total}</p>
+																																		<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																		<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																		<p style="display:none">Status: ${voucher.Status}</p>
+																																		<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																		<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																		<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																		<p style="display:none">Type: ${voucher.Type}</p>
+																																		<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
 																																		<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
-
-																					</div>
-																				</div>
-																					<div style="margin-top: 25px">
-																		<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
-																		</div>
-																			</li>`;
+																																		</div>
+																																	</div>
+																																		<div style="margin-top: 25px">
+																															<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
+																															</div>
+																															</li>`;
 
 																			voucherList.append(voucherHtml);
 																		}
@@ -1495,12 +1489,12 @@
 																	if (voucherList.children().length > 0) {
 																		alert("Đã tìm thấy mã voucher " + voucherCode);
 																		voucherList.show();
-																		
+
 																	}
 																} else {
 
 																	alert("Không tìm thấy voucher nào với mã " + voucherCode);
-																	
+
 																}
 															},
 															error: function (error) {
@@ -1519,26 +1513,10 @@
 														$("#searchVoucherBtn").click();
 													}
 												});
-
-
-
-
 											});
-
-
-
-
 										</script>
-
-
-
-
-
 									</div>
 								</li>
-
-
-								
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 									Tổng giá sản phẩm
 									<div id="cart-total-container">
@@ -1549,18 +1527,17 @@
 									Phí vận chuyển
 									<span id="phivanchuyen">@Html.Raw(shippingFee)</span>
 								</li>
-								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" >
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 									Giảm giá
 									<span id="giamgia">0đ</span>
 								</li>
-								<div >
 
-								<li style="display:none;" class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi">
+								@if (string.IsNullOrEmpty(userName))
+								{
+									<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
 										@Html.Raw(userName?.Replace("\"", ""))
-								</li>
-								</div>
-								
-
+									</li>
+								}
 								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
 									<div>
 										<strong>Tổng</strong>
@@ -1570,87 +1547,88 @@
 									</div>
 								</li>
 							</ul>
-							<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
-								<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
-								<input type="text" id="voucherId" name="voucherID" style="display:none;">
-								<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
-								<input type="text" id="addressIDSave" name="addressIDSave1" style="display:none;">
-								<div class="form-group">
-									<input type="hidden" id="total-price" name="TongTien" value="">
-								</div>
-								<div class="form-group" style="display:none;">
-									<input type="radio" id="paid" name="HinhThucThanhToan" value="Thanh toán khi nhận hàng" checked>
-									<label for="paid">Thanh toán khi nhận hàng</label>
-									<br />
-									<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Thanh toán trực tuyến VNPay">
-									<label for="not-paid">Thanh toán trực tuyến VNPay</label>
-								</div>
-								<button class="btn1 btn-danger text mr-2 px-4" type="submit"
-										style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
-									Xác Nhận Đặt Hàng
-								</button>
-								@*<div>
-								<p>Cấp bậc của bạn: @Model.RankName</p>
-								</div>*@
-								<script>
-									$(document).ready(function () {
-										$("#checkout-form").submit(function (event) {
-											// Ngăn chặn mặc định của form
-											//event.preventDefault();
+						</div>
+						<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
+							<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
+							<input type="text" id="voucherId" name="voucherID" style="display:none;">
+							<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
+							<input type="text" id="addressIDSave" name="addressIDSave1" style="display:none;">
+							<div class="form-group">
+								<input type="hidden" id="total-price" name="TongTien" value="">
+							</div>
+							<div class="form-group" style="display:none;">
+								<input type="radio" id="paid" name="HinhThucThanhToan" value="Thanh toán khi nhận hàng" checked>
+								<label for="paid">Thanh toán khi nhận hàng</label>
+								<br />
+								<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Thanh toán trực tuyến VNPay">
+								<label for="not-paid">Thanh toán trực tuyến VNPay</label>
+							</div>
+							<button class="btn1 btn-danger text mr-2 px-4" type="submit"
+									style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
+								Xác Nhận Đặt Hàng
+							</button>
+							@*<div>
+							<p>Cấp bậc của bạn: @Model.RankName</p>
+							</div>*@
+							<script>
+								$(document).ready(function () {
+									$("#checkout-form").submit(function (event) {
+										// Ngăn chặn mặc định của form
+										//event.preventDefault();
 
-											// Lấy voucherId từ trường ẩn
-											var a = $("#voucherId").val();
-											console.log(a)
-											// Kiểm tra xem voucherId có tồn tại không
-											if (!a) {
-												console.log("Voucher ID không hợp lệ");
-												return;
-											}
+										// Lấy voucherId từ trường ẩn
+										var a = $("#voucherId").val();
+										console.log(a)
+										// Kiểm tra xem voucherId có tồn tại không
+										if (!a) {
+											console.log("Voucher ID không hợp lệ");
+											return;
+										}
 
-											// Thực hiện AJAX để cập nhật số lượng voucher
-											$.ajax({
-												type: "GET",
-												url: "https://localhost:7036/api/Voucher/update-quantity",
-												contentType: "application/json", // Thêm dòng này để chỉ định kiểu dữ liệu của nội dung
-												data: { voucherId: a },
-												success: function (result) {
-													// Xử lý kết quả nếu cần thiết
-													console.log("Cập nhật số lượng voucher thành công");
+										// Thực hiện AJAX để cập nhật số lượng voucher
+										$.ajax({
+											type: "GET",
+											url: "https://localhost:7036/api/Voucher/update-quantity",
+											contentType: "application/json", // Thêm dòng này để chỉ định kiểu dữ liệu của nội dung
+											data: { voucherId: a },
+											success: function (result) {
+												// Xử lý kết quả nếu cần thiết
+												console.log("Cập nhật số lượng voucher thành công");
 
-													// Kiểm tra trạng thái của AJAX
-													if (result && result.success) {
-														// Tiếp tục với bước xác nhận đặt hàng
-														// Ví dụ: Hiển thị thông báo hoặc chuyển hướng đến trang cảm ơn
+												// Kiểm tra trạng thái của AJAX
+												if (result && result.success) {
+													// Tiếp tục với bước xác nhận đặt hàng
+													// Ví dụ: Hiển thị thông báo hoặc chuyển hướng đến trang cảm ơn
 
-														// Submit form sau khi đã xử lý xong
-														submitCheckoutForm();
-													} else {
-														console.log("Lỗi khi cập nhật số lượng voucher");
-													}
-												},
-												error: function (error) {
-													console.log("Lỗi Ajax:", error);
-
-													// Nếu có lỗi, bạn có thể xử lý tùy thuộc vào yêu cầu của bạn
+													// Submit form sau khi đã xử lý xong
+													submitCheckoutForm();
+												} else {
+													console.log("Lỗi khi cập nhật số lượng voucher");
 												}
-											});
+											},
+											error: function (error) {
+												console.log("Lỗi Ajax:", error);
+
+												// Nếu có lỗi, bạn có thể xử lý tùy thuộc vào yêu cầu của bạn
+											}
 										});
 									});
+								});
 
-									// Hàm để submit form sau khi đã xử lý xong
-									function submitCheckoutForm() {
-										// Đảm bảo rằng đã cập nhật số lượng voucher thành công trước khi submit form
-										console.log("submitCheckoutForm được gọi");
-										$("#checkout-form")[0].submit();
-									}
-								</script>
+								// Hàm để submit form sau khi đã xử lý xong
+								function submitCheckoutForm() {
+									// Đảm bảo rằng đã cập nhật số lượng voucher thành công trước khi submit form
+									console.log("submitCheckoutForm được gọi");
+									$("#checkout-form")[0].submit();
+								}
+							</script>
 
-							</form>
-						</div>
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </section>
 <div class="shell">

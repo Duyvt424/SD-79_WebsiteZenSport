@@ -506,7 +506,7 @@ namespace AppView.Controllers
                     Quantity = 1
                 };
                 _dbContext.BillDetails.Add(billDetails);
-            } 
+            }
             var billStatusHis = new BillStatusHistory()
             {
                 BillStatusHistoryID = Guid.NewGuid(),
@@ -545,6 +545,44 @@ namespace AppView.Controllers
             _dbContext.SaveChanges();
             _dbContext.Update(ShoesDT_Size);
             _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult CheckQuantityInBill(Guid shoesDetailsId, string size, Guid billId)
+        {
+            var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == objSize);
+            var billItem = _dbContext.BillDetails.FirstOrDefault(cd => cd.BillID == billId && cd.ShoesDetails_SizeID == ShoesDT_Size.ID);
+            if (billItem != null)
+            {
+                if (ShoesDT_Size.Quantity <= 0)
+                {
+                    return Json(new { success = false, message = "Số lượng sản phẩm đã hết!" });
+                }
+            }
+            return Json(new { success = true, message = "AA!" });
+        }
+
+        [HttpPost]
+        public IActionResult UpdateBillItemQuantity(Guid shoesDetailsId, int quantity, string size, Guid billId)
+        {
+            var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == objSize);
+            var cartItem = _dbContext.BillDetails.FirstOrDefault(cd => cd.BillID == billId && cd.ShoesDetails_SizeID == ShoesDT_Size.ID);
+            if (cartItem != null)
+            {
+                //lưu số lượng trước đó ví dụ 1
+                var previousQuantity = cartItem.Quantity;
+                //Cập nhật số lượng trong giỏ hàng ví dụ 5
+                cartItem.Quantity = quantity;
+                _dbContext.SaveChanges();
+
+                //Cập nhật số lượng tồn của sản phẩm: ShoesDT.AvailableQuantity += 1 - 5; (số lượng trước đó - số lượng mới)
+                ShoesDT_Size.Quantity += previousQuantity - quantity;
+                _dbContext.Update(ShoesDT_Size);
+                _dbContext.SaveChanges();
+            }
             return Ok(new { success = true });
         }
     }

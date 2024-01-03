@@ -928,7 +928,7 @@
 						<input type="text" id="idBillHuy" class="form-control" value="@Model.First().BillID" style="display:none;" />
 						<div style="margin-top:2%;">
 							<button class="btn cancel quay-lai">Quay lại</button>
-							<button class="btn" type="submit">Xác nhận</button>
+							<button class="btn" type="button" id="btn-cancel">Xác nhận</button>
 						</div>
 					</div>
 				</form>
@@ -1092,10 +1092,8 @@
 								<p class="price" style="font-size:15px; padding-top:1%; color:red;"></p>
 							</div>
 							<hr style="width:96%;" />
-							<div class="container" style="margin-left:12%;">
-								<button type="button" id="minus" class="buttonA">-</button>
+							<div class="container" style="margin-left:18%;">
 								<input id="quantityInput" class="inputTang" type="number" name="quanity" value="@Model.First().Products.First().Quantity" min="1" max="10" data-productid="" data-price="" data-size="">
-								<button type="button" id="plus" class="buttonA">+</button>
 							</div>
 							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
 							<input type="text" name="ghiChuUpdateSP" class="form-control" required />
@@ -1718,8 +1716,6 @@
 		const updateButtons = document.querySelectorAll('.btn-updateProduct');
 		const quantityInput = document.getElementById('quantityInput');
 		const quantityInputs = document.querySelectorAll('.inputTang');
-		const plusButton = document.getElementById('plus');
-		const minusButton = document.getElementById('minus');
 		const closeForm = document.getElementById('close-btn');
 		const modalUpdateProduct = document.getElementById('modalUpdateProduct');
 		//lấy id địa chỉ
@@ -1781,22 +1777,20 @@
 			$(modalUpdateProduct).modal('show');
 		}
 
-		plusButton.addEventListener('click', function () {
-			// Tăng giá trị số lượng và cập nhật vào ô input
-			quantityInput.value = Math.min(parseInt(quantityInput.value, 10) + 1, 10);
-		});
-
-		// Thêm sự kiện click cho nút "minus"
-		minusButton.addEventListener('click', function () {
-			// Giảm giá trị số lượng và cập nhật vào ô input
-			quantityInput.value = Math.max(parseInt(quantityInput.value, 10) - 1, 1);
-		});
-
 		closeForm.addEventListener('click', function () {
 			$('#modalUpdateProduct').modal('hide');
 		});
 
 		quantityInputs.forEach(input => {
+			input.addEventListener('mousedown', function (event) {
+				const shoesDetailsId = $(modalUpdateProduct).attr('data-productid');
+				const sizeId = $(modalUpdateProduct).attr('data-size');
+				const isArrowUpClicked = event.target.type === 'number' && event.clientY < input.getBoundingClientRect().top + input.offsetHeight / 2;
+				if (isArrowUpClicked) {
+					checkCartItemQuantity(shoesDetailsId, sizeId, idBill);
+				}
+			});
+
 			input.addEventListener('change', function () {
 				const shoesDetailsId = $(modalUpdateProduct).attr('data-productid');
 				const sizeId = $(modalUpdateProduct).attr('data-size');
@@ -1841,6 +1835,8 @@
 
 				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
 				tongTienElement.innerText = totalOk.toLocaleString('vi-VN') + "đ";
+
+				updateBillItemQuantity(shoesDetailsId, quantity, sizeId, idBill);
 			});
 		});
 
@@ -1889,6 +1885,68 @@
 			});
 		});
 	});
+
+	function updateBillItemQuantity(shoesDetailsId, quantity, size, billId) {
+		$.ajax({
+			url: '@Url.Action("UpdateBillItemQuantity", "Bill")',
+			type: 'POST',
+			data: { shoesDetailsId: shoesDetailsId, quantity: quantity, size: size, billId: billId },
+			success: function (response) {
+				// Cập nhật số lượng thành công
+				updateCartItemCount();
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				// Xử lý lỗi (nếu có)
+			}
+		});
+	}
+
+	function checkCartItemQuantity(shoesDetailsId, size, billId) {
+		const selectedDistrictIdElement = document.getElementById('districtIdShow');
+		const selectedDistrictId = selectedDistrictIdElement != null ? parseInt(document.getElementById('districtIdShow').textContent) : parseInt(document.getElementById('ListQuanHuyen').value);
+		const selectedWardCodeElement = document.getElementById('wardCodeShow');
+		const selectedWardCode = selectedWardCodeElement != null ? parseInt(document.getElementById('wardCodeShow').textContent) : parseInt(document.getElementById('ListPhuongXa').value);
+
+		var priceVoucherElement = document.getElementById('giamgia');
+		var priceVoucherText = priceVoucherElement.innerText;
+		var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
+		$.ajax({
+			url: '@Url.Action("CheckQuantityInBill", "Bill")',
+			type: 'POST',
+			data: { shoesDetailsId: shoesDetailsId, size: size, billId: billId },
+			success: function (response) {
+				if (response.success === false) {
+					// Hiển thị thông báo lỗi
+					alert(response.message);
+
+					// Đặt lại giá trị cho ô input
+					const quantityInput = document.getElementById('quantityInput');
+					if (quantityInput) {
+						quantityInput.value = quantityInput.value - 1; // Hoặc giá trị mặc định mong muốn
+						calculateShippingFee(selectedWardCode, selectedDistrictId);
+						// Đặt một khoảng thời gian nhỏ để chờ sự kiện input kết thúc
+						setTimeout(function () {
+							// lấy id địa chỉ với giá tiền ship mới để cập nhật vào db
+							const existingAddressChecked = document.querySelector('.existing-address[data-isdefault="True"]');
+							if (existingAddressChecked) {
+								var addressId = existingAddressChecked.getAttribute('id').split('_')[1];
+
+								// Di chuyển phần lấy giá trị vận chuyển vào đây
+								var shippingCostHTML = document.getElementById('shippingCost').value;
+								var shippingCost = parseFloat(shippingCostHTML);
+
+								// Gọi hàm cập nhật giá vận chuyển với addressId và shippingCost
+								updatePriceShippingInBill(idBill, shippingCost, priceVoucher);
+							}
+						}, 300);
+					}
+				}
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				// Xử lý lỗi (nếu có)
+			}
+		});
+	}
 </script>
 <script>
 	$(document).ready(function () {
@@ -1979,10 +2037,8 @@
 		});
 	});
 
-	// Bắt sự kiện submit form
-	$('.formCancel').submit(function (e) {
-		e.preventDefault();
-
+	// Bắt sự kiện click cho nút button có id "btn-cancel"
+	$('#btn-cancel').click(function (e) {
 		var ghiChu = $('input[name="ghiChuHuy"]').val();
 		var idBill = $('#idBillHuy').val();
 
@@ -1995,7 +2051,7 @@
 				// Xử lý kết quả từ server
 				if (response.success) {
 					// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
-					$('#myModal').modal('hide');
+					$('#myModalCancel').modal('hide');
 					location.reload();
 				} else {
 					// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác

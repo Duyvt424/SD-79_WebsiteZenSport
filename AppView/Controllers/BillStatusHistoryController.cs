@@ -215,24 +215,21 @@ namespace AppView.Controllers
             var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
             var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
-            if (EmployeeID != null)
+            var billStatusHis = new BillStatusHistory()
             {
-                var billStatusHis = new BillStatusHistory()
-                {
-                    BillStatusHistoryID = Guid.NewGuid(),
-                    Status = 4,
-                    ChangeDate = DateTime.Now,
-                    Note = ghiChu,
-                    BillID = idBill,
-                    EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null
-                };
-                objBill.Status = 4;
-                objBill.CancelDate = DateTime.Now;
-                objBill.EmployeeID = EmployeeID;
-                _dbContext.Bills.Update(objBill);
-                _repos.AddItem(billStatusHis);
-                _dbContext.SaveChanges();
-            }
+                BillStatusHistoryID = Guid.NewGuid(),
+                Status = 4,
+                ChangeDate = DateTime.Now,
+                Note = ghiChu,
+                BillID = idBill,
+                EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null
+            };
+            objBill.Status = 4;
+            objBill.CancelDate = DateTime.Now;
+            objBill.EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null;
+            _dbContext.Bills.Update(objBill);
+            _repos.AddItem(billStatusHis);
+            _dbContext.SaveChanges();
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
 
@@ -262,6 +259,7 @@ namespace AppView.Controllers
 
                 var previousQuantity = billDetails.Quantity;
                 billDetails.Quantity = quanity;
+                billDetails.Price = billDetails.Price;
                 _dbContext.BillDetails.Update(billDetails);
 
                 ShoesDT_Size.Quantity += previousQuantity - quanity;
