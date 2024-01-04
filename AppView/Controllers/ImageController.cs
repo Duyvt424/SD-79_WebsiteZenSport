@@ -28,6 +28,17 @@ namespace AppView.Controllers
             _shoesDTRepos = shoesDTAll;
         }
 
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateImageCode()
         {
             var lastImage = _dbContext.Images.OrderByDescending(c => c.ImageCode).FirstOrDefault();
@@ -44,6 +55,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllImge()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Image/get-image";
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -70,6 +85,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
                 var shoes = shopDBContext.ShoesDetails.Where(c => c.Status == 0).ToList();
@@ -130,6 +149,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Image image = _repos.GetAll().FirstOrDefault(c => c.ImageID == id);
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
@@ -188,6 +211,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var image = _repos.GetAll().FirstOrDefault(c => c.ImageID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Image/delete-image?id={id}";
@@ -196,6 +223,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindImage(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var images = _repos.GetAll().Where(c => c.ImageCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             var shoesDT = _shoesDTRepos.GetAll();
             // Tạo danh sách ViewModel với thông tin Supplier và Material

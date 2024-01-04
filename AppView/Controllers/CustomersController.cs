@@ -31,17 +31,23 @@ namespace AppView.Controllers
             _repos1 = all1;
         }
 
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<IActionResult> GetAllCustomer()
         {
-            //         string apiUrl = "https://localhost:7036/api/Customer/get-customer";
-            //         var httpClient = new HttpClient(); // tạo ra để callApi
-            //         var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-            //                                                          // Lấy dữ liệu Json trả về từ Api được call dạng string
-            //         string apiData = await response.Content.ReadAsStringAsync();
-            //// Lấy kqua trả về từ API
-            // Đọc từ string Json vừa thu được sang List<T>
-
-
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Customer/get-customer";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -68,6 +74,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateCustomer()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
         [HttpPost]
@@ -81,6 +91,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditCustomer(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Customer customer = _repos.GetAll().FirstOrDefault(c => c.CumstomerID == id);
             return View(customer);
@@ -91,27 +105,25 @@ namespace AppView.Controllers
             string apiUrl = $"https://localhost:7036/api/Customer/update-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}&CumstomerID={customer.CumstomerID}";
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllCustomer");
-            //if (_repos.EditItem(customer))
-            //{
-            //    return RedirectToAction("GetAllCustomer");
-            //}
-            //else return BadRequest();
         }
         public async Task<IActionResult> DeleteCustomer(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var cus = _repos.GetAll().First(c => c.CumstomerID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Customer/delete-customer?id={id}";
             var response = await httpClient.DeleteAsync(apiUrl);
             return RedirectToAction("GetAllCustomer");
-            //if (_repos.RemoveItem(cus))
-            //{
-            //    return RedirectToAction("GetAllCustomer");
-            //}
-            //else return Content("Error");
         }
         public async Task<IActionResult> FindCustomer(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var customer = _repos.GetAll().Where(c => c.UserName.ToLower().Contains(searchQuery.ToLower()));
             return View(customer);
         }

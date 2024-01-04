@@ -167,12 +167,14 @@ namespace AppView.Controllers
         public IActionResult Login(Employee employee)
         {
             var loggedInAdmin = _repos.GetAll().FirstOrDefault(c => c.UserName == employee.UserName && c.Password == employee.Password);
+            var RoleName = _dbContext.Roles.First(c => c.RoleID == loggedInAdmin.RoleID).RoleName;
             if (loggedInAdmin != null)
             {
                 HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInAdmin.EmployeeID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInAdmin.UserName));
                 HttpContext.Session.SetString("UserImage", JsonConvert.SerializeObject(loggedInAdmin.Image));
                 HttpContext.Session.SetString("UserEmail", JsonConvert.SerializeObject(loggedInAdmin.Email));
+                HttpContext.Session.SetString("RoleName", JsonConvert.SerializeObject(RoleName));
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }

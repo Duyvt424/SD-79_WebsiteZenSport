@@ -18,6 +18,18 @@ namespace AppView.Controllers
             AllRepositories<Sole> all = new AllRepositories<Sole>(_dbContext, _sole);
             _repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateSoleCode()
         {
             var lastSole = _dbContext.Soles.OrderByDescending(c => c.SoleCode).FirstOrDefault();
@@ -32,6 +44,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllSole()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Sole/get-sole";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -39,14 +55,19 @@ namespace AppView.Controllers
             var sole = JsonConvert.DeserializeObject<List<Sole>>(apiData);
             return View(sole);
         }
+
         [HttpGet]
         public async Task<IActionResult> CreateSole()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
+
+
         [HttpPost]
-
-
         public async Task<IActionResult> CreateSole(Sole sole)
         {
             string apiUrl = $"https://localhost:7036/api/Sole/create-sole?SoleCode={GenerateSoleCode()}&Name={sole.Name}&Status={sole.Status}&Height={sole.Height}&DateCreated={sole.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
@@ -60,6 +81,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditSole(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Sole sole = _repos.GetAll().FirstOrDefault(c => c.SoleID == id);
             return View(sole);
@@ -73,8 +98,11 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteSole(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var sl = _repos.GetAll().First(c => c.SoleID == id);
-
             var httpClien = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Sole/delete-sole?soleID={id}";
             var response = await httpClien.DeleteAsync(apiUrl);
@@ -82,6 +110,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindSole(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var sole = _repos.GetAll().Where(c => c.SoleCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(sole);
         }

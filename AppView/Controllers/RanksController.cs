@@ -21,7 +21,18 @@ namespace AppView.Controllers
 
 
         }
-        //lllllll
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateRankCode()
         {
             var lastRank = context.Ranks.OrderByDescending(c => c.RankCode).FirstOrDefault();
@@ -36,6 +47,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllRanks()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Rank/get-rank";
             var httpClient = new HttpClient();
             var reponse = await httpClient.GetAsync(apiUrl);
@@ -45,6 +60,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> CreateRank()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
         [HttpPost]
@@ -58,6 +77,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditRank(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Rank rank = repos.GetAll().FirstOrDefault(c => c.RankID == id);
             return View(rank);
         }
@@ -70,6 +93,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteRank(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var rank = repos.GetAll().First(c => c.RankID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Rank/delete-rank?id={id}";
@@ -78,6 +105,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindRank(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var rank = repos.GetAll().Where(c => c.RankCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(rank);
         }

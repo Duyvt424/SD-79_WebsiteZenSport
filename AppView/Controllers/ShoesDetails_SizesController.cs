@@ -33,8 +33,23 @@ namespace AppView.Controllers
             sizeRepos = sizeAll;
         }
 
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<IActionResult> GetAllShoesDetails_Size()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/ShoesDetails_Size/get-shoesdetails_size";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -56,6 +71,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateShoesDetails_Size()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var shoesDT = dBContext.ShoesDetails.Where(c => c.Status == 0).ToList();
@@ -80,6 +99,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditShoesDetails_Size(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             ShoesDetails_Size shoesDetails_Size = repos.GetAll().FirstOrDefault(c => c.ID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {

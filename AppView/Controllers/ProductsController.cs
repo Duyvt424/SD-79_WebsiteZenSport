@@ -34,6 +34,17 @@ namespace AppView.Controllers
             AllRepositories<Supplier> supplierAll = new AllRepositories<Supplier>(_dbContext, _supplier);
             supplierRepos = supplierAll;
         }
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateProductCode()
         {
             var lastProduct = _dbContext.Products.OrderByDescending(c => c.ProductCode).FirstOrDefault();
@@ -48,6 +59,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllProduct()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Product/get-product";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -73,6 +88,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProduct()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var supplier = dBContext.Suppliers.Where(c => c.Status == 0).ToList();
@@ -97,6 +116,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProduct(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Product product = _repos.GetAll().FirstOrDefault(c => c.ProductID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {
@@ -119,6 +142,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var product = _repos.GetAll().FirstOrDefault(c => c.ProductID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Product/delete-product?id={id}";
@@ -127,6 +154,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindProduct(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var product = _repos.GetAll().Where(c => c.ProductCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             var suppliers = supplierRepos.GetAll();
             var materials = materialRepos.GetAll();
@@ -144,7 +175,5 @@ namespace AppView.Controllers
             }).ToList();
             return View(productViewModels);
         }
-
-        //llllll
     }
 }

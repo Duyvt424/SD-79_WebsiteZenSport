@@ -54,6 +54,17 @@ namespace AppView.Controllers
             _sexRepos = sexAll;
         }
 
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateShoesDetailsCode()
         {
             var lastShoesDetails = _context.ShoesDetails.OrderByDescending(c => c.ShoesDetailsCode).FirstOrDefault();
@@ -68,6 +79,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllShoesDetails()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/ShoesDetails/get-shoesdetails";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -99,7 +114,11 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> CreateShoesDetails()
         {
-            using(ShopDBContext shopDBContext = new ShopDBContext())
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            using (ShopDBContext shopDBContext = new ShopDBContext())
             {
                 var color = shopDBContext.Colors.Where(c => c.Status == 0).ToList();
                 SelectList selectListColor = new SelectList(color, "ColorID", "Name");
@@ -135,6 +154,10 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult UpdateShoesDetails(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             ShoesDetails shoesdt = _repos.GetAll().FirstOrDefault(c => c.ShoesDetailsId == id);
 
@@ -171,6 +194,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteShoesDetails(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var shoesdt = _repos.GetAll().First(c => c.ShoesDetailsId == id);
             HttpClient httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/ShoesDetails/delete-shoesdetail?id={id}";
@@ -179,6 +206,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindShoesDetails(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var shoesDT = _repos.GetAll().Where(c => c.ShoesDetailsCode.ToLower().Contains(searchQuery.ToLower()));
             var color = _colorRepos.GetAll();
             var product = _productRepos.GetAll();

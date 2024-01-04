@@ -21,6 +21,18 @@ namespace AppView.Controllers
 			AllRepositories<ShippingVoucher> all = new AllRepositories<ShippingVoucher>(context, voucher);
 			repos = all;
 		}
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateVoucherCode()
         {
             var last = context.ShippingVoucher.OrderByDescending(c => c.VoucherShipCode).FirstOrDefault();
@@ -35,22 +47,26 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllShippingVouchers()
 		{
-			string apiUrl1 = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            string apiUrl1 = "https://localhost:7036/api/ShippingVoucher/get-shippingVoucher";
 			var httpClient1 = new HttpClient(); // tạo ra để callApi
 			var response1 = await httpClient1.GetAsync(apiUrl1);// Lấy dữ liệu ra
 			string apiData1 = await response1.Content.ReadAsStringAsync();
 			var styles1 = JsonConvert.DeserializeObject<List<ShippingVoucherViewModel>>(apiData1);
-			/*ShoppingCartViewModel s = new ShoppingCartViewModel();
-			s.Vouchers = styles.ToList();*/
-
-
 			return View(styles1);
        
         }
 
 		public async Task<IActionResult> CreateVouchers()
 		{
-			return View();
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            return View();
 		}
 
 		[HttpPost]
@@ -65,8 +81,12 @@ namespace AppView.Controllers
 		[HttpGet]
 		public async Task<IActionResult> EditVouchers(Guid id) // Khi ấn vào Create thì hiển thị View
 		{
-			// Lấy Product từ database dựa theo id truyền vào từ route
-			ShippingVoucher voucher = repos.GetAll().FirstOrDefault(c => c.ShippingVoucherID == id);
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            // Lấy Product từ database dựa theo id truyền vào từ route
+            ShippingVoucher voucher = repos.GetAll().FirstOrDefault(c => c.ShippingVoucherID == id);
 			return View(voucher);
 		}
 
@@ -81,7 +101,11 @@ namespace AppView.Controllers
 
 		public async Task<IActionResult> DeleteVouchers(Guid id)
 		{
-			var voucher = repos.GetAll().First(c => c.ShippingVoucherID == id);
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            var voucher = repos.GetAll().First(c => c.ShippingVoucherID == id);
 			var httpClient = new HttpClient();
 			string apiUrl = $"https://localhost:7036/api/ShippingVoucher/delete-voucher?id={id}";
 			var response = await httpClient.DeleteAsync(apiUrl);
@@ -89,6 +113,10 @@ namespace AppView.Controllers
 		}
 		public async Task<IActionResult> FindVouchers(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var color = repos.GetAll().Where(c => c.VoucherShipCode.ToLower().Contains(searchQuery.ToLower()));
             return View(color);
         }

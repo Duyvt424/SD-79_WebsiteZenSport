@@ -19,6 +19,18 @@ namespace AppView.Controllers
             AllRepositories<Size> all = new AllRepositories<Size>(_dbcontext, _size);
             _repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateSizeCode()
         {
             var lastSize = _dbcontext.Sizes.OrderByDescending(c => c.SizeCode).FirstOrDefault();
@@ -33,6 +45,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> GetAllSize()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Size/get-size";
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -43,6 +59,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateSize()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
         [HttpPost]
@@ -56,6 +76,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditSize(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Size size = _repos.GetAll().FirstOrDefault(c => c.SizeID == id);
             return View(size);
@@ -69,6 +93,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteSize(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var sz = _repos.GetAll().First(c => c.SizeID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Size/delete-size?sizeID={id}";
@@ -78,6 +106,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindSize(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var size = _repos.GetAll().Where(c => c.SizeCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(size);
         }

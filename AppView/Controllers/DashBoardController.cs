@@ -18,14 +18,34 @@ namespace AppView.Controllers
             AllRepositories<Bill> all = new AllRepositories<Bill>(_dbContext, _bill);
             _repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public IActionResult index()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
 
         [HttpGet]
         public IActionResult tables()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var listBill = _dbContext.Bills.Select(c => new tablesViewModel
             {
                 BillID = c.BillID,

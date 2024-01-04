@@ -33,9 +33,26 @@ namespace AppView.Controllers
             AllRepositories<Role> materialAll = new AllRepositories<Role>(_dbContext, _role);
             role = materialAll;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllEmployee()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Employee/get-employee";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -67,6 +84,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> GetAllEmployees()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Employee/get-employee";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -98,6 +119,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateEmployee()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var role = dBContext.Roles.Where(c => c.Status == 0).ToList();
@@ -128,14 +153,16 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditEmployee(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Employee employee = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var role = dBContext.Roles.Where(c => c.Status == 0).ToList();
                 SelectList selectListRole = new SelectList(role, "RoleID", "RoleName");
                 ViewBag.RoleList = selectListRole;
-
-
             }
             return View(employee);
         }
@@ -158,6 +185,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var product = _repos.GetAll().FirstOrDefault(c => c.EmployeeID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Employee/delete-employee?id={id}";
@@ -166,6 +197,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindEmployee(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var employees = _repos.GetAll().Where(c => c.FullName.ToLower().Contains(searchQuery.ToLower()) || c.UserName.ToLower().Contains(searchQuery.ToLower()));
             var roles = role.GetAll();
             // Tạo danh sách ProductViewModel với thông tin Supplier và Material
@@ -186,10 +221,6 @@ namespace AppView.Controllers
 
             return View(productViewModels);
         }
-        public IActionResult DashBoard()
-        {
-            return View();
-        }
         public IActionResult Login()
         {
             ViewBag.SignUpSuccess = TempData["SignUpSuccess"];
@@ -199,12 +230,14 @@ namespace AppView.Controllers
         public IActionResult Login(Employee employee)
         {
             var loggedInAdmin = _repos.GetAll().FirstOrDefault(c => c.UserName == employee.UserName && c.Password == employee.Password);
+            var RoleName = _dbContext.Roles.First(c => c.RoleID == employee.RoleID).RoleName;
             if (loggedInAdmin != null)
             {
                 HttpContext.Session.SetString("EmployeeID", JsonConvert.SerializeObject(loggedInAdmin.EmployeeID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInAdmin.UserName));
                 HttpContext.Session.SetString("UserImage", JsonConvert.SerializeObject(loggedInAdmin.Image));
                 HttpContext.Session.SetString("UserEmail", JsonConvert.SerializeObject(loggedInAdmin.Email));
+                HttpContext.Session.SetString("RoleName", JsonConvert.SerializeObject(RoleName));
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }

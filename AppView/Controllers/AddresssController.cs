@@ -20,8 +20,24 @@ namespace AppView.Controllers
             AllRepositories<Address> all = new AllRepositories<Address>(_dbContext, _address);
             _repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<IActionResult> GetAllAddress()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Address/get-address";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -143,6 +159,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateAddress()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
                 var customer = shopDBContext.Customers.ToList();
@@ -162,6 +182,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateAddress(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Address address = _repos.GetAll().FirstOrDefault(c => c.AddressID == id);
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
@@ -180,6 +204,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> DeleteAddress(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var address = _repos.GetAll().FirstOrDefault(c => c.AddressID == id);
             HttpClient httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Address/delete-address?id={id}";

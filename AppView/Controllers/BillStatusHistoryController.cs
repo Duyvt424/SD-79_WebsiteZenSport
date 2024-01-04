@@ -32,8 +32,24 @@ namespace AppView.Controllers
             AllRepositories<Employee> EmployeeAll = new AllRepositories<Employee>(_dbContext, _employee);
             _employeeRepos = EmployeeAll;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<IActionResult> GetAllBillStatusHistory()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/BillStatusHistory/get-billStatusHistory";
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -59,6 +75,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateBillStatusHistory()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
                 var bill = shopDBContext.Bills.ToList();
@@ -84,6 +104,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateBillStatusHistory(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             BillStatusHistory billStatusHistory = _repos.GetAll().FirstOrDefault(c => c.BillStatusHistoryID == id);
             using (ShopDBContext shopDBContext = new ShopDBContext())
             {
@@ -108,6 +132,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DeleteBillStatusHistory(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var billStatusHistory = _repos.GetAll().FirstOrDefault(c => c.BillStatusHistoryID == id);
             HttpClient httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/BillStatusHistory/delete-billStatusHistory?BillStatusHistoryID={id}";

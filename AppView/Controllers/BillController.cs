@@ -76,6 +76,18 @@ namespace AppView.Controllers
             _image = new ImageService();
             _style = new StyleService();
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateBillCode()
         {
             var lastProduct = _dbContext.Bills.OrderByDescending(c => c.BillCode).FirstOrDefault();
@@ -91,6 +103,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBill()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Bill/get-bill";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -133,6 +149,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateBill()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var cus = dBContext.Customers.Where(c => c.Status == 0).ToList();
@@ -170,6 +190,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditBill(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             Bill product = _repos.GetAll().FirstOrDefault(c => c.BillID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {
@@ -206,6 +230,10 @@ namespace AppView.Controllers
 
         public IActionResult DeleteBill(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var voucher = _repos.GetAll().First(c => c.BillID == id);
             if (_repos.RemoveItem(voucher))
             {
@@ -216,6 +244,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> FindBill(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var bill = _repos.GetAll().Where(c => c.BillCode.ToLower().Contains(searchQuery.ToLower()));
             var cus = customer.GetAll();
             var em = employee.GetAll();
@@ -252,6 +284,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DetailsBill(Guid billId, Guid? customerID)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
             var customerId = customerID != null ? customerID : customerIdSession;

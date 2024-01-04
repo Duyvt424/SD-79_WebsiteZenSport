@@ -21,10 +21,6 @@ namespace AppView.Controllers
         private DbSet<FavoriteShoes> favorite;
         private DbSet<ShoesDetails> _shd;
         private DbSet<Customer> _cu;
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
 
         public FavoriteShoessController()
         {
@@ -38,10 +34,26 @@ namespace AppView.Controllers
             AllRepositories<ShoesDetails> shd = new AllRepositories<ShoesDetails>(_dbContext, _shd);
             shoesDetail = shd;
         }
-        // GET: FavoriteShoess/Details/5
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllFavoritShoes()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Favoritshoes/get-favoriteshoes";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -49,15 +61,6 @@ namespace AppView.Controllers
             var FavoShoe = JsonConvert.DeserializeObject<List<FavoriteShoes>>(apiData);
             var shoesDT = shoesDetail.GetAll();
             var cus = customer.GetAll();
-            // Tạo danh sách ProductViewModel với thông tin Supplier và Material
-            //var favoriteShoesViewModel = FavoShoe.Select(FavoShoes => new FavoriteShoesViewModel
-            //{
-            //   FavoriteID = FavoShoes.FavoriteID,
-            //    ShoesDetailsId =  FavoShoes.ShoesDetailsId,
-            //    CumstomerID =  FavoShoes.CumstomerID,
-
-            //}).ToList();
-
             return View(FavoShoe);
         }
         [HttpGet]
@@ -66,6 +69,10 @@ namespace AppView.Controllers
         // GET: FavoriteShoesController/Create
         public async Task<IActionResult> CreateFavoriteShoes()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var cus = dBContext.Customers.Where(c => c.Status == 0).ToList();
@@ -75,15 +82,11 @@ namespace AppView.Controllers
                 var shoesDT = dBContext.ShoesDetails.Where(c => c.Status == 0).ToList();
                 SelectList selectListShoesDT = new SelectList(shoesDT, "ShoesDetailsId", "ShoesDetailsCode");
                 ViewBag.ShoesDTList = selectListShoesDT;
-
-
             }
             return View();
         }
 
-        // POST: FavoriteShoesController/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFavoriteShose(FavoriteShoes favoriteShoes)
         {
             var httpClient = new HttpClient();
@@ -91,11 +94,14 @@ namespace AppView.Controllers
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("GetAllFavoritShoes");
         }
-        [HttpGet]
-        // GET: FavoriteShoesController/Edit/5
 
+        [HttpGet]
         public async Task<IActionResult> EditFavoriteShoes(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             FavoriteShoes product = repos.GetAll().FirstOrDefault(c => c.FavoriteID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {
@@ -121,6 +127,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DeleteFavoriteShoes(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var favorite = repos.GetAll().First(c => c.FavoriteID == id);
             if (repos.RemoveItem(favorite))
             {
@@ -128,7 +138,6 @@ namespace AppView.Controllers
             }
             else return Content("Error");
         }
-
     }
 }
 

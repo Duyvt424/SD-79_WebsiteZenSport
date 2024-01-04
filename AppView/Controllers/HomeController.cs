@@ -41,6 +41,11 @@ namespace AppView.Controllers
         {
             return View("~/Views/Shared/NotFound.cshtml");
         }
+
+		public IActionResult Forbidden()
+		{
+			return View();
+		}
         public IActionResult Index()
 		{
             var shoesList = _shoesDT.GetAllShoesDetails();
@@ -140,35 +145,6 @@ namespace AppView.Controllers
 			ViewBag.shoesList = shoesList;
 			return View();
 		}
-
-		//public async Task<ActionResult> ListProduct1(decimal price)
-		//{
-		//	// Địa chỉ URL của API
-		//	string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
-
-		//	using (HttpClient client = new HttpClient())
-		//	{
-		//		// Gọi API bằng HTTP GET với giá tiền cần tìm kiếm
-		//		HttpResponseMessage response = client.GetAsync($"{apiUrl}/{price}").Result;
-
-		//		if (response.IsSuccessStatusCode)
-		//		{
-		//			// Đọc kết quả từ API
-		//			var content = response.Content.ReadAsStringAsync().Result;
-		//			var shoesDetails = JsonConvert.DeserializeObject<IEnumerable<ShoesDetails>>(content);
-
-		//			ViewBag.shoesList = shoesDetails;
-
-		//			return View("ListProduct");
-		//		}
-		//		else
-		//		{
-		//			// Xử lý trường hợp lỗi
-		//			return View("Error");
-		//		}
-		//	}
-		//}
-
 
 		[HttpPost]
 		[HttpGet]
@@ -274,48 +250,12 @@ namespace AppView.Controllers
 				}
 			}
 		}
-		/*	[HttpPost]
-			public IActionResult Filters(string[] minPrice)
-			{
-				// Initialize the filtered list with all shoes
-				var shoesList = _shoesDT.GetAllShoesDetails();
 
-				// List of price ranges to filter
-				var priceRanges = new Dictionary<string, (int, int)>
-		{
-			{ "0", (0, 1000000) },
-			{ "1001000", (1001000, 2700000) },
-			{ "2701000", (2701000, 3999000) },
-			{ "4000000", (4000000, int.MaxValue) }
-		};
-
-				// Filter based on selected price range
-				if (minPrice != null)
-				{
-					shoesList = shoesList.Where(shoe =>
-					{
-						foreach (var price in minPrice)
-						{
-							if (priceRanges.TryGetValue(price, out var range))
-							{
-								if (shoe.Price >= range.Item1 && shoe.Price <= range.Item2)
-								{
-									return true;
-								}
-							}
-						}
-						return false;
-					}).ToList();
-				}
-
-				return View("ListProduct", shoesList);
-			} */
 		public IActionResult DetailsProduct(Guid id)
 		{
 			var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
 			var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
 			var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
-		//	var SoleProduct = _sole.GetAllSole().FirstOrDefault(c => c.SoleID == ShoesDT.SoleID);
             if (NameProduct != null)
 			{
 				ViewBag.nameProduct = NameProduct.Name;
@@ -324,16 +264,11 @@ namespace AppView.Controllers
 			{
 				ViewBag.styleProduct = StyleProduct.Name;
 			}
-          /*  if (SoleProduct != null)
-            {
-                ViewBag.soleProduct = SoleProduct.Name;
-            }*/
             var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
 			ViewBag.ImageGolden1 = ImageGoldens.Image1;
 			ViewBag.ImageGolden2 = ImageGoldens.Image2;
 			ViewBag.ImageGolden3 = ImageGoldens.Image3;
 			ViewBag.ImageGolden4 = ImageGoldens.Image4;
-
 
 			var productUrl = Url.Action("DetailsProduct", "HomeController", new { id = ShoesDT.ProductID });
 			ViewBag.ProductUrl = productUrl;
@@ -362,43 +297,6 @@ namespace AppView.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-		/* [HttpPost]
-		  public IActionResult Filters(string[] minPrice)
-		  {
-			  //Filter khoảng giá
-			  foreach (var price in minPrice)
-			  {
-				  if (int.TryParse(price, out int minprice))
-				  {
-					  if (minprice == 0)
-					  {
-						  var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 1000000).ToList();
-					  }
-					  else if (minprice == 1001000)
-					  {
-						  var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 2700000).ToList();
-					  }
-					  else if (minprice == 2701000)
-					  {
-						  var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price > minprice && x.Price <= 3999000).ToList();
-					  }
-					  else if (minprice == 4000000)
-					  {
-						  var shoesList = _shoesDT.GetAllShoesDetails().Where(x => x.Price >= minprice).ToList();
-					  }
-				  }
-			  }
-			  return View("ListProduct");
-		  }*/
-		//public async Task<IActionResult> Search(string name)
-		//{
-		//          var searchResults = await _shopDBContext.Products
-		//                .Where(p => p.Name.Contains(name)) // Điều kiện tìm kiếm
-		//                .Include(p => p.ShoesDetails) // Nếu bạn muốn bao gồm dữ liệu từ ShoesDetails
-		//                .ToListAsync();
-		//	return View(searchResults);
-		//      }
-
 
 		public IActionResult Filters()
 		{
@@ -434,28 +332,6 @@ namespace AppView.Controllers
 					}
 				}
 				ViewBag.NameSP = productNames;
-				/*
-								// Filter giới tính
-								if (genders.Contains("male"))
-								{
-									var sizesList = _size.GetAllSizes().Where(x => x.Status == 1).ToList();
-									List<ShoesDetails> maleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-									AddRangeIfNotExist(combinedShoesList, maleShoesList);
-								}
-
-								if (genders.Contains("female"))
-								{
-									var sizesList = _size.GetAllSizes().Where(x => x.Status == 2).ToList();
-									List<ShoesDetails> femaleShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-									AddRangeIfNotExist(combinedShoesList, femaleShoesList);
-								}
-
-								if (genders.Contains("unisex"))
-								{
-									var sizesList = _size.GetAllSizes().Where(x => x.Status == 0).ToList();
-									List<ShoesDetails> unisexShoesList = comparingShoesList.Where(shoes => sizesList.Any(size => size.SizeID == shoes.SizeID)).ToList();
-									AddRangeIfNotExist(combinedShoesList, unisexShoesList);
-								}*/
 
 				//Filter khoảng giá
 				foreach (var price in minPrice)
@@ -484,13 +360,7 @@ namespace AppView.Controllers
 						}
 					}
 				}
-
-				////Filter hãng
-				//var brandList = _supplier.GetAllSuppliers().Where(suppliers => brands.Contains(suppliers.Name.ToLower())).ToList();
-				//var filteredBrandsList = comparingShoesList.Where(shoes => brandList.Any(brand => brand.SupplierID == shoes.SupplierID)).ToList();
-				//AddRangeIfNotExist(combinedShoesList, (List<ShoesDetails>)filteredBrandsList);
 				
-
 				//Filter style
 				var stylesList = _style.GetAllStyles().Where(s => styles.Contains(s.Name.ToLower())).ToList();
 				var filteredStylesList = comparingShoesList.Where(shoes => stylesList.Any(style => style.StyleID == shoes.StyleID)).ToList();

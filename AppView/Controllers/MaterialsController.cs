@@ -19,6 +19,18 @@ namespace AppView.Controllers
             AllRepositories<Material> all = new AllRepositories<Material>(context, materials);
             repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateMaterialCode()
         {
             var lastMaterial = context.Materials.OrderByDescending(c => c.MaterialCode).FirstOrDefault();
@@ -34,6 +46,10 @@ namespace AppView.Controllers
        
         public async Task<IActionResult> GetAllMaterials()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Material/get-material";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);
@@ -44,26 +60,14 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> CreateMaterial()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
 
-        //// GET: MaterialsController/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
-
-        // GET: MaterialsController/Create
-        
-
-        // POST: MaterialsController/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-      
         public async Task<IActionResult> CreateMaterial(Material material)
         {
             var httpClient = new HttpClient();
@@ -72,10 +76,13 @@ namespace AppView.Controllers
             return RedirectToAction("GetAllMaterials");
         }
 
-        // GET: MaterialsController/Edit/5
         [HttpGet]
         public async Task<IActionResult> EditMaterial(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Material material = repos.GetAll().FirstOrDefault(c => c.MaterialId == id);
             return View(material);
@@ -88,9 +95,13 @@ namespace AppView.Controllers
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllMaterials");
         }
-        // POST: MaterialsController/Edit/5
+
         public async Task<IActionResult> DeleteMaterial(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var material = repos.GetAll().First(c => c.MaterialId == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Material/delete-material?id={id}";
@@ -99,6 +110,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindMaterial(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var material = repos.GetAll().Where(c => c.MaterialCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(material);
         }

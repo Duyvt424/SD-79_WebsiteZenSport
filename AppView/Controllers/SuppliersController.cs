@@ -19,6 +19,18 @@ namespace AppView.Controllers
             AllRepositories<Supplier> all = new AllRepositories<Supplier>(context, supplier);
             repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateSupplierCode()
         {
             var lastSupplier = context.Suppliers.OrderByDescending(c => c.SupplierCode).FirstOrDefault();
@@ -34,6 +46,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> GetAllSuppliers()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Supplier/get-supplier";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);
@@ -44,18 +60,12 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> CreateSupplier()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
-
-        /*		[HttpPost]
-				public async Task<IActionResult> CreateSupplier(Supplier supplier)
-				{
-					var httpClient = new HttpClient();
-					string apiUrl = $"https://localhost:7036/api/Supplier/create-supplier?supplierCode={GenerateSupplierCode()}&name={supplier.Name}&status={supplier.Status}&dateCreated={supplier.DateCreated}";
-					var response = await httpClient.PostAsync(apiUrl, null);
-					return RedirectToAction("GetAllSuppliers");
-				}
-		*/
 
         [HttpPost]
         public async Task<IActionResult> CreateSupplier(Supplier supplier)
@@ -68,6 +78,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditSupplier(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Supplier supplier = repos.GetAll().FirstOrDefault(c => c.SupplierID == id);
             return View(supplier);
@@ -82,6 +96,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DeleteSupplier(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var supplier = repos.GetAll().First(c => c.SupplierID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Supplier/delete-supplier?id={id}";
@@ -90,6 +108,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindSupplier(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var supplier = repos.GetAll().Where(c => c.SupplierCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(supplier);
         }

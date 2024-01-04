@@ -19,6 +19,18 @@ namespace AppView.Controllers
             AllRepositories<Style> all = new AllRepositories<Style>(context, style);
             repos = all;
         }
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         private string GenerateStyleCode()
         {
             var lastStyle = context.Styles.OrderByDescending(c => c.StyleCode).FirstOrDefault();
@@ -34,6 +46,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> GetAllStyles()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Style/get-style"; ;
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -44,6 +60,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> CreateStyle()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             return View();
         }
 
@@ -59,6 +79,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditStyle(Guid id) // Khi ấn vào Create thì hiển thị View
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             // Lấy Product từ database dựa theo id truyền vào từ route
             Style style = repos.GetAll().FirstOrDefault(c => c.StyleID == id);
             return View(style);
@@ -74,6 +98,10 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DeleteStyle(Guid id)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var style = repos.GetAll().First(c => c.StyleID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Style/delete-style?id={id}";
@@ -82,10 +110,12 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindStyle(string searchQuery)
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var style = repos.GetAll().Where(c => c.StyleCode.ToLower().Contains(searchQuery.ToLower()) || c.Name.ToLower().Contains(searchQuery.ToLower()));
             return View(style);
         }
-      
-
     }
 }
