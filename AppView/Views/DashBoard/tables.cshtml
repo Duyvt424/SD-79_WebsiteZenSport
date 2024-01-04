@@ -26,6 +26,121 @@
 	<link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" />
 	<link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
 	<link rel="stylesheet" href="~/assets/css/main.css" />
+	<style>
+		.search {
+			width: 60%;
+			position: relative;
+			box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+			margin-top: 3%;
+			margin-left: 4.5%;
+		}
+
+			.search input {
+				height: 60px;
+				text-indent: 25px;
+				border: 2px solid #d6d4d4;
+			}
+
+				.search input:focus {
+					box-shadow: none;
+					border: 2px solid blue;
+				}
+
+			.search .fa-search {
+				position: absolute;
+				top: 20px;
+				left: 16px;
+			}
+
+			.search button {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				height: 50px;
+				width: 110px;
+				background: blue;
+			}
+
+		.datetimepicker {
+			display: inline-flex;
+			align-items: center;
+			background-color: #fff;
+			border: 2px solid black;
+			border-radius: 8px;
+			&:focus-within
+
+		{
+			border-color: teal;
+		}
+
+		input {
+			font: inherit;
+			color: inherit;
+			appearance: none;
+			outline: none;
+			border: 0;
+			background-color: transparent;
+			&[type=date]
+
+		{
+			width: 10rem;
+			padding: .25rem 0 .25rem .5rem;
+			border-right-width: 0;
+		}
+
+		&[type=time] {
+			width: 5.5rem;
+			padding: .25rem .5rem .25rem 0;
+			border-left-width: 0;
+		}
+
+		}
+
+		span {
+			height: 1rem;
+			margin-right: .25rem;
+			margin-left: .25rem;
+			border-right: 1px solid #ddd;
+		}
+
+		.dropdown-toggle {
+			width: 200px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 40px;
+			border: 2px solid black;
+			font-weight: 600;
+		}
+
+			.dropdown-toggle:focus {
+				box-shadow: none !important;
+			}
+
+
+			.dropdown-toggle::after {
+				display: none;
+			}
+
+		.dropdown-menu {
+			width: 200px;
+			border: 2px solid black;
+			padding: 0rem 0;
+			transform: translate3d(0px, 50px, 0px) !important;
+		}
+
+		.dropdown-item:focus, .dropdown-item:hover {
+			color: black;
+			background-color: white;
+			padding: 12px;
+		}
+
+		.dropdown-item {
+			display: block;
+			width: 100%;
+			padding: 12px;
+		}
+	</style>
 </head>
 <body>
 	<!-- ======== Preloader =========== -->
@@ -262,12 +377,6 @@
 									<i class="lni lni-chevron-left me-2"></i> Menu
 								</button>
 							</div>
-							<div class="header-search d-none d-md-flex">
-								<form action="#">
-									<input type="text" placeholder="Search..." />
-									<button><i class="lni lni-search-alt"></i></button>
-								</form>
-							</div>
 						</div>
 					</div>
 					<div class="col-lg-7 col-md-7 col-6">
@@ -387,10 +496,10 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;"/>
+												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;" />
 											</div>
 											<div>
-												 <h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
+												<h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
 												<p>Admin</p>
 											</div>
 										</div>
@@ -440,12 +549,42 @@
 		<!-- ========== header end ========== -->
 		<!-- ========== table components start ========== -->
 		<section class="table-components">
+			<form action="" class="search-bar" style="align-content:center;">
+				<div class="row height d-flex justify-content-left align-items-left">
+					<div class="col-md-8">
+						<div class="search">
+							<i class="fa fa-search"></i>
+							<input type="text" class="form-control" placeholder="Tìm kiếm...">
+							<button class="btn btn-primary">Search</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			<form style="margin-top:2.5%; margin-left:3%;">
+				<span>Từ ngày:</span>
+				<div class="datetimepicker date-start">
+					<input type="date" id="date" value="">
+				</div>
+				<span style="margin-left:2%;">Đến ngày:</span>
+				<div class="datetimepicker date-end">
+					<input type="date" id="date" value="">
+				</div>
+				<button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" style="margin-left:2%; height:40px;">
+					<span>Trạng thái</span>
+					<i class="fa fa-caret-down"></i>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<li><a class="dropdown-item" href="#">Australia</a></li>
+					<li><a class="dropdown-item" href="#">India</a></li>
+					<li><a class="dropdown-item" href="#">United States</a></li>
+				</ul>
+			</form>
 			<div class="container-fluid">
 				<!-- ========== title-wrapper start ========== -->
 				<div class="title-wrapper pt-30">
 					<div class="row align-items-center">
 						<div class="col-md-6">
-							<div class="title">
+							<div class="title" style="float:left;">
 								<h2>Danh sách đơn hàng</h2>
 							</div>
 						</div>
@@ -543,20 +682,24 @@
 														@if (bill.Status == 0)
 														{
 															<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Chờ xác nhận</span>
-														}else
-														if (bill.Status == 1)
+														}
+														else
+																if (bill.Status == 1)
 														{
 															<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã xác nhận thông tin</span>
-														}else
-														if (bill.Status == 2)
+														}
+														else
+																if (bill.Status == 2)
 														{
 															<span class="main-btn warning-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã bàn giao cho ĐVVC</span>
-														}else
-														if (bill.Status == 3)
+														}
+														else
+																if (bill.Status == 3)
 														{
 															<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>
-														}else
-														if (bill.Status == 4)
+														}
+														else
+																if (bill.Status == 4)
 														{
 															<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>
 														}
@@ -607,8 +750,12 @@
 		</footer>
 		<!-- ========== footer end =========== -->
 	</main>
-	<!-- ======== main-wrapper end =========== -->
-	<!-- ========= All Javascript files linkup ======== -->
+	<script>
+		var dateEl = document.getElementById('date');
+		var timeEl = document.getElementById('time');
+		document.getElementById('date-output').innerHTML = dateEl.type === 'date';
+		document.getElementById('time-output').innerHTML = timeEl.type === 'time';
+	</script>
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/js/Chart.min.js"></script>
 	<script src="~/assets/js/dynamic-pie-chart.js"></script>

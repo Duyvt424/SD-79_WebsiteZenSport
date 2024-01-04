@@ -284,10 +284,6 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DetailsBill(Guid billId, Guid? customerID)
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
             var customerId = customerID != null ? customerID : customerIdSession;
