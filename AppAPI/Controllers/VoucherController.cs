@@ -35,7 +35,7 @@ namespace AppAPI.Controllers
 		[HttpGet("get-voucher-for-username")]
 		public IEnumerable<Voucher> GetVoucherForUsername(string username)
 		{
-			var vouchers = repos.GetAll().Where(c => c.DateCreated <= DateTime.Now && c.Status == 0 &&
+			var vouchers = repos.GetAll().Where(c => c.DateCreated <= DateTime.Now && c.Status == 0 && c.ExpirationDate >= DateTime.Now &&
 				((c.UserNameCustomer == null) ||
 				(username != null && c.UserNameCustomer != null && IsUsernameInList(username, c.UserNameCustomer)))
 			);
