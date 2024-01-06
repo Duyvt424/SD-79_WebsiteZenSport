@@ -1,5 +1,6 @@
 using AppView.Controllers;
 using AppView.Hubs;
+using AppView.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -8,7 +9,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSignalR();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromMinutes(60);
+	options.IdleTimeout = TimeSpan.FromDays(30);
 });
 var app = builder.Build();
 
@@ -23,6 +24,7 @@ app.UseStatusCodePagesWithRedirects("/Home/NotFound");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
+app.UseMiddleware<InactiveCartMiddleware>();
 app.UseRouting();
 app.UseAuthorization();
 

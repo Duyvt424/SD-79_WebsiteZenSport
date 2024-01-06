@@ -236,6 +236,8 @@ namespace AppView.Controllers
                     // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng lên 1
                     cartItem.Quantity++;
                 }
+                shoesDT_Size.Quantity--;
+                _dBContext.SaveChanges();
                 SessionServices.SetObjToSession(HttpContext.Session, "Cart", cartItems);
             }
             return RedirectToAction("Cart");
@@ -263,6 +265,9 @@ namespace AppView.Controllers
                 if (itemToRemove != null)
                 {
                     cartItems.Remove(itemToRemove);
+                    ShoesDT_Size.Quantity += itemToRemove.Quantity;
+                    _dBContext.Update(ShoesDT_Size);
+                    _dBContext.SaveChanges();
                     // Lưu lại thông tin giỏ hàng mới vào session
                     SessionServices.SetObjToSession(HttpContext.Session, "Cart", cartItems);
                 }
@@ -279,93 +284,207 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID, string deliveryDateSave, Guid addressIDSave1)
+        public IActionResult CheckoutOk(List<CartItemViewModel> viewModel, string HinhThucThanhToan, decimal shippingFee, Guid voucherID, string deliveryDateSave, Guid addressIDSave1, string NameKhach, string SdtKhach, string EmailKhach, string ProvinceKhach, string DistrictKhach, string WardKhach, string SoNhaKhach, int DistrictIdKhach, int WardCodeKhach, int ShippingMethodKhach)
         {
             //lấy id ng dùng trên session
             var userIdString = HttpContext.Session.GetString("UserId");
             var CustomerID = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            //tìm hình thức tt tương ứng
-            var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
-            if (CustomerID == Guid.Empty)
+            if (CustomerID != Guid.Empty)
             {
-                return RedirectToAction("Login", "Customer");
-            }
-            var objVoucher = _dBContext.Vouchers.FirstOrDefault(c => c.VoucherID == voucherID);
-            var voucherId = objVoucher?.VoucherID;
-            // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
-            var cartItems = _dBContext.CartDetails
-                .Where(c => c.CumstomerID == CustomerID)
-                .Include(c => c.ShoesDetails_Size)
-                .ToList();
-            // Tính tổng giá tiền cho sản phẩm trong giỏ hàng
-            decimal totalProductPrice = cartItems.Sum(item =>
-            {
-                var shoesDetails = _dBContext.ShoesDetails.FirstOrDefault(c => c.ShoesDetailsId == item.ShoesDetails_Size.ShoesDetailsId);
-                return shoesDetails.Price * item.Quantity;
-            });
-
-            // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
-            decimal totalPrice = totalProductPrice + shippingFee;
-            decimal totalPriceAfterDiscount = voucherID != Guid.Empty ? (totalProductPrice + shippingFee) - objVoucher.VoucherValue : (totalProductPrice + shippingFee) - 0;
-            // Tạo đơn hàng
-            var bill = new Bill
-            {
-                BillID = Guid.NewGuid(),
-                BillCode = GenerateBillCode(),
-                CustomerID = CustomerID,
-                CreateDate = DateTime.Now,
-                ConfirmationDate = DateTime.Now,
-                Status = 0,
-                Note = "",
-                IsPaid = false,
-                SuccessDate = Convert.ToDateTime(deliveryDateSave),
-                ShippingCosts = shippingFee,
-                DeliveryDate = DateTime.Now,
-                CancelDate = DateTime.Now,
-                UpdateDate = DateTime.Now,
-                PaymentDay = DateTime.Now,
-                TotalPrice = totalPrice,
-                TotalPriceAfterDiscount = totalPriceAfterDiscount,
-                EmployeeID = null,
-                VoucherID = voucherId,
-                PurchaseMethodID = HTThanhToan,
-                AddressID = addressIDSave1
-            };
-            _dBContext.Bills.Add(bill);
-
-            var billStatusHistory = new BillStatusHistory
-            {
-                BillStatusHistoryID = Guid.NewGuid(),
-                Status = 0,
-                ChangeDate = DateTime.Now,
-                Note = "Người mua tạo đơn hàng",
-                BillID = bill.BillID,
-                EmployeeID = null,
-            };
-            _dBContext.BillStatusHistories.Add(billStatusHistory);
-
-            foreach (var item in cartItems)
-            {
-                var billDetail = new BillDetails
+                //tìm hình thức tt tương ứng
+                var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
+                var objVoucher = _dBContext.Vouchers.FirstOrDefault(c => c.VoucherID == voucherID);
+                var voucherId = objVoucher?.VoucherID;
+                // Thêm sản phẩm vào bảng BillDetail và cập nhật số lượng sản phẩm
+                var cartItems = _dBContext.CartDetails
+                    .Where(c => c.CumstomerID == CustomerID)
+                    .Include(c => c.ShoesDetails_Size)
+                    .ToList();
+                // Tính tổng giá tiền cho sản phẩm trong giỏ hàng
+                decimal totalProductPrice = cartItems.Sum(item =>
                 {
-                    ID = Guid.NewGuid(),
-                    BillID = bill.BillID,
-                    ShoesDetails_SizeID = item.ShoesDetails_SizeID,
-                    Quantity = item.Quantity,
-                    Price = item.ShoesDetails_Size.ShoesDetails.Price
+                    var shoesDetails = _dBContext.ShoesDetails.FirstOrDefault(c => c.ShoesDetailsId == item.ShoesDetails_Size.ShoesDetailsId);
+                    return shoesDetails.Price * item.Quantity;
+                });
+
+                // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
+                decimal totalPrice = totalProductPrice + shippingFee;
+                decimal totalPriceAfterDiscount = voucherID != Guid.Empty ? (totalProductPrice + shippingFee) - objVoucher.VoucherValue : (totalProductPrice + shippingFee) - 0;
+                // Tạo đơn hàng
+                var bill = new Bill
+                {
+                    BillID = Guid.NewGuid(),
+                    BillCode = GenerateBillCode(),
+                    CustomerID = CustomerID,
+                    CreateDate = DateTime.Now,
+                    ConfirmationDate = DateTime.Now,
+                    Status = 0,
+                    Note = "",
+                    IsPaid = false,
+                    SuccessDate = Convert.ToDateTime(deliveryDateSave),
+                    ShippingCosts = shippingFee,
+                    DeliveryDate = DateTime.Now,
+                    CancelDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    PaymentDay = DateTime.Now,
+                    TotalPrice = totalPrice,
+                    TotalPriceAfterDiscount = totalPriceAfterDiscount,
+                    EmployeeID = null,
+                    VoucherID = voucherId,
+                    PurchaseMethodID = HTThanhToan,
+                    AddressID = addressIDSave1
                 };
-                _dBContext.BillDetails.Add(billDetail);
+                _dBContext.Bills.Add(bill);
+
+                var billStatusHistory = new BillStatusHistory
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 0,
+                    ChangeDate = DateTime.Now,
+                    Note = "Người mua tạo đơn hàng",
+                    BillID = bill.BillID,
+                    EmployeeID = null,
+                };
+                _dBContext.BillStatusHistories.Add(billStatusHistory);
+
+                foreach (var item in cartItems)
+                {
+                    var billDetail = new BillDetails
+                    {
+                        ID = Guid.NewGuid(),
+                        BillID = bill.BillID,
+                        ShoesDetails_SizeID = item.ShoesDetails_SizeID,
+                        Quantity = item.Quantity,
+                        Price = item.ShoesDetails_Size.ShoesDetails.Price
+                    };
+                    _dBContext.BillDetails.Add(billDetail);
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                _dBContext.SaveChanges();
+
+                //Xóa giỏ hàng của người dùng
+                _dBContext.CartDetails.RemoveRange(cartItems);
+                _dBContext.SaveChanges();
+
+                return RedirectToAction("DetailsBill", "Bill", new { billID = bill.BillID });
             }
+            else
+            {
+                var rank = _dBContext.Ranks.First(c => c.Name == "Không").RankID;
 
-            // Lưu thay đổi vào cơ sở dữ liệu
-            _dBContext.SaveChanges();
+                Customer customer = new Customer()
+                {
+                    CumstomerID = Guid.NewGuid(),
+                    FullName = NameKhach,
+                    UserName = NameKhach + GenerateBillCode(),
+                    Password = NameKhach + GenerateBillCode(),
+                    Email = EmailKhach,
+                    Sex = 0,
+                    ResetPassword = "",
+                    PhoneNumber = SdtKhach,
+                    Status = 1,
+                    DateCreated = DateTime.Now,
+                    RankID = rank
+                };
+                _dBContext.Customers.Add(customer);
 
-            //Xóa giỏ hàng của người dùng
-            _dBContext.CartDetails.RemoveRange(cartItems);
-            _dBContext.SaveChanges();
+                Address address = new Address()
+                {
+                    AddressID = Guid.NewGuid(),
+                    Street = SoNhaKhach,
+                    Commune = WardKhach,
+                    District = DistrictKhach,
+                    Province = ProvinceKhach,
+                    IsDefaultAddress = true,
+                    ShippingCost = shippingFee,
+                    DistrictId = DistrictIdKhach,
+                    WardCode = WardCodeKhach,
+                    ShippingMethodID = ShippingMethodKhach,
+                    Status = 1,
+                    DateCreated = DateTime.Now,
+                    CumstomerID = customer.CumstomerID
+                };
+                _dBContext.Addresses.Add(address);
 
-            return RedirectToAction("DetailsBill", "Bill", new {billID = bill.BillID});
+                // Tìm hình thức thanh toán tương ứng
+                //tìm hình thức tt tương ứng
+                var HTThanhToan = _dBContext.PurchaseMethods.FirstOrDefault(c => c.MethodName == HinhThucThanhToan).PurchaseMethodID;
+                var objVoucher = _dBContext.Vouchers.FirstOrDefault(c => c.VoucherID == voucherID);
+                var voucherId = objVoucher?.VoucherID;
+
+                // Lấy dữ liệu giỏ hàng từ Session
+                var cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
+                // Tính tổng giá tiền cho sản phẩm trong giỏ hàng từ Session
+                decimal totalProductPrice = cartItems.Sum(item =>
+                {
+                    // Làm thêm bất kỳ xử lý nào cần thiết với dữ liệu từ Session
+                    return item.Price * item.Quantity;
+                });
+
+                // Tính tổng giá tiền cả giỏ hàng và phí vận chuyển
+                decimal totalPrice = totalProductPrice + shippingFee;
+                decimal totalPriceAfterDiscount = voucherID != Guid.Empty ? (totalProductPrice + shippingFee) - objVoucher.VoucherValue : (totalProductPrice + shippingFee) - 0;
+
+                // Tạo đơn hàng
+                var bill = new Bill
+                {
+                    BillID = Guid.NewGuid(),
+                    BillCode = GenerateBillCode(),
+                    CustomerID = customer.CumstomerID,
+                    CreateDate = DateTime.Now,
+                    ConfirmationDate = DateTime.Now,
+                    Status = 0,
+                    Note = "",
+                    IsPaid = false,
+                    SuccessDate = Convert.ToDateTime(deliveryDateSave),
+                    ShippingCosts = shippingFee,
+                    DeliveryDate = DateTime.Now,
+                    CancelDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    PaymentDay = DateTime.Now,
+                    TotalPrice = totalPrice,
+                    TotalPriceAfterDiscount = totalPriceAfterDiscount,
+                    EmployeeID = null,
+                    VoucherID = voucherId,
+                    PurchaseMethodID = HTThanhToan,
+                    AddressID = address.AddressID
+                };
+                _dBContext.Bills.Add(bill);
+
+                var billStatusHistory = new BillStatusHistory
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 0,
+                    ChangeDate = DateTime.Now,
+                    Note = "Người mua tạo đơn hàng",
+                    BillID = bill.BillID,
+                    EmployeeID = null,
+                };
+                _dBContext.BillStatusHistories.Add(billStatusHistory);
+
+                foreach (var item in cartItems)
+                {
+                    var objSize = _dBContext.Sizes.First(c => c.Name == item.Size).SizeID;
+                    var ShoesDt_Size = _dBContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == item.ShoesDetailsID && c.SizeID == objSize);
+                    var billDetail = new BillDetails
+                    {
+                        ID = Guid.NewGuid(),
+                        BillID = bill.BillID,
+                        ShoesDetails_SizeID = ShoesDt_Size.ID,
+                        Quantity = item.Quantity,
+                        Price = item.Price // Lấy giá từ dữ liệu Session
+                    };
+                    _dBContext.BillDetails.Add(billDetail);
+                }
+                // Lưu thay đổi vào cơ sở dữ liệu
+                _dBContext.SaveChanges();
+                // Xóa giỏ hàng của người dùng từ Session
+                HttpContext.Session.Remove("Cart");
+                return RedirectToAction("DetailsBill", "Bill", new { billID = bill.BillID });
+            }
         }
+
         [HttpPost]
         public IActionResult UpdateCartItemQuantity(Guid shoesDetailsId, int quantity, string size)
         {
@@ -391,7 +510,20 @@ namespace AppView.Controllers
                     _dBContext.SaveChanges();
                 }
             }
-            // Các xử lý khác (nếu cần)
+            else
+            {
+                List<CartItemViewModel> cartItems = SessionServices.GetObjFromSession(HttpContext.Session, "Cart") as List<CartItemViewModel>;
+                CartItemViewModel itemToUpdate = cartItems.First(c => c.ShoesDetailsID == shoesDetailsId && c.Size == size);
+                if (itemToUpdate != null)
+                {
+                    var previousQuantity = itemToUpdate.Quantity;
+                    itemToUpdate.Quantity = quantity;
+                    ShoesDT_Size.Quantity += previousQuantity - quantity;
+                    _dBContext.Update(ShoesDT_Size);
+                    _dBContext.SaveChanges();
+                }
+                SessionServices.SetObjToSession(HttpContext.Session, "Cart", cartItems);
+            }
             return RedirectToAction("Cart");
         }
         public int GetMaxQuantityForProduct(Guid shoesDetailsId, string size)
@@ -430,7 +562,7 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID, Guid idCustomer)
+        public async Task<IActionResult> AddAddress(string nameUser, string phoneNumber, string email, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID, Guid idCustomer)
         {
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
@@ -440,6 +572,7 @@ namespace AppView.Controllers
             {
                 userUpdate.FullName = nameUser;
                 userUpdate.PhoneNumber = phoneNumber;
+                userUpdate.Email = email;
                 _dBContext.Update(userUpdate);
                 _dBContext.SaveChanges();
             }

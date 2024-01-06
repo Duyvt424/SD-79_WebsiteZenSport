@@ -318,7 +318,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-													<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 										<script>
@@ -537,9 +537,12 @@
 								<p style="font-weight:bold; font-size:17px; margin-left: 2%; margin-top: 2%;">Bạn chưa có địa chỉ nhận hàng, hãy thêm mới hoặc đăng nhập!</p>
 							}
 							<div class="btn-container">
-								<button class="btn-address" onclick="toggleAddressList()">
-									Chọn địa chỉ
-								</button>
+								@if (userName != null)
+								{
+									<button class="btn-address" onclick="toggleAddressList()">
+										Chọn địa chỉ
+									</button>
+								}
 								<button class="btn-address add-new-address">
 									Thêm mới
 								</button>
@@ -746,6 +749,10 @@
 										<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
 										<label for="floatingInputEmail">Số điện thoại</label>
 									</div>
+									<div class="form-floating mb-3">
+										<input type="email" class="form-control" name="email" placeholder="Email" required>
+										<label for="floatingInputEmail">Email</label>
+									</div>
 									<div class="row mb-4">
 										<div class="col">
 											<div class="form-floating mb-3">
@@ -783,9 +790,12 @@
 										<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
 										<label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
 									</div>
-									<button class="btn-address" type="submit" style="margin-left: 0.5%;">
-										Thêm
-									</button>
+									@if (userName != null)
+									{
+										<button class="btn-address" type="submit" style="margin-left: 0.5%;">
+											Thêm
+										</button>
+									}
 									<div style="padding-right: 300px; display:none;" id="shippingOptionsDiv">
 										<label class="radio-button" style="font-size: 14px; display: inline;">
 											<input type="radio" name="example-radio" value="option1">
@@ -888,6 +898,7 @@
 				function updateProvinceValue(selectElement) {
 					const provinceName = selectElement.options[selectElement.selectedIndex].text;
 					document.getElementById("ProvinceName").value = provinceName;
+					document.getElementById("provineKhach").value = provinceName;
 				}
 				// Call the fetchProvinces function to populate the select box
 				fetchProvinces();
@@ -930,6 +941,9 @@
 					const districtId = selectElement.value;
 					document.getElementById("DistrictName").value = districtName;
 					document.getElementById("districtIDCus").value = districtId;
+					//
+					document.getElementById("districtKhach").value = districtName;
+					document.getElementById("districtIdKhach").value = districtId;
 				}
 				fetchDistricts();
 			</script>
@@ -969,6 +983,9 @@
 					const wardCode = selectElement.value;
 					document.getElementById("WardName").value = wardName;
 					document.getElementById("wardCodeCus").value = wardCode;
+					//
+					document.getElementById("wardKhach").value = wardName;
+					document.getElementById("wardCodeKhach").value = wardCode;
 				}
 			</script>
 			<script>
@@ -1015,6 +1032,7 @@
 							// Gọi hàm tính toán ngày nhận hàng dự kiến
 							calculateDeliveryDate();
 							document.getElementById('shippingMethodID').value = shippingMethods[0].service_id;
+							document.getElementById('shippingMethodKhach').value = shippingMethods[0].service_id;
 						})
 						.catch(error => {
 							console.error('Error:', error);
@@ -1256,36 +1274,36 @@
 																var voucher = data[i];
 																console.log("Current Voucher:", voucher);
 																var voucherHtml = `
-																																							<li class="list-group-item d-flex justify-content-between align-items-center">
-																																								<div style="display: flex">
-																																									<img src="/image/voucher.jpg"
-																																										width="85"
-																																										alt="totoprayogo.com"
-																																										class="" />
-																																										<div style="margin-left: 10px ">
-																																										<p style="display:none">ID: ${voucher.voucherID}</p>
-																																										<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
-																																										<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																																										<p>Hạng: ${voucher.exclusiveright}</p>
-																																										<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																																										<p style="display:none">Total: ${voucher.Total}</p>
-																																										<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																																										<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																																																								<li class="list-group-item d-flex justify-content-between align-items-center">
+																																																																									<div style="display: flex">
+																																																																										<img src="/image/voucher.jpg"
+																																																																											width="85"
+																																																																											alt="totoprayogo.com"
+																																																																											class="" />
+																																																																											<div style="margin-left: 10px ">
+																																																																											<p style="display:none">ID: ${voucher.voucherID}</p>
+																																																																											<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
+																																																																											<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																																																											<p>Hạng: ${voucher.exclusiveright}</p>
+																																																																											<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																																																											<p style="display:none">Total: ${voucher.Total}</p>
+																																																																											<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																																																											<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
 
-																																										<p style="display:none">Status: ${voucher.Status}</p>
-																																										<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																																										<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																																										<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																																										<p style="display:none">Type: ${voucher.Type}</p>
-																																										<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																																																					<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
+																																																																											<p style="display:none">Status: ${voucher.Status}</p>
+																																																																											<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																																																											<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																																																											<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																																																											<p style="display:none">Type: ${voucher.Type}</p>
+																																																																											<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																																																																						<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
 
-																																									</div>
-																																								</div>
-																																								<div style="margin-top: 25px">
-																																								<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
-																																								</div>
-																																							</li>`;
+																																																																										</div>
+																																																																									</div>
+																																																																									<div style="margin-top: 25px">
+																																																																									<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
+																																																																									</div>
+																																																																								</li>`;
 
 																$("#voucherList").append(voucherHtml);
 															}
@@ -1453,34 +1471,34 @@
 																	result.forEach(function (voucher) {
 																		if (voucher.voucherCode === voucherCode) {
 																			var voucherHtml = `
-																																										<li class="list-group-item d-flex justify-content-between align-items-center">
-																																											 <div style="display: flex">
-																																													<img src="/image/voucher.jpg"
-																																													width="85"
-																																													alt="totoprayogo.com"
-																																													class="" />
-																																													<div style="margin-left: 10px">
-																																													<p style="display:none">ID: ${voucher.voucherID}</p>
-																																													<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue} đ trên hóa đơn  ${voucher.total} đ</p>
-																																													<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																																													<p>Hạng: ${voucher.exclusiveright}</p>
-																																													<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																																													<p style="display:none">Total: ${voucher.Total}</p>
-																																													<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																																													<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
-																																													<p style="display:none">Status: ${voucher.Status}</p>
-																																													<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																																													<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																																													<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																																													<p style="display:none">Type: ${voucher.Type}</p>
-																																													<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																																													<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
-																																													</div>
-																																												</div>
-																																													<div style="margin-top: 25px">
-																																										<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
-																																										</div>
-																																										</li>`;
+																																																																											<li class="list-group-item d-flex justify-content-between align-items-center">
+																																																																												 <div style="display: flex">
+																																																																														<img src="/image/voucher.jpg"
+																																																																														width="85"
+																																																																														alt="totoprayogo.com"
+																																																																														class="" />
+																																																																														<div style="margin-left: 10px">
+																																																																														<p style="display:none">ID: ${voucher.voucherID}</p>
+																																																																														<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue} đ trên hóa đơn  ${voucher.total} đ</p>
+																																																																														<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																																																														<p>Hạng: ${voucher.exclusiveright}</p>
+																																																																														<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																																																														<p style="display:none">Total: ${voucher.Total}</p>
+																																																																														<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																																																														<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																																																														<p style="display:none">Status: ${voucher.Status}</p>
+																																																																														<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																																																														<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																																																														<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																																																														<p style="display:none">Type: ${voucher.Type}</p>
+																																																																														<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																																																														<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
+																																																																														</div>
+																																																																													</div>
+																																																																														<div style="margin-top: 25px">
+																																																																											<input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
+																																																																											</div>
+																																																																											</li>`;
 
 																			voucherList.append(voucherHtml);
 																		}
@@ -1534,103 +1552,121 @@
 
 								@*@if (string.IsNullOrEmpty(userName))
 								{
-									*@<div style="display:none;">
+								*@
+								<div style="display:none;">
 								<li style="display:none;" class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi">
 										@Html.Raw(userName?.Replace("\"", ""))
 								</li>
-								</div>
-								@*}*@
-								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-									<div>
-										<strong>Tổng</strong>
-									</div>
-									<div id="cart-total-container">
-										<span name="TongTien" id="total-price-payment" class="cart-total-all" style="font-weight:bold;"></span>
-									</div>
-								</li>
-							</ul>
 						</div>
-						<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
-							<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
-							<input type="text" id="voucherId" name="voucherID" style="display:none;">
-							<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
-							<input type="text" id="addressIDSave" name="addressIDSave1" style="display:none;">
-							<div class="form-group">
-								<input type="hidden" id="total-price" name="TongTien" value="">
+								@*}*@
+						<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+							<div>
+								<strong>Tổng</strong>
 							</div>
-							<div class="form-group" style="display:none;">
-								<input type="radio" id="paid" name="HinhThucThanhToan" value="Thanh toán khi nhận hàng" checked>
-								<label for="paid">Thanh toán khi nhận hàng</label>
-								<br />
-								<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Thanh toán trực tuyến VNPay">
-								<label for="not-paid">Thanh toán trực tuyến VNPay</label>
+							<div id="cart-total-container">
+								<span name="TongTien" id="total-price-payment" class="cart-total-all" style="font-weight:bold;"></span>
 							</div>
-							<button class="btn1 btn-danger text mr-2 px-4" type="submit"
-									style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
-								Xác Nhận Đặt Hàng
-							</button>
+						</li>
+						</ul>
+					</div>
+					<form method="post" action="@Url.Action("CheckoutOk", "Cart")" id="checkout-form" style="margin-top:15px;">
+						<input type="text" id="nameKhach" name="NameKhach" style="display:none;">
+						<input type="text" id="sdtKhach" name="SdtKhach" style="display:none;">
+						<input type="email" id="emailKhach" name="EmailKhach" style="display:none;">
+						<input type="text" id="provineKhach" name="ProvinceKhach" style="display:none;">
+						<input type="text" id="districtKhach" name="DistrictKhach" style="display:none;">
+						<input type="text" id="wardKhach" name="WardKhach" style="display:none;">
+						<input type="text" id="soNhaKhach" name="SoNhaKhach" style="display:none;">
+						<input type="text" id="districtIdKhach" name="DistrictIdKhach" style="display:none;">
+						<input type="text" id="wardCodeKhach" name="WardCodeKhach" style="display:none;">
+						<input type="number" id="shippingMethodKhach" name="ShippingMethodKhach" style="display:none;">
+						<input type="number" id="shippingFee" name="shippingFee" style="display:none;">
+						<input type="text" id="voucherId" name="voucherID" style="display:none;">
+						<input type="text" id="deliveryDateSave" name="deliveryDateSave" style="display:none;">
+						<input type="text" id="addressIDSave" name="addressIDSave1" style="display:none;">
+						<div class="form-group">
+							<input type="hidden" id="total-price" name="TongTien" value="">
+						</div>
+						<div class="form-group" style="display:none;">
+							<input type="radio" id="paid" name="HinhThucThanhToan" value="Thanh toán khi nhận hàng" checked>
+							<label for="paid">Thanh toán khi nhận hàng</label>
+							<br />
+							<input type="radio" id="not-paid1" name="HinhThucThanhToan" value="Thanh toán trực tuyến VNPay">
+							<label for="not-paid">Thanh toán trực tuyến VNPay</label>
+						</div>
+						<button class="btn1 btn-danger text mr-2 px-4" type="submit"
+								style="width: 355px; height: 45px; border-radius: 25px; color: white; background-color: black; margin-top:15px;">
+							Xác Nhận Đặt Hàng
+						</button>
 							@*<div>
-							<p>Cấp bậc của bạn: @Model.RankName</p>
-							</div>*@
-							<script>
-								$(document).ready(function () {
-									$("#checkout-form").submit(function (event) {
-										// Ngăn chặn mặc định của form
-										//event.preventDefault();
+						<p>Cấp bậc của bạn: @Model.RankName</p>
+						</div>*@
+						<script>
+							$(document).ready(function () {
+								$("#checkout-form").submit(function (event) {
+									// Ngăn chặn mặc định của form
+									//event.preventDefault();
+									var nameUserValue = $("input[name='nameUser']").val();
+									var phoneNumberValue = $("input[name='phoneNumber']").val();
+									var emailValue = $("input[name='email']").val();
+									var streetValue = $("input[name='street']").val();
 
-										// Lấy voucherId từ trường ẩn
-										var a = $("#voucherId").val();
-										console.log(a)
-										// Kiểm tra xem voucherId có tồn tại không
-										if (!a) {
-											console.log("Voucher ID không hợp lệ");
-											return;
-										}
+									// Gán giá trị vào các input ẩn
+									$("#nameKhach").val(nameUserValue);
+									$("#sdtKhach").val(phoneNumberValue);
+									$("#emailKhach").val(emailValue);
+									$("#soNhaKhach").val(streetValue);
+									// Lấy voucherId từ trường ẩn
+									var a = $("#voucherId").val();
+									console.log(a)
+									// Kiểm tra xem voucherId có tồn tại không
+									if (!a) {
+										console.log("Voucher ID không hợp lệ");
+										return;
+									}
 
-										// Thực hiện AJAX để cập nhật số lượng voucher
-										$.ajax({
-											type: "GET",
-											url: "https://localhost:7036/api/Voucher/update-quantity",
-											contentType: "application/json", // Thêm dòng này để chỉ định kiểu dữ liệu của nội dung
-											data: { voucherId: a },
-											success: function (result) {
-												// Xử lý kết quả nếu cần thiết
-												console.log("Cập nhật số lượng voucher thành công");
+									// Thực hiện AJAX để cập nhật số lượng voucher
+									$.ajax({
+										type: "GET",
+										url: "https://localhost:7036/api/Voucher/update-quantity",
+										contentType: "application/json", // Thêm dòng này để chỉ định kiểu dữ liệu của nội dung
+										data: { voucherId: a },
+										success: function (result) {
+											// Xử lý kết quả nếu cần thiết
+											console.log("Cập nhật số lượng voucher thành công");
 
-												// Kiểm tra trạng thái của AJAX
-												if (result && result.success) {
-													// Tiếp tục với bước xác nhận đặt hàng
-													// Ví dụ: Hiển thị thông báo hoặc chuyển hướng đến trang cảm ơn
+											// Kiểm tra trạng thái của AJAX
+											if (result && result.success) {
+												// Tiếp tục với bước xác nhận đặt hàng
+												// Ví dụ: Hiển thị thông báo hoặc chuyển hướng đến trang cảm ơn
 
-													// Submit form sau khi đã xử lý xong
-													submitCheckoutForm();
-												} else {
-													console.log("Lỗi khi cập nhật số lượng voucher");
-												}
-											},
-											error: function (error) {
-												console.log("Lỗi Ajax:", error);
-
-												// Nếu có lỗi, bạn có thể xử lý tùy thuộc vào yêu cầu của bạn
+												// Submit form sau khi đã xử lý xong
+												submitCheckoutForm();
+											} else {
+												console.log("Lỗi khi cập nhật số lượng voucher");
 											}
-										});
+										},
+										error: function (error) {
+											console.log("Lỗi Ajax:", error);
+
+											// Nếu có lỗi, bạn có thể xử lý tùy thuộc vào yêu cầu của bạn
+										}
 									});
 								});
+							});
 
-								// Hàm để submit form sau khi đã xử lý xong
-								function submitCheckoutForm() {
-									// Đảm bảo rằng đã cập nhật số lượng voucher thành công trước khi submit form
-									console.log("submitCheckoutForm được gọi");
-									$("#checkout-form")[0].submit();
-								}
-							</script>
+							// Hàm để submit form sau khi đã xử lý xong
+							function submitCheckoutForm() {
+								// Đảm bảo rằng đã cập nhật số lượng voucher thành công trước khi submit form
+								console.log("submitCheckoutForm được gọi");
+								$("#checkout-form")[0].submit();
+							}
+						</script>
 
-						</form>
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>
-	</div>
 	</div>
 </section>
 <div class="shell">
