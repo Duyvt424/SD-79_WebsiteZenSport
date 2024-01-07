@@ -718,14 +718,19 @@
 			<div class="tables-wrapper">
 				<div class="custom-row">
 					<div class="custom-col">
+						<label class="custom-label" for="orderCode">Mã đơn hàng:</label>
+						<input type="text" id="orderCode" name="orderCode" oninput="findTables()">
+					</div>
+					<div class="custom-col">
 						<label class="custom-label" for="startDate">Từ ngày:</label>
 						<input type="date" id="startDate" name="startDate" oninput="filterByDateRange()">
 					</div>
+					
 					<div class="custom-col">
 						<label class="custom-label" for="endDate">Đến ngày:</label>
 						<input type="date" id="endDate" name="endDate" oninput="filterByDateRange()">
 					</div>
-		<div class="custom-col" style="margin-left: 800px;">
+		<div class="custom-col" style="margin-left: 910px;">
     <label class="custom-label" for="orderStatus">Trạng thái đơn hàng:</label>
     <select id="orderStatus" name="orderStatus" onchange="filterByStatus()">
         <option value="-1">Tất cả</option>
@@ -792,7 +797,7 @@
 											if (string.Equals(trimmedBillName, trimmedFullName, StringComparison.OrdinalIgnoreCase))
 
 											{
-												<tr style="margin-top:5%; margin-bottom:5%">
+												<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
 													<td class="min-width">
 														<p>@stt</p>
 													</td>
@@ -896,6 +901,29 @@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script>
+		function findTables() {
+			var searchTerm = $('#orderCode').val().toLowerCase(); // Chuyển đổi giá trị tìm kiếm thành chữ thường
+
+			$('.bill-row').each(function () {
+				var billCode = $(this).find('td:nth-child(2)').text().toLowerCase(); // Lấy giá trị mã đơn hàng trong mỗi hàng
+
+				// Ẩn hoặc hiển thị hàng tùy thuộc vào việc có kết quả tìm kiếm hay không
+				if (billCode.includes(searchTerm)) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		}
+
+		// Gọi hàm findTables mỗi khi có sự thay đổi trong trường nhập liệu mã đơn hàng
+		$('#orderCode').on('input', function () {
+			findTables();
+		});
+	</script>
+
+
 	<script>
 		function filterByStatus() {
 			var selectedStatus = $("#orderStatus").val().trim();
