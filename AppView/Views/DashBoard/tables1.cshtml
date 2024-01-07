@@ -42,7 +42,9 @@
 		.img-account-profile {
 			height: 10rem;
 		}
-
+		 .max-width {
+        max-width: 40%; /* Đặt chiều rộng tối đa của danh sách (tùy chỉnh theo nhu cầu của bạn) */
+    }
 		.rounded-circle {
 			border-radius: 50% !important;
 		}
@@ -66,6 +68,9 @@
 			border-bottom: 1px solid rgba(33, 40, 50, 0.125);
 		}
 
+		p {
+			word-spacing: 7px;
+		}
 		.form-control, .dataTable-input {
 			display: block;
 			width: 100%;
@@ -132,7 +137,7 @@
 								<path d="M17.0833 10C17.7737 10 18.3432 9.43708 18.2408 8.75433C17.7005 5.14918 14.8508 2.29947 11.2457 1.75912C10.5629 1.6568 10 2.2263 10 2.91665V9.16666C10 9.62691 10.3731 10 10.8333 10H17.0833Z" />
 							</svg>
 						</span>
-						<span class="text">Dashboard</span>
+						<span class="text1" id="searchVoucherBtn1">Mã giảm giá</span>
 					</a>
 					@*<ul id="ddmenu_1" class="collapse dropdown-nav">
 						<li>
@@ -417,7 +422,7 @@
 							</div>*@
 						</div>
 						<!-- end col -->
-						<div class="col-md-6">
+						@*<div class="col-md-6">
 							<div class="breadcrumb-wrapper">
 								<nav aria-label="breadcrumb">
 									<ol class="breadcrumb">
@@ -430,7 +435,7 @@
 									</ol>
 								</nav>
 							</div>
-						</div>
+						</div>*@
 						<!-- end col -->
 					</div>
 					<!-- end row -->
@@ -442,86 +447,7 @@
 
 				<div class="tables-wrapper1" style="display: none;">
 					<div class="row">
-						@*<div class="col-lg-12">
-							<div class="card-style mb-30">
-								<div class="table-wrapper table-responsive">
-									<div class="title">
-								<h2>Thông tin khách hàng</h2>
-							</div>
-									<table class="table">
-										<thead>
-											<tr>
-												<th>
-													<h6>STT</h6>
-												</th>
-												
-												<th>
-													<h6 style="padding-left:5%;">Username</h6>
-												</th>
-												<th>
-													<h6 style="padding-left:5%;">FullName</h6>
-												</th>
-												<th>
-													<h6 style="padding-left:5%;">Password</h6>
-												</th>
-												<th>
-													<h6 style="padding-left:5%;">Email</h6>
-												</th>
-												<th>
-													<h6  style="padding-left:10%;">PhoneNumber</h6>
-												</th>
-												<th>
-													<h6  style="padding-left:5%;">Sex</h6>
-												</th>
-											
-											</tr>
-											<!-- end table row-->
-										</thead>
-										<tbody>
-
-											<tr style="margin-top:5%; margin-bottom:5%" data-userid="@Html.Raw(UserId?.Replace("\"", ""))"
-												data-username="@Html.Raw(userName?.Replace("\"", ""))"
-												data-fullname="@Html.Raw(fullName?.Replace("\"", ""))"
-												data-password="@Html.Raw(Password?.Replace("\"", ""))"
-												data-email="@Html.Raw(email?.Replace("\"", ""))"
-												data-phonenumber="@Html.Raw(PhoneNumber?.Replace("\"", ""))"
-												data-sex="@Html.Raw(Sex?.Replace("\"", ""))">
-														<td class="min-width">
-															<p>@stt</p>
-														</td>
-														
-														<td class="min-width">
-														<p>@Html.Raw(userName?.Replace("\"", ""))</p>
-														</td>
-														<td class="min-width">
-														<p style="color:red;">@Html.Raw(fullName?.Replace("\"", ""))</p>
-														</td>
-														<td class="min-width">
-														<p>@Html.Raw(Password?.Replace("\"", ""))</p>
-														</td>
-														<td class="min-width">
-														<p>@Html.Raw(email?.Replace("\"", ""))</p>
-														</td>
-														<td class="min-width">
-														<p>@Html.Raw(PhoneNumber?.Replace("\"", ""))</p>
-														</td>
-														<td class="min-width">
-														<p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">@Html.Raw(Sex?.Replace("\"", ""))</p>
-														</td>
-													
-													</tr>
-											
-
-
-												
-											
-										</tbody>
-									</table>
-									<!-- end table -->
-								</div>
-							</div>
-							<!-- end card -->
-						</div>*@
+						
 
 						<div class="container-xl px-4 mt-4">
 							<!-- Account page navigation-->
@@ -615,8 +541,162 @@
 					<!-- end row -->
 				</div>
 
+			@*	----------*@
+				
+				<!-- ========== tables-wrapper end ========== -->
+			</div>
+			<div class="tables-wrapper2" style="display: none;">
+					<div class="row" >
+						<div class="col-lg-12">
+							<div class="card-style mb-30">
+								<div class="table-wrapper table-responsive">
+									<div class="title">
+								<h2>Danh sách vouchers bạn đang sở hữu:</h2>
+									</div>
+
+								<ul class="list-group max-width" id="voucherList" style="margin-left: 500px;">
+										<!-- Danh sách voucher sẽ được thêm vào đây bằng JavaScript -->
+									</ul>
+
+							
+								</div>
+							</div>
+							<!-- end card -->
+						</div>
+							
+						<!-- end col -->
+					</div>
+				
+					<!-- end row -->
+				</div>
+		
+
+			<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+										<script>
+											$(document).ready(function () {
+
+												$("#searchVoucherBtn1").click(function () {
+													var username = $("#userNameLi").html().trim();
+													if (!username) {
+														username = null;
+													}
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7036/api/Voucher/get-voucher-for-username?username=" + username,
+														dataType: 'json',
+														success: function (data) {
+															console.log("Data from API:", data);
+
+															// Xóa danh sách voucher cũ
+															$("#voucherList").empty();
+
+															// Lặp qua mảng data trong JavaScript
+															for (var i = 0; i < data.length; i++) {
+																var voucher = data[i];
+																console.log("Current Voucher:", voucher);
+																var voucherHtml = `
+																																																													<li class="list-group-item d-flex justify-content-between align-items-center">
+																																																														<div style="display: flex">
+																																																															<img src="/image/voucher.jpg"
+																																																																width="85"
+																																																																alt="totoprayogo.com"
+																																																																class="" />
+																																																																<div style="margin-left: 10px ">
+																																																																<p style="display:none">ID: ${voucher.voucherID}</p>
+																																																																<p>Mã  ${voucher.voucherCode}  giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
+																																																																<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																																																<p>Hạng: ${voucher.exclusiveright}</p>
+																																																																<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																																																<p style="display:none">Total: ${voucher.Total}</p>
+																																																																<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																																																<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+
+																																																																<p style="display:none">Status: ${voucher.Status}</p>
+																																																																<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																																																<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																																																<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																																																<p style="display:none">Type: ${voucher.Type}</p>
+																																																																<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																																																										
+
+																																																															</div>
+																																																														</div>
+																																																														
+																																																													</li>`;
+
+																$("#voucherList").append(voucherHtml);
+															}
+														},
+
+														error: function (error) {
+															console.error("Lỗi khi lấy voucher:", error);
+														},
+														complete: function () {
+															console.log("Request hoàn tất.");
+														}
+													});
+												});
+
+												$("#voucherList").on("click", ".button-details", function (event) {
+													event.preventDefault();
+
+													// Lấy ID của voucher từ thuộc tính data
+													var voucherId = $(this).data("voucher-id");
+
+													// Thực hiện Ajax request để lấy chi tiết voucher
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7120/Voucher/Details/" + voucherId,
+														success: function (data) {
+															// Xóa nội dung hiện tại (nếu cần)
+															// $("#voucherDetailsContainer").empty();
+
+															// Chèn chi tiết voucher vào container
+															$("#voucherDetailsContainer").html($(data).find(".voucher-details"));
+
+															// Always show the close button
+															$("#voucherDetailsContainer").append('<button id="closeVoucherDetails">Đóng</button>');
+														},
+														error: function (error) {
+															console.error("Lỗi khi lấy chi tiết voucher:", error);
+														}
+													});
+												});
+
+												$("#voucherDetailsContainer").on("click", "#closeVoucherDetails", function () {
+													// Hide the voucher details container
+													$("#voucherDetailsContainer").hide();
+												});
+
+												function formatDate(dateString) {
+													const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+
+													// Chuyển đổi chuỗi ngày thành đối tượng Date
+													const dateObject = new Date(dateString);
+
+													// Lấy các thành phần của ngày
+													const year = dateObject.getFullYear();
+													const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Thêm số 0 phía trước nếu cần
+													const day = dateObject.getDate().toString().padStart(2, '0'); // Thêm số 0 phía trước nếu cần
+
+													// Tạo chuỗi ngày mới
+													const formattedDate = `${year}-${month}-${day}`;
+
+													return formattedDate;
+												}
 
 
+											});
+										</script>
+
+			<div style="display:none;">
+				<li style="display:none;" class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi">
+					@Html.Raw(userName?.Replace("\"", ""))
+				</li>
+			</div>
+@*
+			------------------*@
 			
 				<div class="tables-wrapper">
 					<div class="row">
@@ -784,11 +864,25 @@
 				// Hiển thị tables-wrapper
 				$('.tables-wrapper').show();
 
-				$('.tables-wrapper1').hide();
+				$('.tables-wrapper1,.tables-wrapper2').hide();
+				
+				
 
 				// Ẩn edit-container
 				$('#edit-container').empty();
 			});
+
+			$("#searchVoucherBtn1").click(function (e) {
+            e.preventDefault(); // Prevent the default behavior of the link
+
+            // Show the tables-wrapper2 and hide other elements
+            $('.tables-wrapper2').show();
+            $('.tables-wrapper').hide();
+
+            // Clear any existing content in the edit-container
+            $('#edit-container').empty();
+        });
+
 
 			// Thêm sự kiện click cho liên kết "Thông tin"
 			$('#show-info').click(function (e) {
@@ -798,7 +892,7 @@
 				$('.tables-wrapper1').show();
 
 				// Ẩn tables-wrapper
-				$('.tables-wrapper').hide();
+				$('.tables-wrapper,.tables-wrapper2').hide();
 
 				// Ẩn edit-container
 				$('#edit-container').empty();
@@ -810,7 +904,7 @@
 
 				// Ẩn tables-wrapper và tables-wrapper1
 				$('.tables-wrapper').hide();
-				$('.tables-wrapper1').hide();
+				$('.tables-wrapper1,.tables-wrapper2').hide();
 
 
 				// Sử dụng AJAX để lấy nội dung biểu mẫu chỉnh sửa
