@@ -611,9 +611,14 @@
 
 					// Set giá trị mặc định cho ngày bắt đầu và kết thúc
 					var defaultStartDate = new Date("2020-01-01").toISOString().split('T')[0];
-					var currentDate = new Date().toISOString().split('T')[0];
+					// Lấy ngày hiện tại
+					var currentDate = new Date();
+					// Thêm 1 ngày
+					currentDate.setDate(currentDate.getDate() + 1);
+					// Định dạng ngày mới
+					var formattedDate = currentDate.toISOString().split('T')[0];
 					$("input[name='startDate']").val(defaultStartDate);
-					$("input[name='endDate']").val(currentDate);
+					$("input[name='endDate']").val(formattedDate);
 
 					// Gọi hàm filterData khi trang được tải lần đầu tiên
 					filterData();

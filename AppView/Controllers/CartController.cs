@@ -481,7 +481,7 @@ namespace AppView.Controllers
                 _dBContext.SaveChanges();
                 // Xóa giỏ hàng của người dùng từ Session
                 HttpContext.Session.Remove("Cart");
-                return RedirectToAction("DetailsBill", "Bill", new { billID = bill.BillID });
+                return RedirectToAction("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID });
             }
         }
 
