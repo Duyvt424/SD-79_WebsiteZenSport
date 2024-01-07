@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AppView.Models;
 using System.Web;
+using System.Text;
 
 namespace AppView.Controllers
 { 
@@ -97,6 +98,8 @@ namespace AppView.Controllers
             //}
             //else return BadRequest();
         }
+
+     
         public async Task<IActionResult> DeleteCustomer(Guid id)
         {
             var cus = _repos.GetAll().First(c => c.CumstomerID == id);
@@ -129,7 +132,13 @@ namespace AppView.Controllers
             {
                 HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(loggedInUser.CumstomerID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
+				HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
+				HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(loggedInUser.Email));
+                HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(loggedInUser.Password));
+                HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(loggedInUser.Sex));
+                HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(loggedInUser.PhoneNumber));
                 
+
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
@@ -139,7 +148,72 @@ namespace AppView.Controllers
             }
         }
 
-        public async Task<IActionResult> SignUp()
+
+		[HttpGet]
+		public async Task<IActionResult> GetTotalSpentByCustomer1()
+		{
+			// Kiểm tra xem có customerId được lưu trong Session không
+			if (HttpContext.Session.TryGetValue("UserId", out byte[] userIdBytes) &&
+				Guid.TryParse(Encoding.UTF8.GetString(userIdBytes), out Guid customerId))
+			{
+				string apiUrl = "https://localhost:7036/api/Bill/get-bill";
+				var httpClient = new HttpClient();
+				var response = await httpClient.GetAsync(apiUrl);
+				string apiData = await response.Content.ReadAsStringAsync();
+				var bill = JsonConvert.DeserializeObject<List<Bill>>(apiData);
+
+				// Tính tổng tiền của khách hàng đang đăng nhập
+				decimal totalSpent = bill
+					.Where(b => b.CustomerID == customerId)
+					.Sum(b => b.TotalPriceAfterDiscount);
+
+				// Gọi API để cập nhật RankID cho khách hàng đang đăng nhập
+				string rankId = GetRankId(totalSpent);
+
+				string updateRankApiUrl = $"https://localhost:7036/api/Customer/update-customer-by-rankid?customerId={customerId}&rankId={rankId}";
+
+				var updateRankResponse = await httpClient.PutAsync(updateRankApiUrl, null);
+
+				if (!updateRankResponse.IsSuccessStatusCode)
+				{
+					// Xử lý lỗi nếu cần thiết
+					return StatusCode((int)updateRankResponse.StatusCode);
+				}
+				ViewBag.CustomerId = customerId;
+				return View();
+			}
+			else
+			{
+				// Redirect hoặc xử lý khi không có customerId trong Session
+				return RedirectToAction("Login"); // hoặc thực hiện hành động khác tùy thuộc vào yêu cầu của bạn
+			}
+		}
+
+
+
+
+		private string GetRankId(decimal totalSpent)
+		{
+			// Xác định Rank dựa trên totalSpent
+			if (totalSpent >= 20000000) // Hạng kim cương
+			{
+				return "b76ed681-23ef-4591-8c03-70b287d716ac";
+			}
+			else if (totalSpent >= 10000000) // Hạng vàng
+			{
+				return "34dc614c-9604-4288-b964-3d011afd3b76";
+			}
+			else if (totalSpent >= 5000000) // Hạng bạc
+			{
+				return "49865ee6-9562-46b9-bf6c-d2af8f8c2685";
+			}
+			else
+			{
+				return "29e837e2-1875-434c-a3f9-628db0e033e5";
+			}
+		}
+
+		public async Task<IActionResult> SignUp()
         {  
             return View();
         }
@@ -167,7 +241,7 @@ namespace AppView.Controllers
 				$"&ResetPassword=0000" +
 				$"&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}" +
 				$"&Status=0" +
-				$"&RankID=c388a0b3-899a-415a-8ac1-be43715c15ab" +
+				$"&RankID=29e837e2-1875-434c-a3f9-628db0e033e5" +
 				$"&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Login");
@@ -266,6 +340,8 @@ namespace AppView.Controllers
                 }
             };
             smtpClient.Send(message);
+
+
         }
         public IActionResult VerificationCode()
         {
@@ -320,5 +396,12 @@ namespace AppView.Controllers
             HttpContext.Session.Remove("UserId");
             return RedirectToAction("Login");
         }
-    }
+
+
+
+
+	
+
+
+	}
 }
