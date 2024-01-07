@@ -2,6 +2,7 @@
 *@
 @model IEnumerable<AppView.Models.VoucherViewModel>
 @{
+    
     ViewData["Title"] = "GetAllVouchers";
     var stt = 1;
 }
@@ -269,6 +270,70 @@
                 /* Bạn có thể tùy chỉnh màu khi di chuột qua nếu cần */
                 color: darkgray; /* Màu khi di chuột qua */
             }
+
+        /* Style for the search and date inputs */
+        .row {
+            margin-bottom: 15px;
+        }
+
+        .col {
+            display: flex;
+            align-items: center;
+        }
+
+
+
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="date"] {
+            width: calc(100% - 12px); /* Adjust the width to leave room for the label */
+            padding: 8px; /* Adjust padding for a cleaner look */
+            margin: 0; /* Remove default margin */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: content-box; /* Use content-box to include padding and border in the specified width */
+        }
+        label {
+            margin-right: 10px;
+        }
+        /* Style for the dropdown button */
+        .btn-secondary {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .btn-secondary:hover {
+                background-color: #45a049;
+            }
+
+        /* Style for the dropdown menu items */
+        .dropdown-menu {
+            min-width: 100%;
+        }
+
+        .dropdown-item {
+            color: #333;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-item:hover {
+                background-color: #f2f2f2;
+            }
+
+
+
     </style>
     <script>
         $(document).ready(function () {
@@ -291,12 +356,10 @@
                         </div>
                     </div>
                 </div>
-                @* <form method="get" action="@Url.Action("FindVouchers")">
-                    <div class="form">
-                        <input class="input" placeholder="Tìm kiếm" required="" type="text" name="searchQuery">
-                        <span class="input-border"></span>
-                    </div>
-                </form>*@
+
+              
+                  
+             
                 <div class="row" >
                     <div class="col">
                         <form method="get" action="@Url.Action("FindVouchers")">
@@ -307,8 +370,16 @@
                         </form>
                     </div>
                     <div class="col">
-                        <div class="d-flex justify-content-end">
-                            <div class="btn-group">
+                        <label for="startDate">Từ ngày:</label>
+                        <input type="date" id="startDate" name="startDate" oninput="filterByDateRange()">
+                    </div>
+                    <div class="col">
+                        <label for="endDate">Đến ngày:</label>
+                        <input type="date" id="endDate" name="endDate" oninput="filterByDateRange()">
+                    </div>
+                    <div class="col">
+                        <div class="d-flex justify-content-end" style="margin-left: 280px;">
+                            <div class="btn-group" >
                                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Chọn trạng thái
                                 </button>
@@ -510,8 +581,34 @@
                             }
                         }
                     </script>
+                    <script>
+                        function filterByDateRange() {
+                            var rows = document.getElementsByClassName("voucher-row");
+                            var startDate = new Date(document.getElementById("startDate").value);
+                            var endDate = new Date(document.getElementById("endDate").value);
+
+                            for (var i = 0; i < rows.length; i++) {
+                                var row = rows[i];
+                                var dateCreatedText = row.querySelector("td:nth-child(9)").innerText.trim(); // Giả sử DateCreated ở cột 8
+                                var expirationDateText = row.querySelector("td:nth-child(10)").innerText.trim(); // Giả sử ExpirationDate ở cột 6
+
+                                // Chuyển đổi định dạng ngày thời gian thành ngày JavaScript
+                                var dateCreated = new Date(dateCreatedText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
+                                var expirationDate = new Date(expirationDateText.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
+
+                                // Compare the dateCreated with the selected date range
+                                if (dateCreated >= startDate && expirationDate <= endDate) {
+                                    row.style.display = ""; // Show the row if it falls within the selected date range
+                                } else {
+                                    row.style.display = "none"; // Hide the row otherwise
+                                }
+                            }
+                        }
+                    </script>
 
 
+
+               
 
                 </table>
                 <div class="clearfix">
