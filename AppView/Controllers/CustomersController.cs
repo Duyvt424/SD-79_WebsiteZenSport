@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using AppView.Models;
 using System.Web;
+using System.Text;
+
 namespace AppView.Controllers
 {
     public class CustomersController : Controller
@@ -31,23 +33,23 @@ namespace AppView.Controllers
             _repos1 = all1;
         }
 
-        private bool CheckUserRole()
-        {
-            var CustomerRole = HttpContext.Session.GetString("UserId");
-            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
-            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
-            if (CustomerRole != null || EmployeeName != "Quản lý")
-            {
-                return false;
-            }
-            return true;
-        }
+        //private bool CheckUserRole()
+        //{
+        //    var CustomerRole = HttpContext.Session.GetString("UserId");
+        //    var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+        //    var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+        //    if (CustomerRole != null || EmployeeName != "Quản lý")
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
         public async Task<IActionResult> GetAllCustomer()
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
             string apiUrl = "https://localhost:7036/api/Customer/get-customer";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -74,10 +76,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateCustomer()
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
             return View();
         }
         [HttpPost]
@@ -91,10 +93,10 @@ namespace AppView.Controllers
         [HttpGet]
         public async Task<IActionResult> EditCustomer(Guid id) // Khi ấn vào Create thì hiển thị View
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
             // Lấy Product từ database dựa theo id truyền vào từ route
             Customer customer = _repos.GetAll().FirstOrDefault(c => c.CumstomerID == id);
             return View(customer);
@@ -106,12 +108,70 @@ namespace AppView.Controllers
             var response = await httpClient.PutAsync(apiUrl, null);
             return RedirectToAction("GetAllCustomer");
         }
-        public async Task<IActionResult> DeleteCustomer(Guid id)
+
+        [HttpGet]
+        public async Task<IActionResult> EditCustomers(Guid id) // Khi ấn vào Create thì hiển thị View
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
+            // Lấy Product từ database dựa theo id truyền vào từ route
+            Customer customer = _repos.GetAll().FirstOrDefault(c => c.CumstomerID == id);
+            return View(customer);
+        }
+		//public async Task<IActionResult> EditCustomers(Customer customer) // Thực hiện việc Tạo mới
+		//{
+		//    var httpClient = new HttpClient();
+		//    string apiUrl = $"https://localhost:7036/api/Customer/update-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}&CumstomerID={customer.CumstomerID}";
+		//    var response = await httpClient.PutAsync(apiUrl, null);
+		//    return View();
+
+
+		//}
+
+		public async Task<IActionResult> EditCustomers(Customer customer)
+		{
+			try
+			{
+				// Sử dụng HttpClient để gửi yêu cầu PUT
+				using (var httpClient = new HttpClient())
+				{
+					// Chuyển đổi dữ liệu khách hàng thành chuỗi JSON
+					var customerJson = JsonConvert.SerializeObject(customer);
+					var content = new StringContent(customerJson, Encoding.UTF8, "application/json");
+
+					// Gửi yêu cầu PUT đến API
+					var apiUrl = "https://localhost:7036/api/Customer/update-customer";
+					var response = await httpClient.PutAsync(apiUrl, content);
+
+					// Kiểm tra xem yêu cầu đã thành công hay không
+					if (response.IsSuccessStatusCode)
+					{
+						ViewData["SuccessMessage"] = "Sửa thành công!";
+					}
+					else
+					{
+						ViewData["ErrorMessage"] = $"Lỗi từ server: {response.StatusCode}";
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				// Xử lý lỗi nếu có
+				ViewData["ErrorMessage"] = $"Có lỗi xảy ra: {ex.Message}";
+			}
+
+			// Trả về view, không chuyển hướng
+			return View();
+		}
+
+		public async Task<IActionResult> DeleteCustomer(Guid id)
+        {
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
             var cus = _repos.GetAll().First(c => c.CumstomerID == id);
             var httpClient = new HttpClient();
             string apiUrl = $"https://localhost:7036/api/Customer/delete-customer?id={id}";
@@ -120,10 +180,10 @@ namespace AppView.Controllers
         }
         public async Task<IActionResult> FindCustomer(string searchQuery)
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
+            //if (CheckUserRole() == false)
+            //{
+            //    return RedirectToAction("Forbidden", "Home");
+            //}
             var customer = _repos.GetAll().Where(c => c.UserName.ToLower().Contains(searchQuery.ToLower()));
             return View(customer);
         }
@@ -141,8 +201,14 @@ namespace AppView.Controllers
             {
                 HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(loggedInUser.CumstomerID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
+				HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
+				HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
+				HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(loggedInUser.Password));
+				HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(loggedInUser.Sex));
+				HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(loggedInUser.PhoneNumber));
+				HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(loggedInUser.Email));
 
-                TempData["SignUpSuccess"] = "Đăng nhập thành công!";
+				TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
             else
