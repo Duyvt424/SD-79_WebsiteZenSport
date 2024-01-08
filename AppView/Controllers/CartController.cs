@@ -332,7 +332,8 @@ namespace AppView.Controllers
                     EmployeeID = null,
                     VoucherID = voucherId,
                     PurchaseMethodID = HTThanhToan,
-                    AddressID = addressIDSave1
+                    AddressID = addressIDSave1,
+                    TransactionType = 0
                 };
                 _dBContext.Bills.Add(bill);
 
@@ -448,7 +449,8 @@ namespace AppView.Controllers
                     EmployeeID = null,
                     VoucherID = voucherId,
                     PurchaseMethodID = HTThanhToan,
-                    AddressID = address.AddressID
+                    AddressID = address.AddressID,
+                    TransactionType = 0,
                 };
                 _dBContext.Bills.Add(bill);
 

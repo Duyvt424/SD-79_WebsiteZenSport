@@ -22,6 +22,7 @@ namespace AppData.Models
         public decimal TotalPriceAfterDiscount { get; set; }
         public string Note { get; set; }
         public bool IsPaid { get; set; }
+        public int TransactionType { get; set; }
         public int Status { get; set; }
         public Guid CustomerID { get; set; }
         public Guid? VoucherID { get; set; }
@@ -37,5 +38,6 @@ namespace AppData.Models
         public virtual Address Address { get; set; }
         public virtual List<BillDetails> BillDetails { get; set; }
         public virtual List<BillStatusHistory> BillStatusHistories { get; set; }
+        public virtual List<ReturnedProducts> ReturnedProducts { get; set; }
     }
 }
