@@ -8,7 +8,9 @@
         public decimal Price { get; set; }
         public decimal ImportPrice { get; set; }
         public string? Description { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } /// <summary>
+        /// 
+        /// </summary>
         public string? ColorName { get; set; }
         public string? ProductName { get; set; }
         public string? SoleName { get; set; }

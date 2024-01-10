@@ -34,6 +34,7 @@ namespace AppView.Controllers
             AllRepositories<ShoesDetails> all2 = new AllRepositories<ShoesDetails>(_dbContext, shoes);
             _Sho = all2;
         }
+        // aaaaa
 
         private bool CheckUserRole()
         {

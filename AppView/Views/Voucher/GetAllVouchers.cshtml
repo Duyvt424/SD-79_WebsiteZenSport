@@ -445,7 +445,7 @@
                                     {
                                                 <p><img src="~/image/icons8-connection-status-on-18.png" /> Đang hoạt động</p>
                                     }
-                                    else if (item.Status== 2)
+                                    else if (item.Status == 2)
                                     {
                                                 <p><img src="~/image/icons8-connection-status-off18.png" /> Ngừng hoạt động</p>
                                     }
@@ -604,33 +604,6 @@
                                 }
                             }
                         }
-                    </script>
-                    <script>
-                        $(document).ready(function () {
-                            // Hàm để gọi endpoint và cập nhật trạng thái của voucher
-                            function updateVoucherStatus() {
-                                $.ajax({
-                                    url: '@Url.Action("UpdateVoucherStatus", "DashBoard")',
-                                    type: 'GET',
-                                    success: function (result) {
-                                        if (result.success) {
-                                            console.log('Updated voucher status successfully.');
-                                        } else {
-                                            console.error('Failed to update voucher status:', result.message);
-                                        }
-                                    },
-                                    error: function (error) {
-                                        console.error('Failed to update voucher status:', error);
-                                    }
-                                });
-                            }
-
-                            // Gọi hàm cập nhật trạng thái khi trang được tải
-                            updateVoucherStatus();
-
-                            // Thiết lập công việc lặp lại mỗi 1 giờ (3600000 milliseconds)
-                            setInterval(updateVoucherStatus, 3600000);
-                        });
                     </script>
 
 
