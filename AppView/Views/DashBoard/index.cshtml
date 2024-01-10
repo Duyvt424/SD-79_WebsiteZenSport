@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
 
     Layout = null;
 }
@@ -25,6 +26,30 @@
     <link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
     <link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
     <link rel="stylesheet" href="~/assets/css/main.css" />
+
+    <style>
+        /* CSS để căn chỉnh vị trí của từ ngày và đến ngày trên cùng một dòng */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            flex: 0 0 48%; /* Điều chỉnh độ rộng của mỗi cột để chúng nằm trên cùng một dòng */
+        }
+
+        /* Tùy chỉnh các margin và padding nếu cần */
+        .left {
+            margin-right: 10px; /* Khoảng cách giữa phần nội dung bên trái và phần nội dung bên phải */
+        }
+
+        .right {
+            margin-left: 10px; /* Khoảng cách giữa phần nội dung bên phải và phần nội dung bên trái */
+        }
+
+        /* Optional: Để giữ cùng kích thước với nhau, có thể cần thêm các quy tắc CSS khác dựa trên nhu cầu thiết kế cụ thể của bạn. */
+
+    </style>
   </head>
   <body>
     <!-- ======== Preloader =========== -->
@@ -228,6 +253,10 @@
             </ul>
           </li>
           <span class="divider"><hr /></span>
+
+
+       
+        
 
           <li class="nav-item">
             <a href="notification.html">
@@ -452,7 +481,9 @@
 
       <!-- ========== section start ========== -->
       <section class="section">
-        <div class="container-fluid">
+
+           
+        <div class="container-fluid"  >
           <!-- ========== title-wrapper start ========== -->
           <div class="title-wrapper pt-30">
             <div class="row align-items-center">
@@ -480,67 +511,82 @@
             </div>
             <!-- end row -->
           </div>
-          <!-- ========== title-wrapper end ========== -->
-          <div class="row">
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-              <div class="icon-card mb-30">
-                <div class="icon purple">
-                  <i class="lni lni-cart-full"></i>
+  @*         <div class="form-row">
+    <div class="form-group col-md-6">
+        <label for="startDate">Từ Ngày:</label>
+        <input type="date" id="startDate" class="form-control" onchange="filterData()">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="endDate">Đến Ngày:</label>
+        <input type="date" id="endDate" class="form-control" onchange="filterData()">
+    </div>
+</div>*@
+
+
+
+                <!-- ========== title-wrapper end ========== -->
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon purple">
+                                <i class="lni lni-cart-full"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">Hàng bán được tháng này</h6>
+                                <h3 id="totalQuantitySold" class="text-bold mb-10">0</h3>
+                                <p class="text-sm text-success">
+                                    <i class="lni lni-arrow-up"></i> +2.00%
+                                    <span class="text-gray">(30 days)</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-4 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon success">
+                                <i class="lni lni-dollar"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">Doanh số hôm nay </h6>
+                                <h3 id="totalRevenue" class="text-bold mb-10">0</h3>
+                                <p class="text-sm text-success">
+                                    <i class="lni lni-arrow-up"></i> +5.45%
+                                    <span class="text-gray">Increased</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- End Col -->
+                    <div class="col-xl-4 col-lg-4 col-sm-6">
+                        <div class="icon-card mb-30">
+                            <div class="icon primary">
+                                <i class="lni lni-credit-cards"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">Doanh số tháng này</h6>
+                                <h3 id="totalProfit" class="text-bold mb-10">0</h3>
+                                <p class="text-sm text-danger">
+                                    <i class="lni lni-arrow-down"></i> -2.00%
+                                    <span class="text-gray">Expense</span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
                 </div>
-                <div class="content">
-                  <h6 class="mb-10">New Orders</h6>
-                  <h3 class="text-bold mb-10">34567</h3>
-                  <p class="text-sm text-success">
-                    <i class="lni lni-arrow-up"></i> +2.00%
-                    <span class="text-gray">(30 days)</span>
-                  </p>
-                </div>
-              </div>
-              <!-- End Icon Cart -->
-            </div>
+
             <!-- End Col -->
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-              <div class="icon-card mb-30">
-                <div class="icon success">
-                  <i class="lni lni-dollar"></i>
-                </div>
-                <div class="content">
-                  <h6 class="mb-10">Total Income</h6>
-                  <h3 class="text-bold mb-10">$74,567</h3>
-                  <p class="text-sm text-success">
-                    <i class="lni lni-arrow-up"></i> +5.45%
-                    <span class="text-gray">Increased</span>
-                  </p>
-                </div>
-              </div>
-              <!-- End Icon Cart -->
-            </div>
-            <!-- End Col -->
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-              <div class="icon-card mb-30">
-                <div class="icon primary">
-                  <i class="lni lni-credit-cards"></i>
-                </div>
-                <div class="content">
-                  <h6 class="mb-10">Total Expense</h6>
-                  <h3 class="text-bold mb-10">$24,567</h3>
-                  <p class="text-sm text-danger">
-                    <i class="lni lni-arrow-down"></i> -2.00%
-                    <span class="text-gray">Expense</span>
-                  </p>
-                </div>
-              </div>
-              <!-- End Icon Cart -->
-            </div>
-            <!-- End Col -->
-            <div class="col-xl-3 col-lg-4 col-sm-6">
+        @*    <div class="col-xl-3 col-lg-4 col-sm-6">
               <div class="icon-card mb-30">
                 <div class="icon orange">
                   <i class="lni lni-user"></i>
                 </div>
                 <div class="content">
-                  <h6 class="mb-10">New User</h6>
-                  <h3 class="text-bold mb-10">34567</h3>
+                  <h6 class="mb-10">Tổng đơn hàng</h6>
+                                <h3 id="totalOrders" class="text-bold mb-10">0</h3>
                   <p class="text-sm text-danger">
                     <i class="lni lni-arrow-down"></i> -25.00%
                     <span class="text-gray"> Earning</span>
@@ -550,37 +596,42 @@
               <!-- End Icon Cart -->
             </div>
             <!-- End Col -->
-          </div>
+          </div>*@
+
+              
           <!-- End Row -->
-          <div class="row">
-            <div class="col-lg-7">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap justify-content-between">
-                  <div class="left">
-                    <h6 class="text-medium mb-10">Yearly Stats</h6>
-                    <h3 class="text-bold">$245,479</h3>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1">
-                      <div class="select-position select-sm">
-                        <select class="light-bg">
-                          <option value="">Yearly</option>
-                          <option value="">Monthly</option>
-                          <option value="">Weekly</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
-                </div>
-                <!-- End Title -->
-                <div class="chart">
-                  <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
-                </div>
-                <!-- End Chart -->
-              </div>
+      <div class="row">
+   <div class="col-lg-12">
+      <div class="card-style mb-30">
+         <div class="title d-flex flex-wrap justify-content-between align-items-center"> <!-- Thêm 'align-items-center' để căn giữa theo chiều dọc -->
+            <div class="left">
+               <h6 class="text-medium mb-10">Yearly Stats</h6>
+
             </div>
-            <!-- End Col -->
+            <div class="right">
+               <div class="form-row">
+                  <div class="form-group col-md-6">
+                     <label for="startDate">Từ Ngày:</label>
+                     <input type="date" id="startDate" class="form-control" onchange="filterData()">
+                  </div>
+                  <div class="form-group col-md-6">
+                     <label for="endDate">Đến Ngày:</label>
+                     <input type="date" id="endDate" class="form-control" onchange="filterData()">
+                  </div>
+               </div>
+               <!-- end form-row -->
+            </div>
+         </div>
+         <!-- End Title -->
+         <div class="chart">
+            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
+         </div>
+         <!-- End Chart -->
+      </div>
+   </div>
+</div>
+
+          @*  <!-- End Col -->
             <div class="col-lg-5">
               <div class="card-style mb-30">
                 <div class="title d-flex flex-wrap align-items-center justify-content-between">
@@ -606,7 +657,7 @@
                 </div>
                 <!-- End Chart -->
               </div>
-            </div>
+            </div>*@
             <!-- End Col -->
           </div>
           <!-- End Row -->
@@ -624,572 +675,23 @@
               </div>
             </div>
             <!-- End Col -->
-            <div class="col-lg-7">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap justify-content-between align-items-center">
-                  <div class="left">
-                    <h6 class="text-medium mb-30">Top Selling Products</h6>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1">
-                      <div class="select-position select-sm">
-                        <select class="light-bg">
-                          <option value="">Yearly</option>
-                          <option value="">Monthly</option>
-                          <option value="">Weekly</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
+            <div class="col-lg-7" id="top">
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            fetch('@Url.Action("TopSellingProducts", "DashBoard")')
+                                .then(response => response.text())
+                                .then(data => {
+                                    document.getElementById('top').innerHTML = data;
+                                })
+                                .catch(error => console.log('Error loading content', error));
+                        });
+
+                    </script>
+
                 </div>
-                <!-- End Title -->
-                <div class="table-responsive">
-                  <table class="table top-selling-table">
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th>
-                          <h6 class="text-sm text-medium">Products</h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">Category</h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">Price</h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">Sold</h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">Profit</h6>
-                        </th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div class="check-input-primary">
-                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
-                          </div>
-                        </td>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-1.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Arm Chair</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">43</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$45</p>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="check-input-primary">
-                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
-                          </div>
-                        </td>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-2.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">SOfa</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$145</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">13</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$15</p>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="check-input-primary">
-                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
-                          </div>
-                        </td>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-3.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Dining Table</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$95</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">32</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$215</p>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="check-input-primary">
-                            <input class="form-check-input" type="checkbox" id="checkbox-1" />
-                          </div>
-                        </td>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-4.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Office Chair</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$105</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">23</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <!-- End Table -->
-                </div>
-              </div>
-            </div>
             <!-- End Col -->
           </div>
-          <!-- End Row -->
-          <div class="row">
-            <div class="col-lg-7">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                  <div class="left">
-                    <h6 class="text-medium mb-2">Sales Forecast</h6>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1 mb-2">
-                      <div class="select-position select-sm">
-                        <select class="light-bg">
-                          <option value="">Last Month</option>
-                          <option value="">Last 3 Months</option>
-                          <option value="">Last Year</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
-                </div>
-                <!-- End Title -->
-                <div class="chart">
-                  <div id="legend3">
-                    <ul class="legend3 d-flex flex-wrap align-items-center mb-30">
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color primary-bg"> </span>
-                          <div class="text">
-                            <p class="text-sm text-success">
-                              <span class="text-dark">Revenue</span> +25.55%
-                              <i class="lni lni-arrow-up"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color purple-bg"></span>
-                          <div class="text">
-                            <p class="text-sm text-success">
-                              <span class="text-dark">Net Profit</span> +45.55%
-                              <i class="lni lni-arrow-up"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color orange-bg"></span>
-                          <div class="text">
-                            <p class="text-sm text-danger">
-                              <span class="text-dark">Order</span> -4.2%
-                              <i class="lni lni-arrow-down"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <canvas id="Chart3" style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
-                </div>
-              </div>
-            </div>
-            <!-- End Col -->
-            <div class="col-lg-5">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                  <div class="left">
-                    <h6 class="text-medium mb-2">Traffic</h6>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1 mb-2">
-                      <div class="select-position select-sm">
-                        <select class="bg-ligh">
-                          <option value="">Last 6 Months</option>
-                          <option value="">Last 3 Months</option>
-                          <option value="">Last Year</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
-                </div>
-                <!-- End Title -->
-                <div class="chart">
-                  <div id="legend4">
-                    <ul class="legend3 d-flex flex-wrap gap-3 gap-sm-0 align-items-center mb-30">
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color primary-bg"> </span>
-                          <div class="text">
-                            <p class="text-sm text-success">
-                              <span class="text-dark">Store Visits</span>
-                              +25.55%
-                              <i class="lni lni-arrow-up"></i>
-                            </p>
-                            <h2>3456</h2>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color danger-bg"></span>
-                          <div class="text">
-                            <p class="text-sm text-danger">
-                              <span class="text-dark">Visitors</span> -2.05%
-                              <i class="lni lni-arrow-down"></i>
-                            </p>
-                            <h2>3456</h2>
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <canvas id="Chart4" style="width: 100%; height: 420px; margin-left: -35px;"></canvas>
-                </div>
-                <!-- End Chart -->
-              </div>
-            </div>
-            <!-- End Col -->
-          </div>
-          <!-- End Row -->
-          <div class="row">
-            <div class="col-lg-5">
-              <div class="card-style calendar-card mb-30">
-                <div id="calendar-mini"></div>
-              </div>
-            </div>
-            <!-- End Col -->
-            <div class="col-lg-7">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                  <div class="left">
-                    <h6 class="text-medium mb-30">Sales History</h6>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1">
-                      <div class="select-position select-sm">
-                        <select class="light-bg">
-                          <option value="">Today</option>
-                          <option value="">Yesterday</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
-                </div>
-                <!-- End Title -->
-                <div class="table-responsive">
-                  <table class="table top-selling-table">
-                    <thead>
-                      <tr>
-                        <th>
-                          <h6 class="text-sm text-medium">Products</h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">
-                            Category <i class="lni lni-arrows-vertical"></i>
-                          </h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">
-                            Revenue <i class="lni lni-arrows-vertical"></i>
-                          </h6>
-                        </th>
-                        <th class="min-width">
-                          <h6 class="text-sm text-medium">
-                            Status <i class="lni lni-arrows-vertical"></i>
-                          </h6>
-                        </th>
-                        <th>
-                          <h6 class="text-sm text-medium text-end">
-                            Actions <i class="lni lni-arrows-vertical"></i>
-                          </h6>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-1.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Bedroom</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <span class="status-btn close-btn">Pending</span>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="edit">
-                              <i class="lni lni-pencil"></i>
-                            </button>
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-2.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Arm Chair</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <span class="status-btn warning-btn">Refund</span>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="edit">
-                              <i class="lni lni-pencil"></i>
-                            </button>
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-3.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Sofa</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <span class="status-btn success-btn">Completed</span>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="edit">
-                              <i class="lni lni-pencil"></i>
-                            </button>
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="product">
-                            <div class="image">
-                              <img src="~/assets/images/products/product-mini-4.jpg" alt="" />
-                            </div>
-                            <p class="text-sm">Kitchen</p>
-                          </div>
-                        </td>
-                        <td>
-                          <p class="text-sm">Interior</p>
-                        </td>
-                        <td>
-                          <p class="text-sm">$345</p>
-                        </td>
-                        <td>
-                          <span class="status-btn close-btn">Canceled</span>
-                        </td>
-                        <td>
-                          <div class="action justify-content-end">
-                            <button class="edit">
-                              <i class="lni lni-pencil"></i>
-                            </button>
-                            <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
-                              aria-expanded="false">
-                              <i class="lni lni-more-alt"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Remove</a>
-                              </li>
-                              <li class="dropdown-item">
-                                <a href="#0" class="text-gray">Edit</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <!-- End Table -->
-                </div>
-              </div>
-            </div>
-            <!-- End Col -->
-          </div>
-          <!-- End Row -->
-        </div>
-        <!-- end container -->
+     
       </section>
       <!-- ========== section end ========== -->
 
@@ -1233,6 +735,124 @@
     <script src="~/assets/js/world-merc.js"></script>
     <script src="~/assets/js/polyfill.js"></script>
     <script src="~/assets/js/main.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+      $(document).ready(function () {
+    $.ajax({
+        url: '/DashBoard/GetSummaryStatistics',
+        type: 'GET',
+        success: function (data) {
+            console.log(data);
+
+            // Kiểm tra xem các phần tử HTML có được tìm thấy không
+            console.log(`#totalQuantitySold found: ${$('#totalQuantitySold').length > 0}`);
+            console.log(`#totalRevenue found: ${$('#totalRevenue').length > 0}`);
+            console.log(`#totalProfit found: ${$('#totalProfit').length > 0}`);
+
+            // Đặt giá trị cho các phần tử HTML
+            $('#totalQuantitySold').text(data.monthlyQuantitySold);
+            $('#totalRevenue').text(data.todayRevenue);
+            $('#totalProfit').text(data.monthlyProfit);
+        },
+        error: function (error) {
+            console.error(error);
+        }
+    });
+});
+
+
+
+</script>
+
+
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Lấy đối tượng input ngày bắt đầu và kết thúc
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+
+    // Thiết lập biểu đồ ban đầu
+    const ctx1 = document.getElementById("Chart1").getContext("2d");
+    const chart1 = new Chart(ctx1, {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: "Doanh thu",
+                    backgroundColor: "#365CF5",
+                    data: [],
+                },
+            ],
+        },
+        options: {
+            plugins: {
+                // ... (các tùy chọn plugin hiện tại)
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            title: {
+                display: false,
+            },
+            scales: {
+                y: {
+                    grid: {
+                        display: false,
+                        drawTicks: false,
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        padding: 35,
+                        max: 1200,
+                        min: 500,
+                    },
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        color: "rgba(143, 146, 161, .1)",
+                        zeroLineColor: "rgba(143, 146, 161, .1)",
+                    },
+                    ticks: {
+                        padding: 20,
+                    },
+                },
+            },
+        },
+    });
+
+    // Hàm cập nhật biểu đồ và log doanh thu theo từng ngày
+    function filterData() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        // Gọi action trong controller để lấy dữ liệu từ backend
+        fetch(`/Dashboard/GetDailyRevenue?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
+            .then(response => response.json())
+            .then(data => {
+                // Log doanh thu theo từng ngày
+                console.log(data);
+
+                // Cập nhật nhãn và dữ liệu trong biểu đồ
+                chart1.data.labels = data.map(item => moment(item.date).format("DD/MM/YYYY"));
+                chart1.data.datasets[0].data = data.map(item => item.totalRevenue);
+                chart1.update();
+            })
+            .catch(error => console.error('Lỗi khi lấy dữ liệu:', error));
+    }
+
+    // Gắn sự kiện onchange của input date với hàm filterData
+    startDateInput.addEventListener("change", filterData);
+    endDateInput.addEventListener("change", filterData);
+
+    // Gọi filterData lần đầu khi trang được tải
+    filterData();
+</script>
+
+
 
     <script>
       // ======== jvectormap activation
@@ -1293,154 +913,33 @@
         calendarMini.render();
       });
 
-      // =========== chart one start
-      const ctx1 = document.getElementById("Chart1").getContext("2d");
-      const chart1 = new Chart(ctx1, {
-        type: "line",
-        data: {
-          labels: [
-            "Jan",
-            "Fab",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ],
-          datasets: [
-            {
-              label: "",
-              backgroundColor: "transparent",
-              borderColor: "#365CF5",
-              data: [
-                600, 800, 750, 880, 940, 880, 900, 770, 920, 890, 976, 1100,
-              ],
-              pointBackgroundColor: "transparent",
-              pointHoverBackgroundColor: "#365CF5",
-              pointBorderColor: "transparent",
-              pointHoverBorderColor: "#fff",
-              pointHoverBorderWidth: 5,
-              borderWidth: 5,
-              pointRadius: 8,
-              pointHoverRadius: 8,
-              cubicInterpolationMode: "monotone", // Add this line for curved line
-            },
-          ],
-        },
-        options: {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                labelColor: function (context) {
-                  return {
-                    backgroundColor: "#ffffff",
-                    color: "#171717"
-                  };
-                },
-              },
-              intersect: false,
-              backgroundColor: "#f9f9f9",
-              title: {
-                fontFamily: "Plus Jakarta Sans",
-                color: "#8F92A1",
-                fontSize: 12,
-              },
-              body: {
-                fontFamily: "Plus Jakarta Sans",
-                color: "#171717",
-                fontStyle: "bold",
-                fontSize: 16,
-              },
-              multiKeyBackground: "transparent",
-              displayColors: false,
-              padding: {
-                x: 30,
-                y: 10,
-              },
-              bodyAlign: "center",
-              titleAlign: "center",
-              titleColor: "#8F92A1",
-              bodyColor: "#171717",
-              bodyFont: {
-                family: "Plus Jakarta Sans",
-                size: "16",
-                weight: "bold",
-              },
-            },
-            legend: {
-              display: false,
-            },
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          title: {
-            display: false,
-          },
-          scales: {
-            y: {
-              grid: {
-                display: false,
-                drawTicks: false,
-                drawBorder: false,
-              },
-              ticks: {
-                padding: 35,
-                max: 1200,
-                min: 500,
-              },
-            },
-            x: {
-              grid: {
-                drawBorder: false,
-                color: "rgba(143, 146, 161, .1)",
-                zeroLineColor: "rgba(143, 146, 161, .1)",
-              },
-              ticks: {
-                padding: 20,
-              },
-            },
-          },
-        },
-      });
-      // =========== chart one end
-
-      // =========== chart two start
-      const ctx2 = document.getElementById("Chart2").getContext("2d");
-      const chart2 = new Chart(ctx2, {
-        type: "bar",
-        data: {
-          labels: [
-            "Jan",
-            "Fab",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ],
-          datasets: [
-            {
-              label: "",
-              backgroundColor: "#365CF5",
-              borderRadius: 30,
-              barThickness: 6,
-              maxBarThickness: 8,
-              data: [
-                600, 700, 1000, 700, 650, 800, 690, 740, 720, 1120, 876, 900,
-              ],
-            },
-          ],
-        },
+      
+    const ctx2 = document.getElementById("Chart2").getContext("2d");
+const chart2 = new Chart(ctx2, {
+  type: "line",
+  data: {
+    labels: [
+      "Sun", // Chủ nhật
+      "Mon", // Thứ Hai
+      "Tue", // Thứ Ba
+      "Wed", // Thứ Tư
+      "Thu", // Thứ Năm
+      "Fri", // Thứ Sáu
+      "Sat", // Thứ Bảy
+    ],
+    datasets: [
+      {
+        label: "",
+        borderColor: "#365CF5",
+        borderWidth: 2,
+        pointBackgroundColor: "#365CF5",
+        pointRadius: 6,
+        data: [
+          600, 700, 1000, 700, 650, 800, 690, 740, 720, 1120, 876, 900,
+        ],
+      },
+    ],
+  },
         options: {
           plugins: {
             tooltip: {
