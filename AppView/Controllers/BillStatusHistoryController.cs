@@ -224,15 +224,32 @@ namespace AppView.Controllers
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
 
-        public IActionResult SaveSuccessBill(Guid idBill, string httt)
+        public IActionResult SaveSuccessBill(Guid idBill, string httt, string ghiChuTT)
         {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
             var namePurchaseMethod = _dbContext.PurchaseMethods.First(c => c.MethodName == httt).PurchaseMethodID;
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
             if (objBill != null)
             {
                 objBill.IsPaid = true;
                 objBill.PaymentDay = DateTime.Now;
+                objBill.EmployeeID = EmployeeID;
             }
+            var historyBill = new ReturnedProducts()
+            {
+                ID = Guid.NewGuid(),
+                CreateDate = DateTime.Now,
+                Note = ghiChuTT,
+                QuantityReturned = 0,
+                ReturnedPrice = objBill.TotalPriceAfterDiscount,
+                TransactionType = 0,
+                NamePurChaseMethod = httt,
+                Status = 0,
+                BillId = objBill.BillID,
+                ShoesDetails_SizeID = null
+            };
+            _dbContext.ReturnedProducts.Add(historyBill);
             _dbContext.Bills.Update(objBill);
             _dbContext.SaveChanges();
             return Json(new { success = true, message = "Xác nhận đơn hàng thành công" });

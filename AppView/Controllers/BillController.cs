@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Net.Mail;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
+using static System.Net.WebRequestMethods;
 using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
 using IShoesDetailsService = AppView.IServices.IShoesDetailsService;
 using ProductViewModel = AppView.Models.DetailsBillViewModel.ProductViewModel;
@@ -365,9 +367,26 @@ namespace AppView.Controllers
                                 StatusName = x.Status,
                                 EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == x.EmployeeID).FullName,
                                 Note = x.Note
-                            }).ToList()
-                        })
-                        .ToListAsync();
+                            }).ToList(),
+                            HistoryPayMentViewModels = _dbContext.ReturnedProducts
+                            .Where(x => x.BillId == billId)
+                            .Select(x => new HistoryPayMentViewModel
+                            {
+                                NameProduct = _dbContext.Products.First(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                                ImageUrl = _dbContext.Images.First(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
+                                Description = _dbContext.Styles.First(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
+                                Size = _dbContext.Sizes.First(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
+                                QuantityReturned = x.QuantityReturned,
+                                Price = x.ReturnedPrice,
+                                PayMentDate = x.CreateDate,
+                                TransactionType = x.TransactionType,
+                                PurChaseMethodName = x.NamePurChaseMethod,
+                                Status = x.Status,
+                                Note = x.Note,
+                                EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName
+                            })
+                            .ToList(),
+                        }).ToListAsync();
 
                     var sharedData = new { BillId = billId, DetailsBill = detailsBill };
                     var sharedDataString = JsonConvert.SerializeObject(sharedData);
@@ -613,6 +632,88 @@ namespace AppView.Controllers
                 //Cập nhật số lượng tồn của sản phẩm: ShoesDT.AvailableQuantity += 1 - 5; (số lượng trước đó - số lượng mới)
                 ShoesDT_Size.Quantity += previousQuantity - quantity;
                 _dbContext.Update(ShoesDT_Size);
+                _dbContext.SaveChanges();
+            }
+            return Ok(new { success = true });
+        }
+
+        public IActionResult ReturnedProduct(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct, decimal priceVoucher)
+        {
+            var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
+            var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
+            var objSize = _dbContext.Sizes.First(c => c.Name == idSize)?.SizeID;
+            var ShoesDt_Size = _dbContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == idShoesDT && c.SizeID == objSize);
+            var billDetails = _dbContext.BillDetails.First(c => c.BillID == idBill && c.ShoesDetails_SizeID == ShoesDt_Size.ID);
+            var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
+            if (billDetails != null)
+            {
+                billDetails.Quantity -= quanity;
+                ShoesDt_Size.Quantity += quanity;
+                _dbContext.SaveChanges();
+
+                var historyBill = new ReturnedProducts()
+                {
+                    ID = Guid.NewGuid(),
+                    CreateDate = DateTime.Now,
+                    Note = ghiChuUpdateSP,
+                    QuantityReturned = quanity,
+                    ReturnedPrice = quanity * billDetails.Price,
+                    TransactionType = 1,
+                    NamePurChaseMethod = "Tiền mặt",
+                    Status = 1,
+                    BillId = objBill.BillID,
+                    ShoesDetails_SizeID = ShoesDt_Size.ID
+                };
+
+                var billstatusHis = new BillStatusHistory()
+                {
+                    BillStatusHistoryID = Guid.NewGuid(),
+                    Status = 6,
+                    ChangeDate = DateTime.Now,
+                    Note = $"Đã hoàn trả [{quanity}] sản phẩm [{nameProduct}] kích cỡ [{idSize}]. Lý do: [{ghiChuUpdateSP}]",
+                    BillID = idBill,
+                    EmployeeID = EmployeeID
+                };
+                objBill.Status = 6;
+                objBill.TotalPrice -= billDetails.Price;
+                objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
+                _dbContext.Bills.Update(objBill);
+                _dbContext.BillDetails.Update(billDetails);
+                _dbContext.ShoesDetails_Sizes.Update(ShoesDt_Size);
+                _dbContext.BillStatusHistories.Add(billstatusHis);
+                _dbContext.ReturnedProducts.Add(historyBill);
+                _dbContext.SaveChanges();
+            }
+            return Ok(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult CheckQuantityReturned(Guid shoesDetailsId, string size, Guid billId, int quantity)
+        {
+            var objSize = _dbContext.Sizes.FirstOrDefault(c => c.Name == size)?.SizeID;
+            var ShoesDT_Size = _dbContext.ShoesDetails_Sizes.First(c => c.ShoesDetailsId == shoesDetailsId && c.SizeID == objSize);
+            var billItem = _dbContext.BillDetails.FirstOrDefault(cd => cd.BillID == billId && cd.ShoesDetails_SizeID == ShoesDT_Size.ID);
+            if (billItem != null)
+            {
+                if (quantity >= billItem.Quantity)
+                {
+                    return Json(new { success = false, message = "Số lượng sản phẩm đã hết!" });
+                }
+            }
+            return Json(new { success = true, message = "AA!" });
+        }
+
+        [HttpPost]
+        public IActionResult SuccessBillReturn(Guid idBill, string ghiChuReturn)
+        {
+            var objbill = _dbContext.Bills.First(c => c.BillID == idBill);
+            var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID);
+            if (returnObj.Status == 1)
+            {
+                returnObj.CreateDate = DateTime.Now;
+                returnObj.Note = ghiChuReturn;
+                returnObj.Status = 0;
+                _dbContext.ReturnedProducts.Update(returnObj);
                 _dbContext.SaveChanges();
             }
             return Ok(new { success = true });

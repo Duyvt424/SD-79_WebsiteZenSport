@@ -25,5 +25,6 @@
         public bool IsPaid { get; set; }
         public List<BillStatusHistoryViewModel> BillStatusHistories { get; set; }
         public List<AddressViewModel> AddressViewModels { get; set; }
+        public List<HistoryPayMentViewModel> HistoryPayMentViewModels { get; set; }
     }
 }

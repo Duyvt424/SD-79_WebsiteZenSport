@@ -11,6 +11,7 @@
 	var billStatusHis = Model.First().BillStatusHistories;
 	var status = Model.First().OrderStatuses.First().Status;
 	string statusText;
+	var statusReturn = Model.First().HistoryPayMentViewModels.First().Status;
 
 	switch (status)
 	{
@@ -29,6 +30,9 @@
 		case 4:
 			statusText = "Đã hủy đơn";
 			break;
+		case 6:
+			statusText = "Hoàn trả";
+			break;
 		default:
 			statusText = "Không xác định";
 			break;
@@ -39,6 +43,7 @@
 	decimal shippingCost = Model.First().ShippingCost;
 	decimal priceVoucher = Model.First().PriceVoucher ?? 0;
 	decimal totalAll = Model.First().TotalPriceAfterDiscount;
+	decimal priceTotalItemReturn = 0;
 }
 @inject IHttpContextAccessor HttpContextAccessor
 @{
@@ -497,6 +502,28 @@
 			outline: none;
 			border: 2px solid black;
 		}
+
+		.returned-sp {
+			display: inline-block;
+			width: 300px;
+			margin: 0px 20px;
+			padding: 10px 20px;
+			border-radius: 4px;
+			border: 0;
+			outline: none;
+			border: 2px solid black;
+		}
+
+		.returned-price {
+			display: inline-block;
+			width: 300px;
+			margin: 0px 20px;
+			padding: 10px 20px;
+			border-radius: 4px;
+			border: 0;
+			outline: none;
+			border: 2px solid black;
+		}
 	</style>
 </head>
 <link rel="stylesheet" href="~/css/detailsBill.css">
@@ -715,6 +742,44 @@
 						<h3 class="step-title" style="display:none;">Hoàn trả</h3>
 					</div>
 				}
+				@if (status == 6)
+				{
+					<div class="step completed CreateDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="pe-7s-cart"></i></div>
+						</div>
+						<h3 class="step-title">Đơn hàng đã đặt</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().CreateDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed ConfirmationDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="fa fa-credit-card"></i></div>
+						</div>
+						<h3 class="step-title">Đã xác nhận thông tin thanh toán</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().ConfirmationDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed DeliveryDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="fa fa-truck"></i></div>
+						</div>
+						<h3 class="step-title">Đang vận chuyển</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().DeliveryDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step completed SuccessDate">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="fa fa-check-circle-o"></i></div>
+						</div>
+						<h3 class="step-title">Đã nhận được hàng</h3>
+						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
+					</div>
+					<div class="step notcompleted">
+						<div class="step-icon-wrap">
+							<div class="step-icon"><i class="fa fa-retweet"></i></div>
+						</div>
+						<h3 class="step-title">Hoàn trả</h3>
+						<h4 class="step-title">@Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1).First().PayMentDate</h4>
+					</div>
+				}
 			</div>
 			@if (userName != null && status == 0)
 			{
@@ -733,7 +798,7 @@
 					<a class="main-btn success-btn square-btn btn-hover show-modal-success" style="font-size:16px; padding:5px 10px; margin:2px;" data-toggle="modal" data-target="#myModal">Hoàn thành</a>
 				}
 			}
-			@if (status == 0 || status == 1 || status == 2 || status == 3 || status == 4 || status == 5)
+			@if (status == 0 || status == 1 || status == 2 || status == 3 || status == 4 || status == 5 || status == 6)
 			{
 				<a class="main-btn active-btn square-btn btn-hover show-modal-details" style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-right:5%;">Chi tiết</a>
 			}
@@ -823,6 +888,10 @@
 				<form>
 					<div class="modal-body">
 						<h3 class="title">Xác nhận thanh toán</h3>
+						<div class="form-group">
+							<label>Ghi chú</label>
+							<input type="text" name="ghiChuXacNhanTT" class="form-control">
+						</div>
 						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
 						<p class="description">Xác nhận thanh toán cho đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ] bằng hình thức thanh toán:</p>
 						<button class="btn" type="submit" value="Thanh toán khi nhận hàng" name="httt">Trực tiếp</button>
@@ -871,6 +940,10 @@
 									{
 										<div class="timeline-icon"><i class="fa fa-pencil-square-o"></i></div>
 									}
+									@if (item.StatusName == 6)
+									{
+										<div class="timeline-icon"><i class="fa fa-retweet"></i></div>
+									}
 
 									@if (item.StatusName == 0)
 									{
@@ -895,6 +968,10 @@
 									@if (item.StatusName == 5)
 									{
 										<h3 class="title">Cập nhật đơn hàng</h3>
+									}
+									@if (item.StatusName == 6)
+									{
+										<h3 class="title">Trả hàng / Hoàn tiền</h3>
 									}
 									<p class="description">
 										Ghi chú: @item.Note
@@ -1612,6 +1689,211 @@
 	</div>
 </div>
 
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalReturnProduct" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<button id="close-btn" type="button" class="close quay-lai-return" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<div class="modal-body">
+					<form class="formReturnItem">
+						<div class="row">
+							<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
+								<!-- Image -->
+								<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+									<img src="" class="w-80" alt="Blue Jeans Jacket" />
+									<a href="#!">
+										<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+									</a>
+								</div>
+								<!-- Image -->
+							</div>
+							<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+								<!-- Data -->
+								<p><strong style="font-size:20px;"></strong></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p style="font-size:15px; padding-top:1%;"></p>
+								<p class="price" style="font-size:15px; padding-top:1%; color:red;"></p>
+							</div>
+							<hr style="width:96%;" />
+							<div class="container" style="margin-left:18%;">
+								<input id="quantityInput" class="returned-sp" type="number" name="quanity" value="@Model.First().Products.First().Quantity" min="1" max="10" data-productid="" data-price="" data-size="">
+							</div>
+							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
+							<input type="text" name="ghiChuReturnSP" class="form-control" required />
+							<input type="text" id="idShoesDT" name="idShoesDT" class="form-control" value="@Model.First().Products.First().ProductID" style="display:none;" />
+							<input type="text" id="idSize" name="idSize" class="form-control" value="@Model.First().Products.First().Size" style="display:none;" />
+							<input type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;" />
+							<button type="button" class="main-btn success-btn square-btn btn-hover btn-returnItem" style="font-size:16px; padding:5px 10px; margin:2px; width:20%; float:left; margin-top:2%;" data-productid="" data-size="">Xác nhận</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal-box">
+	<!-- Modal -->
+	<div class="modal fade" id="modalReturnPrice" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content">
+				<button id="close-btn" type="button" class="close quay-lai-return" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h3 style="margin-left: 3%; margin-top:2%;">Xác nhận hoàn tiền</h3>
+				<div class="modal-body">
+					<form class="formReturnItem">
+						<div class="row">
+							<hr style="width:96%;" />
+							<div class="container" style="display:flex;">
+								<h4 style="margin-top:2%;">Số tiền:</h4>
+								<input id="quantityInput" class="returned-price" type="number" name="quanity" value="@priceTotalItemReturn" min="1" max="1000000000" data-price="" placeholder="Số tiền">
+							</div>
+							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
+							<input type="text" name="ghiChuReturnPrice" class="form-control" required />
+							<input type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;" />
+							<button type="button" class="main-btn success-btn square-btn btn-hover btn-returnItemPrice" style="font-size:16px; padding:5px 10px; margin:2px; width:20%; float:left; margin-top:2%;" data-productid="" data-size="">Xác nhận</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	window.addEventListener('load', function () {
+		var idBill = '@Model.First().BillID.ToString()';
+		const returnedButtons = document.querySelectorAll('.btn-returnProduct');
+		const quantityInputs = document.querySelectorAll('.returned-sp');
+		const closeForm = document.getElementById('close-btn');
+		const modalReturnProduct = document.getElementById('modalReturnProduct');
+
+		returnedButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				// Lấy thông tin sản phẩm từ thuộc tính data
+				const productId = button.dataset.productid;
+				const imageUrl = button.dataset.image;
+				const name = button.dataset.name;
+				const description = button.dataset.description;
+				const size = button.dataset.size;
+				const quantity = button.dataset.quantity;
+				const price = parseFloat(button.dataset.price);  // Chuyển đổi giá về kiểu số (nếu chưa là kiểu số)
+				const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+				// Gọi hàm để hiển thị thông tin sản phẩm trong modal
+				showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice);
+			});
+		});
+
+		function showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice) {
+			// Sử dụng thông tin sản phẩm để cập nhật nội dung modal
+			const modalProductImage = modalReturnProduct.querySelector('.bg-image img');
+			const modalProductName = modalReturnProduct.querySelector('.modal-body p strong');
+			const modalProductDescription = modalReturnProduct.querySelector('.modal-body p:nth-child(2)');
+			const modalProductSize = modalReturnProduct.querySelector('.modal-body p:nth-child(3)');
+			const modalProductQuantity = modalReturnProduct.querySelector('.modal-body p:nth-child(4)');
+			const modalProductPrice = modalReturnProduct.querySelector('.modal-body p:nth-child(5)');
+			const inputElement = modalReturnProduct.querySelector('input[name="quanity"]');
+
+			modalProductImage.src = "/image/" + imageUrl;
+			modalProductName.textContent = name;
+			modalProductDescription.textContent = description;
+			modalProductSize.textContent = "Size: " + size;
+			modalProductQuantity.textContent = "Số lượng: x" + quantity;
+			modalProductPrice.textContent = formattedPrice;
+			inputElement.value = 1;
+			// Gán giá trị từ dataset của nút cho các thuộc tính data- của các phần tử trong modal
+			$(modalReturnProduct).attr('data-productid', productId);
+			$(modalReturnProduct).attr('data-size', size);
+			const numericPriceString = formattedPrice.replace(/[^\d]/g, '');
+			const numericPrice = parseFloat(numericPriceString);
+			$(modalReturnProduct).attr('data-price', numericPrice);
+			// Hiển thị modal
+			$(modalReturnProduct).modal('show');
+		}
+
+		closeForm.addEventListener('click', function () {
+			$('#modalReturnProduct').modal('hide');
+		});
+
+		quantityInputs.forEach(input => {
+			input.addEventListener('mousedown', function (event) {
+				const shoesDetailsId = $(modalReturnProduct).attr('data-productid');
+				const sizeId = $(modalReturnProduct).attr('data-size');
+				const quantity = document.querySelector('.returned-sp').value;
+				const isArrowUpClicked = event.target.type === 'number' && event.clientY < input.getBoundingClientRect().top + input.offsetHeight / 2;
+				if (isArrowUpClicked) {
+					checkCartItemQuantity1(shoesDetailsId, sizeId, idBill, quantity);
+				}
+			});
+		});
+
+		const submitForm = document.querySelectorAll('.btn-returnItem');
+		submitForm.forEach(buttonSub => {
+			buttonSub.addEventListener('click', function (e) {
+				e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+				var idBill = '@Model.First().BillID.ToString()';
+				const idShoesDT = $(modalReturnProduct).attr('data-productid');
+				const idSize = $(modalReturnProduct).attr('data-size');
+				var ghiChuUpdateSP = $('input[name="ghiChuReturnSP"]').val();
+				var quanity = document.querySelector('.returned-sp').value;
+				const nameProductHTML = modalReturnProduct.querySelector('.modal-body p strong');
+				const nameProduct = nameProductHTML.textContent;
+				var priceVoucherElement = document.getElementById('giamgia');
+				var priceVoucherText = priceVoucherElement.innerText;
+				var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
+				// Gửi dữ liệu lên server sử dụng Ajax
+				$.ajax({
+					url: '@Url.Action("ReturnedProduct", "Bill")',
+					type: 'POST',
+					data: {
+						idBill: idBill,
+						idShoesDT: idShoesDT,
+						idSize: idSize,
+						ghiChuUpdateSP: ghiChuUpdateSP,
+						quanity: quanity,
+						nameProduct: nameProduct,
+						priceVoucher: priceVoucher
+					},
+					success: function (response) {
+						$('#modalReturnProduct').modal('hide');
+						location.reload();
+					},
+					error: function (error) {
+						// Xử lý lỗi nếu cần
+					}
+				});
+			});
+		});
+	});
+
+	function checkCartItemQuantity1(shoesDetailsId, size, billId, quantity) {
+		$.ajax({
+			url: '@Url.Action("CheckQuantityReturned", "Bill")',
+			type: 'POST',
+			data: { shoesDetailsId: shoesDetailsId, size: size, billId: billId, quantity: quantity },
+			success: function (response) {
+				if (response.success === false) {
+					// Hiển thị thông báo lỗi
+					alert(response.message);
+
+					// Đặt lại giá trị cho ô input
+					const quantityInput = document.querySelector('.returned-sp');
+					if (quantityInput) {
+						quantityInput.value = quantityInput.value - 1;
+					}
+				}
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				// Xử lý lỗi (nếu có)
+			}
+		});
+	}
+</script>
 <script>
 	window.addEventListener('load', function () {
 		var idBill = '@Model.First().BillID.ToString()';
@@ -1712,6 +1994,7 @@
 </script>
 <script>
 	window.addEventListener('load', function () {
+		var statusBill = '@Model.First().OrderStatuses.First().Status.ToString()';
 		var idBill = '@Model.First().BillID.ToString()';
 		const updateButtons = document.querySelectorAll('.btn-updateProduct');
 		const quantityInput = document.getElementById('quantityInput');
@@ -1722,15 +2005,17 @@
 		var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 		const selectedDistrictId = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen) : parseInt(document.getElementById('ListQuanHuyen').value);
 		const selectedWardCode = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idXa) : parseInt(document.getElementById('ListPhuongXa').value);
-		calculateShippingFee(selectedWardCode, selectedDistrictId);
 
-		setTimeout(function () {
-			var phivanchuyenElement1 = document.getElementById('phivanchuyen');
-			var shippingCostString1 = phivanchuyenElement1.textContent;
-			var match1 = shippingCostString1.match(/([\d,.]+)/);
-			var phivanchuyen1 = match1 ? parseFloat(match1[1].replace(/[,.]/g, '')) : 0;
-			updatePriceShippingInBill(idBill, phivanchuyen1);
-		}, 300);
+		if (statusBill != "6") {
+			calculateShippingFee(selectedWardCode, selectedDistrictId);
+			setTimeout(function () {
+				var phivanchuyenElement1 = document.getElementById('phivanchuyen');
+				var shippingCostString1 = phivanchuyenElement1.textContent;
+				var match1 = shippingCostString1.match(/([\d,.]+)/);
+				var phivanchuyen1 = match1 ? parseFloat(match1[1].replace(/[,.]/g, '')) : 0;
+				updatePriceShippingInBill(idBill, phivanchuyen1);
+			}, 300);
+		}
 
 		// Khởi tạo tổng tiền của cả giỏ hàng
 		let totalPrice = 0;
@@ -2098,12 +2383,13 @@
 		$('form').submit(function (e) {
 			e.preventDefault();
 			var idBill = $('#idBillSuccess').val();
+			var ghiChuTT = document.querySelector('[name="ghiChuXacNhanTT"]').value;
 
 			// Gửi dữ liệu lên server sử dụng Ajax
 			$.ajax({
 				url: '@Url.Action("SaveSuccessBill", "BillStatusHistory")',
 				type: 'POST',
-				data: { idBill: idBill, httt: selectedPaymentMethod },
+				data: { idBill: idBill, httt: selectedPaymentMethod, ghiChuTT: ghiChuTT },
 				success: function (response) {
 					// Xử lý kết quả từ server
 					if (response.success) {
@@ -2247,7 +2533,7 @@
 	<div class="card mb-7" style="border: 1px solid white;">
 		<div class="card-header py-3">
 			<h5 class="mb-0">Sản phẩm</h5>
-			@if (userName != null)
+			@if (userName != null && status == 0 || status == 1)
 			{
 				<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-add-product">Thêm sản phẩm</a>
 			}
@@ -2309,7 +2595,22 @@
 							@{
 								var priceTotalItem = item.PriceProduct * item.Products.First().Quantity;
 							}
-							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 45%;" data-shoesdetailsid="@item.Products.First().ProductID" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
+							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.Products.First().ProductID" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
+							@if (status == 3 || status == 6)
+							{
+								<button type="button" id="BtnReturn_@item.Products.First().ProductID"
+								class="btn btn-primary btn-returnProduct"
+								data-productid="@item.Products.First().ProductID"
+								data-image="@item.Products.First().ImageUrl"
+								data-name="@item.Products.First().Name"
+								data-description="@item.Products.First().Description"
+								data-size="@item.Products.First().Size"
+								data-quantity="@item.Products.First().Quantity"
+								data-price="@item.PriceProduct"
+								style="background-color:black; border:1px solid white; margin-top: 37%;">
+									<i class="fa fa-retweet" style="margin-top:8%; font-size:15px;"></i>
+								</button>
+							}
 						</p>
 						<!-- Total Price -->
 					</div>
@@ -2317,13 +2618,60 @@
 				</div>
 			}
 
+			@foreach (var item in Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1))
+			{
+				<h2>Sản phẩm hoàn trả</h2>
+				<div class="row" style="margin-top:2%;">
+					<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
+						<!-- Image -->
+						<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+							<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-80" alt="Blue Jeans Jacket" />
+							<a href="#!">
+								<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+							</a>
+						</div>
+						<!-- Image -->
+					</div>
+					<div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+						<!-- Data -->
+						<p><strong style="font-size:20px;">@item.NameProduct</strong></p>
+						<p style="font-size:15px; padding-top:1%;">@item.Description</p>
+						<p style="font-size:15px; padding-top:1%;">Size: @item.Size</p>
+						<p style="font-size:15px; padding-top:1%;">Số lượng: x@(item.QuantityReturned)</p>
+						<p style="font-size:15px; padding-top:1%; color:red;">@string.Format("{0:N0}đ", item.Price)</p>
+					</div>
+					<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+						<!-- Total Price -->
+						<p class="text-start text-md-center">
+							@{
+								priceTotalItemReturn = item.Price * item.QuantityReturned;
+							}
+							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@string.Format("{0:N0}đ", priceTotalItemReturn)</span>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:37%; margin-right:25%;" class="main-btn warning-btn btn-hover">Đã hoàn trả</a>
+						</p>
+						<!-- Total Price -->
+					</div>
+					<hr class="my-4" style="width:98%;" />
+				</div>
+			}
 			<div style="text-align: right;">
 				<table class="table table-borderless">
 					<thead>
-						<tr>
-							<th scope="col">Tổng sản phẩm:</th>
-							<th scope="col"><span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@totalPrice.ToString("N0")đ</span></th>
-						</tr>
+						@if (status == 6)
+						{
+							var totalpriceAll = totalPrice + priceTotalItemReturn;
+							<tr>
+								<th scope="col">Tổng sản phẩm:</th>
+								<th scope="col"><span class="cart-total-sub" id="totalPriceAfter" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@totalpriceAll.ToString("N0")đ</span></th>
+							</tr>
+						}
+						else
+						{
+							<tr>
+								<th scope="col">Tổng sản phẩm:</th>
+								<th scope="col"><span class="cart-total-sub" id="totalPrice" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@totalPrice.ToString("N0")đ</span></th>
+							</tr>
+						}
 
 						<tr>
 							<th scope="col">Phí vận chuyển:</th>
@@ -2344,6 +2692,14 @@
 							</th>
 						</tr>
 
+						@if (status == 6)
+						{
+							<tr>
+								<th scope="col">Trả hàng:</th>
+								<th scope="col"><span id="trahang" style="padding: 5px 10px; margin: 2px; margin-left: 8%;">@priceTotalItemReturn.ToString("N0")đ</span></th>
+							</tr>
+						}
+
 						<tr>
 							<th scope="col">Tổng: </th>
 							<th scope="col"><span class="cart-total-sub" id="totalPriceAfterDiscount" name="TongTienAfterDiscount" style="padding: 5px 10px; margin: 2px; margin-left: 12%;">= @totalAll.ToString("N0")đ</span></th>
@@ -2353,16 +2709,179 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		window.addEventListener('load', function () {
+			var idBill = '@Model.First().BillID.ToString()';
+			const closeForm = document.getElementById('close-btn');
+
+			$('.btn-returnSP').click(function () {
+				$('#modalReturnPrice').modal('show');
+				document.querySelector('.returned-price').value = parseInt('@priceTotalItemReturn');
+			});
+
+			closeForm.addEventListener('click', function () {
+				$('#modalReturnPrice').modal('hide');
+			});
+
+			const submitForm = document.querySelectorAll('.btn-returnItemPrice');
+			submitForm.forEach(buttonSub => {
+				buttonSub.addEventListener('click', function (e) {
+					e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+					var idBill = '@Model.First().BillID.ToString()';
+					var ghiChuUpdateSP = $('input[name="ghiChuReturnPrice"]').val();
+					// Gửi dữ liệu lên server sử dụng Ajax
+					$.ajax({
+						url: '@Url.Action("SuccessBillReturn", "Bill")',
+						type: 'POST',
+						data: {
+							idBill: idBill,
+							ghiChuReturn: ghiChuUpdateSP,
+						},
+						success: function (response) {
+							$('#modalReturnPrice').modal('hide');
+							location.reload();
+						},
+						error: function (error) {
+							// Xử lý lỗi nếu cần
+						}
+					});
+				});
+			});
+		});
+	</script>
+	@if (userName != null)
+	{
+		<div class="row" id="shipping-address-form-container" style="margin-top:5%;">
+			<div class="container col-md-12 mb-6">
+				<div class="card mb-6">
+					<div class="card-header py-3">
+						<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
+						@if (userName != null && status == 2)
+						{
+							if (Model.First().IsPaid == false)
+							{
+								<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
+							}
+						}
+						@if (userName != null && statusReturn == 1)
+						{
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover btn-returnSP">Hoàn tiền</a>
+						}
+					</div>
+					<div class="card-body existing-address" id="existingAddress" style="display:flex;">
+						<div class="container-fluid">
+							<div class="title-wrapper pt-30">
+								<div class="row align-items-center">
+									<div class="col-md-6">
+										<div class="title" style="float:left;">
+											<h2>Lịch sử thanh toán</h2>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tables-wrapper">
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="card-style mb-30">
+											<div class="table-wrapper table-responsive">
+												@if (Model.First().HistoryPayMentViewModels.Any() && Model.First().IsPaid == true)
+												{
+													<table class="table">
+														<thead>
+															<tr>
+																<th>
+																	<h6 style="padding-left:5%;">Số tiền</h6>
+																</th>
+																<th>
+																	<h6>Thời gian</h6>
+																</th>
+																<th>
+																	<h6>Loại giao dịch</h6>
+																</th>
+																<th>
+																	<h6>Phương thức thanh toán</h6>
+																</th>
+																<th>
+																	<h6>Trạng thái</h6>
+																</th>
+																<th>
+																	<h6>Ghi chú</h6>
+																</th>
+																<th>
+																	<h6>Nhân viên xác nhận</h6>
+																</th>
+															</tr>
+															<!-- end table row-->
+														</thead>
+														<tbody>
+															@foreach (var bill in Model.First().HistoryPayMentViewModels.Where(c => c.Status == 0))
+															{
+																<tr style="margin-top:5%; margin-bottom:5%">
+																	<td class="min-width">
+																		<p>@bill.Price.ToString("N0")đ</p>
+																	</td>
+																	<td class="min-width">
+																		<p>@bill.PayMentDate.ToString("HH:mm, dd/MM/yyyy")</p>
+																	</td>
+																	<td class="min-width">
+																		@if (bill.TransactionType == 0)
+																		{
+																			<p class="main-btn success-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Thanh toán</p>
+																		}
+																		else
+																		{
+																			<p class="main-btn danger-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Hoàn tiền</p>
+																		}
+																	</td>
+																	<td class="min-width">
+																		<p style="color:red;">@bill.PurChaseMethodName</p>
+																	</td>
+																	<td class="min-width">
+																		@if (bill.Status == 0)
+																		{
+																			<p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã thanh toán</p>
+																		}
+																		else
+																		{
+																			<p>Chưa thanh toán</p>
+																		}
+																	</td>
+																	<td class="min-width">
+																		<p>@bill.Note</p>
+																	</td>
+																	<td class="min-width">
+																		<p>@bill.EmployeeName</p>
+																	</td>
+																</tr>
+															}
+														</tbody>
+													</table>
+												}
+												else
+												{
+													<p>Chưa có lịch sử thanh toán.</p>
+												}
+												<!-- end table -->
+											</div>
+										</div>
+										<!-- end card -->
+									</div>
+									<!-- end col -->
+								</div>
+								<!-- end row -->
+							</div>
+							<!-- ========== tables-wrapper end ========== -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 	<div class="row" id="shipping-address-form-container" style="margin-top:5%;">
 		<div class="container col-md-12 mb-6">
 			<div class="card mb-6">
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
-					@if (userName != null && Model.First().IsPaid == false && status != 4)
-					{
-						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
-					}
-
 					@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && userName != null && status == 0 || status == 1)
 					{
 						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi thông tin</a>
@@ -2376,19 +2895,8 @@
 						}
 						else
 						{
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:left; margin-top:1%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được bạn thanh toán online vào lúc: @Model.First().OrderStatuses.First().PaymentDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
+							@*<a style="font-size:16px; padding:5px 10px; margin:2px; float:left; margin-top:1%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được bạn thanh toán online vào lúc: @Model.First().OrderStatuses.First().PaymentDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>*@
 							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover">Đã thanh toán</a>
-						}
-					}
-					@if (userName != null && Model.First().IsPaid == true)
-					{
-						@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay")
-						{
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được thanh toán trực tiếp vào lúc: @Model.First().OrderStatuses.First().PaymentDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
-						}
-						else
-						{
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light btn-hover">Đơn hàng đã được thanh toán online vào lúc: @Model.First().OrderStatuses.First().PaymentDate.ToString("HH:mm, dd/MM/yyyy"), với số tiền: @totalAll.ToString("N0")đ</a>
 						}
 					}
 				</div>
@@ -2484,6 +2992,7 @@
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			// lấy giá tiền gốc
+			var statusBill = '@Model.First().OrderStatuses.First().Status.ToString()';
 			var idBill = '@Model.First().BillID.ToString()';
 			var totalPriceElement = document.getElementById('totalPrice');
 			var totalPriceText = totalPriceElement.innerText;
@@ -2509,7 +3018,9 @@
 				});
 			});
 			// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
-			updateShippingCost();
+			if (statusBill != "6") {
+				updateShippingCost();
+			}
 		});
 
 		function updateShippingCost() {

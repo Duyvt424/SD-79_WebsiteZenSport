@@ -13,10 +13,12 @@ namespace AppData.Models
 		public string Note { get; set; }
 		public int QuantityReturned { get; set; }
         public decimal ReturnedPrice { get; set; }
+        public int TransactionType { get; set; }
+        public string NamePurChaseMethod { get; set; }
         public int Status { get; set; }
         public Guid BillId { get; set; }
-        public Guid ShoesDetails_SizeID { get; set; }
-        public Bill Bill { get; set; }
-        public ShoesDetails_Size ShoesDetails_Size { get; set; }
+        public Guid? ShoesDetails_SizeID { get; set; }
+        public virtual Bill Bill { get; set; }
+        public virtual ShoesDetails_Size ShoesDetails_Size { get; set; }
     }
 }

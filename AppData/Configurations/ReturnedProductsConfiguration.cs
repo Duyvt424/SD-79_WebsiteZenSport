@@ -19,9 +19,11 @@ namespace AppData.Configurations
 			builder.Property(c => c.Note).HasColumnType("nvarchar(1000)");
 			builder.Property(c => c.QuantityReturned).HasColumnType("int");
 			builder.Property(c => c.ReturnedPrice).HasColumnType("decimal(18, 2)");
+			builder.Property(c => c.TransactionType).HasColumnType("int");
+			builder.Property(c => c.NamePurChaseMethod).HasColumnType("nvarchar(1000)");
 			builder.Property(c => c.Status).HasColumnType("int");
 			builder.HasOne(c => c.Bill).WithMany(c => c.ReturnedProducts).HasForeignKey(c => c.BillId);
-			builder.HasOne(c => c.ShoesDetails_Size).WithMany(c => c.ReturnedProducts).HasForeignKey(c => c.ShoesDetails_SizeID);
+			builder.HasOne(c => c.ShoesDetails_Size).WithMany(c => c.ReturnedProducts).HasForeignKey(c => c.ShoesDetails_SizeID).IsRequired(false);
 		}
 	}
 }

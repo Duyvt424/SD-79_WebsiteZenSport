@@ -777,6 +777,8 @@
 							return '<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>';
 						case 4:
 							return '<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>';
+						case 6:
+							return '<span class="main-btn light-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Hoàn trả</span>';
 						default:
 							return '';
 					}
@@ -904,9 +906,14 @@
 																<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>
 															}
 															else
-																	if (bill.Status == 4)
+															        if (bill.Status == 4)
 															{
 																<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>
+															}
+															else
+															        if (bill.Status == 6)
+															{
+																<span class="main-btn light-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Hoàn trả</span>
 															}
 														</td>
 														<td>
