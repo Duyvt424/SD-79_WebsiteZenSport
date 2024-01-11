@@ -1,4 +1,4 @@
-﻿using System.Data.Entity.Core.Objects;
+﻿//using System.Data.Entity.Core.Objects;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
@@ -70,13 +70,13 @@ namespace AppView.Controllers
 
                 viewModel.MonthlyProfit = _dbContext.BillDetails
                     .Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
-                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount - (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0));
+                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount /*- (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0)*/);
 
                 DateTime today = DateTime.Today;
 
                 viewModel.TodayRevenue = _dbContext.BillDetails
                     .Where(bd => bd.Bill.DeliveryDate.Date == today)
-                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount - (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0));
+                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount /*- (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0)*/);
 
                 viewModel.MonthlyQuantitySold = _dbContext.BillDetails
                     .Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
@@ -111,7 +111,7 @@ namespace AppView.Controllers
                 {
                     decimal totalRevenue = bills
                         .Where(b => b.DeliveryDate.Date == date.Date)
-                        .Sum(b => b.TotalPriceAfterDiscount - (b.Voucher != null ? b.Voucher.VoucherValue : 0));
+                        .Sum(b => b.TotalPriceAfterDiscount /*- (b.Voucher != null ? b.Voucher.VoucherValue : 0)*/);
 
                     dailyRevenueList.Add(new DailyRevenueViewModel
                     {
