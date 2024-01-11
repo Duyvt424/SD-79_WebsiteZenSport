@@ -372,12 +372,13 @@ namespace AppView.Controllers
                             .Where(x => x.BillId == billId)
                             .Select(x => new HistoryPayMentViewModel
                             {
-                                NameProduct = _dbContext.Products.First(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
-                                ImageUrl = _dbContext.Images.First(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
-                                Description = _dbContext.Styles.First(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
-                                Size = _dbContext.Sizes.First(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
+                                NameProduct = _dbContext.Products.FirstOrDefault(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                                ImageUrl = _dbContext.Images.FirstOrDefault(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
+                                Description = _dbContext.Styles.FirstOrDefault(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
+                                Size = _dbContext.Sizes.FirstOrDefault(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
                                 QuantityReturned = x.QuantityReturned,
                                 Price = x.ReturnedPrice,
+                                TotalPrice = _dbContext.ReturnedProducts.Where(c => c.BillId == x.BillId && c.Status == 1).Sum(c => c.ReturnedPrice),
                                 PayMentDate = x.CreateDate,
                                 TransactionType = x.TransactionType,
                                 PurChaseMethodName = x.NamePurChaseMethod,
@@ -651,6 +652,7 @@ namespace AppView.Controllers
                 ShoesDt_Size.Quantity += quanity;
                 _dbContext.SaveChanges();
 
+
                 var historyBill = new ReturnedProducts()
                 {
                     ID = Guid.NewGuid(),
@@ -704,15 +706,16 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult SuccessBillReturn(Guid idBill, string ghiChuReturn)
+        public IActionResult SuccessBillReturn(Guid idBill, string ghiChuReturn, decimal price)
         {
             var objbill = _dbContext.Bills.First(c => c.BillID == idBill);
-            var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID);
+            var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID && c.Status == 1);
             if (returnObj.Status == 1)
             {
                 returnObj.CreateDate = DateTime.Now;
                 returnObj.Note = ghiChuReturn;
                 returnObj.Status = 0;
+                returnObj.ReturnedPrice = price;
                 _dbContext.ReturnedProducts.Update(returnObj);
                 _dbContext.SaveChanges();
             }

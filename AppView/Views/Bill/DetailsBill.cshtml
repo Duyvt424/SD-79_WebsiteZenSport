@@ -11,7 +11,8 @@
 	var billStatusHis = Model.First().BillStatusHistories;
 	var status = Model.First().OrderStatuses.First().Status;
 	string statusText;
-	var statusReturn = Model.First().HistoryPayMentViewModels.First().Status;
+	var statusReturn = Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.Status != 0)?.Status;
+	var totalpriceAll = Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault()?.TotalPrice;
 
 	switch (status)
 	{
@@ -2540,7 +2541,7 @@
 		</div>
 		<div class="card-body">
 			<!-- Single item -->
-			@foreach (var item in Model)
+			@foreach (var item in Model.Where(c => c.Products.Any(c => c.Quantity != 0)).ToList())
 			{
 				<div class="row">
 					<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
@@ -2618,9 +2619,12 @@
 				</div>
 			}
 
-			@foreach (var item in Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1))
+			@if (status == 6)
 			{
 				<h2>Sản phẩm hoàn trả</h2>
+			}
+			@foreach (var item in Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1))
+			{
 				<div class="row" style="margin-top:2%;">
 					<div class="col-lg-3 col-md-8 mb-4 mb-lg-0">
 						<!-- Image -->
@@ -2659,10 +2663,9 @@
 					<thead>
 						@if (status == 6)
 						{
-							var totalpriceAll = totalPrice + priceTotalItemReturn;
 							<tr>
 								<th scope="col">Tổng sản phẩm:</th>
-								<th scope="col"><span class="cart-total-sub" id="totalPriceAfter" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@totalpriceAll.ToString("N0")đ</span></th>
+								<th scope="col"><span class="cart-total-sub" id="totalPriceAfter" style="padding: 5px 10px; margin: 2px; margin-left: 5%;">@string.Format("{0:N0}đ", totalpriceAll)</span></th>
 							</tr>
 						}
 						else
@@ -2696,7 +2699,7 @@
 						{
 							<tr>
 								<th scope="col">Trả hàng:</th>
-								<th scope="col"><span id="trahang" style="padding: 5px 10px; margin: 2px; margin-left: 8%;">@priceTotalItemReturn.ToString("N0")đ</span></th>
+								<th scope="col"><span id="trahang" style="padding: 5px 10px; margin: 2px; margin-left: 8%;">@string.Format("{0:N0}đ", totalpriceAll)</span></th>
 							</tr>
 						}
 
@@ -2711,12 +2714,18 @@
 	</div>
 	<script>
 		window.addEventListener('load', function () {
+			var statusReturn = '@Model.First().OrderStatuses.First().Status.ToString()';
 			var idBill = '@Model.First().BillID.ToString()';
 			const closeForm = document.getElementById('close-btn');
+			let priceReturn = 0;
 
 			$('.btn-returnSP').click(function () {
 				$('#modalReturnPrice').modal('show');
-				document.querySelector('.returned-price').value = parseInt('@priceTotalItemReturn');
+		        if (statusReturn == "6")
+		        {
+					document.querySelector('.returned-price').value = parseInt('@totalpriceAll');
+					priceReturn = parseInt('@totalpriceAll');
+		        }
 			});
 
 			closeForm.addEventListener('click', function () {
@@ -2736,6 +2745,7 @@
 						data: {
 							idBill: idBill,
 							ghiChuReturn: ghiChuUpdateSP,
+							price: priceReturn
 						},
 						success: function (response) {
 							$('#modalReturnPrice').modal('hide');
