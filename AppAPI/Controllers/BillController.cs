@@ -37,7 +37,7 @@ namespace AppAPI.Controllers
 			return _repos.GetAll().Where(x => x.BillCode == code);
 		}
 		[HttpPost("create-bill")]
-		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, DateTime PaymentDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int TransactionType, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
+		public string CreateBill(string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, DateTime PaymentDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalRefundAmount, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int TransactionType, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
 		{
 			Bill bill = new Bill();
 			bill.BillID = Guid.NewGuid();
@@ -51,6 +51,7 @@ namespace AppAPI.Controllers
 			bill.PaymentDay = PaymentDate;
 			bill.TotalPrice = TotalPrice;
 			bill.ShippingCosts = ShippingCosts;
+			bill.TotalRefundAmount = TotalRefundAmount;
 			bill.TotalPriceAfterDiscount = TotalPriceAfterDiscount;
 			bill.Note = Note;
 			bill.IsPaid = IsPaid;
@@ -74,7 +75,7 @@ namespace AppAPI.Controllers
 
 		// PUT api/<BillController>/5
 		[HttpPut("update-bill")]
-		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, DateTime PaymentDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int TransactionType, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
+		public string UpdateBill(Guid BillID, string BillCode, DateTime CreateDate, DateTime SuccessDate, DateTime ConfirmationDate, DateTime DeliveryDate, DateTime CancelDate, DateTime UpdateDate, DateTime PaymentDate, decimal TotalPrice, decimal ShippingCosts, decimal TotalRefundAmount, decimal TotalPriceAfterDiscount, string Note, bool IsPaid , int TransactionType, int Status, Guid CustomerID, Guid VoucherID, Guid EmployeeID, Guid PurchaseMethodID, Guid AddressID, Guid ShippingVoucherID)
 		{
 			var bill = _repos.GetAll().First(c => c.BillID == BillID);
 			bill.BillCode = BillCode;
@@ -87,6 +88,7 @@ namespace AppAPI.Controllers
 			bill.PaymentDay = PaymentDate;
 			bill.TotalPrice = TotalPrice;
 			bill.ShippingCosts = ShippingCosts;
+			bill.TotalRefundAmount = TotalRefundAmount;
 			bill.TotalPriceAfterDiscount = TotalPriceAfterDiscount;
 			bill.Note = Note;
 			bill.IsPaid = IsPaid;

@@ -31,7 +31,7 @@ namespace AppAPI.Controllers
 
         // POST api/<ColorController1>
         [HttpPost("create-returnedProducts")]
-        public bool CreateReturnedProducts(DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
+        public bool CreateReturnedProducts(DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
         {
             ReturnedProducts returned = new ReturnedProducts();
             returned.ID = Guid.NewGuid();
@@ -39,6 +39,8 @@ namespace AppAPI.Controllers
             returned.Note = Note;
             returned.QuantityReturned = QuantityReturned;
             returned.ReturnedPrice = ReturnedPrice;
+            returned.ShippingFeeReturned = ShippingFeeReturned;
+            returned.InitialProductTotalPrice = InitialProductTotalPrice;
             returned.Status = Status;
             returned.BillId = BillId;
             returned.ShoesDetails_SizeID = ShoesDetails_SizeID;
@@ -47,13 +49,15 @@ namespace AppAPI.Controllers
 
         // PUT api/<ColorController1>/5
         [HttpPut("update-returnedProducts")]
-        public bool Put(Guid ID ,DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
+        public bool Put(Guid ID ,DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
         {
             var returned = _repos.GetAll().First(c => c.ID == ID);
             returned.CreateDate = CreateDate;
             returned.Note = Note;
             returned.QuantityReturned = QuantityReturned;
             returned.ReturnedPrice = ReturnedPrice;
+            returned.ShippingFeeReturned = ShippingFeeReturned;
+            returned.InitialProductTotalPrice = InitialProductTotalPrice;
             returned.Status = Status;
             returned.BillId = BillId;
             returned.ShoesDetails_SizeID = ShoesDetails_SizeID;

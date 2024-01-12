@@ -440,6 +440,7 @@ namespace AppView.Controllers
                     IsPaid = false,
                     SuccessDate = Convert.ToDateTime(deliveryDateSave),
                     ShippingCosts = shippingFee,
+                    TotalRefundAmount = 0,
                     DeliveryDate = DateTime.Now,
                     CancelDate = DateTime.Now,
                     UpdateDate = DateTime.Now,

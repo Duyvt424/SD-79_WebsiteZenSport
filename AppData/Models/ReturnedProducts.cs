@@ -15,6 +15,8 @@ namespace AppData.Models
         public decimal ReturnedPrice { get; set; }
         public int TransactionType { get; set; }
         public string NamePurChaseMethod { get; set; }
+        public decimal ShippingFeeReturned { get; set; } // Tiền ship hoàn trả
+        public decimal InitialProductTotalPrice { get; set; } // Tổng tiền sản phẩm ban đầu
         public int Status { get; set; }
         public Guid BillId { get; set; }
         public Guid? ShoesDetails_SizeID { get; set; }

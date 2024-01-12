@@ -224,6 +224,19 @@ namespace AppView.Controllers
             return Json(new { success = true, message = "Lưu trạng thái thành công" });
         }
 
+        public IActionResult SaveSuccessBillCus(Guid idBill)
+        {
+            var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == idBill);
+            if (objBill != null)
+            {
+                objBill.IsPaid = true;
+                objBill.PaymentDay = DateTime.Now;
+            }
+            _dbContext.Update(objBill);
+            _dbContext.SaveChanges();
+            return Ok(new { success = true });
+        }
+
         public IActionResult SaveSuccessBill(Guid idBill, string httt, string ghiChuTT)
         {
             var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
@@ -232,8 +245,6 @@ namespace AppView.Controllers
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
             if (objBill != null)
             {
-                objBill.IsPaid = true;
-                objBill.PaymentDay = DateTime.Now;
                 objBill.EmployeeID = EmployeeID;
             }
             var historyBill = new ReturnedProducts()

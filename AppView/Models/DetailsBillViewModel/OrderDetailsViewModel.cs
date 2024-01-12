@@ -23,6 +23,9 @@
 		public decimal? PriceProduct { get; set; }
 		public decimal ShippingCost { get; set; }
         public bool IsPaid { get; set; }
+        public string EmployeeName { get; set; }
+        public decimal? TotalRefundAmount { get; set; }
+        public decimal? PriceShippingReturn { get; set; }
         public List<BillStatusHistoryViewModel> BillStatusHistories { get; set; }
         public List<AddressViewModel> AddressViewModels { get; set; }
         public List<HistoryPayMentViewModel> HistoryPayMentViewModels { get; set; }

@@ -25,6 +25,7 @@ namespace AppData.Configurations
             builder.Property(c => c.PaymentDay).HasColumnType("Datetime");
             builder.Property(c => c.TotalPrice).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.ShippingCosts).HasColumnType("decimal(18, 2)");
+            builder.Property(c => c.TotalRefundAmount).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.TotalPriceAfterDiscount).HasColumnType("decimal(18, 2)");
             builder.Property(c => c.Note).HasColumnType("nvarchar(500)");
             builder.Property(c => c.IsPaid).HasColumnType("bit");

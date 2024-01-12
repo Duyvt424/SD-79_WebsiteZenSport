@@ -19,6 +19,7 @@ namespace AppData.Models
         public DateTime PaymentDay { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal ShippingCosts { get; set; }
+        public decimal TotalRefundAmount { get; set; } // Tiền hoàn trả sản phẩm
         public decimal TotalPriceAfterDiscount { get; set; }
         public string Note { get; set; }
         public bool IsPaid { get; set; }

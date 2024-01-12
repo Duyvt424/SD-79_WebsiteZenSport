@@ -319,6 +319,9 @@ namespace AppView.Controllers
                             PriceProduct = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price,
                             IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
+                            EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == objBill.EmployeeID).FullName,
+                            TotalRefundAmount = _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount != null ? _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount : null,
+                            PriceShippingReturn = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned != null ? _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned : null,
                             Products = new List<ProductViewModel>
                             {
                                 new ProductViewModel
@@ -378,7 +381,7 @@ namespace AppView.Controllers
                                 Size = _dbContext.Sizes.FirstOrDefault(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
                                 QuantityReturned = x.QuantityReturned,
                                 Price = x.ReturnedPrice,
-                                TotalPrice = _dbContext.ReturnedProducts.Where(c => c.BillId == x.BillId && c.Status == 1).Sum(c => c.ReturnedPrice),
+                                TotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == x.BillId && c.Status == 1).InitialProductTotalPrice,
                                 PayMentDate = x.CreateDate,
                                 TransactionType = x.TransactionType,
                                 PurChaseMethodName = x.NamePurChaseMethod,
@@ -469,6 +472,7 @@ namespace AppView.Controllers
             {
                 objBill.PurchaseMethodID = purchaseMethod;
                 objBill.PaymentDay = DateTime.Now;
+                objBill.IsPaid = true;
             }
             _dbContext.Update(objBill);
             _dbContext.SaveChanges();
@@ -638,7 +642,7 @@ namespace AppView.Controllers
             return Ok(new { success = true });
         }
 
-        public IActionResult ReturnedProduct(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct, decimal priceVoucher)
+        public IActionResult ReturnedProduct(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct, decimal priceVoucher, decimal priceShippingReturn, decimal initialProductTotalPrice)
         {
             var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
             var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
@@ -662,6 +666,8 @@ namespace AppView.Controllers
                     ReturnedPrice = quanity * billDetails.Price,
                     TransactionType = 1,
                     NamePurChaseMethod = "Tiền mặt",
+                    ShippingFeeReturned = priceShippingReturn,
+                    InitialProductTotalPrice = initialProductTotalPrice,
                     Status = 1,
                     BillId = objBill.BillID,
                     ShoesDetails_SizeID = ShoesDt_Size.ID
@@ -674,8 +680,9 @@ namespace AppView.Controllers
                     ChangeDate = DateTime.Now,
                     Note = $"Đã hoàn trả [{quanity}] sản phẩm [{nameProduct}] kích cỡ [{idSize}]. Lý do: [{ghiChuUpdateSP}]",
                     BillID = idBill,
-                    EmployeeID = EmployeeID
+                    EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null
                 };
+                objBill.TotalRefundAmount = historyBill.ReturnedPrice;
                 objBill.Status = 6;
                 objBill.TotalPrice -= billDetails.Price;
                 objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
