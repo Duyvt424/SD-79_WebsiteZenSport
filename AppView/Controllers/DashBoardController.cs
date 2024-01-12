@@ -95,6 +95,25 @@ namespace AppView.Controllers
             }
         }
         [HttpGet]
+        public IActionResult Top5Provinces()
+        {
+            var top5Provinces = _dbContext.Bills
+                .Include(b => b.Address)
+                .GroupBy(b => b.Address.Province)
+                .Select(group => new Top5ProvincesViewModel
+                {
+                    Province = group.Key,
+                    TotalOrders = group.Count()
+                })
+                .OrderByDescending(result => result.TotalOrders)
+                .Take(5)
+                .ToList();
+
+            // Chuyển dữ liệu top5Provinces đến view
+            return View(top5Provinces);
+        }
+
+        [HttpGet]
         public IActionResult GetDailyRevenue(DateTime startDate, DateTime endDate)
         {
             try
