@@ -69,6 +69,8 @@
 	<link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
 	<link rel="stylesheet" href="~/assets/css/main.css" />
 	<link rel="stylesheet" href="~/css/detail.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css" integrity="sha512-NXUhxhkDgZYOMjaIgd89zF2w51Mub53Ru3zCNp5LTlEzMbNNAjTjDbpURYGS5Mop2cU4b7re1nOIucsVlrx9fA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<style>
 		body {
 			background-color: whitesmoke;
@@ -775,13 +777,25 @@
 						<h3 class="step-title">Đã nhận được hàng</h3>
 						<h4 class="step-title">@Model.First().OrderStatuses.First().SuccessDate.ToString("HH:mm, dd/MM/yyyy")</h4>
 					</div>
-					<div class="step notcompleted">
-						<div class="step-icon-wrap">
-							<div class="step-icon"><i class="fa fa-retweet"></i></div>
+					@if (Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.TransactionType == 1)?.Status == 0)
+					{
+						<div class="step notcompleted">
+							<div class="step-icon-wrap">
+								<div class="step-icon"><i class="fa fa-retweet"></i></div>
+							</div>
+							<h3 class="step-title">Hoàn trả</h3>
+							<h4 class="step-title">@Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1).First().PayMentDate</h4>
 						</div>
-						<h3 class="step-title">Hoàn trả</h3>
-						<h4 class="step-title">@Model.First().HistoryPayMentViewModels.Where(c => c.TransactionType == 1).First().PayMentDate</h4>
-					</div>
+					}
+					else
+					{
+						<div class="step notcompleted">
+							<div class="step-icon-wrap">
+								<div class="step-icon" style="border:3px solid gray; background-color: whitesmoke; color: gray;"><i class="fa fa-retweet"></i></div>
+							</div>
+							<h3 class="step-title" style="display:none;">Hoàn trả</h3>
+						</div>
+					}
 				}
 			</div>
 			@if (userName != null && status == 0)
@@ -1799,7 +1813,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content clearfix">
 				<button type="button" class="close quay-lai-ht" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<form>
+				<form method="post" enctype="multipart/form-data">
 					<div class="modal-body">
 						<h3 class="title">Vui lòng chọn lý do:</h3>
 						<div class="form-check">
@@ -1833,6 +1847,14 @@
 							</label>
 							<textarea id="otherReason" name="flexRadioDefault" class="form-control" rows="2" placeholder="Nhập lý do khác"></textarea>
 						</div>
+						<label class="form-check-label" for="flexRadioDefault4" style="float:left;">
+							Vui lòng chọn ảnh sản phẩm
+						</label>
+						<input class="form-control form-control-sm" id="formFileSm" type="file" name="imageReturn1" required />
+						<label class="form-check-label" for="flexRadioDefault4" style="float:left;">
+							Vui lòng chọn ảnh sản phẩm
+						</label>
+						<input class="form-control form-control-sm" id="formFileSm" type="file" name="imageReturn2" required />
 						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
 						<div style="margin-top:2%;">
 							<button class="btn" type="button" name="exit-xn">Thoát</button>
@@ -1845,6 +1867,77 @@
 	</div>
 </div>
 
+<div class="modal-box1">
+	<!-- Modal -->
+	<div class="modal fade" id="myModalConfirmDontHT" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content clearfix">
+				<button type="button" class="close quay-lai-dontHT" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<form>
+					<div class="modal-body">
+						<h3 class="title">Xác nhận không đồng ý hoàn trả</h3>
+						<label class="description">Lý do:</label>
+						<input type="text" name="ghiChuDontHT" class="form-control" required />
+						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						<p class="description">Xác nhận không đồng ý hoàn trả cho sản phẩm ?. Lưu ý: Chỉ ấn 'Xác nhận' khi đã xem xét kỹ lưỡng lý do và hình ảnh phản hồi của khách hàng!.</p>
+						<button class="btn" type="button" name="exit-dontHT">Thoát</button>
+						<button class="btn cancel" type="button" name="confirm-dontHT">Xác nhận</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('.btn-returnSPNo').click(function () {
+			$('#myModalConfirmDontHT').modal('show');
+		});
+
+		$('.quay-lai-dontHT').click(function () {
+			$('#myModalConfirmDontHT').modal('hide');
+		});
+
+		$('[name="exit-dontHT"]').click(function () {
+			$('#myModalConfirmDontHT').modal('hide');
+		});
+
+		$('[name="confirm-dontHT"]').click(function () {
+			var idBill = '@Model.First().BillID.ToString()';
+			var ghiChuUpdateSP5 = $('input[name="ghiChuDontHT"]').val();
+			$.ajax({
+				url: '@Url.Action("CancelReturnedProduct", "Bill")',
+				type: 'POST',
+				data: { idBill: idBill, ghiChuDontHT: ghiChuUpdateSP5 },
+				success: function (response) {
+					// Xử lý kết quả từ server
+					if (response.success) {
+						$('#myModalConfirmDontHT').modal('hide');
+						new Noty({
+							type: 'success',
+							text: 'Thành công!',
+							timeout: 1500,
+							progressBar: true,
+							closeWith: ['click', 'button'],
+							callbacks: {
+								afterClose: function () {
+									location.reload();
+								}
+							}
+						}).show();
+					}
+					else {
+						alert(response.message);
+					}
+				},
+				error: function (error) {
+					// Xử lý lỗi nếu cần
+				}
+			});
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.thanh-toan-xn').click(function () {
@@ -1904,6 +1997,7 @@
 				$('#myModalConfirmHT').modal('show');
 				$('[name="confirm-xn-ht"]').click(function () {
 					$('#myModalConfirmHT').modal('hide');
+					console.log('img1', $('input[name="imageReturn1"]').val());
 					showProductModal(productId, imageUrl, name, description, size, quantity, formattedPrice);
 				});
 			});
@@ -1970,7 +2064,7 @@
 		const submitForm = document.querySelectorAll('.btn-returnItem');
 		submitForm.forEach(buttonSub => {
 			buttonSub.addEventListener('click', function (e) {
-				e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+				e.preventDefault();
 				var idBill = '@Model.First().BillID.ToString()';
 				const idShoesDT = $(modalReturnProduct).attr('data-productid');
 				const idSize = $(modalReturnProduct).attr('data-size');
@@ -1987,24 +2081,40 @@
 				var totalPriceElement = document.getElementById('totalPrice');
 				var totalPriceText = totalPriceElement.innerText;
 				var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
-				// Gửi dữ liệu lên server sử dụng Ajax
+
+				var formData = new FormData();
+				formData.append('idBill', idBill);
+				formData.append('idShoesDT', idShoesDT);
+				formData.append('idSize', idSize);
+				formData.append('ghiChuUpdateSP', ghiChuUpdateSP);
+				formData.append('quanity', quanity);
+				formData.append('nameProduct', nameProduct);
+				formData.append('priceVoucher', priceVoucher);
+				formData.append('priceShippingReturn', priceShippingR);
+				formData.append('initialProductTotalPrice', totalPrice);
+				formData.append('image1', document.querySelector('[name="imageReturn1"]').files[0]);
+				formData.append('image2', document.querySelector('[name="imageReturn2"]').files[0]);
+
 				$.ajax({
 					url: '@Url.Action("ReturnedProduct", "Bill")',
 					type: 'POST',
-					data: {
-						idBill: idBill,
-						idShoesDT: idShoesDT,
-						idSize: idSize,
-						ghiChuUpdateSP: ghiChuUpdateSP,
-						quanity: quanity,
-						nameProduct: nameProduct,
-						priceVoucher: priceVoucher,
-						priceShippingReturn: priceShippingR,
-						initialProductTotalPrice: totalPrice
-					},
+					data: formData,
+					processData: false,
+					contentType: false,
 					success: function (response) {
 						$('#modalReturnProduct').modal('hide');
-						location.reload();
+						new Noty({
+							type: 'success', // Loại thông báo (success, error, warning, info)
+							text: 'Thành công!', // Nội dung thông báo
+							timeout: 1500, // Thời gian hiển thị thông báo (ms)
+							progressBar: true, // Hiển thị thanh tiến trình
+							closeWith: ['click', 'button'], // Đóng thông báo khi click hoặc bấm nút
+							callbacks: {
+								afterClose: function () {
+									location.reload();
+								}
+							}
+						}).show();
 					},
 					error: function (error) {
 						// Xử lý lỗi nếu cần
@@ -2743,7 +2853,7 @@
 								var priceTotalItem = item.PriceProduct * item.Products.First().Quantity;
 							}
 							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.Products.First().ProductID" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
-							@if (status == 3 || status == 6)
+							@if (userName == null && status == 3 || status == 6)
 							{
 								<a id="BtnReturn_@item.Products.First().ProductID"
 						   class="main-btn active-btn-light btn-hover btn-returnProduct"
@@ -2798,11 +2908,27 @@
 								priceTotalItemReturn = item.Price * item.QuantityReturned;
 							}
 							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@string.Format("{0:N0}đ", priceTotalItemReturn)</span>
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:37%; margin-right:25%;" class="main-btn warning-btn btn-hover">Đã hoàn trả</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:37%; margin-right:25%;" class="main-btn warning-btn btn-hover">Hoàn trả</a>
 						</p>
 						<!-- Total Price -->
 					</div>
 					<hr class="my-4" style="width:98%;" />
+				</div>
+			}
+			@if (userName != null && status == 6)
+			{
+				<h2>Ảnh khiếu nại sản phẩm</h2>
+				<div class="row" style="margin-top:2%;">
+					<div class="col-sm-6 col-md-6">
+						<div class="image-box">
+							<img src="@Url.Content("~/image/" + Model.FirstOrDefault().HistoryPayMentViewModels.FirstOrDefault().Image1)" alt="Shoes for you" style="width: 100%; height:60%;">
+						</div>
+					</div>
+					<div class="col-sm-6 col-md-6">
+						<div class="image-box">
+							<img src="@Url.Content("~/image/" + Model.FirstOrDefault().HistoryPayMentViewModels.FirstOrDefault().Image2)" alt="Shoes for you" style="width: 100%; height:60%;">
+						</div>
+					</div>
 				</div>
 			}
 			<div style="text-align: right;">
@@ -2869,9 +2995,13 @@
 						</tr>
 					</thead>
 				</table>
-				@if	(status == 6)
+				@if (userName == null && status == 6)
 				{
 					<h5 style="float:right; color:red; font-style:italic;">Bạn vui lòng thanh toán <strong style="color:black;">@string.Format("{0:N0}đ", priceShippingReturn)</strong> cho đơn vị vận chuyển giúp chúng mình nhé!</h5>
+				}
+				@if	(userName == null && Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.TransactionType == 1)?.Status == 2)
+				{
+					<h5 style="float:right; color:red; font-style:italic;">Đơn hàng của bạn đã bị từ chối hoàn trả vì lý do: @Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.Status == 2)?.Note</h5>
 				}
 			</div>
 		</div>
@@ -2912,7 +3042,18 @@
 						},
 						success: function (response) {
 							$('#modalReturnPrice').modal('hide');
-							location.reload();
+							new Noty({
+								type: 'success',
+								text: 'Thành công!',
+								timeout: 1500,
+								progressBar: true,
+								closeWith: ['click', 'button'],
+								callbacks: {
+									afterClose: function () {
+										location.reload();
+									}
+								}
+							}).show();
 						},
 						error: function (error) {
 							// Xử lý lỗi nếu cần
@@ -2938,7 +3079,8 @@
 						}
 						@if (userName != null && statusReturn == 1)
 						{
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover btn-returnSP">Hoàn tiền</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn danger-btn-light btn-hover btn-returnSPNo">Không xác nhận</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn active-btn-light btn-hover btn-returnSP">Xác nhận hoàn tiền</a>
 						}
 					</div>
 					<div class="card-body existing-address" id="existingAddress" style="display:flex;">
@@ -3634,13 +3776,10 @@
 			var totalPriceElement = document.getElementById('giaTienHT');
 			var totalPriceText = totalPriceElement.textContent;
 			var totalPrice = parseInt(totalPriceText);
-			console.log('gia tien ht', totalPrice);
 
 			const quantity = document.querySelector('.returned-sp').value;
 			var totalWeight = quantity * 500;
 			var totalWeightSum = parseInt(totalWeight);
-			console.log('quququq', totalWeightSum);
-			console.log('quququq', isNewAddressClicked1);
 			// lấy id hình thức giao từ db
 			var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 			const ShippingMethodID = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.shippingId) : "0";

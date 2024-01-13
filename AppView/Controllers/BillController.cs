@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 //using Microsoft.Owin.BuilderProperties;
 using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Net.WebRequestMethods;
 using BillStatusHistoryViewModel = AppView.Models.DetailsBillViewModel.BillStatusHistoryViewModel;
 using IShoesDetailsService = AppView.IServices.IShoesDetailsService;
@@ -320,7 +321,7 @@ namespace AppView.Controllers
                             IsPaid = objBill.IsPaid,
                             ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
                             EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == objBill.EmployeeID).FullName,
-                            TotalRefundAmount = _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount != null ? _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount : null,
+                            TotalRefundAmount = _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount != 0 ? _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount : 0,
                             PriceShippingReturn = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned != null ? _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned : null,
                             Products = new List<ProductViewModel>
                             {
@@ -387,7 +388,9 @@ namespace AppView.Controllers
                                 PurChaseMethodName = x.NamePurChaseMethod,
                                 Status = x.Status,
                                 Note = x.Note,
-                                EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName
+                                EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName,
+                                Image1 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.Status == 1).Image1,
+                                Image2 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.Status == 1).Image2
                             })
                             .ToList(),
                         }).ToListAsync();
@@ -642,7 +645,7 @@ namespace AppView.Controllers
             return Ok(new { success = true });
         }
 
-        public IActionResult ReturnedProduct(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct, decimal priceVoucher, decimal priceShippingReturn, decimal initialProductTotalPrice)
+        public IActionResult ReturnedProduct(Guid idBill, Guid idShoesDT, string idSize, string ghiChuUpdateSP, int quanity, string nameProduct, decimal priceVoucher, decimal priceShippingReturn, decimal initialProductTotalPrice, [Bind(Prefix = "image1")] IFormFile image1, [Bind(Prefix = "image2")] IFormFile image2)
         {
             var EmployeeIdString = HttpContext.Session.GetString("EmployeeID");
             var EmployeeID = !string.IsNullOrEmpty(EmployeeIdString) ? JsonConvert.DeserializeObject<Guid>(EmployeeIdString) : Guid.Empty;
@@ -656,6 +659,23 @@ namespace AppView.Controllers
                 ShoesDt_Size.Quantity += quanity;
                 _dbContext.SaveChanges();
 
+                if (image1 != null && image1.Length > 0)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", image1.FileName);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        image1.CopyTo(stream);
+                    }
+                }
+
+                if (image2 != null && image2.Length > 0)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", image2.FileName);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        image2.CopyTo(stream);
+                    }
+                }
 
                 var historyBill = new ReturnedProducts()
                 {
@@ -668,6 +688,8 @@ namespace AppView.Controllers
                     NamePurChaseMethod = "Tiền mặt",
                     ShippingFeeReturned = priceShippingReturn,
                     InitialProductTotalPrice = initialProductTotalPrice,
+                    Image1 = image1.FileName,
+                    Image2 = image2.FileName,
                     Status = 1,
                     BillId = objBill.BillID,
                     ShoesDetails_SizeID = ShoesDt_Size.ID
@@ -682,7 +704,7 @@ namespace AppView.Controllers
                     BillID = idBill,
                     EmployeeID = EmployeeID != Guid.Empty ? EmployeeID : null
                 };
-                objBill.TotalRefundAmount = historyBill.ReturnedPrice;
+                objBill.TotalRefundAmount += historyBill.ReturnedPrice;
                 objBill.Status = 6;
                 objBill.TotalPrice -= billDetails.Price;
                 objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
@@ -723,7 +745,23 @@ namespace AppView.Controllers
                 returnObj.Note = ghiChuReturn;
                 returnObj.Status = 0;
                 returnObj.ReturnedPrice = price;
+                _dbContext.Bills.Update(objbill);
                 _dbContext.ReturnedProducts.Update(returnObj);
+                _dbContext.SaveChanges();
+            }
+            return Ok(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult CancelReturnedProduct(Guid idBill, string ghiChuDontHT)
+        {
+            var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
+            var returnedObj = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == idBill && c.Status == 1);
+            if (returnedObj != null)
+            {
+                returnedObj.Note = ghiChuDontHT;
+                returnedObj.Status = 2;
+                _dbContext.ReturnedProducts.Update(returnedObj);
                 _dbContext.SaveChanges();
             }
             return Ok(new { success = true });

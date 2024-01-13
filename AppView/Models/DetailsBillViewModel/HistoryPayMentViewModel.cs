@@ -9,12 +9,14 @@
 		public string Size { get; set; }
 		public int QuantityReturned { get; set; }
 		public decimal Price { get; set; }
-		public decimal TotalPrice { get; set; }
+		public decimal? TotalPrice { get; set; }
 		public DateTime PayMentDate { get; set; }
 		public int TransactionType { get; set; }
 		public string? PurChaseMethodName { get; set; }
 		public int Status { get; set; }
 		public string? Note { get; set; }
 		public string? EmployeeName { get; set; }
+		public string? Image1 { get; set; }
+		public string? Image2 { get; set; }
     }
 }

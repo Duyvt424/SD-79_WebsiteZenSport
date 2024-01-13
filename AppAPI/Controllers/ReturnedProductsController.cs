@@ -31,7 +31,7 @@ namespace AppAPI.Controllers
 
         // POST api/<ColorController1>
         [HttpPost("create-returnedProducts")]
-        public bool CreateReturnedProducts(DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
+        public bool CreateReturnedProducts(DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, string? Image1, string? Image2, int Status, Guid BillId, Guid ShoesDetails_SizeID)
         {
             ReturnedProducts returned = new ReturnedProducts();
             returned.ID = Guid.NewGuid();
@@ -41,6 +41,8 @@ namespace AppAPI.Controllers
             returned.ReturnedPrice = ReturnedPrice;
             returned.ShippingFeeReturned = ShippingFeeReturned;
             returned.InitialProductTotalPrice = InitialProductTotalPrice;
+            returned.Image1 = Image1;
+            returned.Image2 = Image2;
             returned.Status = Status;
             returned.BillId = BillId;
             returned.ShoesDetails_SizeID = ShoesDetails_SizeID;
@@ -49,7 +51,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<ColorController1>/5
         [HttpPut("update-returnedProducts")]
-        public bool Put(Guid ID ,DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, int Status, Guid BillId, Guid ShoesDetails_SizeID)
+        public bool Put(Guid ID ,DateTime CreateDate, string Note, int QuantityReturned, decimal ReturnedPrice, decimal ShippingFeeReturned, decimal InitialProductTotalPrice, int Status, string? Image1, string? Image2, Guid BillId, Guid ShoesDetails_SizeID)
         {
             var returned = _repos.GetAll().First(c => c.ID == ID);
             returned.CreateDate = CreateDate;
@@ -58,6 +60,8 @@ namespace AppAPI.Controllers
             returned.ReturnedPrice = ReturnedPrice;
             returned.ShippingFeeReturned = ShippingFeeReturned;
             returned.InitialProductTotalPrice = InitialProductTotalPrice;
+            returned.Image1 = Image1;
+            returned.Image2 = Image2;
             returned.Status = Status;
             returned.BillId = BillId;
             returned.ShoesDetails_SizeID = ShoesDetails_SizeID;

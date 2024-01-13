@@ -21,9 +21,11 @@ namespace AppData.Configurations
 			builder.Property(c => c.ReturnedPrice).HasColumnType("decimal(18, 2)");
 			builder.Property(c => c.TransactionType).HasColumnType("int");
 			builder.Property(c => c.NamePurChaseMethod).HasColumnType("nvarchar(1000)");
-			builder.Property(c => c.ShippingFeeReturned).HasColumnType("decimal(18, 2)");
-			builder.Property(c => c.InitialProductTotalPrice).HasColumnType("decimal(18, 2)");
-			builder.Property(c => c.Status).HasColumnType("int");
+            builder.Property(c => c.ShippingFeeReturned).HasColumnType("decimal(18, 2)").IsRequired(false);
+            builder.Property(c => c.InitialProductTotalPrice).HasColumnType("decimal(18, 2)").IsRequired(false);
+            builder.Property(c => c.Image1).HasColumnType("nvarchar(1000)").IsRequired(false);
+            builder.Property(c => c.Image2).HasColumnType("nvarchar(1000)").IsRequired(false);
+            builder.Property(c => c.Status).HasColumnType("int");
 			builder.HasOne(c => c.Bill).WithMany(c => c.ReturnedProducts).HasForeignKey(c => c.BillId);
 			builder.HasOne(c => c.ShoesDetails_Size).WithMany(c => c.ReturnedProducts).HasForeignKey(c => c.ShoesDetails_SizeID).IsRequired(false);
 		}

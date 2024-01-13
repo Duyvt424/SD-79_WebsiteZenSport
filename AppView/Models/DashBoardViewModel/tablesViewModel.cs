@@ -6,6 +6,8 @@
 		public string BillCode { get; set; }
 		public int TotalShoes { get; set; }
 		public decimal Price { get; set; }
+		public decimal ShippngCost { get; set; }
+		public decimal PriceVoucher { get; set; }
 		public Guid CustomerID { get; set; }
 		public string FullNameCus { get; set; }
 		public string PhoneNumber { get; set; }
