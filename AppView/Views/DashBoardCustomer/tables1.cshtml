@@ -739,6 +739,7 @@
         <option value="2">Đã bàn giao cho ĐVVC</option>
         <option value="3">Đã nhận được hàng</option>
         <option value="4">Đã hủy đơn</option>
+							<option value="6">Hoàn trả</option>
     </select>
 </div>
 
@@ -846,6 +847,11 @@
 																if (bill.Status == 4)
 														{
 															<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>
+														}
+														else
+																if (bill.Status == 6)
+														{
+															<span class="main-btn light-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Hoàn trả</span>
 														}
 													</td>
 													<td>
@@ -967,6 +973,8 @@
 					return "3";
 				case "Đã hủy đơn":
 					return "4";
+				case "Hoàn trả":
+					return "6";
 				default:
 					return status;
 			}
