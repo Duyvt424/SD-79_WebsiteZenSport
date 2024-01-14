@@ -1,4 +1,5 @@
 ﻿//using System.Data.Entity.Core.Objects;
+using System.Drawing;
 using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
@@ -13,26 +14,18 @@ namespace AppView.Controllers
     public class DashBoardController : Controller
     {
         private readonly IAllRepositories<Bill> _repos;
-        private readonly IAllRepositories<Color> _colo;
-        private readonly IAllRepositories<ShoesDetails> _Sho;
+     
 
         private ShopDBContext _dbContext = new ShopDBContext();
         private DbSet<Bill> _bill;
-        private DbSet<Color> _color;
-        private DbSet<ShoesDetails> shoes;
+    
         public DashBoardController()
         {
             _bill = _dbContext.Bills;
             AllRepositories<Bill> all = new AllRepositories<Bill>(_dbContext, _bill);
             _repos = all;
 
-            _color = _dbContext.Colors;
-            AllRepositories<Color> all1 = new AllRepositories<Color>(_dbContext, _color);
-            _colo = all1;
-
-            shoes = _dbContext.ShoesDetails;
-            AllRepositories<ShoesDetails> all2 = new AllRepositories<ShoesDetails>(_dbContext, shoes);
-            _Sho = all2;
+           
         }
         // aaaaa
 
@@ -57,44 +50,46 @@ namespace AppView.Controllers
         }
 
 
-      
-        [HttpGet]
-        public IActionResult GetSummaryStatistics()
-        {
-            try
-            {
-                DateTime currentDate = DateTime.Now;
-                int currentMonth = currentDate.Month;
 
-                var viewModel = new SummaryStatisticsViewModel();
+		[HttpGet]
+		public IActionResult GetSummaryStatistics()
+		{
+			try
+			{
+				DateTime currentDate = DateTime.Now;
+				int currentMonth = currentDate.Month;
 
-                viewModel.MonthlyProfit = _dbContext.BillDetails
-                    .Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
-                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount /*- (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0)*/);
+				var viewModel = new SummaryStatisticsViewModel();
 
-                DateTime today = DateTime.Today;
+				viewModel.MonthlyProfit = _dbContext.Bills
+					.Where(bd => bd.DeliveryDate.Month == currentMonth)
+					.Sum(bd => bd.TotalPriceAfterDiscount /*- (bd.Voucher != null ? bd.Voucher.VoucherValue : 0)*/);
 
-                viewModel.TodayRevenue = _dbContext.BillDetails
-                    .Where(bd => bd.Bill.DeliveryDate.Date == today)
-                    .Sum(bd => bd.Bill.TotalPriceAfterDiscount /*- (bd.Bill.Voucher != null ? bd.Bill.Voucher.VoucherValue : 0)*/);
+				DateTime today = DateTime.Today;
 
-                viewModel.MonthlyQuantitySold = _dbContext.BillDetails
-                    .Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
-                    .Sum(bd => bd.Quantity);
+				viewModel.TodayRevenue = _dbContext.Bills
+					.Where(bd => bd.DeliveryDate.Date == today)
+					.Sum(bd => bd.TotalPriceAfterDiscount/* - (bd.Voucher != null ? bd.Voucher.VoucherValue : 0)*/);
 
-                Console.WriteLine($"Monthly Profit: {viewModel.MonthlyProfit}");
-                Console.WriteLine($"Today Revenue: {viewModel.TodayRevenue}");
-                Console.WriteLine($"Monthly Quantity Sold: {viewModel.MonthlyQuantitySold}");
+				viewModel.MonthlyQuantitySold = _dbContext.BillDetails
+					.Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
+					.Sum(bd => bd.Quantity);
 
-                return Json(viewModel);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return Json(new { ErrorMessage = $"Có lỗi xảy ra: {ex.Message}" });
-            }
-        }
-        [HttpGet]
+				Console.WriteLine($"Monthly Profit: {viewModel.MonthlyProfit}");
+				Console.WriteLine($"Today Revenue: {viewModel.TodayRevenue}");
+				Console.WriteLine($"Monthly Quantity Sold: {viewModel.MonthlyQuantitySold}");
+
+				return Json(viewModel);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
+				return Json(new { ErrorMessage = $"Có lỗi xảy ra: {ex.Message}" });
+			}
+		}
+
+
+		[HttpGet]
         public IActionResult Top5Provinces()
         {
             var top5Provinces = _dbContext.Bills
@@ -305,9 +300,35 @@ namespace AppView.Controllers
 
             return View(topSellingProducts);
         }
-
-
         [HttpGet]
+		public IActionResult TopVouchers()
+		{
+			try
+			{
+				var topVouchers = _dbContext.Bills
+					.Where(b => b.VoucherID != null) // Lọc ra các hóa đơn có sử dụng voucher
+					.GroupBy(b => b.VoucherID) // Nhóm theo VoucherID
+					.Select(group => new TopVoucherStatisticsViewModel
+					{
+						VoucherID = group.Key.Value,
+						VoucherCode = group.First().Voucher.VoucherCode,
+						TotalUsage = group.Count(),
+                        VoucherValue = group.First().Voucher.VoucherValue
+					})
+					.OrderByDescending(result => result.TotalUsage)
+					.Take(5)
+					.ToList();
+
+				return View(topVouchers);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
+				return View("Error", new { ErrorMessage = $"Có lỗi xảy ra: {ex.Message}" });
+			}
+		}
+
+		[HttpGet]
         public IActionResult findTables(string billCode)
         {
             var objBill = _repos.GetAll().Where(c => c.BillCode.Contains(billCode)).ToList();

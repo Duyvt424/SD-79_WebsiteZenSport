@@ -693,67 +693,17 @@
      @*   ----   /////Mới*@
 
               <div class="row">
-            <div class="col-lg-7">
-              <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                  <div class="left">
-                    <h6 class="text-medium mb-2">Sales Forecast</h6>
-                  </div>
-                  <div class="right">
-                    <div class="select-style-1 mb-2">
-                      <div class="select-position select-sm">
-                        <select class="light-bg">
-                          <option value="">Last Month</option>
-                          <option value="">Last 3 Months</option>
-                          <option value="">Last Year</option>
-                        </select>
-                      </div>
-                    </div>
-                    <!-- end select -->
-                  </div>
-                </div>
-                <!-- End Title -->
-                <div class="chart">
-                  <div id="legend3">
-                    <ul class="legend3 d-flex flex-wrap align-items-center mb-30">
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color primary-bg"> </span>
-                          <div class="text">
-                            <p class="text-sm text-success">
-                              <span class="text-dark">Revenue</span> +25.55%
-                              <i class="lni lni-arrow-up"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color purple-bg"></span>
-                          <div class="text">
-                            <p class="text-sm text-success">
-                              <span class="text-dark">Net Profit</span> +45.55%
-                              <i class="lni lni-arrow-up"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="d-flex">
-                          <span class="bg-color orange-bg"></span>
-                          <div class="text">
-                            <p class="text-sm text-danger">
-                              <span class="text-dark">Order</span> -4.2%
-                              <i class="lni lni-arrow-down"></i>
-                            </p>
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <canvas id="Chart3" style="width: 100%; height: 450px; margin-left: -35px;"></canvas>
-                </div>
-              </div>
+            <div class="col-lg-7" id="top5">
+          <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                fetch('@Url.Action("TopVouchers", "DashBoard")')
+                                    .then(response => response.text())
+                                    .then(data => {
+                                        document.getElementById('top5').innerHTML = data; // Thay 'top' thành 'top5Provinces'
+                                    })
+                                    .catch(error => console.log('Lỗi khi tải nội dung', error));
+                            });
+                        </script>
             </div>
             <!-- End Col -->
                     <div class="col-lg-5" id="top5Provinces">
@@ -769,6 +719,7 @@
                         </script>
             </div>
             <!-- End
+
           </div>
      
       </section>

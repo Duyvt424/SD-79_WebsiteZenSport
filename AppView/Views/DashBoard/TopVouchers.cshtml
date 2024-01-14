@@ -1,0 +1,232 @@
+﻿@model List<AppView.Models.DashBoardViewModel.TopVoucherStatisticsViewModel>
+@*
+<h2>Top 5 Vouchers Used</h2>
+
+<table>
+    <tr>
+        <th>Voucher Code</th>
+        <th>Total Usage</th>
+    </tr>
+    @foreach (var voucher in Model)
+    {
+        <tr>
+            <td>@voucher.VoucherCode</td>
+            <td>@voucher.TotalUsage</td>
+            <td> @string.Format("{0:0.##}", voucher.VoucherValue)</td>
+        </tr>
+    }
+</table>
+*@
+
+
+@{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="~/assets/images/favicon.svg" type="image/x-icon" />
+    <title>DashBoard</title>
+
+    <!-- ========== All CSS files linkup ========= -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/lineicons.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
+    <link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
+    <link rel="stylesheet" href="~/assets/css/main.css" />
+
+    <style>
+        /* CSS để căn chỉnh vị trí của từ ngày và đến ngày trên cùng một dòng */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            flex: 0 0 48%; /* Điều chỉnh độ rộng của mỗi cột để chúng nằm trên cùng một dòng */
+        }
+
+        /* Tùy chỉnh các margin và padding nếu cần */
+        .left {
+            margin-right: 10px; /* Khoảng cách giữa phần nội dung bên trái và phần nội dung bên phải */
+        }
+
+        .right {
+            margin-left: 10px; /* Khoảng cách giữa phần nội dung bên phải và phần nội dung bên trái */
+        }
+
+        /* Optional: Để giữ cùng kích thước với nhau, có thể cần thêm các quy tắc CSS khác dựa trên nhu cầu thiết kế cụ thể của bạaaaan. */
+
+    </style>
+</head>
+<body>
+    <section>
+
+
+        <div class="card-style mb-30">
+            <div class="title d-flex flex-wrap justify-content-between align-items-center">
+                <div class="left">
+                    <h6 class="text-medium mb-30">
+                        Top 5 Vouchers
+                    </h6>
+                </div>
+      
+            </div>
+            <!-- End Title -->
+            <div class="table-responsive">
+                <table class="table top-selling-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <h6 class="text-sm text-medium">VoucherCode</h6>
+                            </th>
+                            <th class="min-width">
+                                <h6 class="text-sm text-medium">
+                                    TotalUsage
+                                </h6>
+                            </th>
+                            <th>
+                                <h6 class="text-sm text-medium">VoucherValue</h6>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                </td>
+                                <td>
+                                    <p class="text-sm">@product.VoucherCode</p>
+                                </td>
+
+                                <td>
+                                    <p class="text-sm">@product.TotalUsage</p>
+                                </td>
+                                   <td>
+                                    <p class="text-sm">@string.Format("{0:0.##}", product.VoucherValue)Đ</p>
+                                </td>
+
+                                <td>
+                                    <div class="action justify-content-end">
+                                        <button class="more-btn ml-10 dropdown-toggle" id="moreAction1" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="lni lni-more-alt"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction1">
+                                            <li class="dropdown-item">
+                                                <a href="#0" class="text-gray">Remove</a>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <a href="#0" class="text-gray">Edit</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+                </table>
+                <!-- End Table -->
+            </div>
+        </div>
+
+        <!-- End Col -->
+
+
+    </section>
+
+    <!-- ========== footer end =========== -->
+    </main>
+    <!-- ======== main-wrapper end =========== -->
+    <!-- ========= All Javascript files linkup ======== -->
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/Chart.min.js"></script>
+    <script src="~/assets/js/dynamic-pie-chart.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/fullcalendar.js"></script>
+    <script src="~/assets/js/jvectormap.min.js"></script>
+    <script src="~/assets/js/world-merc.js"></script>
+    <script src="~/assets/js/polyfill.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+
+
+    <script>
+        // ======== jvectormap activation
+        var markers = [
+            { name: "Egypt", coords: [26.8206, 30.8025] },
+            { name: "Russia", coords: [61.524, 105.3188] },
+            { name: "Canada", coords: [56.1304, -106.3468] },
+            { name: "Greenland", coords: [71.7069, -42.6043] },
+            { name: "Brazil", coords: [-14.235, -51.9253] },
+        ];
+
+        var jvm = new jsVectorMap({
+            map: "world_merc",
+            selector: "#map",
+            zoomButtons: true,
+
+            regionStyle: {
+                initial: {
+                    fill: "#d1d5db",
+                },
+            },
+
+            labels: {
+                markers: {
+                    render: (marker) => marker.name,
+                },
+            },
+
+            markersSelectable: true,
+            selectedMarkers: markers.map((marker, index) => {
+                var name = marker.name;
+
+                if (name === "Russia" || name === "Brazil") {
+                    return index;
+                }
+            }),
+            markers: markers,
+            markerStyle: {
+                initial: { fill: "#4A6CF7" },
+                selected: { fill: "#ff5050" },
+            },
+            markerLabelStyle: {
+                initial: {
+                    fontWeight: 400,
+                    fontSize: 14,
+                },
+            },
+        });
+        // ====== calendar activation
+        document.addEventListener("DOMContentLoaded", function () {
+            var calendarMiniEl = document.getElementById("calendar-mini");
+            var calendarMini = new FullCalendar.Calendar(calendarMiniEl, {
+                initialView: "dayGridMonth",
+                headerToolbar: {
+                    end: "today prev,next",
+                },
+            });
+            calendarMini.render();
+        });
+
+
+                                // =========== chart four end
+    </script>
+</body>
+</html>
