@@ -493,7 +493,7 @@
 							</div>
 							<div class="content">
 								<h6 class="mb-10">Hàng bán được tháng này</h6>
-								<h3 id="totalQuantitySold" class="text-bold mb-10">0</h3>
+								<h3 id="totalQuantitySold" class="text-bold mb-10">0 sản phẩm</h3>
 								<p class="text-sm text-success">
 									<i class="lni lni-arrow-up"></i> +2.00%
 									<span class="text-gray">(30 days)</span>
@@ -510,7 +510,9 @@
 							</div>
 							<div class="content">
 								<h6 class="mb-10">Doanh số hôm nay </h6>
-								<h3 id="totalRevenue" class="text-bold mb-10">0</h3>
+								<h3 id="monthlyOrderCount" class="text-bold mb-10" style="display: inline-block; margin-right: 10px;">0 đơn hàng</h3>/ 
+								<h3 id="totalRevenue" class="text-bold mb-10" style="display: inline-block;">0 VNĐ</h3>
+
 								<p class="text-sm text-success">
 									<i class="lni lni-arrow-up"></i> +5.45%
 									<span class="text-gray">Increased</span>
@@ -527,9 +529,9 @@
 							</div>
 							<div class="content">
 								<h6 class="mb-10">Doanh số tháng này</h6>
-								<h3 id="totalProfit" class="text-bold mb-10">0</h3>
-								<p class="text-sm text-danger">
-									<i class="lni lni-arrow-down"></i> -2.00%
+								<h3 id="todayOrderCount" class="text-bold mb-10" style="display: inline-block; margin-right: 10px;">0 đơn hàng</h3>/<h3 id="totalProfit" class="text-bold mb-10" style="display: inline-block;">0 VNĐ</h3>
+								<p class="text-sm text-success">
+									<i class="lni lni-arrow-up"></i> +5.45%
 									<span class="text-gray">Expense</span>
 								</p>
 							</div>
@@ -725,6 +727,53 @@
 	<script src="~/assets/js/polyfill.js"></script>
 	<script src="~/assets/js/main.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	@*<script>
+		$(document).ready(function () {
+			$.ajax({
+				url: '/DashBoard/GetSummaryStatistics',
+				type: 'GET',
+				success: function (data) {
+					console.log(data);
+
+					// Kiểm tra xem các phần tử HTML có được tìm thấy không
+					console.log(`#totalQuantitySold found: ${$('#totalQuantitySold').length > 0}`);
+					console.log(`#totalRevenue found: ${$('#totalRevenue').length > 0}`);
+					console.log(`#totalProfit found: ${$('#totalProfit').length > 0}`);
+						// Kiểm tra xem các phần tử HTML có được tìm thấy không
+					console.log(`#totalQuantitySold found: ${$('#monthlyOrderCount').length > 0}`);
+					console.log(`#totalRevenue found: ${$('#todayOrderCount').length > 0}`);
+			
+					//// Đặt giá trị cho các phần tử HTML
+					//$('#totalQuantitySold').text(data.monthlyQuantitySold + ' sản phẩm');
+					//$('#totalRevenue').text(data.todayRevenue + ' VNĐ');
+					//$('#totalProfit').text(data.monthlyProfit + ' VNĐ');
+
+					// Đặt giá trị cho các phần tử HTML
+					$('#totalQuantitySold').text(data.monthlyQuantitySold + ' sản phẩm');
+						$('#monthlyOrderCount').text(data.monthlyOrderCount + ' đơn hàng');
+							$('#todayOrderCount').text(data.todayOrderCount + ' đơn hàng');
+
+					// Định dạng todayRevenue và monthlyProfit như tiền Việt Nam
+					$('#totalRevenue').text(formatCurrency(data.todayRevenue));
+					$('#totalProfit').text(formatCurrency(data.monthlyProfit));
+
+					// Hàm định dạng số như tiền Việt Nam
+					function formatCurrency(value) {
+						return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+					}
+
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		});
+
+
+
+	</script>
+*@
+
 	<script>
 		$(document).ready(function () {
 			$.ajax({
@@ -737,20 +786,28 @@
 					console.log(`#totalQuantitySold found: ${$('#totalQuantitySold').length > 0}`);
 					console.log(`#totalRevenue found: ${$('#totalRevenue').length > 0}`);
 					console.log(`#totalProfit found: ${$('#totalProfit').length > 0}`);
+					// Kiểm tra xem các phần tử HTML có được tìm thấy không
+					console.log(`#totalQuantitySold found: ${$('#monthlyOrderCount').length > 0}`);
+					console.log(`#totalRevenue found: ${$('#todayOrderCount').length > 0}`);
 
 					// Đặt giá trị cho các phần tử HTML
-					$('#totalQuantitySold').text(data.monthlyQuantitySold);
-					$('#totalRevenue').text(data.todayRevenue);
-					$('#totalProfit').text(data.monthlyProfit);
+					$('#totalQuantitySold').text(data.monthlyQuantitySold + ' sản phẩm');
+					$('#monthlyOrderCount').text(data.monthlyOrderCount + ' đơn hàng');
+					$('#todayOrderCount').text(data.todayOrderCount + ' đơn hàng');
+					$('#totalRevenue').text(formatCurrency(data.todayRevenue));
+					$('#totalProfit').text(formatCurrency(data.monthlyProfit));
+
+					// Hàm định dạng số như tiền Việt Nam
+					function formatCurrency(value) {
+						return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+					}
+
 				},
 				error: function (error) {
 					console.error(error);
 				}
 			});
 		});
-
-
-
 	</script>
 
 

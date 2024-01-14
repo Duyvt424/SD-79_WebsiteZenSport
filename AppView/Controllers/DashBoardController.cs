@@ -51,6 +51,42 @@ namespace AppView.Controllers
 
 
 
+		//[HttpGet]
+		//public IActionResult GetSummaryStatistics()
+		//{
+		//	try
+		//	{
+		//		DateTime currentDate = DateTime.Now;
+		//		int currentMonth = currentDate.Month;
+
+		//		var viewModel = new SummaryStatisticsViewModel();
+
+		//		viewModel.MonthlyProfit = _dbContext.Bills
+		//			.Where(bd => bd.DeliveryDate.Month == currentMonth)
+		//			.Sum(bd => bd.TotalPriceAfterDiscount /*- (bd.Voucher != null ? bd.Voucher.VoucherValue : 0)*/);
+
+		//		DateTime today = DateTime.Today;
+
+		//		viewModel.TodayRevenue = _dbContext.Bills
+		//			.Where(bd => bd.DeliveryDate.Date == today)
+		//			.Sum(bd => bd.TotalPriceAfterDiscount/* - (bd.Voucher != null ? bd.Voucher.VoucherValue : 0)*/);
+
+		//		viewModel.MonthlyQuantitySold = _dbContext.BillDetails
+		//			.Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
+		//			.Sum(bd => bd.Quantity);
+
+		//		Console.WriteLine($"Monthly Profit: {viewModel.MonthlyProfit}");
+		//		Console.WriteLine($"Today Revenue: {viewModel.TodayRevenue}");
+		//		Console.WriteLine($"Monthly Quantity Sold: {viewModel.MonthlyQuantitySold}");
+
+		//		return Json(viewModel);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		Console.WriteLine($"Error: {ex.Message}");
+		//		return Json(new { ErrorMessage = $"Có lỗi xảy ra: {ex.Message}" });
+		//	}
+		//}
 		[HttpGet]
 		public IActionResult GetSummaryStatistics()
 		{
@@ -75,9 +111,21 @@ namespace AppView.Controllers
 					.Where(bd => bd.Bill.DeliveryDate.Month == currentMonth)
 					.Sum(bd => bd.Quantity);
 
+				// Tính số lượng đơn hàng tháng này
+				viewModel.MonthlyOrderCount = _dbContext.Bills
+					.Where(bd => bd.DeliveryDate.Month == currentMonth)
+					.Count();
+
+				// Tính số lượng đơn hàng hôm nay
+				viewModel.TodayOrderCount = _dbContext.Bills
+					.Where(bd => bd.DeliveryDate.Date == today)
+					.Count();
+
 				Console.WriteLine($"Monthly Profit: {viewModel.MonthlyProfit}");
 				Console.WriteLine($"Today Revenue: {viewModel.TodayRevenue}");
 				Console.WriteLine($"Monthly Quantity Sold: {viewModel.MonthlyQuantitySold}");
+				Console.WriteLine($"Monthly Order Count: {viewModel.MonthlyOrderCount}");
+				Console.WriteLine($"Today Order Count: {viewModel.TodayOrderCount}");
 
 				return Json(viewModel);
 			}
