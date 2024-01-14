@@ -217,32 +217,22 @@ namespace AppView.Controllers
         {  
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> SignUp(Customer customer, string ConfirmPassword, string rank, int sex)
         {
-            var RankUser = _dbContext.Ranks.FirstOrDefault(c => c.Name == rank);
+            var RankUser = _dbContext.Ranks.FirstOrDefault(c => c.Name == rank).RankID;
             if (customer.Password != ConfirmPassword)
             {
                 return View();
             }
             if (_repos.GetAll().Any(c => c.UserName == customer.UserName))
             {
-                return Content("Da ton tai");
+                TempData["NotyMessage"] = "Tên người dùng đã tồn tại!";
+                return View();
             }
             var httpClient = new HttpClient();
-		
-			// Tạo URL API với các tham số cố định
-			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?" +
-				$"FullName={HttpUtility.UrlEncode(customer.FullName)}" +
-				$"&UserName={HttpUtility.UrlEncode(customer.UserName)}" +
-				$"&Password={HttpUtility.UrlEncode(customer.Password)}" +
-				$"&Email={HttpUtility.UrlEncode(customer.Email)}" +
-				$"&Sex={sex}" +
-				$"&ResetPassword=0000" +
-				$"&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}" +
-				$"&Status=0" +
-				$"&RankID=29e837e2-1875-434c-a3f9-628db0e033e5" +
-				$"&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={HttpUtility.UrlEncode(customer.FullName)}&UserName={HttpUtility.UrlEncode(customer.UserName)}&Password={HttpUtility.UrlEncode(customer.Password)}&Email={HttpUtility.UrlEncode(customer.Email)}&Sex={sex}&ResetPassword={0000}&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}&Status={0}&RankID={RankUser}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
 			var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Login");
         }

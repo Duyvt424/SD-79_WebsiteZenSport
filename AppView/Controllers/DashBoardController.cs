@@ -432,7 +432,9 @@ namespace AppView.Controllers
             return View(listBill);
         }
 
-       
-
+        public IActionResult settings()
+        {
+            return View();
+        }
     }
 }

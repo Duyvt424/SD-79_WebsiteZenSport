@@ -1,254 +1,255 @@
 ﻿@model AppData.Models.Customer
 
 @{
-    ViewData["Title"] = "SignUps";
+	ViewData["Title"] = "SignUps";
 }
 <style>
-    .radio-inputs {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 350px;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      margin-left: 12%;
-    }
+	.radio-inputs {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		max-width: 350px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		margin-left: 12%;
+	}
 
-    .radio-inputs > * {
-      margin: 6px;
-    }
+		.radio-inputs > * {
+			margin: 6px;
+		}
 
-    .radio-input:checked + .radio-tile {
-      border-color: black;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-      color: black;
-    }
+	.radio-input:checked + .radio-tile {
+		border-color: black;
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+		color: black;
+	}
 
-    .radio-input:checked + .radio-tile:before {
-      transform: scale(1);
-      opacity: 1;
-      background-color: black;
-      border-color: black;
-    }
+		.radio-input:checked + .radio-tile:before {
+			transform: scale(1);
+			opacity: 1;
+			background-color: black;
+			border-color: black;
+		}
 
-    .radio-input:checked + .radio-tile .radio-icon svg {
-      fill: black;
-    }
+		.radio-input:checked + .radio-tile .radio-icon svg {
+			fill: black;
+		}
 
-    .radio-input:checked + .radio-tile .radio-label {
-      color: black;
-    }
+		.radio-input:checked + .radio-tile .radio-label {
+			color: black;
+		}
 
-    .radio-input:focus + .radio-tile {
-      border-color: black;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), 0 0 0 4px #b5c9fc;
-    }
+	.radio-input:focus + .radio-tile {
+		border-color: black;
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), 0 0 0 4px #b5c9fc;
+	}
 
-    .radio-input:focus + .radio-tile:before {
-      transform: scale(1);
-      opacity: 1;
-    }
+		.radio-input:focus + .radio-tile:before {
+			transform: scale(1);
+			opacity: 1;
+		}
 
-    .radio-tile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 80px;
-      min-height: 80px;
-      border-radius: 0.5rem;
-      border: 2px solid #b5bfd9;
-      background-color: #fff;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-      transition: 0.15s ease;
-      cursor: pointer;
-      position: relative;
-    }
+	.radio-tile {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 80px;
+		min-height: 80px;
+		border-radius: 0.5rem;
+		border: 2px solid #b5bfd9;
+		background-color: #fff;
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+		transition: 0.15s ease;
+		cursor: pointer;
+		position: relative;
+	}
 
-    .radio-tile:before {
-      content: "";
-      position: absolute;
-      display: block;
-      width: 0.75rem;
-      height: 0.75rem;
-      border: 2px solid #b5bfd9;
-      background-color: #fff;
-      border-radius: 50%;
-      top: 0.25rem;
-      left: 0.25rem;
-      opacity: 0;
-      transform: scale(0);
-      transition: 0.25s ease;
-    }
+		.radio-tile:before {
+			content: "";
+			position: absolute;
+			display: block;
+			width: 0.75rem;
+			height: 0.75rem;
+			border: 2px solid #b5bfd9;
+			background-color: #fff;
+			border-radius: 50%;
+			top: 0.25rem;
+			left: 0.25rem;
+			opacity: 0;
+			transform: scale(0);
+			transition: 0.25s ease;
+		}
 
-    .radio-tile:hover {
-      border-color: black;
-    }
+		.radio-tile:hover {
+			border-color: black;
+		}
 
-    .radio-tile:hover:before {
-      transform: scale(1);
-      opacity: 1;
-    }
+			.radio-tile:hover:before {
+				transform: scale(1);
+				opacity: 1;
+			}
 
-    .radio-icon svg {
-      width: 2rem;
-      height: 2rem;
-      fill: #494949;
-    }
+	.radio-icon svg {
+		width: 2rem;
+		height: 2rem;
+		fill: #494949;
+	}
 
-    .radio-label {
-      color: #707070;
-      transition: 0.375s ease;
-      text-align: center;
-      font-size: 13px;
-    }
+	.radio-label {
+		color: #707070;
+		transition: 0.375s ease;
+		text-align: center;
+		font-size: 13px;
+	}
 
-    .radio-input {
-      clip: rect(0 0 0 0);
-      -webkit-clip-path: inset(100%);
-      clip-path: inset(100%);
-      height: 1px;
-      overflow: hidden;
-      position: absolute;
-      white-space: nowrap;
-      width: 1px;
-    }
+	.radio-input {
+		clip: rect(0 0 0 0);
+		-webkit-clip-path: inset(100%);
+		clip-path: inset(100%);
+		height: 1px;
+		overflow: hidden;
+		position: absolute;
+		white-space: nowrap;
+		width: 1px;
+	}
 </style>
+<link rel="stylesheet" href="~/css/css.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="container">
-    <section class="vh-100 bg-image">
-        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-            <div class="container h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-                        <div class="">
-                            <div class="card-body p-5">
+	<section class="vh-100 bg-image">
+		<div class="mask d-flex align-items-center h-100 gradient-custom-3">
+			<div class="container h-100">
+				<div class="row d-flex justify-content-center align-items-center h-100">
+					<div class="col-12 col-md-9 col-lg-7 col-xl-6">
+						<div class="">
+							<div class="card-body p-5">
 
-                                <img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 200px;">
-                                <h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
-                                    BECOME A
-                                    NIKE MEMBER
-                                </h2>
-                                <p style="text-align: center; font-size: 14px;">
-                                    Create your Nike Member profile and
-                                    get first <br> access to the very best of Nike products, inspiration <br> and
-                                    community.
-                                </p>
-                                <form asp-action="SignUp" style="margin-top:10px;" id="register-form">
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="FullName" type="text" class="form-control" placeholder="Họ và tên" required>
-                                        <label for="floatingInputEmail">Họ và tên</label>
-                                        <span asp-validation-for="FullName" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="UserName" type="text" class="form-control" placeholder="Tên đăng nhập" required>
-                                        <label for="floatingInputEmail">Tên đăng nhập</label>
-                                        <span asp-validation-for="UserName" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="Email" type="email" class="form-control" placeholder="Email" required>
-                                        <label for="floatingInputEmail">Email</label>
-                                        <span asp-validation-for="Email" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại" required>
-                                        <label for="floatingInputEmail">Số điện thoại</label>
-                                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input asp-for="Password" id="Password" type="password" class="form-control" placeholder="Password" required>
-                                        <label for="floatingInputEmail">Mật khẩu</label>
-                                    </div>
-                                     <div class="form-floating mb-3">
-                                        <input type="password" id="ConfirmPassword" class="form-control" name="ConfirmPassword" placeholder="ConfirmPassword" required>
-                                        <label for="floatingInputEmail">Xác nhận mật khẩu</label>
-                                        <div id="divCheckPasswordMatch"></div>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <div class="radio-inputs">
-                                            <label>
-                                                <input name="sex" value="0" class="radio-input" type="radio">
-                                                <span class="radio-tile">
-                                                    <span class="radio-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
-                                                             aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                            <path data-name="layer2"
-                                                                  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" d="M36.1 27.9L62 2M38 6l24-4-4 24"
-                                                                  stroke-linejoin="round" stroke-linecap="round"></path>
-                                                            <circle data-name="layer1" cx="22" cy="42" r="20" fill="none" stroke="#202020"
-                                                                    stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></circle>
-                                                        </svg>
-                                                    </span>
-                                                    <span class="radio-label">Nam</span>
-                                                </span>
-                                            </label>
-                                            <label>
-                                                <input name="sex" value="1" class="radio-input" type="radio">
-                                                <span class="radio-tile">
-                                                    <span class="radio-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
-                                                             aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                            <path data-name="layer2"
-                                                                  d="M51 21a19 19 0 1 0-22 18.7V48h-8v6h8v8h6v-8h8v-6h-8v-8.3A19 19 0 0 0 51 21z"
-                                                                  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
-                                                                  stroke-linecap="round"></path>
-                                                            <path data-name="layer1" d="M19 21a13 13 0 1 1 13 13 13 13 0 0 1-13-13z"
-                                                                  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
-                                                                  stroke-linecap="round"></path>
-                                                        </svg>
-                                                    </span>
-                                                    <span class="radio-label">Nữ</span>
-                                                </span>
-                                            </label>
-                                            <label>
-                                                <input checked="" name="sex" value="2" class="radio-input" type="radio">
-                                                <span class="radio-tile">
-                                                    <span class="radio-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
-                                                             aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                            <circle data-name="layer2"
-                                                                    cx="32" cy="32" r="30" fill="none" stroke="#202020" stroke-miterlimit="10"
-                                                                    stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></circle>
-                                                            <path data-name="layer1" d="M48 40.9a18.5 18.5 0 0 1-32-.3m2-14.7a4 4 0 0 0 8 0m12 0a4 4 0 1 0 8 0"
-                                                                  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
-                                                                  stroke-linecap="round"></path>
-                                                        </svg>
-                                                    </span>
-                                                    <span class="radio-label">Không rõ</span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-floating mb-3" style="display:none;">
-                                        <input type="text" class="form-control" name="rank" value="Đồng" placeholder="Rank" required>
-                                        <label for="floatingInputEmail">Hạng</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input style="display:none;" asp-for="Status" type="number" value="0" name="Status" class="form-control" placeholder="Status" required>
-                                    </div>
-                                    <div class="form-check d-flex justify-content-center mb-5">
-                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" name="AgreeToTerms" checked/>
-                                        <label class="form-check-label" for="form2Example3g">
-                                            I agree all statements in <a href="#gioithieu" class="text-body"><u>Terms of service</u></a>
-                                        </label>
-                                    </div>
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit" value="Create"
-                                                style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
-                                                class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
-                                            <p style="color: white; font-size: 15px; text-decoration: none;">Join Us</p>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+								<img src="/image/Logo_NIKE.svg.png" alt="" style="width: 55px; height: 20px; margin-left: 200px;">
+								<h2 class="text-uppercase text-center mb-5" style="padding-top: 25px; font-weight: bold;">
+									BECOME A
+									NIKE MEMBER
+								</h2>
+								<p style="text-align: center; font-size: 14px;">
+									Create your Nike Member profile and
+									get first <br> access to the very best of Nike products, inspiration <br> and
+									community.
+								</p>
+								<form asp-action="SignUp" style="margin-top:10px;" id="register-form">
+									<div class="form-floating mb-3">
+										<input asp-for="FullName" type="text" class="form-control" placeholder="Họ và tên" required>
+										<label for="floatingInputEmail">Họ và tên</label>
+										<span asp-validation-for="FullName" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="UserName" type="text" class="form-control" placeholder="Tên đăng nhập" required>
+										<label for="floatingInputEmail">Tên đăng nhập</label>
+										<span asp-validation-for="UserName" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Email" type="email" class="form-control" placeholder="Email" required>
+										<label for="floatingInputEmail">Email</label>
+										<span asp-validation-for="Email" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại" required>
+										<label for="floatingInputEmail">Số điện thoại</label>
+										<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Password" id="Password" type="password" class="form-control" placeholder="Password" required>
+										<label for="floatingInputEmail">Mật khẩu</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="password" id="ConfirmPassword" class="form-control" name="ConfirmPassword" placeholder="ConfirmPassword" required>
+										<label for="floatingInputEmail">Xác nhận mật khẩu</label>
+										<div id="divCheckPasswordMatch"></div>
+									</div>
+									<div class="form-floating mb-3">
+										<div class="radio-inputs">
+											<label>
+												<input name="sex" value="0" class="radio-input" type="radio">
+												<span class="radio-tile">
+													<span class="radio-icon">
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
+															 aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
+															<path data-name="layer2"
+																  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" d="M36.1 27.9L62 2M38 6l24-4-4 24"
+																  stroke-linejoin="round" stroke-linecap="round"></path>
+															<circle data-name="layer1" cx="22" cy="42" r="20" fill="none" stroke="#202020"
+																	stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></circle>
+														</svg>
+													</span>
+													<span class="radio-label">Nam</span>
+												</span>
+											</label>
+											<label>
+												<input name="sex" value="1" class="radio-input" type="radio">
+												<span class="radio-tile">
+													<span class="radio-icon">
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
+															 aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
+															<path data-name="layer2"
+																  d="M51 21a19 19 0 1 0-22 18.7V48h-8v6h8v8h6v-8h8v-6h-8v-8.3A19 19 0 0 0 51 21z"
+																  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
+																  stroke-linecap="round"></path>
+															<path data-name="layer1" d="M19 21a13 13 0 1 1 13 13 13 13 0 0 1-13-13z"
+																  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
+																  stroke-linecap="round"></path>
+														</svg>
+													</span>
+													<span class="radio-label">Nữ</span>
+												</span>
+											</label>
+											<label>
+												<input name="sex" value="2" class="radio-input" type="radio" checked>
+												<span class="radio-tile">
+													<span class="radio-icon">
+														<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
+															 aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
+															<circle data-name="layer2"
+																	cx="32" cy="32" r="30" fill="none" stroke="#202020" stroke-miterlimit="10"
+																	stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></circle>
+															<path data-name="layer1" d="M48 40.9a18.5 18.5 0 0 1-32-.3m2-14.7a4 4 0 0 0 8 0m12 0a4 4 0 1 0 8 0"
+																  fill="none" stroke="#202020" stroke-miterlimit="10" stroke-width="2" stroke-linejoin="round"
+																  stroke-linecap="round"></path>
+														</svg>
+													</span>
+													<span class="radio-label">Không rõ</span>
+												</span>
+											</label>
+										</div>
+									</div>
+									<div class="form-floating mb-3" style="display:none;">
+										<input type="text" class="form-control" name="rank" value="Không" placeholder="Rank" required>
+										<label for="floatingInputEmail">Hạng</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input style="display:none;" asp-for="Status" type="number" value="0" name="Status" class="form-control" placeholder="Status" required>
+									</div>
+									<div class="form-check d-flex justify-content-center mb-5">
+										<input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" name="AgreeToTerms" checked />
+										<label class="form-check-label" for="form2Example3g">
+											I agree all statements in <a href="#gioithieu" class="text-body"><u>Terms of service</u></a>
+										</label>
+									</div>
+									<div class="d-flex justify-content-center">
+										<button type="submit" value="Create"
+												style="color: white; background-color: rgb(3, 3, 3); width: 520px; height: 40px;"
+												class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">
+											<p style="color: white; font-size: 15px; text-decoration: none;">Join Us</p>
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </div>
 @*<script>
     $(document).ready(function () {
@@ -269,48 +270,80 @@
 </script>*@
 
 <script>
-     $(document).ready(function () {
-        $("#ConfirmPassword").keyup(checkPasswordMatch);
-        $("#Password").keyup(checkPasswordMatch);
+	$(document).ready(function () {
+		$("#ConfirmPassword").keyup(checkPasswordMatch);
+		$("#Password").keyup(checkPasswordMatch);
 
-        $("#register-form").submit(function (e) {
-            // Kiểm tra điều kiện bỏ trống
-            var fullName = $("#FullName").val();
-            var userName = $("#UserName").val();
-            var email = $("#Email").val();
-            var phoneNumber = $("#PhoneNumber").val();
-            var password = $("#Password").val();
-            var confirmPassword = $("#ConfirmPassword").val();
+		$("#register-form").submit(function (e) {
+			// Kiểm tra điều kiện bỏ trống
+			var fullName = $("#FullName").val();
+			var userName = $("#UserName").val();
+			var email = $("#Email").val();
+			var phoneNumber = $("#PhoneNumber").val();
+			var password = $("#Password").val();
+			var confirmPassword = $("#ConfirmPassword").val();
 
-            if (!fullName || !userName || !email || !phoneNumber || !password || !confirmPassword) {
-                alert("Vui lòng điền đầy đủ thông tin!");
-                e.preventDefault(); // Ngăn chặn form submit nếu có thông tin bỏ trống
-                return;
-            }
+			if (!fullName || !userName || !email || !phoneNumber || !password || !confirmPassword) {
+				new Noty({
+					type: 'warning',
+					text: 'Vui lòng điền đầy đủ thông tin!',
+					timeout: 1500,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				e.preventDefault(); // Ngăn chặn form submit nếu có thông tin bỏ trống
+				return;
+			}
 
-            // Thực hiện kiểm tra điều kiện xác nhận mật khẩu
-            if (password != confirmPassword) {
-                alert("Vui lòng điền đúng mật khẩu!");
-                e.preventDefault(); // Ngăn chặn form submit nếu mật khẩu không khớp
-                return;
-            }
+			// Thực hiện kiểm tra điều kiện xác nhận mật khẩu
+			if (password != confirmPassword) {
+				new Noty({
+					type: 'warning',
+					text: 'Vui lòng điền đúng mật khẩu!',
+					timeout: 1500,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				e.preventDefault(); // Ngăn chặn form submit nếu mật khẩu không khớp
+				return;
+			}
 
-            // Hiển thị thông báo thành công bằng alert
-            alert("Đăng ký thành công!");
-        });
-    });
+			// Kiểm tra nếu có thông báo Noty từ TempData
+			var notyMessage = '@TempData["NotyMessage"]';
+			console.log('sdfgf', notyMessage);
+			if (notyMessage) {
+				new Noty({
+					type: 'warning',
+					text: notyMessage,
+					timeout: 1500,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+			}
 
-    function checkPasswordMatch() {
-        var password = $("#Password").val();
-        var confirmPassword = $("#ConfirmPassword").val();
+			new Noty({
+				type: 'success',
+				text: 'Đăng ký tài khoản thành công!',
+				timeout: 1500,
+				progressBar: true,
+				closeWith: ['click', 'button'],
+			}).show();
+		});
+	});
 
-        if (password != confirmPassword)
-            $("#divCheckPasswordMatch").html("Vui lòng điền đúng mật khẩu!");
-        else
-            $("#divCheckPasswordMatch").html("");
-    }
+	function checkPasswordMatch() {
+		var password = $("#Password").val();
+		var confirmPassword = $("#ConfirmPassword").val();
+
+		if (password != confirmPassword)
+			$("#divCheckPasswordMatch").html("Vui lòng điền đúng mật khẩu!");
+		else
+			$("#divCheckPasswordMatch").html("");
+	}
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}

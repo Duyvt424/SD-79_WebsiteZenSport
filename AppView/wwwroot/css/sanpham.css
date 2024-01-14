@@ -1,31 +1,4 @@
-﻿.nav-item {
-    position: relative;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-    .nav-item::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        transform: scaleX(0);
-        height: 2px;
-        bottom: 0;
-        left: 0;
-        background-color: black;
-        transform-origin: bottom right;
-        transition: transform 0.25s ease-out;
-        margin-left: 10px;
-    }
-
-    .nav-item:hover::after {
-        transform: scaleX(1);
-        transform-origin: bottom left;
-    }
-
-
-.fa-user-o, .fa-shopping-cart {
+﻿.fa-user-o, .fa-shopping-cart {
     font-size: 20px;
     padding: 4px;
 }
@@ -457,9 +430,10 @@ ul {
     ul li {
         list-style: none;
         margin: 5px 5px 0;
-        font-size: 15px;
+        font-size: 18px;
         font-style: normal;
-        color: #ccc
+        color: #ccc;
+        font-weight: 600;
     }
 
         ul li:first-child {

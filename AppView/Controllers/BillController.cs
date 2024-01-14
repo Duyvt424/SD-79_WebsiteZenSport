@@ -382,15 +382,15 @@ namespace AppView.Controllers
                                 Size = _dbContext.Sizes.FirstOrDefault(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
                                 QuantityReturned = x.QuantityReturned,
                                 Price = x.ReturnedPrice,
-                                TotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == x.BillId && c.Status == 1).InitialProductTotalPrice,
+                                TotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == x.BillId && c.TransactionType == 1).InitialProductTotalPrice,
                                 PayMentDate = x.CreateDate,
                                 TransactionType = x.TransactionType,
                                 PurChaseMethodName = x.NamePurChaseMethod,
                                 Status = x.Status,
                                 Note = x.Note,
                                 EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName,
-                                Image1 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.Status == 1).Image1,
-                                Image2 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.Status == 1).Image2
+                                Image1 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image1,
+                                Image2 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image2
                             })
                             .ToList(),
                         }).ToListAsync();
@@ -756,11 +756,13 @@ namespace AppView.Controllers
         public IActionResult CancelReturnedProduct(Guid idBill, string ghiChuDontHT)
         {
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
-            var returnedObj = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == idBill && c.Status == 1);
-            if (returnedObj != null)
+            var returnedObj = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == idBill && c.TransactionType == 1);
+            if (returnedObj?.Status == 1)
             {
                 returnedObj.Note = ghiChuDontHT;
                 returnedObj.Status = 2;
+                objBill.Status = 6;
+                _dbContext.Bills.Update(objBill);
                 _dbContext.ReturnedProducts.Update(returnedObj);
                 _dbContext.SaveChanges();
             }
