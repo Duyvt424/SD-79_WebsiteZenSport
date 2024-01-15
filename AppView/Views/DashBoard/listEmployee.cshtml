@@ -1,6 +1,16 @@
-@model AppData.Models.Employee
+﻿@model List<AppView.Models.DashBoardViewModel.employeeViewModel>
 @{
+
 	Layout = null;
+	var stt = 1;
+}
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	var objAdmin = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
+	var objAdminName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	var objAdminImg = HttpContextAccessor.HttpContext.Session.GetString("UserImage");
+	var objAdminEmail = HttpContextAccessor.HttpContext.Session.GetString("UserEmail");
+	int recordsPerPage1 = 0, startIndex1 = 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +19,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="shortcut icon" href="~/assets/images/favicon.svg" type="image/x-icon" />
-	<title>Settings | PlainAdmin Demo</title>
+	<title>Quản lí đơn hàng</title>
 
 	<!-- ========== All CSS files linkup ========= -->
 	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
@@ -17,6 +27,125 @@
 	<link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" />
 	<link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
 	<link rel="stylesheet" href="~/assets/css/main.css" />
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<!-- Thêm thư viện phân trang -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js" integrity="sha512-frFP3ZxLshB4CErXkPVEXnd5ingvYYtYhE5qllGdZmcOlRKNEPbufyupfdSTNmoF5ICaQNO6SenXzOZvoGkiIA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.js" integrity="sha512-uzuo1GprrBscZGr+iQSv8+YQQsKY+rSHJju0FruVsGHV2CZNZPymW/4RkxoHxAxw3Lo5UQaxDMF8zINUfAsGeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<style>
+		.search {
+			width: 60%;
+			position: relative;
+			box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+			margin-top: 3%;
+			margin-left: 4.5%;
+		}
+
+			.search input {
+				height: 60px;
+				text-indent: 25px;
+				border: 2px solid #d6d4d4;
+			}
+
+				.search input:focus {
+					box-shadow: none;
+					border: 2px solid blue;
+				}
+
+			.search .fa-search {
+				position: absolute;
+				top: 20px;
+				left: 16px;
+			}
+
+			.search button {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				height: 50px;
+				width: 110px;
+				background: blue;
+			}
+
+		.datetimepicker {
+			display: inline-flex;
+			align-items: center;
+			background-color: #fff;
+			border: 2px solid black;
+			border-radius: 8px;
+			&:focus-within
+
+		{
+			border-color: teal;
+		}
+
+		input {
+			font: inherit;
+			color: inherit;
+			appearance: none;
+			outline: none;
+			border: 0;
+			background-color: transparent;
+			&[type=date]
+
+		{
+			width: 10rem;
+			padding: .25rem 0 .25rem .5rem;
+			border-right-width: 0;
+		}
+
+		&[type=time] {
+			width: 5.5rem;
+			padding: .25rem .5rem .25rem 0;
+			border-left-width: 0;
+		}
+
+		}
+
+		span {
+			height: 1rem;
+			margin-right: .25rem;
+			margin-left: .25rem;
+			border-right: 1px solid #ddd;
+		}
+
+		.dropdown-toggle {
+			width: 200px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 40px;
+			border: 2px solid black;
+			font-weight: 600;
+		}
+
+			.dropdown-toggle:focus {
+				box-shadow: none !important;
+			}
+
+
+			.dropdown-toggle::after {
+				display: none;
+			}
+
+		.dropdown-menu {
+			width: 200px;
+			border: 2px solid black;
+			padding: 0rem 0;
+			transform: translate3d(0px, 50px, 0px) !important;
+		}
+
+		.dropdown-item:focus, .dropdown-item:hover {
+			color: black;
+			background-color: white;
+			padding: 12px;
+		}
+
+		.dropdown-item {
+			display: block;
+			width: 100%;
+			padding: 12px;
+		}
+	</style>
 </head>
 <body>
 	<!-- ======== Preloader =========== -->
@@ -27,7 +156,7 @@
 	<!-- ======== sidebar-nav start =========== -->
 	<aside class="sidebar-nav-wrapper">
 		<div class="navbar-logo">
-			<a href="index.html">
+			<a href="@Url.Action("index", "DashBoard")">
 				<img src="~/assets/images/logo/logo.svg" alt="logo" />
 			</a>
 		</div>
@@ -91,17 +220,6 @@
 						</li>
 					</ul>
 				</li>
-				@*          <li class="nav-item">
-				<a href="invoice.html">
-				<span class="icon">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path
-				d="M3.33334 3.35442C3.33334 2.4223 4.07954 1.66666 5.00001 1.66666H15C15.9205 1.66666 16.6667 2.4223 16.6667 3.35442V16.8565C16.6667 17.5519 15.8827 17.9489 15.3333 17.5317L13.8333 16.3924C13.537 16.1673 13.1297 16.1673 12.8333 16.3924L10.5 18.1646C10.2037 18.3896 9.79634 18.3896 9.50001 18.1646L7.16668 16.3924C6.87038 16.1673 6.46298 16.1673 6.16668 16.3924L4.66668 17.5317C4.11731 17.9489 3.33334 17.5519 3.33334 16.8565V3.35442ZM4.79168 5.04218C4.79168 5.39173 5.0715 5.6751 5.41668 5.6751H10C10.3452 5.6751 10.625 5.39173 10.625 5.04218C10.625 4.69264 10.3452 4.40927 10 4.40927H5.41668C5.0715 4.40927 4.79168 4.69264 4.79168 5.04218ZM5.41668 7.7848C5.0715 7.7848 4.79168 8.06817 4.79168 8.41774C4.79168 8.76724 5.0715 9.05066 5.41668 9.05066H10C10.3452 9.05066 10.625 8.76724 10.625 8.41774C10.625 8.06817 10.3452 7.7848 10 7.7848H5.41668ZM4.79168 11.7932C4.79168 12.1428 5.0715 12.4262 5.41668 12.4262H10C10.3452 12.4262 10.625 12.1428 10.625 11.7932C10.625 11.4437 10.3452 11.1603 10 11.1603H5.41668C5.0715 11.1603 4.79168 11.4437 4.79168 11.7932ZM13.3333 4.40927C12.9882 4.40927 12.7083 4.69264 12.7083 5.04218C12.7083 5.39173 12.9882 5.6751 13.3333 5.6751H14.5833C14.9285 5.6751 15.2083 5.39173 15.2083 5.04218C15.2083 4.69264 14.9285 4.40927 14.5833 4.40927H13.3333ZM12.7083 8.41774C12.7083 8.76724 12.9882 9.05066 13.3333 9.05066H14.5833C14.9285 9.05066 15.2083 8.76724 15.2083 8.41774C15.2083 8.06817 14.9285 7.7848 14.5833 7.7848H13.3333C12.9882 7.7848 12.7083 8.06817 12.7083 8.41774ZM13.3333 11.1603C12.9882 11.1603 12.7083 11.4437 12.7083 11.7932C12.7083 12.1428 12.9882 12.4262 13.3333 12.4262H14.5833C14.9285 12.4262 15.2083 12.1428 15.2083 11.7932C15.2083 11.4437 14.9285 11.1603 14.5833 11.1603H13.3333Z" />
-				</svg>
-				</span>
-				<span class="text">Invoice</span>
-				</a>
-				</li>*@
 				<li class="nav-item nav-item-has-children">
 					<a href="#0"
 					   class="collapsed"
@@ -232,12 +350,6 @@
 									<i class="lni lni-chevron-left me-2"></i> Menu
 								</button>
 							</div>
-							<div class="header-search d-none d-md-flex">
-								<form action="#">
-									<input type="text" placeholder="Search..." />
-									<button><i class="lni lni-search-alt"></i></button>
-								</form>
-							</div>
 						</div>
 					</div>
 					<div class="col-lg-7 col-md-7 col-6">
@@ -357,10 +469,10 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="~/assets/images/profile/profile-image.png" alt="" />
+												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;" />
 											</div>
 											<div>
-												<h6 class="fw-500">Adam Joe</h6>
+												<h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
 												<p>Admin</p>
 											</div>
 										</div>
@@ -370,12 +482,11 @@
 									<li>
 										<div class="author-info flex items-center !p-1">
 											<div class="image">
-												<img src="~/assets/images/profile/profile-image.png" alt="image">
+												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="image">
 											</div>
 											<div class="content">
-												<h4 class="text-sm">Adam Joe</h4>
-												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-												   href="#">Email@gmail.com</a>
+												<h4 class="text-sm">@Html.Raw(objAdminName?.Replace("\"", ""))</h4>
+												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">@Html.Raw(objAdminEmail?.Replace("\"", ""))</a>
 											</div>
 										</div>
 									</li>
@@ -409,15 +520,160 @@
 			</div>
 		</header>
 		<!-- ========== header end ========== -->
-		<!-- ========== section start ========== -->
-		<section class="section">
+		<!-- ========== table components start ========== -->
+		<section class="table-components">
+			<form method="get" id="searchForm" class="search-bar" style="align-content:center;" action="@Url.Action("findEmployee")">
+				<div class="row height d-flex justify-content-left align-items-left">
+					<div class="col-md-8">
+						<div class="search">
+							<i class="fa fa-search"></i>
+							<input type="text" id="searchInput" class="form-control" name="username" placeholder="Tìm kiếm...">
+							<button type="button" class="btn btn-primary">Search</button>
+						</div>
+					</div>
+				</div>
+			</form>
+			<form method="get" action="@Url.Action("FilterEmployee", "DashBoard")" style="float:right; margin-top:-3%; margin-right:3%;">
+				<div style="display:flex;">
+					<div class="dropdown" style="margin-right:2%;">
+						<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Trạng thái
+						</button>
+						<ul class="dropdown-menu" id="statusDropdown" style="cursor:pointer;">
+							<li><a class="dropdown-item" data-value="8">Tất cả</a></li>
+							<li><a class="dropdown-item" data-value="0">Đang hoạt động</a></li>
+							<li><a class="dropdown-item" data-value="1">Ngừng hoạt động</a></li>
+						</ul>
+					</div>
+					<div class="dropdown">
+						<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Giới tính
+						</button>
+						<ul class="dropdown-menu" id="sortDropdown" style="cursor:pointer;">
+							<li><a class="dropdown-item" data-value="8">Tất cả</a></li>
+							<li><a class="dropdown-item" data-value="0">Nam</a></li>
+							<li><a class="dropdown-item" data-value="1">Nữ</a></li>
+							<li><a class="dropdown-item" data-value="2">Không xác định</a></li>
+						</ul>
+					</div>
+				</div>
+			</form>
+			<script>
+				$(document).ready(function () {
+					// Set giá trị mặc định cho dropdown "Trạng thái"
+					$("#statusDropdown a[data-value='8']").addClass("selected"); // Đặt class cho phần tử mặc định
+
+					// Set giá trị mặc định cho dropdown "Sắp xếp"
+					$("#sortDropdown a[data-value='8']").addClass("selected"); // Đặt class cho phần tử mặc định
+					// filterData();
+				});
+
+				// Bắt sự kiện click trên các phần tử của dropdown "Trạng thái"
+				$("#statusDropdown a").click(function () {
+					$("#statusDropdown a").removeClass("selected"); // Xóa class "selected" trên tất cả các phần tử
+					$(this).addClass("selected"); // Thêm class "selected" cho phần tử được chọn
+					filterData();
+				});
+
+				// Bắt sự kiện click trên các phần tử của dropdown "Sắp xếp"
+				$("#sortDropdown a").click(function () {
+					$("#sortDropdown a").removeClass("selected"); // Xóa class "selected" trên tất cả các phần tử
+					$(this).addClass("selected"); // Thêm class "selected" cho phần tử được chọn
+					filterData();
+				});
+
+				// Hàm để lọc dữ liệu
+				function filterData() {
+					var selectedStatus = $("#statusDropdown a.selected").data("value");
+
+					var selectedSort = $("#sortDropdown a.selected").data("value");
+
+					$.ajax({
+						type: "GET",
+						url: '@Url.Action("FilterEmployee", "DashBoard")',
+						data: {
+							nameStatus: selectedStatus,
+							priceNewOld: selectedSort,
+						},
+						success: function (response) {
+							updateDisplay(response);
+						},
+						error: function (error) {
+							console.log("Error:", error);
+						}
+					});
+				}
+
+				function updateDisplay(data) {
+					$("#resultContainer").empty();
+
+					data.map(function (bill, index) {
+						console.log(bill);
+						var statusLabelClass = getStatusLabelClass(bill.status);
+						var rowHtml = '<tr style="margin-top:5%; margin-bottom:5%">' +
+							'<td class="min-width"><p>' + (index + 1) + '</p></td>' +
+							'<td class="min-width">' +
+							'<div class="lead">' +
+							'<div class="lead-image" style="margin-left:25%;">' +
+							'<img src="' + '@Url.Content("~/image/")' + bill.image + '" alt="" />' +
+							'</div>' +
+							'</div>' +
+							'</td>' +
+							'<td class="min-width"><p>' + bill.userName + '</p></td>' +
+							'<td class="min-width"><p>' + bill.email + '</p></td>' +
+							'<td class="min-width"><p>' + bill.fullname + '</p></td>' +
+							'<td class="min-width"><p>' + formatDate(bill.createDate) + '</p></td>' +
+							'<td class="min-width ' + statusLabelClass + '">' +
+							getStatusLabelHtml(bill.status) +
+							'</td>' +
+							'<td>' +
+							'<div class="action">' +
+							'<a href="' + '@Url.Action("settings", "DashBoard")?employeeId=' + bill.employeeId + '" class="text-danger">' +
+							'<i class="lni lni-eye"></i>' +
+							'</a>' +
+							'</div>' +
+							'</td>' +
+							'</tr>';
+						$("#resultContainer").append(rowHtml);
+					});
+				}
+
+				function formatDate(dateString) {
+					var options = { hour: 'numeric', minute: 'numeric', day: 'numeric', month: 'numeric', year: 'numeric' };
+					return new Date(dateString).toLocaleString('vi-VN', options);
+				}
+
+				function getStatusLabelHtml(status) {
+					switch (status) {
+						case 0:
+							return '<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đang hoạt động</span>';
+						case 1:
+							return '<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Ngừng hoạt động</span>';
+						// Thêm các trạng thái khác nếu cần
+						default:
+							return '';
+					}
+				}
+
+				function getStatusLabelClass(status) {
+					switch (status) {
+						case 0:
+							return 'active-status';
+						case 1:
+							return 'inactive-status';
+						// Thêm các trạng thái khác nếu cần
+						default:
+							return '';
+					}
+				}
+			</script>
 			<div class="container-fluid">
 				<!-- ========== title-wrapper start ========== -->
 				<div class="title-wrapper pt-30">
 					<div class="row align-items-center">
 						<div class="col-md-6">
-							<div class="title">
-								<h2>Thông tin chi tiết</h2>
+							<div class="title" style="float:left;">
+								<h2>Danh sách nhân viên</h2>
 							</div>
 						</div>
 						<!-- end col -->
@@ -428,9 +684,8 @@
 										<li class="breadcrumb-item">
 											<a href="#0">Dashboard</a>
 										</li>
-										<li class="breadcrumb-item"><a href="#0">Quản lý nhân viên</a></li>
 										<li class="breadcrumb-item active" aria-current="page">
-											Thông tin chi tiết
+											Tables
 										</li>
 									</ol>
 								</nav>
@@ -441,119 +696,180 @@
 					<!-- end row -->
 				</div>
 				<!-- ========== title-wrapper end ========== -->
-				<form asp-action="settings" enctype="multipart/form-data">
+				<!-- ========== tables-wrapper start ========== -->
+				<div class="tables-wrapper">
 					<div class="row">
-						<div class="col-lg-6">
-							<div class="card-style settings-card-1 mb-30">
-								<div class="title mb-30 d-flex justify-content-between align-items-center">
-									<h6>Thông tin cá nhân</h6>
-									<button class="border-0 bg-transparent">
-										<i class="lni lni-pencil-alt"></i>
-									</button>
-								</div>
-								<div class="profile-info">
-									<div class="input-style-1" style="display:none;">
-										<label>ID</label>
-										<input type="text" asp-for="EmployeeID" />
-									</div>
-									<div class="d-flex align-items-center mb-30">
-										<div class="profile-image">
-											<img src="@Url.Content("~/image/" + Model.Image)" alt="" />
-											<div class="update-image">
-												<input type="file" name="image" />
-												<label for=""><i class="lni lni-cloud-upload"></i></label>
-											</div>
-										</div>
-										<div class="profile-meta">
-											<h5 class="text-bold text-dark mb-10">@Model.FullName</h5>
-										</div>
-									</div>
-									<div class="input-style-1">
-										<label>Họ và tên</label>
-										<input type="text" asp-for="FullName" />
-									</div>
-									<div class="input-style-1">
-										<label>Tên đăng hập</label>
-										<input type="text" asp-for="UserName" />
-									</div>
-									<div class="input-style-1">
-										<label>Mật khẩu</label>
-										<input type="password" asp-for="Password" />
-									</div>
-								</div>
-							</div>
-							<!-- end card -->
-						</div>
-						<!-- end col -->
+						<div class="col-lg-12">
+							<div class="card-style mb-30">
+								<div class="table-wrapper table-responsive">
+									@if (Model.Any())
+									{
+										<table id="myTalble" class="table">
+											<thead>
+												<tr>
+													<th>
+														<h6>STT</h6>
+													</th>
+													<th>
+														<h6 style="margin-left:29%;">Ảnh</h6>
+													</th>
+													<th>
+														<h6>Tên tài khoản</h6>
+													</th>
+													<th>
+														<h6 style="padding-left:5%;">Email</h6>
+													</th>
+													<th>
+														<h6>Tên nhân viên</h6>
+													</th>
+													<th>
+														<h6>Ngày tạo</h6>
+													</th>
+													<th>
+														<h6>Trạng thái</h6>
+													</th>
+													<th>
+														<h6>Hành động</h6>
+													</th>
+												</tr>
+												<!-- end table row-->
+											</thead>
+											<tbody id="resultContainer">
+												@foreach (var bill in Model)
+												{
+													<tr style="margin-top:5%; margin-bottom:5%">
+														<td class="min-width">
+															<p>@stt</p>
+														</td>
+														<td class="min-width">
+															<div class="lead">
+																<div class="lead-image" style="margin-left:25%;">
+																	<img src="@Url.Content("~/image/" + bill.Image)" alt="" />
+																</div>
+															</div>
+														</td>
+														<td class="min-width">
+															<p>@bill.UserName</p>
+														</td>
+														<td class="min-width">
+															<p>@bill.Email</p>
+														</td>
+														<td class="min-width">
+															<p>@bill.Fullname</p>
+														</td>
+														<td class="min-width">
+															<p>@bill.CreateDate.ToString("HH:mm, dd/MM/yyyy")</p>
+														</td>
+														<td class="min-width">
+															@if (bill.Status == 0)
+															{
+																<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đang hoạt động</span>
+															}
+															else
+																	if (bill.Status == 1)
+															{
+																<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Ngừng hoạt động</span>
+															}
+														</td>
+														<td>
+															<div class="action">
+																<a href="@Url.Action("settings", "DashBoard", new {employeeId = bill.EmployeeId})" class="text-danger">
+																	<i class="lni lni-eye"></i>
+																</a>
+															</div>
+														</td>
+													</tr>
+													stt++;
+												}
+											</tbody>
+										</table>
+										<nav aria-label="Page navigation example" style="margin-left:40%;">
+											<ul class="pagination" id="pagination">
+												<li class="page-item" data-page="prev">
+													<a class="page-link" href="#" aria-label="Previous" style="color:black;">
+														<span aria-hidden="true">&laquo;</span>
+													</a>
+												</li>
+												<!-- Pagination items will be dynamically added here -->
+												<li class="page-item" data-page="next">
+													<a class="page-link" href="#" aria-label="Next" style="color:black;">
+														<span aria-hidden="true">&raquo;</span>
+													</a>
+												</li>
+											</ul>
+										</nav>
+									}
+									else
+									{
+										<p>Không tìm thấy nhân viên.</p>
+									}
+									<script>
+										document.addEventListener("DOMContentLoaded", function () {
+											// Số bản ghi trên mỗi trang
+											var recordsPerPage = 10;
 
-						<div class="col-lg-6">
-							<div class="card-style settings-card-2 mb-30">
-								<div class="title mb-30">
-									<h6>My Profile</h6>
+											// Tổng số trang
+											var totalRecords = @Model.Count();
+
+											// Tính toán số lượng trang
+											var totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+											// Ẩn tất cả các bản ghi
+											$('#resultContainer tr').hide();
+
+											// Hiển thị chỉ 10 sản phẩm ban đầu
+											$('#resultContainer tr').slice(0, recordsPerPage).show();
+
+											// Khởi tạo phân trang
+											$('#pagination').twbsPagination({
+												totalPages: totalPages,
+												visiblePages: 1,
+												prev: 'Previous',
+												next: 'Next',
+												onPageClick: function (event, page) {
+													// Tính vị trí bắt đầu và kết thúc của bản ghi trên trang hiện tại
+													var startIndex = (page - 1) * recordsPerPage;
+													var endIndex = Math.min(startIndex + recordsPerPage - 1, totalRecords - 1);
+
+													// Hiển thị hoặc ẩn các bản ghi tương ứng
+													$('#resultContainer tr').hide().slice(startIndex, endIndex + 1).show();
+												}
+											});
+										});
+									</script>
+									<!-- end table -->
 								</div>
-								<form action="#">
-									<div class="row">
-										<div class="col-12">
-											<div class="input-style-1">
-												<label>Email</label>
-												<input type="email" asp-for="Email" />
-											</div>
-										</div>
-										<div class="col-12">
-											<div class="input-style-1">
-												<label>Số điện thoại</label>
-												<input type="number" asp-for="PhoneNumber" />
-											</div>
-										</div>
-										<div class="col-12">
-											<div class="input-style-1">
-												<label>Địa chỉ</label>
-												<input type="text" asp-for="Address" />
-											</div>
-										</div>
-										<div class="col-xxl-12">
-											<div class="select-style-1">
-												<label>Vai trò</label>
-												<div class="select-position">
-													<select asp-for="RoleID" class="light-bg" asp-items="@ViewBag.RoleList"></select>
-												</div>
-											</div>
-										</div>
-										<div class="col-xxl-12">
-											<div class="select-style-1">
-												<label>Giới tính</label>
-												<div class="select-position">
-													<select asp-for="Sex" class="light-bg">
-														<option value="0">Nam</option>
-														<option value="1">Nữ</option>
-														<option value="2">Không xác định</option>
-													</select>
-												</div>
-											</div>
-										</div>
-										<div class="col-12">
-											<div class="input-style-1">
-												<label>Mô tả</label>
-												<textarea placeholder="Type here" rows="4" asp-for="IdentificationCode"></textarea>
-											</div>
-										</div>
-										<div class="col-12">
-											<button type="submit" class="main-btn primary-btn btn-hover">
-												Cập nhật thông tin
-											</button>
-										</div>
-									</div>
-								</form>
 							</div>
 							<!-- end card -->
 						</div>
 						<!-- end col -->
 					</div>
-				</form>
-				<!-- end row -->
+					<!-- end row -->
+				</div>
+				<!-- ========== tables-wrapper end ========== -->
 			</div>
 			<!-- end container -->
 		</section>
+		<!-- ========== table components end ========== -->
+		<!-- ========== footer start =========== -->
+		<footer class="footer">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-6 order-last order-md-first">
+						<div class="copyright text-center text-md-start">
+						</div>
+					</div>
+					<!-- end col-->
+					<div class="col-md-6">
+						<div class="terms d-flex justify-content-center justify-content-md-end">
+						</div>
+					</div>
+				</div>
+				<!-- end row -->
+			</div>
+			<!-- end container -->
+		</footer>
+		<!-- ========== footer end =========== -->
 	</main>
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/js/Chart.min.js"></script>

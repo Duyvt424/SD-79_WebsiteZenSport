@@ -287,44 +287,46 @@ namespace AppView.Controllers
 
         public async Task<IActionResult> DetailsBill(Guid billId, Guid? customerID)
         {
-            var userIdString = HttpContext.Session.GetString("UserId");
-            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
-            var customerId = customerID != null ? customerID : customerIdSession;
-            if (customerId != Guid.Empty)
+            try
             {
-                var loggedInUser = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CumstomerID == customerId);
-
-                if (loggedInUser != null)
+                var userIdString = HttpContext.Session.GetString("UserId");
+                var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+                var customerId = customerID != null ? customerID : customerIdSession;
+                if (customerId != Guid.Empty)
                 {
-                    var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billId);
-                    var detailsBill = await _dbContext.BillDetails
-                        .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null && c.BillID == billId)
-                        .Select(c => new OrderDetailsViewModel
-                        {
-                            BillID = objBill.BillID,
-                            ShoesDetails_SizeID = c.ShoesDetails_SizeID,
-                            BillCode = objBill.BillCode,
-                            CustomerId = objBill.CustomerID,
-                            FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
-                            PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
-                            Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
-                            PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == objBill.PurchaseMethodID).MethodName,
-                            Street = _dbContext.Addresses.First(c => c.AddressID == objBill.AddressID).Street,
-                            Ward = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Commune,
-                            District = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).District,
-                            Province = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Province,
-                            TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
-                            TotalPriceAfterDiscount = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPriceAfterDiscount,
-                            PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
-                            PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
-                            PriceProduct = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price,
-                            IsPaid = objBill.IsPaid,
-                            ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
-                            EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == objBill.EmployeeID).FullName,
-                            TotalRefundAmount = _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount != 0 ? _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount : 0,
-                            PriceShippingReturn = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned != null ? _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned : null,
-                            Products = new List<ProductViewModel>
+                    var loggedInUser = await _dbContext.Customers.FirstOrDefaultAsync(c => c.CumstomerID == customerId);
+
+                    if (loggedInUser != null)
+                    {
+                        var objBill = _dbContext.Bills.FirstOrDefault(c => c.BillID == billId);
+                        var detailsBill = await _dbContext.BillDetails
+                            .Where(c => c.Bill.CustomerID == loggedInUser.CumstomerID && c.ShoesDetails_Size != null && c.BillID == billId)
+                            .Select(c => new OrderDetailsViewModel
                             {
+                                BillID = objBill.BillID,
+                                ShoesDetails_SizeID = c.ShoesDetails_SizeID,
+                                BillCode = objBill.BillCode,
+                                CustomerId = objBill.CustomerID,
+                                FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
+                                PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
+                                Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
+                                PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == objBill.PurchaseMethodID).MethodName,
+                                Street = _dbContext.Addresses.First(c => c.AddressID == objBill.AddressID).Street,
+                                Ward = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Commune,
+                                District = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).District,
+                                Province = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Province,
+                                TotalPrice = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPrice,
+                                TotalPriceAfterDiscount = _dbContext.Bills.First(c => c.BillID == objBill.BillID).TotalPriceAfterDiscount,
+                                PriceVoucher = objBill.VoucherID != null ? _dbContext.Vouchers.First(c => c.VoucherID == objBill.VoucherID).VoucherValue : null,
+                                PriceVoucherShip = objBill.ShippingVoucherID != null ? _dbContext.ShippingVoucher.First(c => c.ShippingVoucherID == objBill.ShippingVoucherID).ShippingDiscount : null,
+                                PriceProduct = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price,
+                                IsPaid = objBill.IsPaid,
+                                ShippingCost = _dbContext.Bills.First(c => c.BillID == objBill.BillID).ShippingCosts,
+                                EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == objBill.EmployeeID).FullName,
+                                TotalRefundAmount = _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount != 0 ? _dbContext.Bills.FirstOrDefault(c => c.BillID == objBill.BillID).TotalRefundAmount : 0,
+                                PriceShippingReturn = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned != null ? _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).ShippingFeeReturned : null,
+                                Products = new List<ProductViewModel>
+                                {
                                 new ProductViewModel
                                 {
                                     ProductID = c.ShoesDetails_Size.ShoesDetailsId,
@@ -335,9 +337,9 @@ namespace AppView.Controllers
                                     Quantity = c.Quantity,
                                     Price = _dbContext.ShoesDetails.First(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Price * c.Quantity
                                 }
-                            },
-                            OrderStatuses = new List<OrderStatusViewModel>
-                            {
+                                },
+                                OrderStatuses = new List<OrderStatusViewModel>
+                                {
                                 new OrderStatusViewModel
                                 {
                                     Status = _dbContext.Bills.First(c => c.BillID == billId).Status,
@@ -349,87 +351,94 @@ namespace AppView.Controllers
                                     UpdateDate = _dbContext.Bills.First(c => c.BillID == billId).UpdateDate,
                                     PaymentDate = _dbContext.Bills.First(c => c.BillID == billId).PaymentDay
                                 }
-                            },
-                            AddressViewModels = _dbContext.Addresses.Where(c => c.CumstomerID == objBill.CustomerID).Select(a => new AddressViewModel
-                            {
-                                AddressID = a.AddressID,
-                                FullNameCus = _dbContext.Customers.First(c => c.CumstomerID == objBill.CustomerID).FullName,
-                                PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerID).PhoneNumber,
-                                Street = a.Street,
-                                Ward = a.Commune,
-                                District = a.District,
-                                Province = a.Province,
-                                IsDefaultAddress = a.IsDefaultAddress,
-                                ShippingCost = a.ShippingCost,
-                                DistrictId = a.DistrictId,
-                                WardCode = a.WardCode,
-                                ShippingMethodID = a.ShippingMethodID
-                            }).ToList(),
-                            BillStatusHistories = _dbContext.BillStatusHistories.Where(c => c.BillID == billId).Select(x => new BillStatusHistoryViewModel
-                            {
-                                ChangeDate = x.ChangeDate,
-                                StatusName = x.Status,
-                                EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == x.EmployeeID).FullName,
-                                Note = x.Note
-                            }).ToList(),
-                            HistoryPayMentViewModels = _dbContext.ReturnedProducts
-                            .Where(x => x.BillId == billId)
-                            .Select(x => new HistoryPayMentViewModel
-                            {
-                                NameProduct = _dbContext.Products.FirstOrDefault(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
-                                ImageUrl = _dbContext.Images.FirstOrDefault(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
-                                Description = _dbContext.Styles.FirstOrDefault(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
-                                Size = _dbContext.Sizes.FirstOrDefault(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
-                                QuantityReturned = x.QuantityReturned,
-                                Price = x.ReturnedPrice,
-                                TotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == x.BillId && c.TransactionType == 1).InitialProductTotalPrice,
-                                PayMentDate = x.CreateDate,
-                                TransactionType = x.TransactionType,
-                                PurChaseMethodName = x.NamePurChaseMethod,
-                                Status = x.Status,
-                                Note = x.Note,
-                                EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName,
-                                Image1 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image1,
-                                Image2 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image2
-                            })
-                            .ToList(),
-                        }).ToListAsync();
+                                },
+                                AddressViewModels = _dbContext.Addresses.Where(c => c.CumstomerID == objBill.CustomerID).Select(a => new AddressViewModel
+                                {
+                                    AddressID = a.AddressID,
+                                    FullNameCus = _dbContext.Customers.First(c => c.CumstomerID == objBill.CustomerID).FullName,
+                                    PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerID).PhoneNumber,
+                                    Street = a.Street,
+                                    Ward = a.Commune,
+                                    District = a.District,
+                                    Province = a.Province,
+                                    IsDefaultAddress = a.IsDefaultAddress,
+                                    ShippingCost = a.ShippingCost,
+                                    DistrictId = a.DistrictId,
+                                    WardCode = a.WardCode,
+                                    ShippingMethodID = a.ShippingMethodID
+                                }).ToList(),
+                                BillStatusHistories = _dbContext.BillStatusHistories.Where(c => c.BillID == billId).Select(x => new BillStatusHistoryViewModel
+                                {
+                                    ChangeDate = x.ChangeDate,
+                                    StatusName = x.Status,
+                                    EmployeeName = _dbContext.Employees.First(c => c.EmployeeID == x.EmployeeID).FullName,
+                                    Note = x.Note
+                                }).ToList(),
+                                HistoryPayMentViewModels = _dbContext.ReturnedProducts
+                                .Where(x => x.BillId == billId)
+                                .Select(x => new HistoryPayMentViewModel
+                                {
+                                    NameProduct = _dbContext.Products.FirstOrDefault(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
+                                    ImageUrl = _dbContext.Images.FirstOrDefault(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
+                                    Description = _dbContext.Styles.FirstOrDefault(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
+                                    Size = _dbContext.Sizes.FirstOrDefault(c => c.SizeID == x.ShoesDetails_Size.SizeID).Name,
+                                    QuantityReturned = x.QuantityReturned,
+                                    Price = x.ReturnedPrice,
+                                    TotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == x.BillId && c.TransactionType == 1).InitialProductTotalPrice,
+                                    PayMentDate = x.CreateDate,
+                                    TransactionType = x.TransactionType,
+                                    PurChaseMethodName = x.NamePurChaseMethod,
+                                    Status = x.Status,
+                                    Note = x.Note,
+                                    EmployeeName = _dbContext.Employees.FirstOrDefault(e => e.EmployeeID == objBill.EmployeeID).FullName,
+                                    Image1 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image1,
+                                    Image2 = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID && c.TransactionType == 1).Image2,
+                                    InitialProductTotalPrice = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == billId && c.TransactionType == 1).InitialProductTotalPrice
+                                })
+                                .ToList(),
+                            }).ToListAsync();
 
-                    var sharedData = new { BillId = billId, DetailsBill = detailsBill };
-                    var sharedDataString = JsonConvert.SerializeObject(sharedData);
-                    HttpContext.Session.SetString("SharedDataKey", sharedDataString);
+                        var sharedData = new { BillId = billId, DetailsBill = detailsBill };
+                        var sharedDataString = JsonConvert.SerializeObject(sharedData);
+                        HttpContext.Session.SetString("SharedDataKey", sharedDataString);
 
-                    var shoesList = _shoesDT.GetallShoedetailDtO();
-                    ViewBag.NameSP = "";
-                    Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
-                    ViewBag.NameStyle = "";
-                    Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
-                    foreach (var shoes in shoesList)
-                    {
-                        var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
-                        if (firstImage != null)
+                        var shoesList = _shoesDT.GetallShoedetailDtO();
+                        ViewBag.NameSP = "";
+                        Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+                        ViewBag.NameStyle = "";
+                        Dictionary<Guid, string> productStyles = new Dictionary<Guid, string>();
+                        foreach (var shoes in shoesList)
                         {
-                            shoes.ImageUrl = firstImage.Image1;
+                            var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == shoes.ShoesDetailsId);
+                            if (firstImage != null)
+                            {
+                                shoes.ImageUrl = firstImage.Image1;
+                            }
+                            var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
+                            if (product != null)
+                            {
+                                productNames[shoes.ShoesDetailsId] = product.Name;
+                            }
+                            var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
+                            if (style != null)
+                            {
+                                productStyles[shoes.ShoesDetailsId] = style.Name;
+                            }
                         }
-                        var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == shoes.ProductID);
-                        if (product != null)
-                        {
-                            productNames[shoes.ShoesDetailsId] = product.Name;
-                        }
-                        var style = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == shoes.StyleID);
-                        if (style != null)
-                        {
-                            productStyles[shoes.ShoesDetailsId] = style.Name;
-                        }
+                        ViewBag.NameStyle = productStyles;
+                        ViewBag.NameSP = productNames;
+                        ViewBag.shoesList = shoesList;
+
+                        return View(detailsBill);
                     }
-                    ViewBag.NameStyle = productStyles;
-                    ViewBag.NameSP = productNames;
-                    ViewBag.shoesList = shoesList;
-
-                    return View(detailsBill);
                 }
+                return View(new List<OrderDetailsViewModel>());
             }
-            return View(new List<OrderDetailsViewModel>()); // Trả về danh sách rỗng nếu không có dữ liệu
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Có lỗi xảy ra: " + ex.Message;
+                return View(new List<OrderDetailsViewModel>());
+            }
         }
 
         public async Task<IActionResult> BillDetail(Guid? customerID)
@@ -745,7 +754,6 @@ namespace AppView.Controllers
                 returnObj.Note = ghiChuReturn;
                 returnObj.Status = 0;
                 returnObj.ReturnedPrice = price;
-                _dbContext.Bills.Update(objbill);
                 _dbContext.ReturnedProducts.Update(returnObj);
                 _dbContext.SaveChanges();
             }

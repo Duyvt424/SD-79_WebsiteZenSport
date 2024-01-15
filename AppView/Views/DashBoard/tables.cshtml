@@ -213,7 +213,7 @@
 					</a>
 					<ul id="ddmenu_2" class="collapse dropdown-nav">
 						<li>
-							<a href="@Url.Action("settings", "DashBoard")"> Nhân viên </a>
+							<a href="@Url.Action("listEmployee", "DashBoard")"> Nhân viên </a>
 						</li>
 						<li>
 							<a href="blank-page.html"> Khách hàng </a>
@@ -598,7 +598,7 @@
 					$("input[name='endDate']").val(formattedDate);
 
 					// Gọi hàm filterData khi trang được tải lần đầu tiên
-					filterData();
+					// filterData();
 				});
 
 				// Bắt sự kiện click trên các phần tử của dropdown "Trạng thái"
@@ -692,7 +692,7 @@
 							success: function (response) {
 								console.log(response);
 								// Xử lý dữ liệu trả về và cập nhật nội dung hiển thị
-								updateDisplay(response);
+								// updateDisplay(response);
 							},
 							error: function (error) {
 								console.log("Error:", error);

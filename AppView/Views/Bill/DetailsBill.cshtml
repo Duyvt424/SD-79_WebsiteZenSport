@@ -12,7 +12,7 @@
 	var status = Model.First().OrderStatuses.First().Status;
 	string statusText;
 	var statusReturn = Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.Status != 0)?.Status;
-	var totalpriceAll = Model.FirstOrDefault()?.TotalRefundAmount;
+	var totalpriceAll = Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault()?.InitialProductTotalPrice;
 	var TotalRefundAmount = Model.FirstOrDefault()?.TotalRefundAmount;
 	var priceShippingReturn = Model.FirstOrDefault()?.PriceShippingReturn;
 
@@ -1774,7 +1774,7 @@
 							<hr style="width:96%;" />
 							<div class="container" style="display:flex;">
 								<h4 style="margin-top:2%;">Số tiền:</h4>
-								<input id="quantityInput" class="returned-price" type="number" name="quanity" value="@priceTotalItemReturn" min="1" max="1000000000" data-price="" placeholder="Số tiền" disabled>
+								<input id="quantityInput" class="returned-price" type="number" name="quanity" value="@priceTotalItemReturn" min="1" max="1000000000" data-price="" placeholder="Số tiền">
 							</div>
 							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
 							<input type="text" name="ghiChuReturnPrice" class="form-control" required />
@@ -3171,8 +3171,8 @@
 			$('.btn-returnSP').click(function () {
 				$('#modalReturnPrice').modal('show');
 				if (statusReturn == "6") {
-					document.querySelector('.returned-price').value = parseInt('@totalpriceAll');
-					priceReturn = parseInt('@totalpriceAll');
+					document.querySelector('.returned-price').value = parseInt('@TotalRefundAmount');
+					priceReturn = parseInt('@TotalRefundAmount');
 				}
 			});
 
@@ -3481,10 +3481,6 @@
 			var priceVoucherElement = document.getElementById('giamgia');
 			var priceVoucherText = priceVoucherElement.innerText;
 			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
-			// hiển thị tổng giá tiền khi trang đc load
-			var totalOk = (totalPrice + phivanchuyen) - priceVoucher;
-			var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
-			tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 			// Lắng nghe sự kiện change của tất cả các checkbox
 			var checkboxes = document.querySelectorAll('.existing-address input[type="checkbox"]');
 			checkboxes.forEach(function (checkbox) {
@@ -3494,6 +3490,10 @@
 			});
 			// Khởi tạo giá tiền vận chuyển khi trang được tải lần đầu
 			if (statusBill != "6") {
+				// hiển thị tổng giá tiền khi trang đc load
+				var totalOk = (totalPrice + phivanchuyen) - priceVoucher;
+				var tongTienElement = document.querySelector('[name="TongTienAfterDiscount"]');
+				tongTienElement.innerText = "= " + totalOk.toLocaleString('vi-VN') + "đ";
 				updateShippingCost();
 			}
 		});
@@ -3962,4 +3962,19 @@
 				.catch(error => console.log(error));
 		}
 	</script>
+	<script>
+    $(document).ready(function () {
+        var errorMessage = '@ViewBag.ErrorMessage';
+        
+        if (errorMessage) {
+            new Noty({
+                type: 'error',
+                text: errorMessage,
+                timeout: 1000,
+                progressBar: true,
+                closeWith: ['click', 'button'],
+            }).show();
+        }
+    });
+</script>
 </div>

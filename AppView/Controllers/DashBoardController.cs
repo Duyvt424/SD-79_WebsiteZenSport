@@ -7,7 +7,9 @@ using AppView.Models;
 using AppView.Models.DashBoardViewModel;
 using AppView.Models.DetailsBillViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AppView.Controllers
 {
@@ -480,9 +482,107 @@ namespace AppView.Controllers
             return View(listBill);
         }
 
-        public IActionResult settings()
+        public IActionResult settings(Guid employeeId)
         {
-            return View();
+            Employee employee = _dbContext.Employees.FirstOrDefault(c => c.EmployeeID == employeeId);
+            using (ShopDBContext dBContext = new ShopDBContext())
+            {
+                var role = dBContext.Roles.Where(c => c.Status == 0).ToList();
+                SelectList selectListRole = new SelectList(role, "RoleID", "RoleName");
+                ViewBag.RoleList = selectListRole;
+            }
+            return View(employee);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> settings(Employee employee, [Bind(Prefix = "image")] IFormFile image)
+        {
+            string imageName;
+            if (image != null && image.Length > 0)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", image.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    image.CopyTo(stream);
+                }
+                imageName = image.FileName;
+            }
+            else
+            {
+                imageName = _dbContext.Employees.FirstOrDefault(c => c.EmployeeID == employee.EmployeeID).Image;
+            }
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Employee/update-employee?FullName={employee.FullName}&UserName={employee.UserName}&Password={employee.Password}&Email={employee.Email}&Sex={employee.Sex}&ResetPassword={0000}&PhoneNumber={employee.PhoneNumber}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&EmployeeID={employee.EmployeeID}&RoleID={employee.RoleID}&Image={imageName}&IdentificationCode={employee.IdentificationCode}&Address={employee.Address}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("listEmployee");
+        }
+
+        public IActionResult listEmployee()
+        {
+            var listEmployee = _dbContext.Employees.Select(c => new employeeViewModel
+            {
+                EmployeeId = c.EmployeeID,
+                Image = c.Image,
+                UserName = c.UserName,
+                Email = c.Email,
+                Fullname = c.FullName,
+                CreateDate = c.DateCreated,
+                Status = c.Status,
+            }).ToList();
+            return View(listEmployee);
+        }
+
+        public IActionResult findEmployee(string username)
+        {
+            var objEmployee = _dbContext.Employees.Where(c => c.UserName.ToLower().Contains(username.ToLower()) || c.FullName.ToLower().Contains(username.ToLower())).ToList();
+            var listEmployee = objEmployee.Select(c => new employeeViewModel
+            {
+                EmployeeId = c.EmployeeID,
+                Image = c.Image,
+                UserName = c.UserName,
+                Email = c.Email,
+                Fullname = c.FullName,
+                CreateDate = c.DateCreated,
+                Status = c.Status,
+            }).ToList();
+            return View(listEmployee);
+        }
+
+        [HttpGet]
+        public IActionResult FilterEmployee(int nameStatus, int priceNewOld)
+        {
+            var query = _dbContext.Employees.ToList();
+            if (nameStatus != 8)
+            {
+                query = query.Where(c => c.Status == nameStatus).ToList();
+            }
+            if (priceNewOld != 8)
+            {
+                switch (priceNewOld)
+                {
+                    case 0:
+                        query = query.Where(c => c.Sex == 0).ToList();
+                        break;
+                    case 1:
+                        query = query.Where(c => c.Sex == 1).ToList();
+                        break;
+                    case 2:
+                        query = query.Where(c => c.Sex == 2).ToList();
+                        break;
+                }
+            }
+            var objEmployee = query.ToList();
+            var listEmployee = objEmployee.Select(c => new employeeViewModel
+            {
+                EmployeeId = c.EmployeeID,
+                Image = c.Image,
+                UserName = c.UserName,
+                Email = c.Email,
+                Fullname = c.FullName,
+                CreateDate = c.DateCreated,
+                Status = c.Status,
+            }).ToList();
+            return Json(listEmployee);
         }
     }
 }
