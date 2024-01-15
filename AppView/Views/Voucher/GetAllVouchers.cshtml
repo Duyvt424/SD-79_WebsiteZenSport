@@ -400,14 +400,14 @@
                             <th>STT</th>
                             <th>Mã</th>
                             <th>Giá trị</th>
-                            <th>Lượt sử dụng</th>
+                            <th>Lượt <br /> sử dụng</th>
                             <th>Số lượng</th>
-                            <th>Đơn tối thiểu</th>
+                            <th>Cho đơn <br /> tối thiểu</th>
                             <th>Hạng</th>
                             <th>Ngày tạo</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
-                            <th>Loại</th>
+                            <th>Quyền</th>
                             @* <th>IsDel</th>*@
                             <th>Status</th>
                             <th>Action</th>
@@ -420,11 +420,11 @@
                                 <tr class="voucher-row">
                                                 <td>@stt</td>
                                                 <td>@Html.DisplayFor(modelItem => item.VoucherCode)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.VoucherValue)</td>
+                                <td>@string.Format("{0:#,0.##} VNĐ", item.VoucherValue)</td>
                                     <td>@Html.DisplayFor(modelItem => item.MaxUsage)/@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
 
-                                                <td>@Html.DisplayFor(modelItem => item.Total)</td>
+                                <td>@string.Format("{0:#,0.##} VNĐ", item.Total)</td>
                                                <td>@Html.DisplayFor(modelItem => item.Exclusiveright)</td>
                                                <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>

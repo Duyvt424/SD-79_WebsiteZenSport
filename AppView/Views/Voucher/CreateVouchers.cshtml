@@ -30,7 +30,7 @@
 
 									<div class="form-floating mb-3">
 										<input asp-for="VoucherValue" type="text" class="form-control" placeholder="VoucherValue" id="voucherValue" required>
-										<label for="floatingInputUsername">VoucherValue</label>
+										<label for="floatingInputUsername">Giá trị</label>
 									</div>
 								@*	<div class="form-floating mb-3">
 										<input asp-for="MaxUsage" type="text" class="form-control" placeholder="MaxUsage" id="maxUsage" required>
@@ -38,11 +38,11 @@
 									</div>*@
 									<div class="form-floating mb-3">
 										<input asp-for="RemainingUsage" type="text" class="form-control" placeholder="RemainingUsage" id="remainingUsage" required>
-										<label for="floatingInputUsername">RemainingUsage</label>
+										<label for="floatingInputUsername">Lượt áp dụng</label>
 									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="DateCreated" type="datetime-local" class="form-control" placeholder="Ngày tạo" id="dateCreated" required>
-										<label for="floatingInputUsername">DateCreated</label>
+										<label for="floatingInputUsername">Ngày bắt đầu</label>
 									</div>
 									<div class="form-floating mb-3" style="display: none">
 										<input asp-for="UserNameCustomer" type="text" class="form-control" placeholder="UserNameCustomer" id="userNameCustomer" required  style="background-color: #f8f9fa; opacity: 0.6; cursor: not-allowed;">
@@ -50,7 +50,7 @@
 									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" id="expirationDate" required>
-										<label for="floatingInputUsername">ExpirationDate</label>
+										<label for="floatingInputUsername">Ngày kết thúc</label>
 									</div>
 									@*<div class="form-floating mb-3" >
 										<input asp-for="ExpirationDate" type="datetime-local" class="form-control" placeholder="ExpirationDate" id="expirationDate" required>
@@ -62,7 +62,7 @@
 									</div>
 									<div class="form-floating mb-3">
 										<input asp-for="Total" type="text" class="form-control" placeholder="Total" id="total" required>
-										<label for="floatingInputUsername">Total</label>
+										<label for="floatingInputUsername">Áp dụng cho đơn hàng từ</label>
 									</div>
 									@*	<div class="form-floating mb-3">
 										<input asp-for="Exclusiveright" type="text" class="form-control" placeholder="Exclusiveright" required>
@@ -76,7 +76,7 @@
 											<option value="Hạng bạc">Hạng bạc</option>
 											<option value="Hạng kim cương">Hạng kim cương</option>
 	</select>
-	<label for="Exclusiveright">Exclusiveright</label>
+	<label for="Exclusiveright">Hạng</label>
 </div>
 
 									@*<<div class="form-check">
@@ -90,7 +90,7 @@
 
 
 									<div class="form-check">
-										<div>Type:</div>
+										<div>Quyền sử dụng:</div>
 										<input asp-for="Type" type="radio" class="form-check-input" value="0" id="Type0" />
 										<label class="form-check-label" for="Type0">Tất cả</label>
 										<br />
