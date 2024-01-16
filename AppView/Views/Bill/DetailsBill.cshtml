@@ -827,6 +827,10 @@
 			{
 				<a class="main-btn light-btn-outline btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Hủy đơn hàng</a>
 			}
+			@if	(userName == null && Model.First().ResetPass == "" && Model.First().StatusCustomer == 1)
+			{
+				<p style="float:right; margin-right:1%;">Bạn vui lòng đăng ký tài khoản để có thể theo dõi đơn hàng và các ưu đãi của chúng mình nhé! <a style="color:red; font-style:italic; cursor:pointer;" href="@Url.Action("SignUp", "Customer")">nhấp vào đây</a></p>
+			}
 		</div>
 	</div>
 	<div class="d-flex flex-wrap flex-md-nowrap justify-content-center justify-content-sm-between align-items-center">
@@ -1906,10 +1910,13 @@
 		$('[name="confirm-dontHT"]').click(function () {
 			var idBill = '@Model.First().BillID.ToString()';
 			var ghiChuUpdateSP5 = $('input[name="ghiChuDontHT"]').val();
+			var priceVoucherElement = document.getElementById('giamgia');
+			var priceVoucherText = priceVoucherElement.innerText;
+			var priceVoucher = parseInt(priceVoucherText.replace(/[^\d]/g, ''));
 			$.ajax({
 				url: '@Url.Action("CancelReturnedProduct", "Bill")',
 				type: 'POST',
-				data: { idBill: idBill, ghiChuDontHT: ghiChuUpdateSP5 },
+				data: { idBill: idBill, ghiChuDontHT: ghiChuUpdateSP5, priceVoucher: priceVoucher },
 				success: function (response) {
 					// Xử lý kết quả từ server
 					if (response.success) {
@@ -1987,6 +1994,7 @@
 </script>
 <script>
 	window.addEventListener('load', function () {
+		const statusReturn = '@Model.First().OrderStatuses.First().Status.ToString()';
 		var idBill = '@Model.First().BillID.ToString()';
 		const returnedButtons = document.querySelectorAll('.btn-returnProduct');
 		const quantityInputs = document.querySelectorAll('.returned-sp');
@@ -2064,6 +2072,7 @@
 				const quantity = document.querySelector('.returned-sp').value;
 				const totalPriceRT = numericPrice * quantity;
 				document.getElementById('giaTienHT').textContent = totalPriceRT;
+				console.log('log aa', document.getElementById('giaTienHT').textContent);
 				//lấy id địa chỉ
 				var selectedCheckbox = document.querySelector('.existing-address[data-isdefault="True"]');
 				const selectedDistrictId = selectedCheckbox ? parseFloat(selectedCheckbox.closest('.existing-address').dataset.idHuyen) : parseInt(document.getElementById('ListQuanHuyen').value);
@@ -2089,10 +2098,25 @@
 				const priceShippingRTElement = document.getElementById('shippingHT');
 				const priceShippingRT = priceShippingRTElement.textContent;
 				const priceShippingR = priceShippingRT.replace(/[^\d]/g, '');
-				var totalPriceElement = document.getElementById('totalPrice');
-				var totalPriceText = totalPriceElement.innerText;
-				var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
 
+				let finalTotalPrice;
+				if (statusReturn !== "6")
+				{
+					var totalPriceElement = document.getElementById('totalPrice');
+					var totalPriceText = totalPriceElement.innerText;
+					var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
+					console.log('log aa', totalPrice);
+					finalTotalPrice = totalPrice;
+				}
+				else
+				{
+					var totalPriceElementReturn = document.getElementById('totalPriceAfter');
+					var totalPriceTextReturn = totalPriceElementReturn.innerText;
+					var totalPriceReturn = parseInt(totalPriceTextReturn.replace(/[^\d]/g, ''));
+					console.log('log aa', totalPriceReturn);
+					finalTotalPrice = totalPriceReturn;
+				}
+				console.log('log aa', finalTotalPrice);
 				var formData = new FormData();
 				formData.append('idBill', idBill);
 				formData.append('idShoesDT', idShoesDT);
@@ -2102,7 +2126,7 @@
 				formData.append('nameProduct', nameProduct);
 				formData.append('priceVoucher', priceVoucher);
 				formData.append('priceShippingReturn', priceShippingR);
-				formData.append('initialProductTotalPrice', totalPrice);
+				formData.append('initialProductTotalPrice', finalTotalPrice);
 				formData.append('image1', document.querySelector('[name="imageReturn1"]').files[0]);
 				formData.append('image2', document.querySelector('[name="imageReturn2"]').files[0]);
 
@@ -2578,16 +2602,16 @@
 				success: function (response) {
 					$('#modalAddAddress').modal('hide');
 					new Noty({
-							type: 'success',
-							text: 'Thành công!',
-							timeout: 1500,
-							progressBar: true,
-							closeWith: ['click', 'button'],
-							callbacks: {
-								afterClose: function () {
-									location.reload();
-								}
+						type: 'success',
+						text: 'Thành công!',
+						timeout: 1500,
+						progressBar: true,
+						closeWith: ['click', 'button'],
+						callbacks: {
+							afterClose: function () {
+								location.reload();
 							}
+						}
 					}).show();
 				},
 				error: function (error) {
@@ -2639,16 +2663,16 @@
 					// Nếu thành công, đóng modal và thực hiện các bước khác nếu cần
 					$('#myModalCancel').modal('hide');
 					new Noty({
-							type: 'success',
-							text: 'Thành công!',
-							timeout: 1500,
-							progressBar: true,
-							closeWith: ['click', 'button'],
-							callbacks: {
-								afterClose: function () {
-									location.reload();
-								}
+						type: 'success',
+						text: 'Thành công!',
+						timeout: 1500,
+						progressBar: true,
+						closeWith: ['click', 'button'],
+						callbacks: {
+							afterClose: function () {
+								location.reload();
 							}
+						}
 					}).show();
 				} else {
 					// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
@@ -2719,9 +2743,8 @@
 								}
 							}
 						}).show();
-					} 
-					else 
-					{
+					}
+					else {
 						// Nếu thất bại, hiển thị thông báo lỗi hoặc xử lý khác
 					}
 				},
@@ -2958,34 +2981,34 @@
 								var priceTotalItem = item.PriceProduct * item.Products.First().Quantity;
 							}
 							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.Products.First().ProductID" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
-							@if (userName == null && status == 3)
+							@if (userName == null && status == 3 && Model.FirstOrDefault()?.HistoryPayMentViewModels.Where(c => c.TransactionType == 1)?.FirstOrDefault()?.Status != 2)
 							{
 								<a id="BtnReturn_@item.Products.First().ProductID"
-								   class="main-btn active-btn-light btn-hover btn-returnProduct"
-								   data-productid="@item.Products.First().ProductID"
-								   data-image="@item.Products.First().ImageUrl"
-								   data-name="@item.Products.First().Name"
-								   data-description="@item.Products.First().Description"
-								   data-size="@item.Products.First().Size"
-								   data-quantity="@item.Products.First().Quantity"
-								   data-price="@item.PriceProduct"
-								   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
+						   class="main-btn active-btn-light btn-hover btn-returnProduct"
+						   data-productid="@item.Products.First().ProductID"
+						   data-image="@item.Products.First().ImageUrl"
+						   data-name="@item.Products.First().Name"
+						   data-description="@item.Products.First().Description"
+						   data-size="@item.Products.First().Size"
+						   data-quantity="@item.Products.First().Quantity"
+						   data-price="@item.PriceProduct"
+						   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
 									<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
 									Hoàn trả
 								</a>
 							}
-							@if (userName == null && status == 6)
+							@if (userName == null && status == 6 && Model.FirstOrDefault()?.HistoryPayMentViewModels.Where(c => c.TransactionType == 1)?.FirstOrDefault()?.Status != 2)
 							{
 								<a id="BtnReturn_@item.Products.First().ProductID"
-								   class="main-btn active-btn-light btn-hover btn-returnProduct"
-								   data-productid="@item.Products.First().ProductID"
-								   data-image="@item.Products.First().ImageUrl"
-								   data-name="@item.Products.First().Name"
-								   data-description="@item.Products.First().Description"
-								   data-size="@item.Products.First().Size"
-								   data-quantity="@item.Products.First().Quantity"
-								   data-price="@item.PriceProduct"
-								   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
+						   class="main-btn active-btn-light btn-hover btn-returnProduct"
+						   data-productid="@item.Products.First().ProductID"
+						   data-image="@item.Products.First().ImageUrl"
+						   data-name="@item.Products.First().Name"
+						   data-description="@item.Products.First().Description"
+						   data-size="@item.Products.First().Size"
+						   data-quantity="@item.Products.First().Quantity"
+						   data-price="@item.PriceProduct"
+						   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
 									<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
 									Hoàn trả
 								</a>
@@ -3111,22 +3134,19 @@
 							</tr>
 						}
 
-						@if (status != 6)
-						{
-							<tr>
-								<th scope="col">Giảm giá:</th>
-								<th scope="col">
-									@if (Model.First().PriceVoucher != null)
-									{
-										<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">- @string.Format("{0:N0}đ", priceVoucher)</span>
-									}
-									else
-									{
-										<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">0đ</span>
-									}
-								</th>
-							</tr>
-						}
+						<tr>
+							<th scope="col">Giảm giá:</th>
+							<th scope="col">
+								@if (Model.First().PriceVoucher != null)
+								{
+									<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">- @string.Format("{0:N0}đ", priceVoucher)</span>
+								}
+								else
+								{
+									<span id="giamgia" style="padding: 5px 10px; margin: 2px; margin-left: 10%;">0đ</span>
+								}
+							</th>
+						</tr>
 
 						@if (status == 6)
 						{
@@ -3154,7 +3174,7 @@
 				{
 					<h5 style="float:right; color:red; font-style:italic;">Đơn hàng của bạn đã bị từ chối hoàn trả vì lý do: @Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.Status == 2)?.Note</h5>
 				}
-			    @if (userName != null && Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.TransactionType == 1)?.Status == 1)
+				@if (userName != null && Model.FirstOrDefault()?.HistoryPayMentViewModels.FirstOrDefault(c => c.TransactionType == 1)?.Status == 1)
 				{
 					<h5 style="float:right; color:red; font-style:italic;">Hoàn trả số tiền: @string.Format("{0:N0}đ", @Model.FirstOrDefault()?.TotalRefundAmount) cho khách hàng</h5>
 				}
@@ -3963,18 +3983,18 @@
 		}
 	</script>
 	<script>
-    $(document).ready(function () {
-        var errorMessage = '@ViewBag.ErrorMessage';
-        
-        if (errorMessage) {
-            new Noty({
-                type: 'error',
-                text: errorMessage,
-                timeout: 1000,
-                progressBar: true,
-                closeWith: ['click', 'button'],
-            }).show();
-        }
-    });
-</script>
+		$(document).ready(function () {
+			var errorMessage = '@ViewBag.ErrorMessage';
+
+			if (errorMessage) {
+				new Noty({
+					type: 'error',
+					text: errorMessage,
+					timeout: 1000,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+			}
+		});
+	</script>
 </div>

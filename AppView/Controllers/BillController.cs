@@ -310,6 +310,8 @@ namespace AppView.Controllers
                                 FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
                                 PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
                                 Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
+                                ResetPass = _dbContext.Customers.First(c => c.CumstomerID == customerId).ResetPassword,
+                                StatusCustomer = _dbContext.Customers.First(c => c.CumstomerID == customerId).Status,
                                 PurchaseMethod = _dbContext.PurchaseMethods.First(x => x.PurchaseMethodID == objBill.PurchaseMethodID).MethodName,
                                 Street = _dbContext.Addresses.First(c => c.AddressID == objBill.AddressID).Street,
                                 Ward = _dbContext.Addresses.First(x => x.AddressID == objBill.AddressID).Commune,
@@ -664,9 +666,9 @@ namespace AppView.Controllers
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
             if (billDetails != null)
             {
-                billDetails.Quantity -= quanity;
-                ShoesDt_Size.Quantity += quanity;
-                _dbContext.SaveChanges();
+                //billDetails.Quantity -= quanity;
+                //ShoesDt_Size.Quantity += quanity;
+                //_dbContext.SaveChanges();
 
                 if (image1 != null && image1.Length > 0)
                 {
@@ -715,11 +717,11 @@ namespace AppView.Controllers
                 };
                 objBill.TotalRefundAmount += historyBill.ReturnedPrice;
                 objBill.Status = 6;
-                objBill.TotalPrice -= billDetails.Price;
+                objBill.TotalPrice -= billDetails.Price * quanity;
                 objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
                 _dbContext.Bills.Update(objBill);
-                _dbContext.BillDetails.Update(billDetails);
-                _dbContext.ShoesDetails_Sizes.Update(ShoesDt_Size);
+                //_dbContext.BillDetails.Update(billDetails);
+                //_dbContext.ShoesDetails_Sizes.Update(ShoesDt_Size);
                 _dbContext.BillStatusHistories.Add(billstatusHis);
                 _dbContext.ReturnedProducts.Add(historyBill);
                 _dbContext.SaveChanges();
@@ -747,13 +749,23 @@ namespace AppView.Controllers
         public IActionResult SuccessBillReturn(Guid idBill, string ghiChuReturn, decimal price)
         {
             var objbill = _dbContext.Bills.First(c => c.BillID == idBill);
-            var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID && c.Status == 1);
+            var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID && c.TransactionType == 1 && c.Status == 1);
+            var billDetails = _dbContext.BillDetails.FirstOrDefault(c => c.BillID == idBill && c.ShoesDetails_SizeID == returnObj.ShoesDetails_SizeID);
+            var ShoesDt_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ID == returnObj.ShoesDetails_SizeID);
             if (returnObj.Status == 1)
             {
                 returnObj.CreateDate = DateTime.Now;
                 returnObj.Note = ghiChuReturn;
                 returnObj.Status = 0;
                 returnObj.ReturnedPrice = price;
+                billDetails.Quantity -= returnObj.QuantityReturned;
+                ShoesDt_Size.Quantity += returnObj.QuantityReturned;
+                if (objbill.TotalRefundAmount == returnObj.InitialProductTotalPrice)
+                {
+                    objbill.Status = 4;
+                }
+                _dbContext.Bills.Update(objbill);
+                _dbContext.BillDetails.Update(billDetails);
                 _dbContext.ReturnedProducts.Update(returnObj);
                 _dbContext.SaveChanges();
             }
@@ -761,15 +773,19 @@ namespace AppView.Controllers
         }
 
         [HttpPost]
-        public IActionResult CancelReturnedProduct(Guid idBill, string ghiChuDontHT)
+        public IActionResult CancelReturnedProduct(Guid idBill, string ghiChuDontHT, decimal priceVoucher)
         {
             var objBill = _dbContext.Bills.First(c => c.BillID == idBill);
-            var returnedObj = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == idBill && c.TransactionType == 1);
+            var returnedObj = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == idBill && c.TransactionType == 1 && c.Status == 1);
+            var billDetails = _dbContext.BillDetails.FirstOrDefault(c => c.BillID == idBill && c.ShoesDetails_SizeID == returnedObj.ShoesDetails_SizeID);
             if (returnedObj?.Status == 1)
             {
                 returnedObj.Note = ghiChuDontHT;
                 returnedObj.Status = 2;
-                objBill.Status = 6;
+                objBill.TotalRefundAmount -= returnedObj.ReturnedPrice;
+                objBill.TotalPrice += billDetails.Price * returnedObj.QuantityReturned;
+                objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
+                objBill.Status = 3;
                 _dbContext.Bills.Update(objBill);
                 _dbContext.ReturnedProducts.Update(returnedObj);
                 _dbContext.SaveChanges();

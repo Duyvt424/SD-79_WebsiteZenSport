@@ -222,19 +222,36 @@ namespace AppView.Controllers
         public async Task<IActionResult> SignUp(Customer customer, string ConfirmPassword, string rank, int sex)
         {
             var RankUser = _dbContext.Ranks.FirstOrDefault(c => c.Name == rank).RankID;
+            var userKhach = _dbContext.Customers.FirstOrDefault(c => c.PhoneNumber == customer.PhoneNumber && c.ResetPassword == "" && c.Status == 1);
             if (customer.Password != ConfirmPassword)
             {
                 return View();
             }
             if (_repos.GetAll().Any(c => c.UserName == customer.UserName))
             {
-                TempData["NotyMessage"] = "Tên người dùng đã tồn tại!";
+                ViewBag.NotyMessage = "Tên người dùng đã tồn tại!";
                 return View();
             }
-            var httpClient = new HttpClient();
-			string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={HttpUtility.UrlEncode(customer.FullName)}&UserName={HttpUtility.UrlEncode(customer.UserName)}&Password={HttpUtility.UrlEncode(customer.Password)}&Email={HttpUtility.UrlEncode(customer.Email)}&Sex={sex}&ResetPassword={0000}&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}&Status={0}&RankID={RankUser}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
-			var response = await httpClient.PostAsync(apiUrl, null);
-            return RedirectToAction("Login");
+
+            if (!Regex.IsMatch(customer.FullName, "^[a-zA-Z]+$"))
+            {
+                ViewBag.NotyMessage = "Tên đăng nhập không hợp lệ!";
+                return View();
+            }
+            if (userKhach != null)
+            {
+                var httpClient = new HttpClient();
+                string apiUrl = $"https://localhost:7036/api/Customer/update-customer?CumstomerID={userKhach.CumstomerID}&FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={0000}&PhoneNumber={customer.PhoneNumber}&Status={0}&RankID={RankUser}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                var response = await httpClient.PutAsync(apiUrl, null);
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                var httpClient = new HttpClient();
+                string apiUrl = $"https://localhost:7036/api/Customer/create-customer?FullName={HttpUtility.UrlEncode(customer.FullName)}&UserName={HttpUtility.UrlEncode(customer.UserName)}&Password={HttpUtility.UrlEncode(customer.Password)}&Email={HttpUtility.UrlEncode(customer.Email)}&Sex={sex}&ResetPassword={0000}&PhoneNumber={HttpUtility.UrlEncode(customer.PhoneNumber)}&Status={0}&RankID={RankUser}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";
+                var response = await httpClient.PostAsync(apiUrl, null);
+                return RedirectToAction("Login");
+            }
         }
         public IActionResult DangNhap()
         {

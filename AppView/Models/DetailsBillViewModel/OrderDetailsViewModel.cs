@@ -11,6 +11,8 @@
         public string? FullName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+        public string? ResetPass { get; set; }
+        public int StatusCustomer { get; set; }
         public string? Street { get; set; }
         public string? Ward { get; set; }
         public string? District { get; set; }

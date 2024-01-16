@@ -309,7 +309,7 @@
 			}
 
 			// Kiểm tra nếu có thông báo Noty từ TempData
-			var notyMessage = '@TempData["NotyMessage"]';
+			var notyMessage = '@Html.Raw(ViewBag.NotyMessage)';
 			console.log('sdfgf', notyMessage);
 			if (notyMessage) {
 				new Noty({
@@ -319,6 +319,7 @@
 					progressBar: true,
 					closeWith: ['click', 'button'],
 				}).show();
+				return;
 			}
 
 			new Noty({

@@ -53,29 +53,29 @@ namespace AppAPI.Controllers
             return _repos.AddItem(customer);
         }
 
-        // PUT api/<ValuesController>/5
         [HttpPut("update-customer")]
-        public bool UpdateCustomer(string FullName, string Password, string Email, int Sex, string PhoneNumber, int Status, Guid CumstomerID, string Res)
+        public bool UpdateCustomer(Guid CumstomerID, string FullName, string UserName, string Password, string Email, int Sex, string ResetPassword, string PhoneNumber, int Status, Guid RankID, DateTime DateCreated)
         {
             var cus = _repos.GetAll().First(c => c.CumstomerID == CumstomerID);
             cus.FullName = FullName;
+            cus.UserName = UserName;
             cus.Password = Password;
             cus.Email = Email;
             cus.Sex = Sex;
+            cus.ResetPassword = ResetPassword;
             cus.PhoneNumber = PhoneNumber;
             cus.Status = Status;
-            cus.ResetPassword = Res;
+            cus.RankID = RankID;
+            cus.DateCreated = DateCreated;
             return _repos.EditItem(cus);
         }
 
-        // DELETE api/<ValuesController>/5
         [HttpDelete("delete-customer")]
         public bool Delete(Guid id)
         {
             var cus = _repos.GetAll().First(c => c.CumstomerID == id);
-            return _repos.RemoveItem(cus);
+            cus.Status = 1;
+            return _repos.EditItem(cus);
         }
     }
-    //aff
-    //ikrfjkie
 }
