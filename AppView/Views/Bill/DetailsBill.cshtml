@@ -706,7 +706,7 @@
 						<img src="~/image/cancel-order-8091835-6506585.png" style="max-width:55%;" />
 						<h4 style="color:red;">Đã hủy đơn hàng</h4>
 						<p>vào @Model.First().OrderStatuses.First().CancelDate.ToString("HH:mm, dd/MM/yyyy")</p>
-						<p style="margin-top:1%;">Lý do: <strong>@billStatusHis.First(c => c.StatusName == 4).Note</strong></p>
+						<p style="margin-top:1%;">Lý do: <strong>@billStatusHis.FirstOrDefault(c => c.StatusName == 4)?.Note</strong></p>
 					</div>
 				}
 
@@ -827,7 +827,7 @@
 			{
 				<a class="main-btn light-btn-outline btn-hover show-modal-cancel" style="font-size:16px; padding:5px 10px; margin:2px; margin-left: 5%;" data-toggle="modal" data-target="#myModal">Hủy đơn hàng</a>
 			}
-			@if	(userName == null && Model.First().ResetPass == "" && Model.First().StatusCustomer == 1)
+			@if (userName == null && Model.First().ResetPass == "" && Model.First().StatusCustomer == 1)
 			{
 				<p style="float:right; margin-right:1%;">Bạn vui lòng đăng ký tài khoản để có thể theo dõi đơn hàng và các ưu đãi của chúng mình nhé! <a style="color:red; font-style:italic; cursor:pointer;" href="@Url.Action("SignUp", "Customer")">nhấp vào đây</a></p>
 			}
@@ -915,13 +915,21 @@
 						</div>
 						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
 						<p class="description">Xác nhận thanh toán cho đơn hàng [@Model.First().BillCode] + số tiền [@totalAll.ToString("N0")đ] bằng hình thức thanh toán:</p>
-						@if (Model.First().IsPaid == true && Model.First().PurchaseMethod == "Thanh toán trực tuyến VNPay")
+						@if (userName != null)
 						{
-							<button class="btn cancel" type="submit" value="Thanh toán trực tuyến VNPay" name="httt">Thanh toán trực tuyến</button>
-						}
-						else
-						{
-							<button class="btn" type="submit" value="Thanh toán khi nhận hàng" name="httt">Thanh toán trực tiếp</button>
+							@if (Model.First().IsPaid == false)
+							{
+								<button class="btn cancel" type="submit" value="Thanh toán trực tuyến VNPay" name="httt">Thanh toán trực tuyến</button>
+								<button class="btn" type="submit" value="Thanh toán khi nhận hàng" name="httt">Thanh toán trực tiếp</button>
+							}
+							else if (Model.First().IsPaid == true && Model.First().PurchaseMethod == "Thanh toán trực tuyến VNPay")
+							{
+								<button class="btn cancel" type="submit" value="Thanh toán trực tuyến VNPay" name="httt">Thanh toán trực tuyến</button>
+							}
+							else
+							{
+								<button class="btn" type="submit" value="Thanh toán khi nhận hàng" name="httt">Thanh toán trực tiếp</button>
+							}
 						}
 					</div>
 				</form>
@@ -1618,7 +1626,7 @@
 													type: 'POST',
 													data: { ShoesDetailsId: shoesDetailsId, Size: size, BillId: billId, ProductId: productId },
 													success: function (data) {
-														location.reload();
+														window.location.replace(window.location.href);
 													},
 													error: function () {
 													}
@@ -1778,7 +1786,7 @@
 							<hr style="width:96%;" />
 							<div class="container" style="display:flex;">
 								<h4 style="margin-top:2%;">Số tiền:</h4>
-								<input id="quantityInput" class="returned-price" type="number" name="quanity" value="@priceTotalItemReturn" min="1" max="1000000000" data-price="" placeholder="Số tiền">
+								<input id="quantityInput" class="returned-price" type="number" name="quanity" value="@priceTotalItemReturn" min="1" max="1000000000" data-price="" placeholder="Số tiền" disabled>
 							</div>
 							<label class="description" style="text-align:center; margin-top:4%; font-size:18px; font-weight:bold;">Ghi chú:</label>
 							<input type="text" name="ghiChuReturnPrice" class="form-control" required />
@@ -2100,16 +2108,14 @@
 				const priceShippingR = priceShippingRT.replace(/[^\d]/g, '');
 
 				let finalTotalPrice;
-				if (statusReturn !== "6")
-				{
+				if (statusReturn !== "6") {
 					var totalPriceElement = document.getElementById('totalPrice');
 					var totalPriceText = totalPriceElement.innerText;
 					var totalPrice = parseInt(totalPriceText.replace(/[^\d]/g, ''));
 					console.log('log aa', totalPrice);
 					finalTotalPrice = totalPrice;
 				}
-				else
-				{
+				else {
 					var totalPriceElementReturn = document.getElementById('totalPriceAfter');
 					var totalPriceTextReturn = totalPriceElementReturn.innerText;
 					var totalPriceReturn = parseInt(totalPriceTextReturn.replace(/[^\d]/g, ''));
@@ -2977,50 +2983,60 @@
 					<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
 						<!-- Total Price -->
 						<p class="text-start text-md-center">
-							@{
-								var priceTotalItem = item.PriceProduct * item.Products.First().Quantity;
-							}
-							<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@item.Products.First().ProductID" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
-							@if (userName == null && status == 3 && Model.FirstOrDefault()?.HistoryPayMentViewModels.Where(c => c.TransactionType == 1)?.FirstOrDefault()?.Status != 2)
-							{
-								<a id="BtnReturn_@item.Products.First().ProductID"
-						   class="main-btn active-btn-light btn-hover btn-returnProduct"
-						   data-productid="@item.Products.First().ProductID"
-						   data-image="@item.Products.First().ImageUrl"
-						   data-name="@item.Products.First().Name"
-						   data-description="@item.Products.First().Description"
-						   data-size="@item.Products.First().Size"
-						   data-quantity="@item.Products.First().Quantity"
-						   data-price="@item.PriceProduct"
-						   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
-									<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
-									Hoàn trả
-								</a>
-							}
-							@if (userName == null && status == 6 && Model.FirstOrDefault()?.HistoryPayMentViewModels.Where(c => c.TransactionType == 1)?.FirstOrDefault()?.Status != 2)
-							{
-								<a id="BtnReturn_@item.Products.First().ProductID"
-						   class="main-btn active-btn-light btn-hover btn-returnProduct"
-						   data-productid="@item.Products.First().ProductID"
-						   data-image="@item.Products.First().ImageUrl"
-						   data-name="@item.Products.First().Name"
-						   data-description="@item.Products.First().Description"
-						   data-size="@item.Products.First().Size"
-						   data-quantity="@item.Products.First().Quantity"
-						   data-price="@item.PriceProduct"
-						   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
-									<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
-									Hoàn trả
-								</a>
-							}
-						</p>
+						@{
+							var priceTotalItem = item.PriceProduct * item.Products.First().Quantity;
+							var productId = item.Products.First().ProductID;
+							var sizeId = item.Products.First().Size;
+
+							// Kiểm tra xem sản phẩm đã tồn tại trong bảng ReturnedProducts chưa
+							var isProductReturned = Model.FirstOrDefault().HistoryPayMentViewModels
+								.Any(c => c.TransactionType == 1 && c.Status == 2 && c.ShoesDetailsID == productId && c.Size == sizeId);
+
+							var imagesToDisplay = Model.FirstOrDefault().HistoryPayMentViewModels
+								.Where(c => c.TransactionType == 1 && c.Status == 2)
+								.ToList();
+						}
+						<span class="main-btn info-btn btn-hover priceTotalItem" style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;" data-shoesdetailsid="@productId" data-size="@item.Products.First().Size">@string.Format("{0:N0}đ", priceTotalItem)</span>
+						@if (userName == null && status == 3 && !isProductReturned)
+						{
+							<a id="BtnReturn_@productId"
+							   class="main-btn active-btn-light btn-hover btn-returnProduct"
+							   data-productid="@productId"
+							   data-image="@item.Products.First().ImageUrl"
+							   data-name="@item.Products.First().Name"
+							   data-description="@item.Products.First().Description"
+							   data-size="@item.Products.First().Size"
+							   data-quantity="@item.Products.First().Quantity"
+							   data-price="@item.PriceProduct"
+							   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
+								<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
+								Hoàn trả
+							</a>
+						}
+						@if (userName == null && status == 6 && Model.FirstOrDefault()?.HistoryPayMentViewModels.Where(c => c.TransactionType == 1)?.FirstOrDefault()?.Status != 2 && !isProductReturned)
+						{
+							<a id="BtnReturn_@productId"
+							   class="main-btn active-btn-light btn-hover btn-returnProduct"
+							   data-productid="@productId"
+							   data-image="@item.Products.First().ImageUrl"
+							   data-name="@item.Products.First().Name"
+							   data-description="@item.Products.First().Description"
+							   data-size="@item.Products.First().Size"
+							   data-quantity="@item.Products.First().Quantity"
+							   data-price="@item.PriceProduct"
+							   style="font-size:18px; padding:5px 10px; margin:2px; margin-top: 37%;">
+								<i class="fa fa-retweet" style="margin-top:8%; font-size:20px;"></i>
+								Hoàn trả
+							</a>
+						}
+					</p>
 						<!-- Total Price -->
 					</div>
 					<hr class="my-4" style="width:98%;" />
 				</div>
 			}
 
-			@if (status == 6)
+			@if (status == 3 || status == 6)
 			{
 				<h2>Sản phẩm hoàn trả</h2>
 			}
@@ -3247,9 +3263,9 @@
 						<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
 						@if (userName != null && status == 2)
 						{
-							if (Model.First().IsPaid == true && Model.FirstOrDefault()?.HistoryPayMentViewModels?.FirstOrDefault()?.Status == null)
+							if (Model.FirstOrDefault()?.HistoryPayMentViewModels?.FirstOrDefault()?.Status == null)
 							{
-								<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn secondary-btn rounded-full btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
+								<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn active-btn-light btn-hover xac-nhan-tt" data-toggle="modal" data-target="#myModal">Xác nhận thanh toán</a>
 							}
 						}
 						@if (userName != null && statusReturn == 1)
@@ -3372,10 +3388,10 @@
 			<div class="card mb-6">
 				<div class="card-header py-3">
 					<h5 class="mb-0">THÔNG TIN ĐƠN HÀNG</h5>
-					@*					@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && userName != null && status == 0 || status == 1)
+					@if (Model.First().PurchaseMethod != "Thanh toán trực tuyến VNPay" && userName != null && status == 0 || status == 1)
 					{
-					<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi thông tin</a>
-					}*@
+						<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn dark-btn rounded-full btn-hover btn-change-info">Thay đổi thông tin</a>
+					}
 					@if (userName == null && status != 4)
 					{
 						@if (Model.First().IsPaid == false && status != 2)

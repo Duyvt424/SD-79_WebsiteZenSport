@@ -2,8 +2,9 @@
 {
 	public class HistoryPayMentViewModel
 	{
-		public Guid  ShoesDetailsID { get; set; }
-		public string  ImageUrl { get; set; }
+        public Guid? ShoesDetailsID { get; set; }
+        public Guid? BillId { get; set; }
+        public string  ImageUrl { get; set; }
 		public string  NameProduct { get; set; }
 		public string Description { get; set; }
 		public string Size { get; set; }

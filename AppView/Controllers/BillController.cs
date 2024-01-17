@@ -332,6 +332,7 @@ namespace AppView.Controllers
                                 new ProductViewModel
                                 {
                                     ProductID = c.ShoesDetails_Size.ShoesDetailsId,
+                                    ShoesDT_SizeId  = _dbContext.ShoesDetails_Sizes.FirstOrDefault(x => x.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId && x.SizeID == c.ShoesDetails_Size.SizeID).ID,
                                     ImageUrl = _dbContext.Images.First(x => x.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
                                     Name = _dbContext.Products.First(x => x.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                                     Description = _dbContext.Styles.First(x => x.StyleID == c.ShoesDetails_Size.ShoesDetails.StyleID).Name,
@@ -380,6 +381,8 @@ namespace AppView.Controllers
                                 .Where(x => x.BillId == billId)
                                 .Select(x => new HistoryPayMentViewModel
                                 {
+                                    ShoesDetailsID = _dbContext.ReturnedProducts.FirstOrDefault(x => x.ShoesDetails_SizeID == c.ShoesDetails_SizeID).ShoesDetails_SizeID,
+                                    BillId = _dbContext.ReturnedProducts.FirstOrDefault(c => c.BillId == objBill.BillID).BillId,
                                     NameProduct = _dbContext.Products.FirstOrDefault(c => c.ProductID == x.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                                     ImageUrl = _dbContext.Images.FirstOrDefault(c => c.ShoesDetailsID == x.ShoesDetails_Size.ShoesDetailsId).Image1,
                                     Description = _dbContext.Styles.FirstOrDefault(c => c.StyleID == x.ShoesDetails_Size.ShoesDetails.StyleID).Name,
@@ -739,7 +742,7 @@ namespace AppView.Controllers
             {
                 if (quantity >= billItem.Quantity)
                 {
-                    return Json(new { success = false, message = "Số lượng sản phẩm đã hết!" });
+                    return Json(new { success = false, message = "Số lượng sản phẩm trong đơn hàng đã hết" });
                 }
             }
             return Json(new { success = true, message = "AA!" });
@@ -760,10 +763,6 @@ namespace AppView.Controllers
                 returnObj.ReturnedPrice = price;
                 billDetails.Quantity -= returnObj.QuantityReturned;
                 ShoesDt_Size.Quantity += returnObj.QuantityReturned;
-                if (objbill.TotalRefundAmount == returnObj.InitialProductTotalPrice)
-                {
-                    objbill.Status = 4;
-                }
                 _dbContext.Bills.Update(objbill);
                 _dbContext.BillDetails.Update(billDetails);
                 _dbContext.ReturnedProducts.Update(returnObj);

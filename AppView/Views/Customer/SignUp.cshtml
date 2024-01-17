@@ -308,20 +308,6 @@
 				return;
 			}
 
-			// Kiểm tra nếu có thông báo Noty từ TempData
-			var notyMessage = '@Html.Raw(ViewBag.NotyMessage)';
-			console.log('sdfgf', notyMessage);
-			if (notyMessage) {
-				new Noty({
-					type: 'warning',
-					text: notyMessage,
-					timeout: 1500,
-					progressBar: true,
-					closeWith: ['click', 'button'],
-				}).show();
-				return;
-			}
-
 			new Noty({
 				type: 'success',
 				text: 'Đăng ký tài khoản thành công!',

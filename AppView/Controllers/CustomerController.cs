@@ -229,13 +229,6 @@ namespace AppView.Controllers
             }
             if (_repos.GetAll().Any(c => c.UserName == customer.UserName))
             {
-                ViewBag.NotyMessage = "Tên người dùng đã tồn tại!";
-                return View();
-            }
-
-            if (!Regex.IsMatch(customer.FullName, "^[a-zA-Z]+$"))
-            {
-                ViewBag.NotyMessage = "Tên đăng nhập không hợp lệ!";
                 return View();
             }
             if (userKhach != null)
