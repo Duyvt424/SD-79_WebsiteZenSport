@@ -874,12 +874,57 @@
 			},
 		});
 
+		//// Hàm cập nhật biểu đồ và log doanh thu theo từng ngày
+		//function filterData() {
+		//	const startDate = new Date(startDateInput.value);
+		//	const endDate = new Date(endDateInput.value);
+
+		//	// Gọi action trong controller để lấy dữ liệu từ backend
+		//	fetch(`/Dashboard/GetDailyRevenue?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
+		//		.then(response => response.json())
+		//		.then(data => {
+		//			// Log doanh thu theo từng ngày
+		//			console.log(data);
+
+		//			// Cập nhật nhãn và dữ liệu trong biểu đồ
+		//			chart1.data.labels = data.map(item => moment(item.date).format("DD/MM/YYYY"));
+		//			chart1.data.datasets[0].data = data.map(item => item.totalRevenue);
+		//			chart1.update();
+		//		})
+		//		.catch(error => console.error('Lỗi khi lấy dữ liệu:', error));
+		//}
+
+		//// Gắn sự kiện onchange của input date với hàm filterData
+		//startDateInput.addEventListener("change", filterData);
+		//endDateInput.addEventListener("change", filterData);
+
+		//// Gọi filterData lần đầu khi trang được tải
+		//filterData();
+
 		// Hàm cập nhật biểu đồ và log doanh thu theo từng ngày
 		function filterData() {
-			const startDate = new Date(startDateInput.value);
-			const endDate = new Date(endDateInput.value);
+			// Lấy ngày hiện tại
+			const currentDate = new Date();
 
-			// Gọi action trong controller để lấy dữ liệu từ backend
+			// Tính toán ngày 7 ngày trước
+			const sevenDaysAgo = new Date(currentDate);
+			sevenDaysAgo.setDate(currentDate.getDate() - 7);
+
+			// Nếu ngày bắt đầu chưa được chọn, đặt giá trị mặc định là 7 ngày trước ngày hiện tại
+			if (!startDateInput.value) {
+				startDateInput.valueAsDate = sevenDaysAgo;
+			}
+
+			// Nếu ngày kết thúc chưa được chọn, đặt giá trị mặc định là ngày hiện tại
+			if (!endDateInput.value) {
+				endDateInput.valueAsDate = currentDate;
+			}
+
+			// Lấy giá trị ngày bắt đầu và kết thúc đã được chọn
+			const startDate = startDateInput.valueAsDate;
+			const endDate = endDateInput.valueAsDate;
+
+			// Tiếp tục với phần gọi API để lấy dữ liệu từ backend
 			fetch(`/Dashboard/GetDailyRevenue?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
 				.then(response => response.json())
 				.then(data => {
@@ -900,6 +945,7 @@
 
 		// Gọi filterData lần đầu khi trang được tải
 		filterData();
+
 	</script>
 
 
