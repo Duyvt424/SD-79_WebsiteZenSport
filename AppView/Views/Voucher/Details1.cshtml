@@ -1,0 +1,70 @@
+﻿@model AppData.Models.Voucher
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Http
+
+@{
+   
+    ViewData["Title"] = "Details1";
+    string formattedValue = string.Format("{0:#,##0}", Model.VoucherValue);
+    string formattedValue1 = string.Format("{0:#,##0}", Model.Total);
+}
+
+
+
+
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        .coupon {
+            border: 5px dotted #bbb;
+            width: 80%;
+            border-radius: 15px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .container {
+            padding: 2px 16px;
+            background-color: #f1f1f1;
+        }
+
+        .promo {
+            background: #ccc;
+            padding: 3px;
+        }
+
+        .expire {
+            color: red;
+        }
+    </style>
+
+
+    <div class="coupon">
+        <div class="container">
+            <h3>ZENSPORT LOGO</h3>
+        </div>
+        <img src="/image/79cf6b2d-1216-4d22-a3cd-e9fca50ddebe.png" alt="Avatar" style="width:100%;">
+        <br />
+        <br />
+        <div class="container" style="background-color:white">
+            <h2><b>@Html.Raw(formattedValue)Đ OFF YOUR PURCHASE OF INVOICE VALUE @Html.Raw(formattedValue1)Đ </b></h2>
+            <br />
+
+
+            <p>Lorem ipsum dolor sit amet, et nam pertinax gloriatur. Sea te minim soleat senserit, ex quo luptatum tacimates voluptatum, salutandi delicatissimi eam ea. In sed nullam laboramus appellantur, mei ei omnis dolorem mnesarchum.</p>
+            <p>Exclusiveright: <span>@Html.DisplayFor(model => model.Exclusiveright)</span></p>
+            <p>Intended for: <span>@Html.DisplayFor(model => model.UserNameCustomer)</span></p>
+
+        </div>
+        <br />
+        <div class="container">
+            <p>Use Promo Code: <span class="promo">@Html.DisplayFor(model => model.VoucherCode)</span></p>
+            <p class="expire">Expires: @Html.DisplayFor(model => model.ExpirationDate)</p>
+        </div>
+    </div>
+
+</html>
+
+

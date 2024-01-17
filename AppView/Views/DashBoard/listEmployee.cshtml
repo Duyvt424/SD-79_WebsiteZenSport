@@ -216,7 +216,7 @@
 							<a href="@Url.Action("settings", "DashBoard")"> Nhân viên </a>
 						</li>
 						<li>
-							<a href="blank-page.html"> Khách hàng </a>
+							<a asp-controller="Customers" asp-action="GetAllCustomer"> Khách hàng </a>
 						</li>
 					</ul>
 				</li>
@@ -238,11 +238,11 @@
 					</a>
 					<ul id="ddmenu_3" class="collapse dropdown-nav">
 						<li>
-							<a href="signin.html"> Sign In </a>
+							<a asp-controller="Employee" asp-action="LogOut"> Log out </a>
 						</li>
-						<li>
+						@*<li>
 							<a href="signup.html"> Sign Up </a>
-						</li>
+						</li>*@
 					</ul>
 				</li>
 				<span class="divider"><hr /></span>
@@ -263,34 +263,34 @@
 					</a>
 					<ul id="ddmenu_5" class="collapse dropdown-nav">
 						<li>
-							<a href="@Url.Action("GetAllAddress", "Address")"> Address </a>
+							<a href="@Url.Action("GetAllAddress", "Addresss")"> Address </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllBill", "Bill")"> Bill </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllColor", "Color")"> Color </a>
+							<a href="@Url.Action("GetAllColor", "Colors")"> Color </a>
 						</li>
+						@*	<li>
+						<a href="@Url.Action("GetAllCustomer", "Customer")"> Customer </a>
+						</li>*@
 						<li>
-							<a href="@Url.Action("GetAllCustomer", "Customer")"> Customer </a>
-						</li>
-						<li>
-							<a href="@Url.Action("GetAllEmployee", "Employee")"> Employee </a>
+							<a href="@Url.Action("GetAllEmployee", "Employees")"> Employee </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllImge", "Image")"> Image </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllMaterials", "Material")"> Material </a>
+							<a href="@Url.Action("GetAllMaterials", "Materials")"> Material </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllProduct", "Product")"> Product </a>
+							<a href="@Url.Action("GetAllProduct", "Products")"> Product </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllPu", "PuchaseMethod")"> PuchaseMethod </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllRanks", "Rank")"> Rank </a>
+							<a href="@Url.Action("GetAllRanks", "Ranks")"> Rank </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllRole", "Role")"> Role </a>
@@ -302,20 +302,20 @@
 							<a href="@Url.Action("GetAllShoesDetails_Size", "ShoesDetails_Sizes")"> ShoesDetails - Size </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSize", "Size")"> Size </a>
+							<a href="@Url.Action("GetAllSize", "Sizes")"> Size </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSole", "Sole")"> Sole </a>
+							<a href="@Url.Action("GetAllSole", "Soles")"> Sole </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllStyles", "Style")"> Style </a>
+							<a href="@Url.Action("GetAllStyles", "Styles")"> Style </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSuppliers", "Supplier")"> Supplier </a>
+							<a href="@Url.Action("GetAllSuppliers", "Suppliers")"> Supplier </a>
 						</li>
-						<li>
-							<a href="@Url.Action("GetAllVouchers", "Voucher")"> Voucher </a>
-						</li>
+						@*	<li>
+						<a href="@Url.Action("GetAllVouchers", "Voucher")"> Voucher </a>
+						</li>*@
 					</ul>
 				</li>
 				<span class="divider"><hr /></span>

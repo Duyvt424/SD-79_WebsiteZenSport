@@ -169,9 +169,13 @@
                         <img src="@Url.Content("~/image/" + item.ImageUrl)" alt="Shoes for you" style="width: 100%;" data-shoes-id="@item.ShoesDetailsId" data-shoes-name="@ViewBag.NameSP[item.ShoesDetailsId]" data-shoes-style="@ViewBag.NameStyle[item.ShoesDetailsId]">
                     </div>
                     <div class="caption">
-                        <h6 style="text-align:center;">@ViewBag.NameSP[item.ShoesDetailsId] - @ViewBag.NameStyle[item.ShoesDetailsId]</h6>
+                        <!-- Your HTML code with inline CSS styles -->
+                        <!-- Your HTML code with inline CSS styles -->
+                        <h6 style="text-align: center; color: #333; font-size: 16px; font-weight: bold; margin-bottom: 5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h6>
+                        <h6 style="text-align: center; color: #333; font-size: 16px; font-weight: bold; margin-bottom: 5px;">@ViewBag.NameStyle[item.ShoesDetailsId]</h6>
+                        <p class="price" style="text-align: center; color: red; font-size: 18px; font-weight: bold; margin-top: 5px;">@item.Price.ToString("N0")đ</p>
 
-                        <p class="price" style="text-align:center;">@item.Price.ToString("N0")đ</p>
+
                     </div>
                 </div>
             }
@@ -183,9 +187,11 @@
                         <img src="@Url.Content("~/image/" + item.ImageUrl)" alt="Shoes for you" style="width: 100%;" data-shoes-id="@item.ShoesDetailsId" data-shoes-name="@ViewBag.NameSP[item.ShoesDetailsId]" data-shoes-style="@ViewBag.NameStyle[item.ShoesDetailsId]">
                     </div>
                     <div class="caption">
-                        <h6 style="text-align:center;">@ViewBag.NameSP[item.ShoesDetailsId] - @ViewBag.NameStyle[item.ShoesDetailsId]</h6>
+                        <!-- Your HTML code with inline CSS styles -->
+                        <h6 style="text-align: center; color: #333; font-size: 16px; font-weight: bold; margin-bottom: 5px;">@ViewBag.NameSP[item.ShoesDetailsId]</h6>
+                        <h6 style="text-align: center; color: #333; font-size: 16px; font-weight: bold; margin-bottom: 5px;">@ViewBag.NameStyle[item.ShoesDetailsId]</h6>
+                        <p class="price" style="text-align: center; color: red; font-size: 18px; font-weight: bold; margin-top: 5px;">@item.Price.ToString("N0")đ</p>
 
-                        <p class="price" style="text-align:center;">@item.Price.ToString("N0")đ</p>
                     </div>
                 </div>
             }

@@ -403,7 +403,7 @@
                             <th>Lượt <br /> sử dụng</th>
                             <th>Số lượng</th>
                             <th>Cho đơn <br /> tối thiểu</th>
-                            <th>Hạng</th>
+                            <th style="display:none;">Hạng</th>
                             <th>Ngày tạo</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
@@ -425,7 +425,7 @@
                                                 <td>@Html.DisplayFor(modelItem => item.RemainingUsage)</td>
 
                                 <td>@string.Format("{0:#,0.##} VNĐ", item.Total)</td>
-                                               <td>@Html.DisplayFor(modelItem => item.Exclusiveright)</td>
+                                <td style="display:none;">@Html.DisplayFor(modelItem => item.Exclusiveright)</td>
                                                <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
                                               <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>

@@ -2,6 +2,13 @@
 @{
 	Layout = null;
 }
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	var objAdmin = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
+	var objAdminName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	var objAdminImg = HttpContextAccessor.HttpContext.Session.GetString("UserImage");
+	var objAdminEmail = HttpContextAccessor.HttpContext.Session.GetString("UserEmail");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,9 +94,21 @@
 							<a href="@Url.Action("settings", "DashBoard")"> Nhân viên </a>
 						</li>
 						<li>
-							<a href="blank-page.html"> Khách hàng </a>
+							<a asp-controller="Customers" asp-action="GetAllCustomer"> Khách hàng </a>
 						</li>
 					</ul>
+				</li>
+				<li class="nav-item">
+					<a href="@Url.Action("GetAllVouchers", "Voucher")">
+						<span class="icon">
+							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M1.66666 4.16667C1.66666 3.24619 2.41285 2.5 3.33332 2.5H16.6667C17.5872 2.5 18.3333 3.24619 18.3333 4.16667V9.16667C18.3333 10.0872 17.5872 10.8333 16.6667 10.8333H3.33332C2.41285 10.8333 1.66666 10.0872 1.66666 9.16667V4.16667Z" />
+								<path d="M1.875 13.75C1.875 13.4048 2.15483 13.125 2.5 13.125H17.5C17.8452 13.125 18.125 13.4048 18.125 13.75C18.125 14.0952 17.8452 14.375 17.5 14.375H2.5C2.15483 14.375 1.875 14.0952 1.875 13.75Z" />
+								<path d="M2.5 16.875C2.15483 16.875 1.875 17.1548 1.875 17.5C1.875 17.8452 2.15483 18.125 2.5 18.125H17.5C17.8452 18.125 18.125 17.8452 18.125 17.5C18.125 17.1548 17.8452 16.875 17.5 16.875H2.5Z" />
+							</svg>
+						</span>
+						<span class="text">Quản lí vouchers</span>
+					</a>
 				</li>
 				@*          <li class="nav-item">
 				<a href="invoice.html">
@@ -120,11 +139,11 @@
 					</a>
 					<ul id="ddmenu_3" class="collapse dropdown-nav">
 						<li>
-							<a href="signin.html"> Sign In </a>
+							<a asp-controller="Employee" asp-action="LogOut"> Log out </a>
 						</li>
-						<li>
+						@*<li>
 							<a href="signup.html"> Sign Up </a>
-						</li>
+						</li>*@
 					</ul>
 				</li>
 				<span class="divider"><hr /></span>
@@ -145,34 +164,34 @@
 					</a>
 					<ul id="ddmenu_5" class="collapse dropdown-nav">
 						<li>
-							<a href="@Url.Action("GetAllAddress", "Address")"> Address </a>
+							<a href="@Url.Action("GetAllAddress", "Addresss")"> Address </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllBill", "Bill")"> Bill </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllColor", "Color")"> Color </a>
+							<a href="@Url.Action("GetAllColor", "Colors")"> Color </a>
 						</li>
+						@*	<li>
+						<a href="@Url.Action("GetAllCustomer", "Customer")"> Customer </a>
+						</li>*@
 						<li>
-							<a href="@Url.Action("GetAllCustomer", "Customer")"> Customer </a>
-						</li>
-						<li>
-							<a href="@Url.Action("GetAllEmployee", "Employee")"> Employee </a>
+							<a href="@Url.Action("GetAllEmployee", "Employees")"> Employee </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllImge", "Image")"> Image </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllMaterials", "Material")"> Material </a>
+							<a href="@Url.Action("GetAllMaterials", "Materials")"> Material </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllProduct", "Product")"> Product </a>
+							<a href="@Url.Action("GetAllProduct", "Products")"> Product </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllPu", "PuchaseMethod")"> PuchaseMethod </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllRanks", "Rank")"> Rank </a>
+							<a href="@Url.Action("GetAllRanks", "Ranks")"> Rank </a>
 						</li>
 						<li>
 							<a href="@Url.Action("GetAllRole", "Role")"> Role </a>
@@ -184,20 +203,20 @@
 							<a href="@Url.Action("GetAllShoesDetails_Size", "ShoesDetails_Sizes")"> ShoesDetails - Size </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSize", "Size")"> Size </a>
+							<a href="@Url.Action("GetAllSize", "Sizes")"> Size </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSole", "Sole")"> Sole </a>
+							<a href="@Url.Action("GetAllSole", "Soles")"> Sole </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllStyles", "Style")"> Style </a>
+							<a href="@Url.Action("GetAllStyles", "Styles")"> Style </a>
 						</li>
 						<li>
-							<a href="@Url.Action("GetAllSuppliers", "Supplier")"> Supplier </a>
+							<a href="@Url.Action("GetAllSuppliers", "Suppliers")"> Supplier </a>
 						</li>
-						<li>
-							<a href="@Url.Action("GetAllVouchers", "Voucher")"> Voucher </a>
-						</li>
+						@*	<li>
+						<a href="@Url.Action("GetAllVouchers", "Voucher")"> Voucher </a>
+						</li>*@
 					</ul>
 				</li>
 				<span class="divider"><hr /></span>
@@ -357,10 +376,10 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="~/assets/images/profile/profile-image.png" alt="" />
+												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;" />
 											</div>
 											<div>
-												<h6 class="fw-500">Adam Joe</h6>
+												<h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
 												<p>Admin</p>
 											</div>
 										</div>
@@ -370,12 +389,11 @@
 									<li>
 										<div class="author-info flex items-center !p-1">
 											<div class="image">
-												<img src="~/assets/images/profile/profile-image.png" alt="image">
+												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="image">
 											</div>
 											<div class="content">
-												<h4 class="text-sm">Adam Joe</h4>
-												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-												   href="#">Email@gmail.com</a>
+												<h4 class="text-sm">@Html.Raw(objAdminName?.Replace("\"", ""))</h4>
+												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">@Html.Raw(objAdminEmail?.Replace("\"", ""))</a>
 											</div>
 										</div>
 									</li>
