@@ -246,6 +246,9 @@ namespace AppView.Controllers
             if (objBill != null)
             {
                 objBill.EmployeeID = EmployeeID;
+                objBill.IsPaid = true;
+                objBill.PaymentDay = DateTime.Now;
+                objBill.PurchaseMethodID = namePurchaseMethod;
             }
             var historyBill = new ReturnedProducts()
             {
