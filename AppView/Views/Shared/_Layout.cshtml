@@ -91,6 +91,16 @@
 			display: block;
 		}
 
+		.navbar-brand {
+			font-family: 'Your Preferred Font', sans-serif; /* Chọn font chữ mong muốn */
+			font-size: 24px; /* Kích thước chữ */
+			font-weight: bold; /* Độ đậm của chữ */
+			color: #333; /* Màu chữ */
+			text-decoration: none; /* Loại bỏ gạch chân chữ (nếu cần) */
+			padding-left: 40px; /* Khoảng cách từ bên trái */
+			display: flex;
+			align-items: center; /* Canh chỉnh văn bản theo chiều dọc */
+		}
 	</style>
 </head>
 <body>
@@ -184,8 +194,10 @@
 				<nav class="navbar bg-body-tertiary">
 					<div class="container-fluid">
 						<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-							<img src="~/image/Logo_NIKE.svg.png" alt="Hi" width=90px height=15px
-								 style="padding-left: 40px;">
+							@*<img src="~/image/Logo_NIKE.svg.png" alt="Hi" width=90px height=15px
+								 style="padding-left: 40px;">*@
+
+							ZenSport 
 						</a>
 					</div>
 				</nav>
