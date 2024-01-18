@@ -1901,6 +1901,38 @@
 	</div>
 </div>
 
+<div class="modal-box1">
+	<!-- Modal -->
+	<div class="modal fade" id="myModalConfirmTTOnline" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content clearfix">
+				<button type="button" class="close quay-lai-ttOnline" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<form>
+					<div class="modal-body">
+						<h3 class="title">Xác nhận thanh toán online?</h3>
+						<input id="idBillSuccess" type="text" name="idBill" class="form-control" value="@Model.First().BillID" style="display:none;">
+						<p class="description">Xác nhận thanh toán online cho đơn hàng?. Lưu ý: Bạn sẽ không thể sửa đổi thông tin đơn hàng sau khi đã bấm xác nhận!</p>
+						<button class="btn thanh-toan-close" type="button" name="exit-dontHT">Thoát</button>
+						<button class="btn cancel thanh-toan" type="button" name="confirm-dontHT">Xác nhận</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('.thanh-toan-online').click(function () {
+			$('#myModalConfirmTTOnline').modal('show');
+		});
+
+		// Đóng modal khi click nút x (close)
+		$('.thanh-toan-close').click(function () {
+			$('#myModalConfirmTTOnline').modal('hide');
+		});
+	});
+</script>
 <script>
 	$(document).ready(function () {
 		$('.btn-returnSPNo').click(function () {
@@ -3396,13 +3428,13 @@
 					{
 						@if (Model.First().IsPaid == false && status != 2)
 						{
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn primary-btn-light btn-hover thanh-toan">Thanh toán online</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn primary-btn-light btn-hover thanh-toan-online">Thanh toán online</a>
 						}
 						else
 								if (Model.First().IsPaid == false && status == 2)
 						{
 							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn success-btn-light btn-hover thanh-toan-xn">Đã nhận được hàng</a>
-							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn primary-btn-light btn-hover thanh-toan">Thanh toán online</a>
+							<a style="font-size:16px; padding:5px 10px; margin:2px; float:right; margin-top:-2%;" class="main-btn primary-btn-light btn-hover thanh-toan-online">Thanh toán online</a>
 						}
 						else
 						{
