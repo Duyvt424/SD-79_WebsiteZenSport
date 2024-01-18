@@ -328,7 +328,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-												<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 
@@ -1621,6 +1621,18 @@
 									var emailValue = $("input[name='email']").val();
 									var streetValue = $("input[name='street']").val();
 
+									if(nameUserValue === "" || phoneNumberValue === "" || emailValue === "" || streetValue === "")
+									{
+										new Noty({
+											type: 'warning',
+											text: 'Vui lòng nhập thông tin!',
+											timeout: 1000,
+											progressBar: true,
+											closeWith: ['click', 'button'],
+										}).show();
+										event.preventDefault();
+										return;
+									}
 									// Gán giá trị vào các input ẩn
 									$("#nameKhach").val(nameUserValue);
 									$("#sdtKhach").val(phoneNumberValue);
