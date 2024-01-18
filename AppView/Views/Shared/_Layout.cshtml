@@ -189,15 +189,13 @@
 				</nav>
 			</div>
 		}
-		<div class="container-fluid" style="margin-left: 14px; width: 98%;">
+		<div class="container-fluid" style="margin-right: 25px; width: 98%;">
 			<nav class="navbar navbar-expand-lg bg-body-tertiary">
 				<nav class="navbar bg-body-tertiary">
 					<div class="container-fluid">
 						<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-							@*<img src="~/image/Logo_NIKE.svg.png" alt="Hi" width=90px height=15px
-								 style="padding-left: 40px;">*@
-
-							ZenSport 
+							<img src="~/image/anhlogo23.png" alt="Hi" width=180px height=70px
+								 style="padding-left: 0px;">
 						</a>
 					</div>
 				</nav>
@@ -233,9 +231,12 @@
 							<li class="nav-item">
 								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="ListProduct">Sản phẩm</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link active" aria-current="page" asp-area="" asp-controller="DashBoardCustomer" asp-action="tables1">Đơn hàng</a>
-							</li>
+							@if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
+							{
+								<li class="nav-item">
+									<a class="nav-link active" aria-current="page" asp-area="" asp-controller="DashBoardCustomer" asp-action="tables1">Đơn hàng</a>
+								</li>
+							}
 						</ul>
 						<form class="d-flex" role="search" method="get" action="@Url.Action("Search", "Home")">
 							<div class="src-box">

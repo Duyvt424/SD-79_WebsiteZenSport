@@ -270,6 +270,80 @@
 </script>*@
 
 <script>
+	document.addEventListener('DOMContentLoaded', function () {
+		document.getElementById('register-form').addEventListener('submit', function (event) {
+			// Validation for FullName
+			var fullNameInput = document.getElementById('FullName');
+			if (!/^.{6,}$/.test(fullNameInput.value)) {
+				new Noty({
+					type: 'error',
+					text: 'Tên người dùng không hợp lệ!',
+					timeout: 600,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				event.preventDefault();
+				return;
+			}
+
+			var userNameInput = document.getElementById('UserName');
+			if (!/^\S{6,}$/.test(userNameInput.value)) {
+				new Noty({
+					type: 'error',
+					text: 'Tên đăng nhập không hợp lệ!',
+					timeout: 600,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				event.preventDefault();
+				return;
+			}
+			// Kiểm tra không chứa ký tự đặc biệt
+			if (/[^a-zA-Z0-9]/.test(userNameInput.value)) {
+				new Noty({
+					type: 'error',
+					text: 'Tên đăng nhập không hợp lệ1!',
+					timeout: 600,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				event.preventDefault();
+				return;
+			}
+
+			// Validation for PhoneNumber
+			var phoneNumberInput = document.getElementById('PhoneNumber');
+			if (!/^0[0-9]{9,10}$/.test(phoneNumberInput.value)) {
+				new Noty({
+					type: 'error',
+					text: 'Số điện thoại không hợp lệ!',
+					timeout: 600,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				event.preventDefault();
+				return;
+			}
+
+			// Validation for Password and ConfirmPassword
+			var passwordInput = document.getElementById('Password');
+			var confirmPasswordInput = document.getElementById('ConfirmPassword');
+			if (!/^\S{6,}$/.test(passwordInput.value) || passwordInput.value !== confirmPasswordInput.value) {
+				new Noty({
+					type: 'error',
+					text: 'Vui lòng nhập mật trên 6 ký tự!',
+					timeout: 600,
+					progressBar: true,
+					closeWith: ['click', 'button'],
+				}).show();
+				event.preventDefault();
+				return;
+			}
+		});
+	});
+</script>
+
+<script>
 	$(document).ready(function () {
 		$("#ConfirmPassword").keyup(checkPasswordMatch);
 		$("#Password").keyup(checkPasswordMatch);
@@ -307,14 +381,6 @@
 				e.preventDefault(); // Ngăn chặn form submit nếu mật khẩu không khớp
 				return;
 			}
-
-			new Noty({
-				type: 'success',
-				text: 'Đăng ký tài khoản thành công!',
-				timeout: 1500,
-				progressBar: true,
-				closeWith: ['click', 'button'],
-			}).show();
 		});
 	});
 

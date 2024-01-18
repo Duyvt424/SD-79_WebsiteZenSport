@@ -263,32 +263,6 @@
 				}
 			});
 		});
-
-	</script>
-	<script>
-		$(document).ready(function () {
-			var searchTerm = '@ViewBag.NameSP';
-			if (searchTerm != '') {
-				$('#search-input').val(searchTerm);
-			}
-
-			$('form').submit(function (event) {
-				event.preventDefault(); // ngăn chặn hành động mặc định của trình duyệt
-
-				var name = $('#search-input').val();
-				$.ajax({
-					url: "/Home/Search",
-					data: { name: name },
-					success: function (result) {
-						$('#product-list').html(result);
-						$('#search-input').val(name);
-					},
-					error: function (xhr) {
-						alert(xhr.responseText);
-					}
-				});
-			});
-		});
 	</script>
 </body>
 
