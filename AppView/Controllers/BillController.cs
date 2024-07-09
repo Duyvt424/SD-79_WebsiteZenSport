@@ -745,7 +745,7 @@ namespace AppView.Controllers
                     return Json(new { success = false, message = "Số lượng sản phẩm trong đơn hàng đã hết" });
                 }
             }
-            return Json(new { success = true, message = "AA!" });
+            return Json(new { success = true, message = "Success!" });
         }
 
         [HttpPost]
