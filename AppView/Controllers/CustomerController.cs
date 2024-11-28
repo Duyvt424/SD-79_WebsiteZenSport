@@ -396,12 +396,29 @@ namespace AppView.Controllers
             HttpContext.Session.Remove("UserId");
             return RedirectToAction("Login");
         }
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ChangePassword(Customer customer, string newpass, string enewpass)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var objCustomer = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == customerIdSession);
+            if (customer.Password != objCustomer.Password)
+            {
+                return RedirectToAction("ChangePassword");
+            }
 
-
-
-
-	
-
-
-	}
+            if (objCustomer != null && newpass != "" && enewpass != "")
+            {
+                objCustomer.Password = enewpass;
+            }
+            _dbContext.Customers.Update(objCustomer);
+            _dbContext.SaveChanges();
+            HttpContext.Session.Remove("UserId");
+            return RedirectToAction("Login");
+        }
+    }
 }

@@ -1614,25 +1614,23 @@
 						<script>
 							$(document).ready(function () {
 								$("#checkout-form").submit(function (event) {
-									// Ngăn chặn mặc định của form
 									//event.preventDefault();
 									var nameUserValue = $("input[name='nameUser']").val();
 									var phoneNumberValue = $("input[name='phoneNumber']").val();
 									var emailValue = $("input[name='email']").val();
 									var streetValue = $("input[name='street']").val();
-
-									if(nameUserValue === "" || phoneNumberValue === "" || emailValue === "" || streetValue === "")
-									{
-										new Noty({
-											type: 'warning',
-											text: 'Vui lòng nhập thông tin!',
-											timeout: 1000,
-											progressBar: true,
-											closeWith: ['click', 'button'],
-										}).show();
-										event.preventDefault();
-										return;
-									}
+									//if(nameUserValue === "" || phoneNumberValue === "" || emailValue === "" || streetValue === "")
+									//{
+									//	new Noty({
+									//		type: 'warning',
+									//		text: 'Vui lòng nhập thông tin!',
+									//		timeout: 1000,
+									//		progressBar: true,
+									//		closeWith: ['click', 'button'],
+									//	}).show();
+									//	event.preventDefault();
+									//	return;
+									//}
 									// Gán giá trị vào các input ẩn
 									$("#nameKhach").val(nameUserValue);
 									$("#sdtKhach").val(phoneNumberValue);

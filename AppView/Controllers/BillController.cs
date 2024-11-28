@@ -722,8 +722,9 @@ namespace AppView.Controllers
                 objBill.Status = 6;
                 objBill.TotalPrice -= billDetails.Price * quanity;
                 objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
+                billDetails.Quantity -= quanity;
                 _dbContext.Bills.Update(objBill);
-                //_dbContext.BillDetails.Update(billDetails);
+                _dbContext.BillDetails.Update(billDetails);
                 //_dbContext.ShoesDetails_Sizes.Update(ShoesDt_Size);
                 _dbContext.BillStatusHistories.Add(billstatusHis);
                 _dbContext.ReturnedProducts.Add(historyBill);
@@ -753,7 +754,6 @@ namespace AppView.Controllers
         {
             var objbill = _dbContext.Bills.First(c => c.BillID == idBill);
             var returnObj = _dbContext.ReturnedProducts.First(c => c.BillId == objbill.BillID && c.TransactionType == 1 && c.Status == 1);
-            var billDetails = _dbContext.BillDetails.FirstOrDefault(c => c.BillID == idBill && c.ShoesDetails_SizeID == returnObj.ShoesDetails_SizeID);
             var ShoesDt_Size = _dbContext.ShoesDetails_Sizes.FirstOrDefault(c => c.ID == returnObj.ShoesDetails_SizeID);
             if (returnObj.Status == 1)
             {
@@ -761,10 +761,8 @@ namespace AppView.Controllers
                 returnObj.Note = ghiChuReturn;
                 returnObj.Status = 0;
                 returnObj.ReturnedPrice = price;
-                billDetails.Quantity -= returnObj.QuantityReturned;
                 ShoesDt_Size.Quantity += returnObj.QuantityReturned;
                 _dbContext.Bills.Update(objbill);
-                _dbContext.BillDetails.Update(billDetails);
                 _dbContext.ReturnedProducts.Update(returnObj);
                 _dbContext.SaveChanges();
             }
@@ -785,7 +783,9 @@ namespace AppView.Controllers
                 objBill.TotalPrice += billDetails.Price * returnedObj.QuantityReturned;
                 objBill.TotalPriceAfterDiscount = priceVoucher != null ? objBill.TotalPrice - priceVoucher : objBill.TotalPrice - 0;
                 objBill.Status = 3;
+                billDetails.Quantity += returnedObj.QuantityReturned;
                 _dbContext.Bills.Update(objBill);
+                _dbContext.BillDetails.Update(billDetails);
                 _dbContext.ReturnedProducts.Update(returnedObj);
                 _dbContext.SaveChanges();
             }
