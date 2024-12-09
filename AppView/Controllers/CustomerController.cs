@@ -11,6 +11,9 @@ using System.Text.RegularExpressions;
 using AppView.Models;
 using System.Web;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AppView.Controllers
 { 
@@ -419,6 +422,62 @@ namespace AppView.Controllers
             _dbContext.SaveChanges();
             HttpContext.Session.Remove("UserId");
             return RedirectToAction("Login");
+        }
+
+        public async Task LoginByGoogle()
+        {
+            await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("GoogleResponse")
+                });
+        }
+
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+            {
+                claim.Issuer,
+                claim.OriginalIssuer,
+                claim.Type,
+                claim.Value
+            });
+            var nameIdentifier = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var fullName = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            var givenName = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var emailAddress = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var userDb = _dbContext.Customers.FirstOrDefault(c => c.Email == emailAddress);
+            var rank = _dbContext.Ranks.First(c => c.Name == "Không").RankID;
+            if (userDb == null)
+            {
+                var User = new Customer()
+                {
+                    CumstomerID = Guid.NewGuid(),
+                    FullName = fullName,
+                    UserName = givenName,
+                    Password = nameIdentifier,
+                    Email = emailAddress,
+                    Sex = 2,
+                    ResetPassword = "",
+                    PhoneNumber = "",
+                    Status = 2,
+                    DateCreated = DateTime.Now,
+                    RankID = rank
+                };
+                _dbContext.Customers.Add(User);
+                _dbContext.SaveChanges();
+                userDb = User;
+            }
+            HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(userDb.CumstomerID.ToString()));
+            HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(userDb.UserName));
+            HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(userDb.FullName));
+            HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(userDb.Email));
+            HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(userDb.Password));
+            HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(userDb.Sex));
+            HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(userDb.PhoneNumber));
+            HttpContext.Session.SetInt32("IsEmailLogin", userDb.Status);
+            return RedirectToAction("Index", "Home");
         }
     }
 }
