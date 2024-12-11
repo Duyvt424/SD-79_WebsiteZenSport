@@ -21,8 +21,8 @@ namespace AppAPI.Controllers
                 // Get Config Info
                 string vnp_Returnurl = $"https://localhost:7120/Bill/DetailsBill?billID={billID}&customerID={customerID}";
                 string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-                string vnp_TmnCode = "FCDTXZ7R";
-                string vnp_HashSecret = "CFXSPSWTFKNDMMSUBRALHRJAKEPAKBUE";
+                string vnp_TmnCode = "P1QG69PV";
+                string vnp_HashSecret = "M16XD5ML4KJV0GKQD4Z207OHJXICU4ZT";
 
                 // Build URL for VNPAY
                 VnPayLibrary vnpay = new VnPayLibrary();

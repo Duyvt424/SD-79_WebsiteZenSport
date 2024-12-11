@@ -561,11 +561,12 @@ namespace AppView.Controllers
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
             var customerId = customerIdSession != Guid.Empty ? customerIdSession : idCustomer;
             var userUpdate = _dBContext.Customers.FirstOrDefault(c => c.CumstomerID == customerId);
+            var emailGoogle = email != null ? email : userUpdate.Email;
             if (userUpdate != null)
             {
                 userUpdate.FullName = nameUser;
                 userUpdate.PhoneNumber = phoneNumber;
-                userUpdate.Email = email;
+                userUpdate.Email = emailGoogle;
                 _dBContext.Update(userUpdate);
                 _dBContext.SaveChanges();
             }

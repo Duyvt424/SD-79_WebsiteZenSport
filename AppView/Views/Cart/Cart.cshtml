@@ -760,10 +760,13 @@
 										<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
 										<label for="floatingInputEmail">Số điện thoại</label>
 									</div>
-									<div class="form-floating mb-3">
-										<input type="email" class="form-control" name="email" placeholder="Email" required>
-										<label for="floatingInputEmail">Email</label>
-									</div>
+									@if (Context.Session.GetInt32("IsEmailLogin") != 2)
+									{
+										<div class="form-floating mb-3">
+											<input type="email" class="form-control" name="email" placeholder="Email" required>
+											<label for="floatingInputEmail">Email</label>
+										</div>
+									}
 									<div class="row mb-4">
 										<div class="col">
 											<div class="form-floating mb-3">
