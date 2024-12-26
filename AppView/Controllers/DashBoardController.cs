@@ -213,10 +213,6 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult tables()
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
             var listBill = _dbContext.Bills.Select(c => new tablesViewModel
             {
                 BillID = c.BillID,
@@ -519,6 +515,10 @@ namespace AppView.Controllers
 
         public IActionResult listEmployee()
         {
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             var listEmployee = _dbContext.Employees.Select(c => new employeeViewModel
             {
                 EmployeeId = c.EmployeeID,

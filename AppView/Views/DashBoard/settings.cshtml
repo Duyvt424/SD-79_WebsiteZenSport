@@ -291,7 +291,7 @@
 									</li>
 									<li class="divider"></li>
 									<li>
-										<a href="#0">
+										<a href="@Url.Action("settings", "DashBoard", new {employeeId = objAdmin?.Replace("\"", "")})">
 											<i class="lni lni-user"></i> View Profile
 										</a>
 									</li>
@@ -308,7 +308,7 @@
 									</li>
 									<li class="divider"></li>
 									<li>
-										<a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
+										<a href="@Url.Action("LogOut", "Employee")"> <i class="lni lni-exit"></i> Sign Out </a>
 									</li>
 								</ul>
 							</div>
@@ -399,7 +399,7 @@
 						<div class="col-lg-6">
 							<div class="card-style settings-card-2 mb-30">
 								<div class="title mb-30">
-									<h6>My Profile</h6>
+									<h6>Thông tin cá nhân</h6>
 								</div>
 								<form action="#">
 									<div class="row">
@@ -421,7 +421,7 @@
 												<input type="text" asp-for="Address" />
 											</div>
 										</div>
-										<div class="col-xxl-12">
+										<div class="col-xxl-12" style="display:none;">
 											<div class="select-style-1">
 												<label>Vai trò</label>
 												<div class="select-position">

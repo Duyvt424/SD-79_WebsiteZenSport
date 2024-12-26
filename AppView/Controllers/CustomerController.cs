@@ -34,19 +34,26 @@ namespace AppView.Controllers
 			AllRepositories<Rank> all1 = new AllRepositories<Rank>(_dbContext, _rank);
 			_repos1 = all1;
 		}
-       
+
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
+
         public async Task<IActionResult> GetAllCustomer()
         {
-   //         string apiUrl = "https://localhost:7036/api/Customer/get-customer";
-   //         var httpClient = new HttpClient(); // tạo ra để callApi
-   //         var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
-   //                                                          // Lấy dữ liệu Json trả về từ Api được call dạng string
-   //         string apiData = await response.Content.ReadAsStringAsync();
-			//// Lấy kqua trả về từ API
-			// Đọc từ string Json vừa thu được sang List<T>
-
-
-			string apiUrl = "https://localhost:7036/api/Customer/get-customer";
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
+            string apiUrl = "https://localhost:7036/api/Customer/get-customer";
 			var httpClient = new HttpClient(); // tạo ra để callApi
 			var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
 			string apiData = await response.Content.ReadAsStringAsync();

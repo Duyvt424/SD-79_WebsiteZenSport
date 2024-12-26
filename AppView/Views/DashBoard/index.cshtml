@@ -172,7 +172,6 @@
 						</li>*@
 					</ul>
 				</li>
-				<span class="divider"><hr /></span>
 				<li class="nav-item nav-item-has-children">
 					<a href="#0"
 					   class="collapsed"
@@ -245,12 +244,6 @@
 						</li>*@
 					</ul>
 				</li>
-				<span class="divider"><hr /></span>
-
-
-
-
-
 				<li class="nav-item">
 					<a href="notification.html">
 						<span class="icon">
@@ -317,7 +310,7 @@
 									</li>
 									<li class="divider"></li>
 									<li>
-										<a href="#0">
+										<a href="@Url.Action("settings", "DashBoard", new {employeeId = objAdmin?.Replace("\"", "")})">
 											<i class="lni lni-user"></i> View Profile
 										</a>
 									</li>
@@ -334,7 +327,7 @@
 									</li>
 									<li class="divider"></li>
 									<li>
-										<a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
+										<a href="@Url.Action("LogOut", "Employee")"> <i class="lni lni-exit"></i> Sign Out </a>
 									</li>
 								</ul>
 							</div>

@@ -401,7 +401,7 @@
 									</li>
 									<li class="divider"></li>
 									<li>
-										<a href="#0"> <i class="lni lni-exit"></i> Sign Out </a>
+										<a href="@Url.Action("LogOut", "Employee")"> <i class="lni lni-exit"></i> Sign Out </a>
 									</li>
 								</ul>
 							</div>
@@ -665,7 +665,7 @@
 														</td>
 														<td>
 															<div class="action">
-																<a href="@Url.Action("settings", "DashBoard", new {employeeId = bill.EmployeeId})" class="text-danger">
+																<a href="@Url.Action("settings", "DashBoard", new {employeeId = objAdmin?.Replace("\"", "")})" class="text-danger">
 																	<i class="lni lni-eye"></i>
 																</a>
 															</div>

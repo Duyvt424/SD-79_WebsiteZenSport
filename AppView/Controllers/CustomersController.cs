@@ -33,23 +33,23 @@ namespace AppView.Controllers
             _repos1 = all1;
         }
 
-        //private bool CheckUserRole()
-        //{
-        //    var CustomerRole = HttpContext.Session.GetString("UserId");
-        //    var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
-        //    var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
-        //    if (CustomerRole != null || EmployeeName != "Quản lý")
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
+        private bool CheckUserRole()
+        {
+            var CustomerRole = HttpContext.Session.GetString("UserId");
+            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
+            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
+            if (CustomerRole != null || EmployeeName != "Quản lý")
+            {
+                return false;
+            }
+            return true;
+        }
         public async Task<IActionResult> GetAllCustomer()
         {
-            //if (CheckUserRole() == false)
-            //{
-            //    return RedirectToAction("Forbidden", "Home");
-            //}
+            if (CheckUserRole() == false)
+            {
+                return RedirectToAction("Forbidden", "Home");
+            }
             string apiUrl = "https://localhost:7036/api/Customer/get-customer";
             var httpClient = new HttpClient(); // tạo ra để callApi
             var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
@@ -120,53 +120,53 @@ namespace AppView.Controllers
             Customer customer = _repos.GetAll().FirstOrDefault(c => c.CumstomerID == id);
             return View(customer);
         }
-		//public async Task<IActionResult> EditCustomers(Customer customer) // Thực hiện việc Tạo mới
-		//{
-		//    var httpClient = new HttpClient();
-		//    string apiUrl = $"https://localhost:7036/api/Customer/update-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}&CumstomerID={customer.CumstomerID}";
-		//    var response = await httpClient.PutAsync(apiUrl, null);
-		//    return View();
+        //public async Task<IActionResult> EditCustomers(Customer customer) // Thực hiện việc Tạo mới
+        //{
+        //    var httpClient = new HttpClient();
+        //    string apiUrl = $"https://localhost:7036/api/Customer/update-customer?FullName={customer.FullName}&UserName={customer.UserName}&Password={customer.Password}&Email={customer.Email}&Sex={customer.Sex}&ResetPassword={customer.ResetPassword}&PhoneNumber={customer.PhoneNumber}&Status={customer.Status}&RankID={customer.RankID}&DateCreated={customer.DateCreated}&CumstomerID={customer.CumstomerID}";
+        //    var response = await httpClient.PutAsync(apiUrl, null);
+        //    return View();
 
 
-		//}
+        //}
 
-		public async Task<IActionResult> EditCustomers(Customer customer)
-		{
-			try
-			{
-				// Sử dụng HttpClient để gửi yêu cầu PUT
-				using (var httpClient = new HttpClient())
-				{
-					// Chuyển đổi dữ liệu khách hàng thành chuỗi JSON
-					var customerJson = JsonConvert.SerializeObject(customer);
-					var content = new StringContent(customerJson, Encoding.UTF8, "application/json");
+        public async Task<IActionResult> EditCustomers(Customer customer)
+        {
+            try
+            {
+                // Sử dụng HttpClient để gửi yêu cầu PUT
+                using (var httpClient = new HttpClient())
+                {
+                    // Chuyển đổi dữ liệu khách hàng thành chuỗi JSON
+                    var customerJson = JsonConvert.SerializeObject(customer);
+                    var content = new StringContent(customerJson, Encoding.UTF8, "application/json");
 
-					// Gửi yêu cầu PUT đến API
-					var apiUrl = "https://localhost:7036/api/Customer/update-customer";
-					var response = await httpClient.PutAsync(apiUrl, content);
+                    // Gửi yêu cầu PUT đến API
+                    var apiUrl = "https://localhost:7036/api/Customer/update-customer";
+                    var response = await httpClient.PutAsync(apiUrl, content);
 
-					// Kiểm tra xem yêu cầu đã thành công hay không
-					if (response.IsSuccessStatusCode)
-					{
-						ViewData["SuccessMessage"] = "Sửa thành công!";
-					}
-					else
-					{
-						ViewData["ErrorMessage"] = $"Lỗi từ server: {response.StatusCode}";
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				// Xử lý lỗi nếu có
-				ViewData["ErrorMessage"] = $"Có lỗi xảy ra: {ex.Message}";
-			}
+                    // Kiểm tra xem yêu cầu đã thành công hay không
+                    if (response.IsSuccessStatusCode)
+                    {
+                        ViewData["SuccessMessage"] = "Sửa thành công!";
+                    }
+                    else
+                    {
+                        ViewData["ErrorMessage"] = $"Lỗi từ server: {response.StatusCode}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có
+                ViewData["ErrorMessage"] = $"Có lỗi xảy ra: {ex.Message}";
+            }
 
-			// Trả về view, không chuyển hướng
-			return View();
-		}
+            // Trả về view, không chuyển hướng
+            return View();
+        }
 
-		public async Task<IActionResult> DeleteCustomer(Guid id)
+        public async Task<IActionResult> DeleteCustomer(Guid id)
         {
             //if (CheckUserRole() == false)
             //{
@@ -201,14 +201,14 @@ namespace AppView.Controllers
             {
                 HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(loggedInUser.CumstomerID.ToString()));
                 HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
-				HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
-				HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
-				HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(loggedInUser.Password));
-				HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(loggedInUser.Sex));
-				HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(loggedInUser.PhoneNumber));
-				HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(loggedInUser.Email));
+                HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(loggedInUser.FullName));
+                HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(loggedInUser.UserName));
+                HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(loggedInUser.Password));
+                HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(loggedInUser.Sex));
+                HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(loggedInUser.PhoneNumber));
+                HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(loggedInUser.Email));
 
-				TempData["SignUpSuccess"] = "Đăng nhập thành công!";
+                TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
             else
