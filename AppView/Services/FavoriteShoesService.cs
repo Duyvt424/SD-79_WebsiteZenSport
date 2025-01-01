@@ -10,11 +10,11 @@ namespace AppView.Services
         {
             _dbContext = new ShopDBContext();
         }
-        public bool AddFavoritShoes(FavoriteShoes favoritshose)
+        public bool AddFavoritShoes(FavoriteShoes favoriteShoes)
         {
             try
             {
-                _dbContext.Add(favoritshose);
+                _dbContext.Add(favoriteShoes);
                 _dbContext.SaveChanges();
                 return true;
             }
@@ -23,40 +23,39 @@ namespace AppView.Services
                 return false;
             }
         }
-        public List<FavoriteShoes> GetAllFavoritShoes()
+
+        public List<FavoriteShoes> GetAllFavoriteShoes()
         {
             return _dbContext.FavoriteShoes.ToList();
         }
-        public FavoriteShoes GetFavoritShoesById(Guid id)
+
+        public FavoriteShoes GetFavoritShoesById(Guid ID)
         {
-            return _dbContext.FavoriteShoes.First(x => x.FavoriteID==id);
+            return _dbContext.FavoriteShoes.First(x => x.FavoriteShoesID == ID);
         }
-        public bool RemoveFavoritShoes(FavoriteShoes favoritshose)
+        public bool RemoveFavoritShoes(FavoriteShoes favoriteShoes)
         {
             try
-            {
-               
-                _dbContext.FavoriteShoes.Remove(favoritshose);
+            {           
+                _dbContext.FavoriteShoes.Remove(favoriteShoes);
                 _dbContext.SaveChanges();
                 return true;
             }
             catch (Exception)
             {
-
                 return false;
             }
         }
-        public bool UpdateFavoritShoes(FavoriteShoes favoritshose)
+        public bool UpdateFavoritShoes(FavoriteShoes favoriteShoes)
         {
             try
             {
-                _dbContext.Update(favoritshose);
+                _dbContext.Update(favoriteShoes);
                 _dbContext.SaveChanges();
                 return true;
             }
             catch
             {
-
                 return false;
             }
         }

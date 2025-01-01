@@ -4,10 +4,10 @@ namespace AppView.IServices
 {
     public interface IFavoriteShoesService
     {
-        public bool AddFavoritShoes(FavoriteShoes favoritshose);
-        public bool RemoveFavoritShoes(FavoriteShoes favoritshose);
-        public bool UpdateFavoritShoes(FavoriteShoes favoritshose);
-        public List<FavoriteShoes> GetAllFavoritShoes();
-        public FavoriteShoes GetFavoritShoesById(Guid id);
+        public bool AddFavoritShoes(FavoriteShoes favoriteShoes);
+        public bool RemoveFavoritShoes(FavoriteShoes favoriteShoes);
+        public bool UpdateFavoritShoes(FavoriteShoes favoriteShoes);
+        public List<FavoriteShoes> GetAllFavoriteShoes();
+        public FavoriteShoes GetFavoritShoesById(Guid ID);
     }
 }

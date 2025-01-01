@@ -297,17 +297,17 @@
                 <tr>
                      <td>@stt</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FavoriteID)
+                        @Html.DisplayFor(modelItem => item.FavoriteShoesID)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ShoesDetailsId)
+                        @Html.DisplayFor(modelItem => item.ShoesDetails_SizeId)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.CumstomerID)
                     </td>
                     <td>
-                        <a href="@Url.Action("EditFavoriteShoes", new { id = item.FavoriteID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
-                        <a href="@Url.Action("DeleteFavoriteShoes", new { id = item.FavoriteID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
+                        <a href="@Url.Action("EditFavoriteShoes", new { id = item.FavoriteShoesID})" class="settings" title="Settings" data-toggle="tooltip"><i class="material-icons">&#xe3c9;</i></a>
+                        <a href="@Url.Action("DeleteFavoriteShoes", new { id = item.FavoriteShoesID})" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xe872;</i></a>
                       @*  @Html.ActionLink("Edit", "EditFavoriteShoes", new { id=item.FavoriteID}) |*@
                    
                     </td>

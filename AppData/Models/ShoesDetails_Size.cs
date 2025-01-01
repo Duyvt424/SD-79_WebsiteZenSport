@@ -17,5 +17,6 @@ namespace AppData.Models
         public virtual List<CartDetails> CartDetails { get; set; }
         public virtual List<BillDetails> BillDetails { get; set; }
         public virtual List<ReturnedProducts> ReturnedProducts { get; set; }
+        public virtual List<FavoriteShoes> FavoriteShoes { get; set; }
     }
 }

@@ -8,10 +8,12 @@ namespace AppData.Models
 {
     public class FavoriteShoes
     {
-        public Guid FavoriteID { get; set; }
-        public Guid ShoesDetailsId { get; set; }
+        public Guid FavoriteShoesID { get; set; }
+        public Guid ShoesDetails_SizeId { get; set; }
         public Guid CumstomerID { get; set; }
-        public virtual ShoesDetails ShoesDetails { get; set; }
+        public DateTime AddedDate { get; set; }
+        public int Status { get; set; }
+        public virtual ShoesDetails_Size ShoesDetails_Size { get; set; }
         public virtual Customer Customer { get; set; }
         
     }

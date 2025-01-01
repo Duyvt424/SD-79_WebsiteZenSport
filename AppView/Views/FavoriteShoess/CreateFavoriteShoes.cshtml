@@ -27,15 +27,15 @@
                                     <form asp-action="CreateFavoriteShoes"style="margin-top:10px;" id="register-form">
                                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                         <div class="form-floating mb-3">
-                                        <select asp-for="FavoriteID" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
+                                        <select asp-for="FavoriteShoesID" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
                                         <label for="floatingInputEmail">Mã đôi giày yêu thích</label>
-                                        <span asp-validation-for="FavoriteID" class="text-danger"></span>
+                                        <span asp-validation-for="FavoriteShoesID" class="text-danger"></span>
                                         </div>
                                         
                                         <div class="form-floating mb-3">
-                                        <select asp-for="ShoesDetailsId" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
+                                        <select asp-for="ShoesDetails_SizeId" class="form-control" asp-items="@ViewBag.ShoesDTList"></select>
                                         <label for="floatingInputEmail">Mã giày chi tiết</label>
-                                        <span asp-validation-for="ShoesDetailsId" class="text-danger"></span>
+                                        <span asp-validation-for="ShoesDetails_SizeId" class="text-danger"></span>
                                         </div>
                                         
                                          <div class="form-floating mb-3">

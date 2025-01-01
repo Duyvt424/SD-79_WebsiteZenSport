@@ -14,9 +14,11 @@ namespace AppData.Configurations
         public void Configure(EntityTypeBuilder<FavoriteShoes> builder)
         {
             builder.ToTable("FavoriteShoes");
-            builder.HasKey(c => c.FavoriteID);
+            builder.HasKey(c => c.FavoriteShoesID);
+            builder.Property(c => c.AddedDate).HasColumnType("Datetime");
+            builder.Property(c => c.Status).HasColumnType("int");
             builder.HasOne(c => c.Customer).WithMany(c => c.FavoriteShoes).HasForeignKey(c => c.CumstomerID);
-            builder.HasOne(c => c.ShoesDetails).WithMany(c => c.FavoriteShoes).HasForeignKey(c => c.ShoesDetailsId);
+            builder.HasOne(c => c.ShoesDetails_Size).WithMany(c => c.FavoriteShoes).HasForeignKey(c => c.ShoesDetails_SizeId);
         }
     }
 }

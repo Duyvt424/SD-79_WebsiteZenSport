@@ -4,19 +4,17 @@ using AppData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace AppAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FavoritshoesController : ControllerBase
+    public class FavoriteShoesController : ControllerBase
     {
         // GET: api/<FavoritshoesController>
         private readonly IAllRepositories<FavoriteShoes> repos;
         ShopDBContext _dbContext = new ShopDBContext();
         DbSet<FavoriteShoes> _favorite;
-        public FavoritshoesController()
+        public FavoriteShoesController()
         {
             _favorite = _dbContext.FavoriteShoes;
             AllRepositories<FavoriteShoes> all = new AllRepositories<FavoriteShoes>(_dbContext, _favorite);
@@ -30,14 +28,15 @@ namespace AppAPI.Controllers
             return repos.GetAll();
         }
         // POST api/<FavoritshoesController>
-        [HttpPost("create-favoritshoes")]
-        public string AddFavoritShoes( Guid CumstomerID, Guid ShoesDetailsId)
+        [HttpPost("create-favoriteshoes")]
+        public string AddFavoriteShoes(Guid CumstomerID, Guid ShoesDetails_SizeID, DateTime AddedDate, int Status)
         {
             FavoriteShoes favorite = new FavoriteShoes();
-            favorite.FavoriteID = Guid.NewGuid();
-            
+            favorite.FavoriteShoesID = Guid.NewGuid();
             favorite.CumstomerID = CumstomerID;
-            favorite.ShoesDetailsId = ShoesDetailsId;
+            favorite.ShoesDetails_SizeId = ShoesDetails_SizeID;
+            favorite.AddedDate = AddedDate;
+            favorite.Status = Status;
             if (repos.AddItem(favorite))
             {
                 return "Thêm thành công";
@@ -50,11 +49,13 @@ namespace AppAPI.Controllers
 
         // PUT api/<FavoritshoesController>/5
         [HttpPut("update-favoritshoes")]
-        public string UpdateFavoritShoes( Guid FavoriteID, Guid CumstomerID, Guid ShoesDetailsId)
+        public string UpdateFavoritShoes(Guid FavoriteShoesID, Guid CumstomerID, Guid ShoesDetails_SizeID, DateTime AddedDate, int Status)
         {
-            var favorite = repos.GetAll().First(c => c.FavoriteID == FavoriteID);
+            var favorite = repos.GetAll().First(c => c.FavoriteShoesID == FavoriteShoesID);
             favorite.CumstomerID = CumstomerID;
-            favorite.ShoesDetailsId = ShoesDetailsId;
+            favorite.ShoesDetails_SizeId = ShoesDetails_SizeID;
+            favorite.AddedDate = AddedDate;
+            favorite.Status = Status;
             if (repos.EditItem(favorite))
             {
                 return "Sửa thành công";
@@ -68,8 +69,9 @@ namespace AppAPI.Controllers
         [HttpDelete("delete-favoritshoes")]
         public string DeleteFavoritShoes(Guid id)
         {
-            var favorite = repos.GetAll().First(c => c.FavoriteID == id);
-            if (repos.RemoveItem(favorite))
+            var favorite = repos.GetAll().First(c => c.FavoriteShoesID == id);
+            favorite.Status = 1;
+            if (repos.EditItem(favorite))
             {
                 return "Xóa thành công";
             }

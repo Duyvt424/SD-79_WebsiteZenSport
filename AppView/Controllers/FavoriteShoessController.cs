@@ -13,75 +13,49 @@ namespace AppView.Controllers
 {
     public class FavoriteShoessController : Controller
     {
-        // GET: FavoriteShoess
         private readonly IAllRepositories<FavoriteShoes> repos;
         private readonly IAllRepositories<Customer> customer;
-        private readonly IAllRepositories<ShoesDetails> shoesDetail;
+        private readonly IAllRepositories<ShoesDetails_Size> shoesDetails_Size;
         private ShopDBContext _dbContext = new ShopDBContext();
-        private DbSet<FavoriteShoes> favorite;
-        private DbSet<ShoesDetails> _shd;
-        private DbSet<Customer> _cu;
-
+        private DbSet<FavoriteShoes> favoriteShoes;
+        private DbSet<ShoesDetails_Size> _shoesDetailsSize;
+        private DbSet<Customer> _customers;
         public FavoriteShoessController()
         {
-            favorite = _dbContext.FavoriteShoes;
-            AllRepositories<FavoriteShoes> all = new AllRepositories<FavoriteShoes>(_dbContext, favorite);
+            favoriteShoes = _dbContext.FavoriteShoes;
+            AllRepositories<FavoriteShoes> all = new AllRepositories<FavoriteShoes>(_dbContext, favoriteShoes);
             repos = all;
-            _cu = _dbContext.Customers;
-            AllRepositories<Customer> cu = new AllRepositories<Customer>(_dbContext, _cu);
+            _customers = _dbContext.Customers;
+            AllRepositories<Customer> cu = new AllRepositories<Customer>(_dbContext, _customers);
             customer = cu;
-            _shd = _dbContext.ShoesDetails;
-            AllRepositories<ShoesDetails> shd = new AllRepositories<ShoesDetails>(_dbContext, _shd);
-            shoesDetail = shd;
-        }
-
-        private bool CheckUserRole()
-        {
-            var CustomerRole = HttpContext.Session.GetString("UserId");
-            var EmployeeNameSession = HttpContext.Session.GetString("RoleName");
-            var EmployeeName = EmployeeNameSession != null ? EmployeeNameSession.Replace("\"", "") : null;
-            if (CustomerRole != null || EmployeeName != "Quản lý")
-            {
-                return false;
-            }
-            return true;
+            _shoesDetailsSize = _dbContext.ShoesDetails_Sizes;
+            AllRepositories<ShoesDetails_Size> shd = new AllRepositories<ShoesDetails_Size>(_dbContext, _shoesDetailsSize);
+            shoesDetails_Size = shd;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllFavoritShoes()
+        public async Task<IActionResult> GetAllFavoriteShoes()
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
-            string apiUrl = "https://localhost:7036/api/Favoritshoes/get-favoriteshoes";
-            var httpClient = new HttpClient(); // tạo ra để callApi
-            var response = await httpClient.GetAsync(apiUrl);// Lấy dữ liệu ra
+            string apiUrl = "https://localhost:7036/api/FavoriteShoes/get-favoriteshoes";
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(apiUrl);
             string apiData = await response.Content.ReadAsStringAsync();
-            var FavoShoe = JsonConvert.DeserializeObject<List<FavoriteShoes>>(apiData);
-            var shoesDT = shoesDetail.GetAll();
-            var cus = customer.GetAll();
-            return View(FavoShoe);
+            var FavoriteShoes = JsonConvert.DeserializeObject<List<FavoriteShoes>>(apiData);
+            return View(FavoriteShoes);
         }
+
         [HttpGet]
-
-
-        // GET: FavoriteShoesController/Create
         public async Task<IActionResult> CreateFavoriteShoes()
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var cus = dBContext.Customers.Where(c => c.Status == 0).ToList();
                 SelectList selectListCustomer = new SelectList(cus, "CumstomerID", "FullName");
-                ViewBag.CustomerList = selectListCustomer;
+                ViewBag.CusList = selectListCustomer;
 
-                var shoesDT = dBContext.ShoesDetails.Where(c => c.Status == 0).ToList();
-                SelectList selectListShoesDT = new SelectList(shoesDT, "ShoesDetailsId", "ShoesDetailsCode");
-                ViewBag.ShoesDTList = selectListShoesDT;
+                var shoesDTSize = dBContext.ShoesDetails_Sizes;
+                SelectList selectListShoesDT_Size = new SelectList(shoesDTSize, "ID", "ID");
+                ViewBag.ShoesDTList = selectListShoesDT_Size;
             }
             return View();
         }
@@ -90,53 +64,41 @@ namespace AppView.Controllers
         public async Task<IActionResult> CreateFavoriteShose(FavoriteShoes favoriteShoes)
         {
             var httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Favoritshoes/create-favoritshoes={favoriteShoes.ShoesDetailsId}&CustomerID={favoriteShoes.CumstomerID}&ShoesDetailsId={favoriteShoes.ShoesDetailsId}";
+            string apiUrl = $"https://localhost:7036/api/FavoriteShoes/create-favoriteshoes?CumstomerID={favoriteShoes.CumstomerID}&ShoesDetails_SizeID={favoriteShoes.ShoesDetails_SizeId}&AddedDate={favoriteShoes.AddedDate.ToString("yyyy-MM-ddTHH:mm:ss")}&Status={favoriteShoes.Status}";
             var response = await httpClient.PostAsync(apiUrl, null);
-            return RedirectToAction("GetAllFavoritShoes");
+            return RedirectToAction("GetAllFavoriteShoes");
         }
 
         [HttpGet]
         public async Task<IActionResult> EditFavoriteShoes(Guid id)
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
-            FavoriteShoes product = repos.GetAll().FirstOrDefault(c => c.FavoriteID == id);
+            FavoriteShoes favoriteShoes = repos.GetAll().FirstOrDefault(c => c.FavoriteShoesID == id);
             using (ShopDBContext dBContext = new ShopDBContext())
             {
                 var cus = dBContext.Customers.Where(c => c.Status == 0).ToList();
                 SelectList selectListCustomer = new SelectList(cus, "CumstomerID", "FullName");
-                ViewBag.CustomerList = selectListCustomer;
+                ViewBag.CusList = selectListCustomer;
 
-                var shoesDT = dBContext.ShoesDetails.Where(c => c.Status == 0).ToList();
-                SelectList selectListShoesDT = new SelectList(shoesDT, "ShoesDetailsId", "ShoesDetailsCode");
-                ViewBag.ShoesDTList = selectListShoesDT; 
+                var shoesDTSize = dBContext.ShoesDetails_Sizes;
+                SelectList selectListShoesDT_Size = new SelectList(shoesDTSize, "ID", "ID");
+                ViewBag.ShoesDTList = selectListShoesDT_Size;
             }
-            return View(product);
+            return View(favoriteShoes);
         }
-        public async Task<IActionResult> EditFavoriteShoes(FavoriteShoes product)
+        public async Task<IActionResult> EditFavoriteShoes(FavoriteShoes favoriteShoes)
         {
-            if (repos.EditItem(product))
-            {
-                return RedirectToAction("GetAllFavoritShoes");
-            }
-            else return BadRequest();
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/FavoriteShoes/update-favoritshoes?FavoriteShoesID={favoriteShoes.FavoriteShoesID}&CumstomerID={favoriteShoes.CumstomerID}&ShoesDetails_SizeID={favoriteShoes.ShoesDetails_SizeId}&AddedDate={favoriteShoes.AddedDate}&Status={favoriteShoes.Status}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            return RedirectToAction("GetAllFavoriteShoes");
         }
-
 
         public async Task<IActionResult> DeleteFavoriteShoes(Guid id)
         {
-            if (CheckUserRole() == false)
-            {
-                return RedirectToAction("Forbidden", "Home");
-            }
-            var favorite = repos.GetAll().First(c => c.FavoriteID == id);
-            if (repos.RemoveItem(favorite))
-            {
-                return RedirectToAction("GetAllFavoritShoes");
-            }
-            else return Content("Error");
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/FavoriteShoes/delete-favoritshoes?id={id}";
+            var response = await httpClient.DeleteAsync(apiUrl);
+            return RedirectToAction("GetAllFavoriteShoes");
         }
     }
 }
