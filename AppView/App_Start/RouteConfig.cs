@@ -1,5 +1,4 @@
-﻿using System.Web.Mvc;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace AppView.App_Start
 {

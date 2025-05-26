@@ -1,14 +1,13 @@
 ﻿using AppView.DTO;
-using AppData.IServices;
+using AppView.IRepositories;
 using AppData.Models;
-using AppView.IServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppView.Services
+namespace AppView.Repository
 {
     public class ShoesDetailsService : IShoesDetailsService
     {

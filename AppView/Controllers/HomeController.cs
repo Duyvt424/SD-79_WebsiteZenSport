@@ -1,6 +1,6 @@
 ﻿using AppData.IServices;
 using AppData.Models;
-using AppAPI.DTO;
+using AppView.DTO;
 using AppData.Services;
 using AppView.IServices;
 using AppView.Services;
@@ -150,10 +150,10 @@ namespace AppView.Controllers
 		[HttpGet]
 		public async Task<ActionResult> ListProduct1(string[] colors, string[] genders, string[] brands, string[] styles, string[] minPrice)
 		{
-			// Địa chỉ URL của API
-			//string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
-			string apiUrlV1 = "https://localhost:7036/api/ShoesDetails/filter-allProduct";
-			var rangeItems = new List<RangeItemcs>();
+            // Địa chỉ URL của API
+            //string apiUrl = "https://localhost:7036/api/ProductAPI/Price"; // Thay thế URL_CUA_API bằng URL thực tế của API của bạn.
+            string apiUrlV1 = "https://localhost:7036/api/ShoesDetails/filter-allProduct";
+            var rangeItems = new List<RangeItemcs>();
 			using (HttpClient client = new HttpClient())
 			{
 				string query = "";

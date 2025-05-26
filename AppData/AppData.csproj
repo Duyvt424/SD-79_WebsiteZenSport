@@ -3,11 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
+    <NoWarn>all</NoWarn>
+    <RestoreNoWarn>all</RestoreNoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
+	<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.13">

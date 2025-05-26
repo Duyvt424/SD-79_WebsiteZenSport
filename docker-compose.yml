@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.Api
+    ports:
+      - "5000:80"
+    networks:
+      - appnetwork
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  view:
+    build:
+      context: .
+      dockerfile: Dockerfile.View
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - appnetwork
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Azx1azx1!
+      POSTGRES_DB: db_datn
+    ports:
+      - "5432:5432"
+    networks:
+      - appnetwork
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Giữ lại dữ liệu của DB
+
+networks:
+  appnetwork:
+    driver: bridge
+
+volumes:
+  pgdata:

@@ -1,0 +1,24 @@
+# --- Bước 1: Build với SDK ---
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /app
+
+# Copy file solution và csproj
+COPY AppData.sln .
+COPY AppAPI/AppAPI.csproj AppAPI/
+COPY AppData/AppData.csproj AppData/
+
+# Khôi phục package
+RUN dotnet restore AppAPI/AppAPI.csproj
+
+# Copy toàn bộ source code API + Data
+COPY AppAPI/ AppAPI/
+COPY AppData/ AppData/
+
+# Build API
+RUN dotnet publish AppAPI/AppAPI.csproj -c Release -o /out
+
+# --- Bước 2: Chạy với runtime nhẹ ---
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build /out .
+ENTRYPOINT ["dotnet", "AppAPI.dll"]
