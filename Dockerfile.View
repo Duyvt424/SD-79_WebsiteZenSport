@@ -1,23 +1,17 @@
-# --- Bước 1: Build với SDK ---
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /app
 
-# Copy file solution và csproj
 COPY AppData.sln .
 COPY AppView/AppView.csproj AppView/
 COPY AppData/AppData.csproj AppData/
 
-# Khôi phục package
 RUN dotnet restore AppView/AppView.csproj
 
-# Copy toàn bộ source code View + Data
 COPY AppView/ AppView/
 COPY AppData/ AppData/
 
-# Build View
 RUN dotnet publish AppView/AppView.csproj -c Release -o /out
 
-# --- Bước 2: Chạy với runtime nhẹ ---
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build /out .

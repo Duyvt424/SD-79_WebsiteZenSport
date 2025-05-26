@@ -25,22 +25,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
 
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: Azx1azx1!
-      POSTGRES_DB: db_datn
-    ports:
-      - "5432:5432"
-    networks:
-      - appnetwork
-    volumes:
-      - pgdata:/var/lib/postgresql/data  # Giữ lại dữ liệu của DB
-
 networks:
   appnetwork:
     driver: bridge
-
-volumes:
-  pgdata:
