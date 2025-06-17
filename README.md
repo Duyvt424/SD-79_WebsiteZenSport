@@ -33,10 +33,10 @@ Zensport cung cấp các chức năng chính như:
 ```bash
 git clone https://github.com/Duyvt424/SD-79_WebsiteZenSport.git
 ```
-Mở solution bằng Visual Studio 2022 (hoặc mới hơn)
+Mở solution bằng Visual Studio
 ## 2. Cấu hình cơ sở dữ liệu SQL Server 
 * Cài đặt SQL Server
-* Chạy file script SQL trong thư mục /Database để tạo CSDL
+* Chạy file DATN_A.sql trong thư mục Database để tạo CSDL
 ## 3. Cập nhật chuỗi kết nối (Connection String)
 *  Tại Program.cs trong project AppAPI hãy thay thế bằng chuỗi kết nối của bạn:
 ```bash
