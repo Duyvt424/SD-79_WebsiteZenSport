@@ -12,6 +12,10 @@ using System.Diagnostics;
 using System.Linq;
 using ErrorViewModel = AppView.Models.ErrorViewModel;
 using System.Text;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using AppView.Models;
 
 namespace AppView.Controllers
 {
@@ -253,26 +257,111 @@ namespace AppView.Controllers
 
 		public IActionResult DetailsProduct(Guid id)
 		{
-			var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
-			var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
-			var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
-            if (NameProduct != null)
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+			if (customerIdSession != Guid.Empty)
 			{
-				ViewBag.nameProduct = NameProduct.Name;
-			}
-			if (StyleProduct != null)
-			{
-				ViewBag.styleProduct = StyleProduct.Name;
-			}
-            var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
-			ViewBag.ImageGolden1 = ImageGoldens.Image1;
-			ViewBag.ImageGolden2 = ImageGoldens.Image2;
-			ViewBag.ImageGolden3 = ImageGoldens.Image3;
-			ViewBag.ImageGolden4 = ImageGoldens.Image4;
+                var ChatUser = _shopDBContext.HistoryChats.Where(c => c.CustomerID == customerIdSession).ToList();
+                var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+                var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
+                var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
+                var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
+				//lấy thông tin để foreach sản phẩm gợi ý
+				var listShoesDT = _shoesDT.GetAllShoesDetails();
+                ViewBag.NameSP = "";
+                Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+                foreach (var item in listShoesDT)
+				{
+                    var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == item.ShoesDetailsId);
+                    if (firstImage != null)
+                    {
+                        item.ImageUrl = firstImage.Image1;
+                    }
 
-			var productUrl = Url.Action("DetailsProduct", "HomeController", new { id = ShoesDT.ProductID });
-			ViewBag.ProductUrl = productUrl;
-			return View(ShoesDT);
+                    var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == item.ProductID);
+                    if (product != null)
+                    {
+                        productNames[item.ShoesDetailsId] = product.Name;
+                    }
+                }
+
+                var detailsProductViewModel = new DetailsProductViewModel()
+                {
+                    ShoesDT = ShoesDT.ShoesDetailsId,
+                    NameProduct = NameProduct.ProductID,
+                    StyleProduct = StyleProduct.StyleID,
+                    ImageGoldens = ImageGoldens.ImageID,
+                    Price = ShoesDT.Price,
+                    ShoesDetailsId = ShoesDT.ShoesDetailsId,
+                    Description = ShoesDT.Description,
+                    ChatHistory = ChatUser
+                };
+                if (NameProduct != null)
+                {
+                    ViewBag.nameProduct = NameProduct.Name;
+                }
+                if (StyleProduct != null)
+                {
+                    ViewBag.styleProduct = StyleProduct.Name;
+                }
+				//lưu trữ vào viewbag
+                ViewBag.ImageGolden1 = ImageGoldens.Image1;
+                ViewBag.ImageGolden2 = ImageGoldens.Image2;
+                ViewBag.ImageGolden3 = ImageGoldens.Image3;
+                ViewBag.ImageGolden4 = ImageGoldens.Image4;
+                ViewBag.NameSP = productNames;
+                ViewBag.shoesList = listShoesDT;
+                var productUrl = Url.Action("DetailsProduct", "HomeController", new { id = ShoesDT.ProductID });
+                ViewBag.ProductUrl = productUrl;
+                return View(detailsProductViewModel);
+            }
+			else
+			{
+                var historyChatbot = HistoryChatSessionService.GetObjFromSession(HttpContext.Session, "UserChatbot") as List<HistoryChat>;
+                var ShoesDT = _shoesDT.GetAllShoesDetails().FirstOrDefault(c => c.ShoesDetailsId == id);
+                var NameProduct = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == ShoesDT.ProductID);
+                var StyleProduct = _style.GetAllStyles().FirstOrDefault(c => c.StyleID == ShoesDT.StyleID);
+                var ImageGoldens = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == id);
+                //lấy thông tin để foreach sản phẩm gợi ý
+                var listShoesDT = _shoesDT.GetAllShoesDetails();
+                ViewBag.NameSP = "";
+                Dictionary<Guid, string> productNames = new Dictionary<Guid, string>();
+                foreach (var item in listShoesDT)
+                {
+                    var firstImage = _image.GetAllImages().FirstOrDefault(c => c.ShoesDetailsID == item.ShoesDetailsId);
+                    if (firstImage != null)
+                    {
+                        item.ImageUrl = firstImage.Image1;
+                    }
+
+                    var product = _product.GetAllProducts().FirstOrDefault(c => c.ProductID == item.ProductID);
+                    if (product != null)
+                    {
+                        productNames[item.ShoesDetailsId] = product.Name;
+                    }
+                }
+                var detailsProductViewModel = new DetailsProductViewModel()
+                {
+                    ShoesDT = ShoesDT.ShoesDetailsId,
+                    NameProduct = NameProduct.ProductID,
+                    StyleProduct = StyleProduct.StyleID,
+                    ImageGoldens = ImageGoldens.ImageID,
+                    Price = ShoesDT.Price,
+                    ShoesDetailsId = ShoesDT.ShoesDetailsId,
+                    Description = ShoesDT.Description,
+                    ChatHistory = historyChatbot
+                };
+
+                ViewBag.nameProduct = NameProduct?.Name;
+                ViewBag.styleProduct = StyleProduct?.Name;
+                ViewBag.ImageGolden1 = ImageGoldens?.Image1;
+                ViewBag.ImageGolden2 = ImageGoldens?.Image2;
+                ViewBag.ImageGolden3 = ImageGoldens?.Image3;
+                ViewBag.ImageGolden4 = ImageGoldens?.Image4;
+                ViewBag.NameSP = productNames;
+                ViewBag.shoesList = listShoesDT;
+                return View(detailsProductViewModel);
+            }
 		}
 
 
@@ -427,6 +516,64 @@ namespace AppView.Controllers
                 .Select(p => p.Name)
                 .ToList();
             return Json(suggestions);
+        }
+
+		[HttpPost]
+		public async Task<IActionResult> SendPrompt(string prompt)
+		{
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var httpClient = new HttpClient();
+            string apiKey = "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";
+            var apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+
+            var payload = new
+            {
+                model = "meta-llama/llama-4-maverick:free",
+                messages = new[]
+                {
+					new { role = "user", content = prompt }
+				}
+            };
+
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(apiUrl, content);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            dynamic jsonResponse = JsonConvert.DeserializeObject(responseString);
+            string botMessage = Regex.Replace(jsonResponse.choices[0].message.content.ToString(), @"[#\\*`]+", "");
+			if (customerIdSession != Guid.Empty)
+			{
+                HistoryChat historyChat = new HistoryChat()
+                {
+                    HistoryChatID = Guid.NewGuid(),
+                    Message = prompt,
+					Response = botMessage,
+                    CreatedAt = DateTime.Now,
+                    CustomerID = customerIdSession
+                };
+				_shopDBContext.HistoryChats.Add(historyChat);
+				_shopDBContext.SaveChanges();
+            }
+			else
+			{
+                var chatList = HistoryChatSessionService.GetObjFromSession(HttpContext.Session, "UserChatbot") as List<HistoryChat>;
+                if (chatList == null)
+                    chatList = new List<HistoryChat>();
+
+                HistoryChat historyChatbot = new HistoryChat()
+                {
+                    HistoryChatID = Guid.NewGuid(),
+                    Message = prompt,
+                    Response = botMessage,
+                    CreatedAt = DateTime.Now,
+                    CustomerID = customerIdSession
+                };
+				chatList.Add(historyChatbot);
+				HistoryChatSessionService.SetObjToSession(HttpContext.Session, "UserChatbot", chatList);
+            }
+            return Json(new { response = botMessage });
         }
     }
 }

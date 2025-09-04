@@ -44,10 +44,11 @@ namespace AppData.Models
         public DbSet<BillStatusHistory> BillStatusHistories { get; set; }
         public DbSet<Sex> Sex { get; set; }
         public DbSet<ReturnedProducts> ReturnedProducts { get; set; }
+        public DbSet<HistoryChat> HistoryChats { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=DATN_A;User ID=sa;Password=123456");
+            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-46F72MJA\SQLEXPRESS;Initial Catalog=DATN_A;User ID=sa;Password=azx1azx1");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

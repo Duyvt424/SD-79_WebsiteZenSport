@@ -24,5 +24,6 @@ namespace AppData.Models
         public virtual List<Bill> Bills { get; set; }
         public virtual List<Address> Addresses { get; set; }
         public virtual List<FavoriteShoes> FavoriteShoes { get; set; }
+        public virtual List<HistoryChat> HistoryChats { get; set; }
     }
 }
