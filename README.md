@@ -1,7 +1,7 @@
 # Zensport Sneakers
 
 # Giới thiệu
-Zensport Sneakers là một website thương mại điện tử bán giày thể thao, được thiết kế và phát triển bởi nhóm 4 thành viên như một đồ án tốt nghiệp. Ứng dụng giúp quản lý sản phẩm, đơn hàng, khách hàng, mã giảm giá, và thanh toán trực tuyến thông qua VNPay.
+Zensport Sneakers là một website thương mại điện tử bán giày thể thao, được thiết kế và phát triển bởi nhóm 4 thành viên và là một đồ án tốt nghiệp. Ứng dụng giúp quản lý sản phẩm, đơn hàng, khách hàng, mã giảm giá, thanh toán trực tuyến thông qua VNPay, phân hạng khách hàng và chatbot AI. Tất cả đều dựa trên nhu cầu thực tiễn và hơn hết là hướng tới một trải nghiệm tốt nhất cho người dùng.
 
 # Công nghệ sử dụng
 * ASP.NET Core MVC
@@ -15,17 +15,20 @@ Zensport Sneakers là một website thương mại điện tử bán giày thể
 * SQL Server Management Studio (SSMS)
 * Postman, Swagger
 * GitHub
+* Sourcetree
 
 # Chức năng
 Zensport cung cấp các chức năng chính như:
 
-* Quản lý sản phẩm, khách hàng, hóa đơn, voucher
+* Quản lý sản phẩm, khách hàng, hóa đơn, coupon
 * Đăng nhập bằng Google
 * Tính phí vận chuyển bằng API Giao Hàng Nhanh
-* Thanh toán trực tuyến qua VNPay
+* Thanh toán trực tuyến qua VNPAY
 * Giỏ hàng & đặt hàng
 * Theo dõi trạng thái đơn hàng
 * Phân quyền người dùng
+* Phân hạng khách hàng
+* Chatbot AI tư vấn sản phẩm
 * Dashboard thống kê cho Admin
 
 #  Hướng dẫn sử dụng
