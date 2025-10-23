@@ -1,14 +1,17 @@
 ﻿@model List<AppView.Models.DashBoardViewModel.tablesViewModel>
 @{
+
 	Layout = null;
-	var stt = 1;
 }
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-	var objAdmin = HttpContextAccessor.HttpContext.Session.GetString("EmployeeID");
-	var objAdminName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
-	var objAdminImg = HttpContextAccessor.HttpContext.Session.GetString("UserImage");
-	var objAdminEmail = HttpContextAccessor.HttpContext.Session.GetString("UserEmail");
+	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	var fullName = HttpContextAccessor.HttpContext.Session.GetString("FullName");
+	var email = HttpContextAccessor.HttpContext.Session.GetString("Email");
+	var UserId = HttpContextAccessor.HttpContext.Session.GetString("UserId");
+	var Password = HttpContextAccessor.HttpContext.Session.GetString("Password");
+	var Sex = HttpContextAccessor.HttpContext.Session.GetString("Sex");
+	var PhoneNumber = HttpContextAccessor.HttpContext.Session.GetString("PhoneNumber");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -16,143 +19,114 @@
 	<meta charset="UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="shortcut icon" href="~/assets/images/favicon.svg" type="image/x-icon" />
-	<title>Quản lí đơn hàng</title>
-
-	<!-- ========== All CSS files linkup ========= -->
+	<title>Đơn mua</title>
+	<link rel="icon" type="image" href="~/image/logo1.png" />
 	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/assets/css/lineicons.css" />
 	<link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" />
 	<link rel="stylesheet" href="~/assets/css/fullcalendar.css" />
 	<link rel="stylesheet" href="~/assets/css/main.css" />
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<style>
-		.search {
-			width: 60%;
-			position: relative;
-			box-shadow: 0 0 40px rgba(51, 51, 51, .1);
-			margin-top: 3%;
-			margin-left: 4.5%;
+		body {
+			margin-top: 20px;
+			background-color: #f2f6fc;
+			color: #69707a;
 		}
 
-			.search input {
-				height: 60px;
-				text-indent: 25px;
-				border: 2px solid #d6d4d4;
+		.img-account-profile {
+			height: 10rem;
+		}
+
+		.max-width {
+			max-width: 40%;
+		}
+
+		.rounded-circle {
+			border-radius: 50% !important;
+		}
+
+		.card {
+			box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+		}
+
+			.card .card-header {
+				font-weight: 500;
 			}
 
-				.search input:focus {
-					box-shadow: none;
-					border: 2px solid blue;
-				}
-
-			.search .fa-search {
-				position: absolute;
-				top: 20px;
-				left: 16px;
-			}
-
-			.search button {
-				position: absolute;
-				top: 5px;
-				right: 5px;
-				height: 50px;
-				width: 110px;
-				background: blue;
-			}
-
-		.datetimepicker {
-			display: inline-flex;
-			align-items: center;
-			background-color: #fff;
-			border: 2px solid black;
-			border-radius: 8px;
-			&:focus-within
-
-		{
-			border-color: teal;
+		.card-header:first-child {
+			border-radius: 0.35rem 0.35rem 0 0;
 		}
 
-		input {
-			font: inherit;
-			color: inherit;
-			appearance: none;
-			outline: none;
-			border: 0;
-			background-color: transparent;
-			&[type=date]
-
-		{
-			width: 10rem;
-			padding: .25rem 0 .25rem .5rem;
-			border-right-width: 0;
+		.card-header {
+			padding: 1rem 1.35rem;
+			margin-bottom: 0;
+			background-color: rgba(33, 40, 50, 0.03);
+			border-bottom: 1px solid rgba(33, 40, 50, 0.125);
 		}
 
-		&[type=time] {
-			width: 5.5rem;
-			padding: .25rem .5rem .25rem 0;
-			border-left-width: 0;
+		p {
+			word-spacing: 7px;
 		}
 
-		}
-
-		span {
-			height: 1rem;
-			margin-right: .25rem;
-			margin-left: .25rem;
-			border-right: 1px solid #ddd;
-		}
-
-		.dropdown-toggle {
-			width: 200px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			height: 40px;
-			border: 2px solid black;
-			font-weight: 600;
-		}
-
-			.dropdown-toggle:focus {
-				box-shadow: none !important;
-			}
-
-
-			.dropdown-toggle::after {
-				display: none;
-			}
-
-		.dropdown-menu {
-			width: 200px;
-			border: 2px solid black;
-			padding: 0rem 0;
-			transform: translate3d(0px, 50px, 0px) !important;
-		}
-
-		.dropdown-item:focus, .dropdown-item:hover {
-			color: black;
-			background-color: white;
-			padding: 12px;
-		}
-
-		.dropdown-item {
+		.form-control, .dataTable-input {
 			display: block;
 			width: 100%;
-			padding: 12px;
+			padding: 0.875rem 1.125rem;
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 1;
+			color: #69707a;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid #c5ccd6;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			border-radius: 0.35rem;
+			transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		}
+
+		.nav-borders .nav-link.active {
+			color: #0061f2;
+			border-bottom-color: #0061f2;
+		}
+
+		.nav-borders .nav-link {
+			color: #69707a;
+			border-bottom-width: 0.125rem;
+			border-bottom-style: solid;
+			border-bottom-color: transparent;
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+			padding-left: 0;
+			padding-right: 0;
+			margin-left: 1rem;
+			margin-right: 1rem;
+		}
+
+		.custom-row {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		.custom-col {
+			margin-right: 10px;
+		}
+
+		.custom-label {
+			margin-bottom: 5px;
 		}
 	</style>
 </head>
 <body>
-	<!-- ======== Preloader =========== -->
 	<div id="preloader">
 		<div class="spinner"></div>
 	</div>
-	<!-- ======== Preloader =========== -->
-	<!-- ======== sidebar-nav start =========== -->
 	<aside class="sidebar-nav-wrapper">
-		<div class="navbar-logo">
-			<a href="@Url.Action("index", "DashBoard")">
-				<img src="~/assets/images/logo/logo.svg" alt="logo" />
+		<div class="navbar-logo" style="text-align:center">
+			<a href="@Url.Action("index", "Home")">
+				<img src="~/image/anhlogo23.png" alt="logo" style="width:85%; height:55%;" />
 			</a>
 		</div>
 		<nav class="sidebar-nav">
@@ -171,49 +145,21 @@
 								<path d="M17.0833 10C17.7737 10 18.3432 9.43708 18.2408 8.75433C17.7005 5.14918 14.8508 2.29947 11.2457 1.75912C10.5629 1.6568 10 2.2263 10 2.91665V9.16666C10 9.62691 10.3731 10 10.8333 10H17.0833Z" />
 							</svg>
 						</span>
-						<span class="text">Dashboard</span>
+						<span class="text1" id="searchVoucherBtn1">Mã giảm giá</span>
 					</a>
-					<ul id="ddmenu_1" class="collapse dropdown-nav">
-						<li>
-							<a href="index.html"> eCommerce </a>
-						</li>
-					</ul>
+					@*<ul id="ddmenu_1" class="collapse dropdown-nav">
+					<li>
+					<a href="#edit"> Sửa thông tin </a>
+					</li>
+
+					<li>
+					<a href="#edit">  Thông tin </a>
+					</li>
+
+					</ul>*@
+
 				</li>
-				<li class="nav-item nav-item-has-children">
-					<a href="#0"
-					   class="collapsed"
-					   data-bs-toggle="collapse"
-					   data-bs-target="#ddmenu_2"
-					   aria-controls="ddmenu_2"
-					   aria-expanded="false"
-					   aria-label="Toggle navigation">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M11.8097 1.66667C11.8315 1.66667 11.8533 1.6671 11.875 1.66796V4.16667C11.875 5.43232 12.901 6.45834 14.1667 6.45834H16.6654C16.6663 6.48007 16.6667 6.50186 16.6667 6.5237V16.6667C16.6667 17.5872 15.9205 18.3333 15 18.3333H5.00001C4.07954 18.3333 3.33334 17.5872 3.33334 16.6667V3.33334C3.33334 2.41286 4.07954 1.66667 5.00001 1.66667H11.8097ZM6.66668 7.70834C6.3215 7.70834 6.04168 7.98816 6.04168 8.33334C6.04168 8.67851 6.3215 8.95834 6.66668 8.95834H10C10.3452 8.95834 10.625 8.67851 10.625 8.33334C10.625 7.98816 10.3452 7.70834 10 7.70834H6.66668ZM6.04168 11.6667C6.04168 12.0118 6.3215 12.2917 6.66668 12.2917H13.3333C13.6785 12.2917 13.9583 12.0118 13.9583 11.6667C13.9583 11.3215 13.6785 11.0417 13.3333 11.0417H6.66668C6.3215 11.0417 6.04168 11.3215 6.04168 11.6667ZM6.66668 14.375C6.3215 14.375 6.04168 14.6548 6.04168 15C6.04168 15.3452 6.3215 15.625 6.66668 15.625H13.3333C13.6785 15.625 13.9583 15.3452 13.9583 15C13.9583 14.6548 13.6785 14.375 13.3333 14.375H6.66668Z" />
-								<path d="M13.125 2.29167L16.0417 5.20834H14.1667C13.5913 5.20834 13.125 4.74197 13.125 4.16667V2.29167Z" />
-							</svg>
-						</span>
-						<span class="text">Pages</span>
-					</a>
-					<ul id="ddmenu_2" class="collapse dropdown-nav">
-						<li>
-							<a href="settings.html"> Settings </a>
-						</li>
-						<li>
-							<a href="blank-page.html"> Blank Page </a>
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item">
-					<a href="invoice.html">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M3.33334 3.35442C3.33334 2.4223 4.07954 1.66666 5.00001 1.66666H15C15.9205 1.66666 16.6667 2.4223 16.6667 3.35442V16.8565C16.6667 17.5519 15.8827 17.9489 15.3333 17.5317L13.8333 16.3924C13.537 16.1673 13.1297 16.1673 12.8333 16.3924L10.5 18.1646C10.2037 18.3896 9.79634 18.3896 9.50001 18.1646L7.16668 16.3924C6.87038 16.1673 6.46298 16.1673 6.16668 16.3924L4.66668 17.5317C4.11731 17.9489 3.33334 17.5519 3.33334 16.8565V3.35442ZM4.79168 5.04218C4.79168 5.39173 5.0715 5.6751 5.41668 5.6751H10C10.3452 5.6751 10.625 5.39173 10.625 5.04218C10.625 4.69264 10.3452 4.40927 10 4.40927H5.41668C5.0715 4.40927 4.79168 4.69264 4.79168 5.04218ZM5.41668 7.7848C5.0715 7.7848 4.79168 8.06817 4.79168 8.41774C4.79168 8.76724 5.0715 9.05066 5.41668 9.05066H10C10.3452 9.05066 10.625 8.76724 10.625 8.41774C10.625 8.06817 10.3452 7.7848 10 7.7848H5.41668ZM4.79168 11.7932C4.79168 12.1428 5.0715 12.4262 5.41668 12.4262H10C10.3452 12.4262 10.625 12.1428 10.625 11.7932C10.625 11.4437 10.3452 11.1603 10 11.1603H5.41668C5.0715 11.1603 4.79168 11.4437 4.79168 11.7932ZM13.3333 4.40927C12.9882 4.40927 12.7083 4.69264 12.7083 5.04218C12.7083 5.39173 12.9882 5.6751 13.3333 5.6751H14.5833C14.9285 5.6751 15.2083 5.39173 15.2083 5.04218C15.2083 4.69264 14.9285 4.40927 14.5833 4.40927H13.3333ZM12.7083 8.41774C12.7083 8.76724 12.9882 9.05066 13.3333 9.05066H14.5833C14.9285 9.05066 15.2083 8.76724 15.2083 8.41774C15.2083 8.06817 14.9285 7.7848 14.5833 7.7848H13.3333C12.9882 7.7848 12.7083 8.06817 12.7083 8.41774ZM13.3333 11.1603C12.9882 11.1603 12.7083 11.4437 12.7083 11.7932C12.7083 12.1428 12.9882 12.4262 13.3333 12.4262H14.5833C14.9285 12.4262 15.2083 12.1428 15.2083 11.7932C15.2083 11.4437 14.9285 11.1603 14.5833 11.1603H13.3333Z" />
-							</svg>
-						</span>
-						<span class="text">Invoice</span>
-					</a>
-				</li>
+
 				<li class="nav-item nav-item-has-children">
 					<a href="#0"
 					   class="collapsed"
@@ -228,102 +174,21 @@
 								<path d="M11.6383 15.18L15.805 11.0133C16.5373 10.2811 16.5373 9.09391 15.805 8.36166L11.6383 4.195C11.2722 3.82888 10.7923 3.64582 10.3125 3.64582V3.02082C10.3125 2.10035 11.0587 1.35416 11.9792 1.35416H16.9792C17.8997 1.35416 18.6458 2.10035 18.6458 3.02082V16.3542C18.6458 17.2747 17.8997 18.0208 16.9792 18.0208H11.9792C11.0587 18.0208 10.3125 17.2747 10.3125 16.3542V15.7292C10.7923 15.7292 11.2722 15.5461 11.6383 15.18Z" />
 							</svg>
 						</span>
-						<span class="text">Auth</span>
+						<span class="text">Thông tin</span>
 					</a>
 					<ul id="ddmenu_3" class="collapse dropdown-nav">
 						<li>
-							<a href="signin.html"> Sign In </a>
+							<a href="#" id="show-info"> Thông tin</a>
 						</li>
 						<li>
-							<a href="signup.html"> Sign Up </a>
+							<a href="#edit"> Sửa thông tin</a>
 						</li>
 					</ul>
 				</li>
 				<span class="divider"><hr /></span>
-				<li class="nav-item nav-item-has-children">
-					<a href="#0"
-					   class="collapsed"
-					   data-bs-toggle="collapse"
-					   data-bs-target="#ddmenu_4"
-					   aria-controls="ddmenu_4"
-					   aria-expanded="false"
-					   aria-label="Toggle navigation">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M1.66666 5.41669C1.66666 3.34562 3.34559 1.66669 5.41666 1.66669C7.48772 1.66669 9.16666 3.34562 9.16666 5.41669C9.16666 7.48775 7.48772 9.16669 5.41666 9.16669C3.34559 9.16669 1.66666 7.48775 1.66666 5.41669Z" />
-								<path d="M1.66666 14.5834C1.66666 12.5123 3.34559 10.8334 5.41666 10.8334C7.48772 10.8334 9.16666 12.5123 9.16666 14.5834C9.16666 16.6545 7.48772 18.3334 5.41666 18.3334C3.34559 18.3334 1.66666 16.6545 1.66666 14.5834Z" />
-								<path d="M10.8333 5.41669C10.8333 3.34562 12.5123 1.66669 14.5833 1.66669C16.6544 1.66669 18.3333 3.34562 18.3333 5.41669C18.3333 7.48775 16.6544 9.16669 14.5833 9.16669C12.5123 9.16669 10.8333 7.48775 10.8333 5.41669Z" />
-								<path d="M10.8333 14.5834C10.8333 12.5123 12.5123 10.8334 14.5833 10.8334C16.6544 10.8334 18.3333 12.5123 18.3333 14.5834C18.3333 16.6545 16.6544 18.3334 14.5833 18.3334C12.5123 18.3334 10.8333 16.6545 10.8333 14.5834Z" />
-							</svg>
-						</span>
-						<span class="text">UI Elements </span>
-					</a>
-					<ul id="ddmenu_4" class="collapse dropdown-nav">
-						<li>
-							<a href="alerts.html"> Alerts </a>
-						</li>
-						<li>
-							<a href="buttons.html"> Buttons </a>
-						</li>
-						<li>
-							<a href="cards.html"> Cards </a>
-						</li>
-						<li>
-							<a href="typography.html"> Typography </a>
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item nav-item-has-children">
-					<a href="#0"
-					   class="collapsed"
-					   data-bs-toggle="collapse"
-					   data-bs-target="#ddmenu_55"
-					   aria-controls="ddmenu_55"
-					   aria-expanded="false"
-					   aria-label="Toggle navigation">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M5.48663 1.1466C5.77383 0.955131 6.16188 1.03274 6.35335 1.31994L6.87852 2.10769C7.20508 2.59755 7.20508 3.23571 6.87852 3.72556L6.35335 4.51331C6.16188 4.80052 5.77383 4.87813 5.48663 4.68666C5.19943 4.49519 5.12182 4.10715 5.31328 3.81994L5.83845 3.03219C5.88511 2.96221 5.88511 2.87105 5.83845 2.80106L5.31328 2.01331C5.12182 1.72611 5.19943 1.33806 5.48663 1.1466Z" />
-								<path d="M2.49999 5.83331C2.03976 5.83331 1.66666 6.2064 1.66666 6.66665V10.8333C1.66666 13.5948 3.90523 15.8333 6.66666 15.8333H9.99999C12.1856 15.8333 14.0436 14.431 14.7235 12.4772C14.8134 12.4922 14.9058 12.5 15 12.5H16.6667C17.5872 12.5 18.3333 11.7538 18.3333 10.8333V8.33331C18.3333 7.41284 17.5872 6.66665 16.6667 6.66665H15C15 6.2064 14.6269 5.83331 14.1667 5.83331H2.49999ZM14.9829 11.2496C14.9942 11.1123 15 10.9735 15 10.8333V7.91665H16.6667C16.8967 7.91665 17.0833 8.10319 17.0833 8.33331V10.8333C17.0833 11.0634 16.8967 11.25 16.6667 11.25H15L14.9898 11.2498L14.9829 11.2496Z" />
-								<path d="M8.85332 1.31994C8.6619 1.03274 8.27383 0.955131 7.98663 1.1466C7.69943 1.33806 7.62182 1.72611 7.81328 2.01331L8.33848 2.80106C8.38507 2.87105 8.38507 2.96221 8.33848 3.03219L7.81328 3.81994C7.62182 4.10715 7.69943 4.49519 7.98663 4.68666C8.27383 4.87813 8.6619 4.80052 8.85332 4.51331L9.37848 3.72556C9.70507 3.23571 9.70507 2.59755 9.37848 2.10769L8.85332 1.31994Z" />
-								<path d="M10.4867 1.1466C10.7738 0.955131 11.1619 1.03274 11.3533 1.31994L11.8785 2.10769C12.2051 2.59755 12.2051 3.23571 11.8785 3.72556L11.3533 4.51331C11.1619 4.80052 10.7738 4.87813 10.4867 4.68666C10.1994 4.49519 10.1218 4.10715 10.3133 3.81994L10.8385 3.03219C10.8851 2.96221 10.8851 2.87105 10.8385 2.80106L10.3133 2.01331C10.1218 1.72611 10.1994 1.33806 10.4867 1.1466Z" />
-								<path d="M2.49999 16.6667C2.03976 16.6667 1.66666 17.0398 1.66666 17.5C1.66666 17.9602 2.03976 18.3334 2.49999 18.3334H14.1667C14.6269 18.3334 15 17.9602 15 17.5C15 17.0398 14.6269 16.6667 14.1667 16.6667H2.49999Z" />
-							</svg>
-						</span>
-						<span class="text">Icons</span>
-					</a>
-					<ul id="ddmenu_55" class="collapse dropdown-nav">
-						<li>
-							<a href="icons.html"> LineIcons </a>
-						</li>
-						<li>
-							<a href="mdi-icons.html"> MDI Icons </a>
-						</li>
-					</ul>
-				</li>
-				<li class="nav-item nav-item-has-children">
-					<a href="#0"
-					   class="collapsed"
-					   data-bs-toggle="collapse"
-					   data-bs-target="#ddmenu_5"
-					   aria-controls="ddmenu_5"
-					   aria-expanded="false"
-					   aria-label="Toggle navigation">
-						<span class="icon">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M4.16666 3.33335C4.16666 2.41288 4.91285 1.66669 5.83332 1.66669H14.1667C15.0872 1.66669 15.8333 2.41288 15.8333 3.33335V16.6667C15.8333 17.5872 15.0872 18.3334 14.1667 18.3334H5.83332C4.91285 18.3334 4.16666 17.5872 4.16666 16.6667V3.33335ZM6.04166 5.00002C6.04166 5.3452 6.32148 5.62502 6.66666 5.62502H13.3333C13.6785 5.62502 13.9583 5.3452 13.9583 5.00002C13.9583 4.65485 13.6785 4.37502 13.3333 4.37502H6.66666C6.32148 4.37502 6.04166 4.65485 6.04166 5.00002ZM6.66666 6.87502C6.32148 6.87502 6.04166 7.15485 6.04166 7.50002C6.04166 7.8452 6.32148 8.12502 6.66666 8.12502H13.3333C13.6785 8.12502 13.9583 7.8452 13.9583 7.50002C13.9583 7.15485 13.6785 6.87502 13.3333 6.87502H6.66666ZM6.04166 10C6.04166 10.3452 6.32148 10.625 6.66666 10.625H9.99999C10.3452 10.625 10.625 10.3452 10.625 10C10.625 9.65485 10.3452 9.37502 9.99999 9.37502H6.66666C6.32148 9.37502 6.04166 9.65485 6.04166 10ZM9.99999 16.6667C10.9205 16.6667 11.6667 15.9205 11.6667 15C11.6667 14.0795 10.9205 13.3334 9.99999 13.3334C9.07949 13.3334 8.33332 14.0795 8.33332 15C8.33332 15.9205 9.07949 16.6667 9.99999 16.6667Z" />
-							</svg>
-						</span>
-						<span class="text"> Forms </span>
-					</a>
-					<ul id="ddmenu_5" class="collapse dropdown-nav">
-						<li>
-							<a href="form-elements.html"> Form Elements </a>
-						</li>
-					</ul>
-				</li>
+
 				<li class="nav-item active">
-					<a href="@Url.Action("tables", "DashBoard")">
+					<a href="@Url.Action("tables1", "Bill")">
 						<span class="icon">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M1.66666 4.16667C1.66666 3.24619 2.41285 2.5 3.33332 2.5H16.6667C17.5872 2.5 18.3333 3.24619 18.3333 4.16667V9.16667C18.3333 10.0872 17.5872 10.8333 16.6667 10.8333H3.33332C2.41285 10.8333 1.66666 10.0872 1.66666 9.16667V4.16667Z" />
@@ -331,13 +196,13 @@
 								<path d="M2.5 16.875C2.15483 16.875 1.875 17.1548 1.875 17.5C1.875 17.8452 2.15483 18.125 2.5 18.125H17.5C17.8452 18.125 18.125 17.8452 18.125 17.5C18.125 17.1548 17.8452 16.875 17.5 16.875H2.5Z" />
 							</svg>
 						</span>
-						<span class="text">Quản lí hóa đơn</span>
+						<span class="text" href="#" id="show-orders">Đơn mua</span>
 					</a>
 				</li>
 				<span class="divider"><hr /></span>
 
 				<li class="nav-item">
-					<a href="notification.html">
+					<a asp-controller="Customer" asp-action="LogOut">
 						<span class="icon">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path d="M10.8333 2.50008C10.8333 2.03984 10.4602 1.66675 9.99999 1.66675C9.53975 1.66675 9.16666 2.03984 9.16666 2.50008C9.16666 2.96032 9.53975 3.33341 9.99999 3.33341C10.4602 3.33341 10.8333 2.96032 10.8333 2.50008Z" />
@@ -346,21 +211,11 @@
 								<path d="M7.48901 17.1925C8.10004 17.8918 8.99841 18.3335 10 18.3335C11.0016 18.3335 11.9 17.8918 12.511 17.1925C10.8482 17.4634 9.15183 17.4634 7.48901 17.1925Z" />
 							</svg>
 						</span>
-						<span class="text">Notifications</span>
+						<span class="text">Logout</span>
 					</a>
 				</li>
 			</ul>
 		</nav>
-		<div class="promo-box">
-			<div class="promo-icon">
-				<img class="mx-auto" src="~/assets/images/logo/logo-icon-big.svg" alt="Logo">
-			</div>
-			<h3>Upgrade to PRO</h3>
-			<p>Improve your development process and start doing more with PlainAdmin PRO!</p>
-			<a href="https://plainadmin.com/pro" target="_blank" rel="nofollow" class="main-btn primary-btn btn-hover">
-				Upgrade to PRO
-			</a>
-		</div>
 	</aside>
 	<div class="overlay"></div>
 	<!-- ======== sidebar-nav end =========== -->
@@ -373,7 +228,7 @@
 					<div class="col-lg-5 col-md-5 col-6">
 						<div class="header-left d-flex align-items-center">
 							<div class="menu-toggle-btn mr-15">
-								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
+								<button id="menu-toggle" class="main-btn primary-btn btn-hover" style="background-color:black;">
 									<i class="lni lni-chevron-left me-2"></i> Menu
 								</button>
 							</div>
@@ -496,11 +351,10 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="Admin" style="height:100%;" />
+												<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar" style="height:100%;" />
 											</div>
 											<div>
-												<h6 class="fw-500">@Html.Raw(objAdminName?.Replace("\"", ""))</h6>
-												<p>Admin</p>
+												<h6 class="fw-500">@Html.Raw(fullName?.Replace("\"", ""))</h6>
 											</div>
 										</div>
 									</div>
@@ -509,11 +363,11 @@
 									<li>
 										<div class="author-info flex items-center !p-1">
 											<div class="image">
-												<img src="/image/@Html.Raw(objAdminImg?.Replace("\"", ""))" alt="image">
+												<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar">
 											</div>
 											<div class="content">
-												<h4 class="text-sm">@Html.Raw(objAdminName?.Replace("\"", ""))</h4>
-												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">@Html.Raw(objAdminEmail?.Replace("\"", ""))</a>
+												<h4 class="text-sm">@Html.Raw(userName?.Replace("\"", ""))</h4>
+												<a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs" href="#">@Html.Raw(email?.Replace("\"", ""))</a>
 											</div>
 										</div>
 									</li>
@@ -549,392 +403,372 @@
 		<!-- ========== header end ========== -->
 		<!-- ========== table components start ========== -->
 		<section class="table-components">
-			<form method="get" id="searchForm" class="search-bar" style="align-content:center;" action="@Url.Action("findTables")">
-				<div class="row height d-flex justify-content-left align-items-left">
-					<div class="col-md-8">
-						<div class="search">
-							<i class="fa fa-search"></i>
-							<input type="text" id="searchInput" class="form-control" name="billCode" placeholder="Tìm kiếm...">
-							<button type="button" class="btn btn-primary">Search</button>
-						</div>
-					</div>
-				</div>
-			</form>
-			<form method="get" style="margin-top:2.5%; margin-left:3%;" action="@Url.Action("searchByDate")">
-				<span>Từ ngày:</span>
-				<div class="datetimepicker date-start">
-					<input type="date" id="date" value="" name="startDate">
-				</div>
-				<span style="margin-left:2%;">Đến ngày:</span>
-				<div class="datetimepicker date-end">
-					<input type="date" id="date" value="" name="endDate">
-				</div>
-			</form>
-			<form method="get" action="@Url.Action("Filter")" style="float:right; margin-top:-3%; margin-right:3%;">
-				<div style="display:flex;">
-					<div class="dropdown" style="margin-right:2%;">
-						<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Trạng thái
-						</button>
-						<ul class="dropdown-menu" id="statusDropdown" style="cursor:pointer;">
-							<li><a class="dropdown-item" data-value="8">Tất cả</a></li>
-							<li><a class="dropdown-item" data-value="0">Chờ xác nhận</a></li>
-							<li><a class="dropdown-item" data-value="1">Đã xác nhận thông tin</a></li>
-							<li><a class="dropdown-item" data-value="2">Đang vận chuyển</a></li>
-							<li><a class="dropdown-item" data-value="3">Giao hàng thành công</a></li>
-							<li><a class="dropdown-item" data-value="6">Hoàn trả</a></li>
-							<li><a class="dropdown-item" data-value="4">Đã hủy</a></li>
-						</ul>
-					</div>
-					<div class="dropdown">
-						<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Sắp xếp
-						</button>
-						<ul class="dropdown-menu" id="sortDropdown" style="cursor:pointer;">
-							<li><a class="dropdown-item" data-value="8">Mặc định</a></li>
-							<li><a class="dropdown-item" data-value="0">Mới nhất</a></li>
-							<li><a class="dropdown-item" data-value="1">Cũ nhất</a></li>
-							<li><a class="dropdown-item" data-value="2">Giá trị giảm dần</a></li>
-							<li><a class="dropdown-item" data-value="3">Gía trị tăng dần</a></li>
-						</ul>
-					</div>
-				</div>
-			</form>
-			<script>
-				$(document).ready(function () {
-					// Set giá trị mặc định cho dropdown "Trạng thái"
-					$("#statusDropdown a[data-value='8']").addClass("selected"); // Đặt class cho phần tử mặc định
-
-					// Set giá trị mặc định cho dropdown "Sắp xếp"
-					$("#sortDropdown a[data-value='8']").addClass("selected"); // Đặt class cho phần tử mặc định
-
-					// Set giá trị mặc định cho ngày bắt đầu và kết thúc
-					var defaultStartDate = new Date("2020-01-01").toISOString().split('T')[0];
-					var currentDate = new Date().toISOString().split('T')[0];
-					$("input[name='startDate']").val(defaultStartDate);
-					$("input[name='endDate']").val(currentDate);
-
-					// Gọi hàm filterData khi trang được tải lần đầu tiên
-					filterData();
-				});
-
-				// Bắt sự kiện click trên các phần tử của dropdown "Trạng thái"
-				$("#statusDropdown a").click(function () {
-					$("#statusDropdown a").removeClass("selected"); // Xóa class "selected" trên tất cả các phần tử
-					$(this).addClass("selected"); // Thêm class "selected" cho phần tử được chọn
-					filterData();
-				});
-
-				// Bắt sự kiện click trên các phần tử của dropdown "Sắp xếp"
-				$("#sortDropdown a").click(function () {
-					$("#sortDropdown a").removeClass("selected"); // Xóa class "selected" trên tất cả các phần tử
-					$(this).addClass("selected"); // Thêm class "selected" cho phần tử được chọn
-					filterData();
-				});
-
-				// Hàm để lọc dữ liệu
-				function filterData() {
-					// Lấy giá trị đang được chọn trong dropdown "Trạng thái"
-					var selectedStatus = $("#statusDropdown a.selected").data("value");
-
-					// Lấy giá trị đang được chọn trong dropdown "Sắp xếp"
-					var selectedSort = $("#sortDropdown a.selected").data("value");
-
-					// Lấy giá trị ngày tháng từ input "Từ ngày" và "Đến ngày"
-					var startDateValue = $("input[name='startDate']").val();
-					var endDateValue = $("input[name='endDate']").val();
-
-					// Gửi Ajax Request để lọc và hiển thị dữ liệu dựa trên các giá trị đã chọn
-					$.ajax({
-						type: "GET",
-						url: '@Url.Action("Filter")',
-						data: {
-							nameStatus: selectedStatus,
-							priceNewOld: selectedSort,
-							startDate: startDateValue,
-							endDate: endDateValue
-						},
-						success: function (response) {
-							// Xử lý dữ liệu trả về và cập nhật nội dung hiển thị
-							updateDisplay(response);
-						},
-						error: function (error) {
-							console.log("Error:", error);
-						}
-					});
-				}
-
-				// Hàm để cập nhật nội dung hiển thị
-				function updateDisplay(data) {
-					// Xóa nội dung hiện tại (nếu cần)
-					$("#resultContainer").empty();
-
-					// Thêm hoặc cập nhật nội dung hiển thị
-					$.each(data, function (index, bill) {
-						var rowHtml = '<tr>' +
-							'<td class="min-width"><p>' + (index + 1) + '</p></td>' +
-							'<td class="min-width"><p>' + bill.billCode + '</p></td>' +
-							'<td class="min-width"><p>' + bill.totalShoes + '</p></td>' +
-							'<td class="min-width"><p style="color:red;">' + formatCurrency(bill.price) + '</p></td>' +
-							'<td class="min-width"><p>' + bill.fullNameCus + '</p></td>' +
-							'<td class="min-width"><p>' + bill.phoneNumber + '</p></td>' +
-							'<td class="min-width"><p>' + formatDateTime(bill.createDate) + '</p></td>' +
-							'<td class="min-width"><p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">' + bill.purchasePayMent + '</p></td>' +
-							'<td class="min-width">' + getStatusLabel(bill.status) + '</td>' +
-							'<td>' +
-							'<div class="action">' +
-							'<a href="' + '@Url.Action("DetailsBill", "Bill")?billID=' + bill.billID + '&customerID=' + bill.customerID + '" class="text-danger">' +
-							'<i class="lni lni-eye"></i>' +
-							'</a>' +
-							'</div>' +
-							'</td>' +
-							'</tr>';
-						$("#resultContainer").append(rowHtml);
-					});
-				}
-			</script>
-			<script>
-				$(document).ready(function () {
-					// Bắt sự kiện khi người dùng click vào "Đến ngày"
-					$("input[name='endDate']").on("change", function () {
-						// Lấy giá trị của "Từ ngày" và "Đến ngày"
-						var startDateValue = $("input[name='startDate']").val();
-						var endDateValue = $(this).val(); // Lấy giá trị của "Đến ngày"
-
-						// Gửi Ajax Request để hiển thị dữ liệu
-						$.ajax({
-							type: "GET",
-							url: '@Url.Action("searchByDate")',
-							data: { startDate: startDateValue, endDate: endDateValue },
-							success: function (response) {
-								console.log(response);
-								// Xử lý dữ liệu trả về và cập nhật nội dung hiển thị
-								updateDisplay(response);
-							},
-							error: function (error) {
-								console.log("Error:", error);
-							}
-						});
-					});
-				});
-
-				function updateDisplay(data) {
-					// Xóa nội dung hiện tại (nếu cần)
-					$("#resultContainer").empty();
-
-					function formatCurrency(value) {
-						// Định dạng giá
-						return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-					}
-
-					function formatDateTime(date) {
-						const options = { hour: 'numeric', minute: 'numeric', day: 'numeric', month: 'numeric', year: 'numeric' };
-						const formattedDate = new Date(date).toLocaleString('vi-VN', options);
-
-						return formattedDate;
-					}
-					// Thêm hoặc cập nhật nội dung hiển thị
-					$.each(data, function (index, bill) {
-						console.log('index', index);
-						console.log('bill', bill);
-						var rowHtml = '<tr>' +
-							'<td class="min-width"><p>' + (index + 1) + '</p></td>' +
-							'<td class="min-width"><p>' + bill.billCode + '</p></td>' +
-							'<td class="min-width"><p>' + bill.totalShoes + '</p></td>' +
-							'<td class="min-width"><p style="color:red;">' + formatCurrency(bill.price) + '</p></td>' +
-							'<td class="min-width"><p>' + bill.fullNameCus + '</p></td>' +
-							'<td class="min-width"><p>' + bill.phoneNumber + '</p></td>' +
-							'<td class="min-width"><p>' + formatDateTime(bill.createDate) + '</p></td>' +
-							'<td class="min-width"><p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">' + bill.purchasePayMent + '</p></td>' +
-							'<td class="min-width">' + getStatusLabel(bill.status) + '</td>' +
-							'<td>' +
-							'<div class="action">' +
-							'<a href="' + '@Url.Action("DetailsBill", "Bill")?billID=' + bill.billID + '&customerID=' + bill.customerID + '" class="text-danger">' +
-							'<i class="lni lni-eye"></i>' +
-							'</a>' +
-							'</div>' +
-							'</td>' +
-							'</tr>';
-						$("#resultContainer").append(rowHtml);
-					});
-				}
-
-				function getStatusLabel(status) {
-					switch (status) {
-						case 0:
-							return '<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Chờ xác nhận</span>';
-						case 1:
-							return '<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã xác nhận thông tin</span>';
-						case 2:
-							return '<span class="main-btn warning-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã bàn giao cho ĐVVC</span>';
-						case 3:
-							return '<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>';
-						case 4:
-							return '<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>';
-						default:
-							return '';
-					}
-				}
-			</script>
 			<div class="container-fluid">
 				<!-- ========== title-wrapper start ========== -->
 				<div class="title-wrapper pt-30">
 					<div class="row align-items-center">
 						<div class="col-md-6">
-							<div class="title" style="float:left;">
-								<h2>Danh sách đơn hàng</h2>
-							</div>
+							@*<div class="title">
+							<h2>Danh sách đơn hàng</h2>
+							</div>*@
 						</div>
 						<!-- end col -->
-						<div class="col-md-6">
-							<div class="breadcrumb-wrapper">
-								<nav aria-label="breadcrumb">
-									<ol class="breadcrumb">
-										<li class="breadcrumb-item">
-											<a href="#0">Dashboard</a>
-										</li>
-										<li class="breadcrumb-item active" aria-current="page">
-											Tables
-										</li>
-									</ol>
-								</nav>
-							</div>
+						@*<div class="col-md-6">
+						<div class="breadcrumb-wrapper">
+						<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+						<li class="breadcrumb-item">
+						<a href="#0">Dashboard</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">
+						Tables
+						</li>
+						</ol>
+						</nav>
 						</div>
+						</div>*@
 						<!-- end col -->
 					</div>
 					<!-- end row -->
 				</div>
 				<!-- ========== title-wrapper end ========== -->
 				<!-- ========== tables-wrapper start ========== -->
-				<div class="tables-wrapper">
+
+				<div id="edit-container"></div>
+
+				<div class="tables-wrapper1" style="display: none;">
 					<div class="row">
-						<div class="col-lg-12">
-							<div class="card-style mb-30">
-								<div class="table-wrapper table-responsive">
-									@if (Model.Any())
-									{
-										<table class="table">
-											<thead>
-												<tr>
-													<th>
-														<h6>STT</h6>
-													</th>
-													<th>
-														<h6 style="padding-left:5%;">Mã đơn hàng</h6>
-													</th>
-													<th>
-														<h6>Tổng số <br /> sản phẩm</h6>
-													</th>
-													<th>
-														<h6 style="padding-left:5%;">Tổng số tiền</h6>
-													</th>
-													<th>
-														<h6>Tên khách hàng</h6>
-													</th>
-													<th>
-														<h6>Số điện thoại</h6>
-													</th>
-													<th>
-														<h6>Thời gian đặt hàng</h6>
-													</th>
-													<th>
-														<h6>Phương thức thanh toán</h6>
-													</th>
-													<th>
-														<h6>Trạng thái đơn hàng</h6>
-													</th>
-													<th>
-														<h6>Hành động</h6>
-													</th>
-												</tr>
-												<!-- end table row-->
-											</thead>
-											<tbody id="resultContainer">
-												@foreach (var bill in Model.OrderBy(c => c.BillCode))
-												{
-													<tr style="margin-top:5%; margin-bottom:5%">
-														<td class="min-width">
-															<p>@stt</p>
-														</td>
-														<td class="min-width">
-															<p>@bill.BillCode</p>
-														</td>
-														<td class="min-width">
-															<p>@bill.TotalShoes</p>
-														</td>
-														<td class="min-width">
-															<p style="color:red;">@bill.Price.ToString("N0")đ</p>
-														</td>
-														<td class="min-width">
-															<p>@bill.FullNameCus</p>
-														</td>
-														<td class="min-width">
-															<p>@bill.PhoneNumber</p>
-														</td>
-														<td class="min-width">
-															<p>@bill.CreateDate.ToString("HH:mm, dd/MM/yyyy")</p>
-														</td>
-														<td class="min-width">
-															<p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">@bill.PurchasePayMent</p>
-														</td>
-														<td class="min-width">
-															@if (bill.Status == 0)
-															{
-																<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Chờ xác nhận</span>
-															}
-															else
-																	if (bill.Status == 1)
-															{
-																<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã xác nhận thông tin</span>
-															}
-															else
-																	if (bill.Status == 2)
-															{
-																<span class="main-btn warning-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã bàn giao cho ĐVVC</span>
-															}
-															else
-																	if (bill.Status == 3)
-															{
-																<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>
-															}
-															else
-																	if (bill.Status == 4)
-															{
-																<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>
-															}
-														</td>
-														<td>
-															<div class="action">
-																<a href="@Url.Action("DetailsBill", "Bill", new {billID = bill.BillID, customerID  = bill.CustomerID})" class="text-danger">
-																	<i class="lni lni-eye"></i>
-																</a>
-															</div>
-														</td>
-													</tr>
-													stt++;
-												}
-											</tbody>
-										</table>
-									}
-									else
-									{
-										<p>Không tìm thấy đơn hàng phù hợp.</p>
-									}
-									<!-- end table -->
+
+
+						<div class="container-xl px-4 mt-4">
+							<!-- Account page navigation-->
+							<nav class="nav nav-borders">
+								<a class="nav-link active ms-0" href="https://www.bootdey.com/snippets/view/bs5-edit-profile-account-details" target="__blank">Profile</a>
+								@*	<a class="nav-link" href="https://www.bootdey.com/snippets/view/bs5-profile-billing-page" target="__blank">Billing</a>
+								<a class="nav-link" href="https://www.bootdey.com/snippets/view/bs5-profile-security-page" target="__blank">Security</a>
+								<a class="nav-link" href="https://www.bootdey.com/snippets/view/bs5-edit-notifications-page" target="__blank">Notifications</a>*@
+							</nav>
+							<hr class="mt-0 mb-4">
+							<div class="row">
+								<div class="col-xl-4">
+									<!-- Profile picture card-->
+									<div class="card mb-4 mb-xl-0">
+										<div class="card-header">Profile Picture</div>
+										<div class="card-body text-center">
+											<!-- Profile picture image-->
+											<img class="img-account-profile rounded-circle mb-2" src="~/image/Screenshot_1.png" alt="">
+											<!-- Profile picture help block-->
+											@*<div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>*@
+											<!-- Profile picture upload button-->
+											<button class="btn btn-primary" type="button">Upload new image</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-xl-8">
+									<!-- Account details card-->
+									<div class="card mb-4">
+										<div class="card-header">Account Details</div>
+										<div class="card-body">
+											<form>
+												<!-- Form Group (username)-->
+												<div class="mb-3">
+													<label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
+													<input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" value="@Html.Raw(userName?.Replace("\"", ""))" style="color: black;">
+												</div>
+												<!-- Form Row-->
+												<div class=" mb-3">
+													<!-- Form Group (first name)-->
+
+													<label class="small mb-1" for="inputFirstName">Full name</label>
+													<input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" value="@Html.Raw(fullName?.Replace("\"", ""))" style="color: black;">
+
+													<!-- Form Group (last name)-->
+													@*	<div class="col-md-6">
+													<label class="small mb-1" for="inputLastName">Last name</label>
+													<input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" value="Luna" style="color: black;">
+													</div>*@
+												</div>
+												<!-- Form Row        -->
+												@*	<div class="row gx-3 mb-3">
+												<!-- Form Group (organization name)-->
+												<div class="col-md-6">
+												<label class="small mb-1" for="inputOrgName">Organization name</label>
+												<input class="form-control" id="inputOrgName" type="text" placeholder="Enter your organization name" value="Start Bootstrap">
+												</div>
+												<!-- Form Group (location)-->
+												<div class="col-md-6">
+												<label class="small mb-1" for="inputLocation">Location</label>
+												<input class="form-control" id="inputLocation" type="text" placeholder="Enter your location" value="San Francisco, CA">
+												</div>
+												</div>*@
+												<!-- Form Group (email address)-->
+												<div class="mb-3">
+													<label class="small mb-1" for="inputEmailAddress">Email address</label>
+													<input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="@Html.Raw(email?.Replace("\"", ""))" style="color: black;">
+												</div>
+												<!-- Form Row-->
+												<div class="row gx-3 mb-3">
+													<!-- Form Group (phone number)-->
+													<div class="col-md-6">
+														<label class="small mb-1" for="inputPhone">Phone number</label>
+														<input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="@Html.Raw(PhoneNumber?.Replace("\"", ""))" style="color: black;">
+													</div>
+													<!-- Form Group (birthday)-->
+													<div class="col-md-6">
+														<label class="small mb-1" for="inputBirthday">Birthday</label>
+														<input class="form-control" id="inputBirthday" type="text" name="birthday" placeholder="Enter your birthday" value="06/10/1988" style="color: black;">
+													</div>
+												</div>
+												<!-- Save changes button-->
+												@*	<button class="btn btn-primary" type="button">Save changes</button>*@
+											</form>
+										</div>
+									</div>
 								</div>
 							</div>
-							<!-- end card -->
 						</div>
 						<!-- end col -->
 					</div>
 					<!-- end row -->
 				</div>
+
+				@*	----------*@
+
 				<!-- ========== tables-wrapper end ========== -->
 			</div>
-			<!-- end container -->
+			<div class="tables-wrapper2" style="display: none;">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card-style mb-30">
+							<div class="table-wrapper table-responsive">
+								<div class="title">
+									<h2>Danh sách vouchers bạn đang sở hữu:</h2>
+								</div>
+
+								<ul class="list-group max-width" id="voucherList" style="margin-left: 500px;">
+									<!-- Danh sách voucher sẽ được thêm vào đây bằng JavaScript -->
+								</ul>
+
+
+							</div>
+						</div>
+						<!-- end card -->
+					</div>
+
+					<!-- end col -->
+				</div>
+
+				<!-- end row -->
+			</div>
+
+
+			<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+			<script>
+				$(document).ready(function () {
+
+					$("#searchVoucherBtn1").click(function () {
+						var username = $("#userNameLi").html().trim();
+						if (!username) {
+							username = null;
+						}
+						$.ajax({
+							type: "GET",
+							url: "https://localhost:7036/api/Voucher/get-voucher-for-username?username=" + username,
+							dataType: 'json',
+							success: function (data) {
+								console.log("Data from API:", data);
+
+								// Xóa danh sách voucher cũ
+								$("#voucherList").empty();
+
+								// Lặp qua mảng data trong JavaScript
+								for (var i = 0; i < data.length; i++) {
+									var voucher = data[i];
+									console.log("Current Voucher:", voucher);
+									var voucherHtml = `
+																																																						<li class="list-group-item d-flex justify-content-between align-items-center">
+																																																							<div style="display: flex">
+																																																								<img src="/image/voucher.jpg"
+																																																									width="85"
+																																																									alt="totoprayogo.com"
+																																																									class="" />
+																																																									<div style="margin-left: 10px ">
+																																																									<p style="display:none">ID: ${voucher.voucherID}</p>
+																																																									<p>Mã  ${voucher.voucherCode}  giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
+																																																									<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																																									<p>Hạng: ${voucher.exclusiveright}</p>
+																																																									<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																																									<p style="display:none">Total: ${voucher.Total}</p>
+																																																									<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																																									<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																																									<p style="display:none">Status: ${voucher.Status}</p>
+																																																									<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																																									<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																																									<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																																									<p style="display:none">Type: ${voucher.Type}</p>
+																																																									<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																																								</div>
+																																																							</div>
+
+																																																						</li>`;
+
+									$("#voucherList").append(voucherHtml);
+								}
+							},
+
+							error: function (error) {
+								console.error("Lỗi khi lấy voucher:", error);
+							},
+							complete: function () {
+								console.log("Request hoàn tất.");
+							}
+						});
+					});
+
+					$("#voucherList").on("click", ".button-details", function (event) {
+						event.preventDefault();
+
+						// Lấy ID của voucher từ thuộc tính data
+						var voucherId = $(this).data("voucher-id");
+
+						// Thực hiện Ajax request để lấy chi tiết voucher
+						$.ajax({
+							type: "GET",
+							url: "https://localhost:7120/Voucher/Details/" + voucherId,
+							success: function (data) {
+								// Xóa nội dung hiện tại (nếu cần)
+								// $("#voucherDetailsContainer").empty();
+
+								// Chèn chi tiết voucher vào container
+								$("#voucherDetailsContainer").html($(data).find(".voucher-details"));
+
+								// Always show the close button
+								$("#voucherDetailsContainer").append('<button id="closeVoucherDetails">Đóng</button>');
+							},
+							error: function (error) {
+								console.error("Lỗi khi lấy chi tiết voucher:", error);
+							}
+						});
+					});
+
+					$("#voucherDetailsContainer").on("click", "#closeVoucherDetails", function () {
+						// Hide the voucher details container
+						$("#voucherDetailsContainer").hide();
+					});
+
+					function formatDate(dateString) {
+						const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+
+						// Chuyển đổi chuỗi ngày thành đối tượng Date
+						const dateObject = new Date(dateString);
+
+						// Lấy các thành phần của ngày
+						const year = dateObject.getFullYear();
+						const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Thêm số 0 phía trước nếu cần
+						const day = dateObject.getDate().toString().padStart(2, '0'); // Thêm số 0 phía trước nếu cần
+
+						// Tạo chuỗi ngày mới
+						const formattedDate = `${year}-${month}-${day}`;
+
+						return formattedDate;
+					}
+
+
+				});
+			</script>
+
+			<div style="display:none;">
+				<li style="display:none;" class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0" id="userNameLi">
+					@Html.Raw(userName?.Replace("\"", ""))
+				</li>
+			</div>
+
+			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
+				<div class="custom-row d-flex justify-content-between align-items-center">
+					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
+						<div class="search" style="width:920%;">
+							<i class="fa fa-search"></i>
+							<input type="text" id="searchInput" class="form-control" name="billCode" placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên sản phẩm...">
+						</div>
+					</form>
+					<form method="get" action="@Url.Action("Filter")" style="margin-left:80%; margin-top:2%;">
+						<div>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									Trạng thái
+								</button>
+								<ul class="dropdown-menu" id="statusDropdown" style="cursor:pointer;">
+									<li><a class="dropdown-item" data-value="8">Tất cả</a></li>
+									<li><a class="dropdown-item" data-value="0">Chờ xác nhận</a></li>
+									<li><a class="dropdown-item" data-value="1">Đã xác nhận thông tin</a></li>
+									<li><a class="dropdown-item" data-value="2">Đang vận chuyển</a></li>
+									<li><a class="dropdown-item" data-value="3">Giao hàng thành công</a></li>
+									<li><a class="dropdown-item" data-value="6">Hoàn trả</a></li>
+									<li><a class="dropdown-item" data-value="4">Đã hủy</a></li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="title" style="margin-top:2%;">
+					<h2>Danh sách đơn hàng</h2>
+				</div>
+				@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
+				{
+					var bill = group.First();
+					<div id="resultContainer">
+						<div class="row" style="margin-top:1%;">
+							<div class="col-lg-12">
+								<div class="card-style mb-30">
+									<div class="table-wrapper table-responsive">
+										<table class="table">
+											<tbody>
+												@foreach (var item in group)
+												{
+													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+														<td class="min-width d-flex align-items-flex-start">
+															<div class="col-lg-2 col-md-12 mb-4 mb-lg-0">
+																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																	<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-100" alt="Image" />
+																	<a href="#!">
+																		<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+																	</a>
+																</div>
+															</div>
+															<div class="col-lg-9 col-md-6 mb-4 mb-lg-0" style="margin-left:3%;">
+																<p style="font-size:23px;"><strong>@item.NameProduct</strong></p>
+																<p>Phân loại hàng: @item.Description</p>
+																<p>X@(item.TotalShoes)</p>
+																<p style="font-size:15px; float:right;">@item.Price.ToString("N0")đ</p>
+																<p>Size:@item.SizeName</p>
+															</div>
+														</td>
+													</tr>
+												}
+												<tr>
+													<td>
+														<p style="font-size:20px; float:right; margin-right:5%;">
+															Thành tiền:
+															<strong style="color:red;">@bill.TotalPrice.ToString("N0")đ</strong>
+														</p>
+														<a href="@Url.Action("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID })" class="main-btn secondary-btn-light rounded-full btn-hover"
+													   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width: 15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+															Chi tiết
+														</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
 		</section>
-		<!-- ========== table components end ========== -->
-		<!-- ========== footer start =========== -->
 		<footer class="footer">
 			<div class="container-fluid">
 				<div class="row">
@@ -955,11 +789,297 @@
 		<!-- ========== footer end =========== -->
 	</main>
 	<script>
-		var dateEl = document.getElementById('date');
-		var timeEl = document.getElementById('time');
-		document.getElementById('date-output').innerHTML = dateEl.type === 'date';
-		document.getElementById('time-output').innerHTML = timeEl.type === 'time';
+		$(document).ready(function () {
+			console.log("script loaded"); // kiểm tra script có chạy không
+
+			// Hàm gọi filter (ví dụ gọi lần đầu hoặc khi click)
+			function filterData() {
+				const selectedStatus = $("#statusDropdown a.selected").data("value");
+				console.log("filterData called, status=", selectedStatus);
+
+				$.ajax({
+					type: "GET",
+					url: '@Url.Action("Filter")', // nếu đây gây lỗi, thay bằng '/Bill/Filter'
+					data: { nameStatus: selectedStatus },
+					success: function (response) {
+						console.log("AJAX response:", response);
+						try {
+							renderBills(response);
+						} catch (err) {
+							console.error("renderBills error:", err);
+						}
+					},
+					error: function (error) {
+						console.error("AJAX Error:", error);
+					}
+				});
+			}
+
+			// gắn sự kiện dropdown (off trước để tránh gắn nhiều lần)
+			$("#statusDropdown a").off("click").on("click", function () {
+				$("#statusDropdown a").removeClass("selected");
+				$(this).addClass("selected");
+				filterData();
+			});
+
+			// gọi 1 lần khi load để hiển thị mặc định (nếu muốn)
+			// filterData();
+
+			// Hàm render (group nếu data flat)
+			function renderBills(data) {
+				const container = $("#resultContainer");
+				console.log("Rendering bills, container found:", container.length);
+
+				container.empty();
+				if (!data || data.length === 0) {
+					container.html("<p style='text-align:center; margin-top:20px;'>Không có hóa đơn nào.</p>");
+					return;
+				}
+
+				// Nếu server đã trả grouped (mỗi phần tử có .items), dùng trực tiếp
+				const isGrouped = Array.isArray(data) && data.length > 0 && Array.isArray(data[0].items);
+				let groups = [];
+
+				if (isGrouped) {
+					groups = data; // cấu trúc đã hợp lệ
+				} else {
+					// group flat array theo billID
+					const map = {};
+					data.forEach(item => {
+						const id = item.billID ?? item.BillID; // cố gắng hỗ trợ nhiều kiểu tên
+						if (!map[id]) map[id] = { billID: id, customerID: item.customerID ?? item.CustomerID, items: [], totalPrice: item.totalPrice ?? item.TotalPrice };
+						map[id].items.push(item);
+						// cập nhật tổng giá nếu server không cung cấp
+						if (!map[id].totalPrice) {
+							map[id].totalPrice = (map[id].totalPrice || 0) + (Number(item.totalPrice ?? item.price ?? item.Price ?? 0));
+						}
+					});
+					groups = Object.values(map);
+				}
+
+				// render mỗi nhóm
+				groups.forEach(group => {
+					// item đầu dùng làm nguồn thông tin chung
+					const first = Array.isArray(group.items) ? group.items[0] : group.items;
+					let itemsHtml = "";
+
+					(group.items || []).forEach(item => {
+						itemsHtml += `
+							<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+								<td class="min-width d-flex align-items-flex-start">
+									<div style="flex:0 0 150px; max-width:150px;">
+										<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+											<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+											<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+										</div>
+									</div>
+									<div style="flex:1; margin-left:16px;">
+										<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+										<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+										<p>X${item.totalShoes ?? item.TotalShoes}</p>
+										<p>Size: ${item.sizeName ?? item.SizeName}</p>
+										<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+									</div>
+								</td>
+							</tr>`;
+					});
+
+					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
+					const billId = group.billID ?? first.billID ?? first.BillID;
+					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
+
+					const html = `
+						<div class="row" style="margin-top:1%;">
+							<div class="col-lg-12">
+								<div class="card-style mb-30">
+									<div class="table-wrapper table-responsive">
+										<table class="table">
+											<tbody>
+												${itemsHtml}
+												<tr>
+													<td>
+														<p style="font-size:20px; float:right; margin-right:5%;">
+															Thành tiền: <strong style="color:red;">${total}đ</strong>
+														</p>
+														<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+														   class="main-btn secondary-btn-light rounded-full btn-hover"
+														   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+															Chi tiết
+														</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>`;
+
+					container.append(html);
+				});
+			}
+
+			function formatCurrency(value) {
+				return Number(value || 0).toLocaleString('vi-VN');
+			}
+		});
 	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script>
+		function findTables() {
+			var searchTerm = $('#orderCode').val().toLowerCase(); // Chuyển đổi giá trị tìm kiếm thành chữ thường
+
+			$('.bill-row').each(function () {
+				var billCode = $(this).find('td:nth-child(2)').text().toLowerCase(); // Lấy giá trị mã đơn hàng trong mỗi hàng
+
+				// Ẩn hoặc hiển thị hàng tùy thuộc vào việc có kết quả tìm kiếm hay không
+				if (billCode.includes(searchTerm)) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		}
+
+		// Gọi hàm findTables mỗi khi có sự thay đổi trong trường nhập liệu mã đơn hàng
+		$('#orderCode').on('input', function () {
+			findTables();
+		});
+	</script>
+
+
+	<script>
+		function filterByStatus() {
+			var selectedStatus = $("#orderStatus").val().trim();
+			console.log("Selected Status:", selectedStatus);
+
+			// Lấy tất cả các dòng và lưu vào mảng
+			var rows = $("tbody tr");
+			console.log("Number of Rows:", rows.length);
+
+			// Lặp qua mảng và so sánh trạng thái
+			rows.each(function () {
+				var statusCell = $(this).find("td:eq(8)");
+
+				if (statusCell.length > 0) {
+					var rowStatus = statusCell.text().trim();
+					console.log("Row Status (Before):", rowStatus);
+
+					// Chuẩn hóa giá trị trước khi so sánh
+					var normalizedRowStatus = normalizeStatus(rowStatus);
+					console.log("Normalized Row Status:", normalizedRowStatus);
+
+					var shouldDisplay = selectedStatus === "-1" || normalizedRowStatus.includes(selectedStatus);
+					console.log("Should Display:", shouldDisplay);
+
+					$(this).toggle(shouldDisplay);
+				}
+			});
+		}
+
+		// Hàm để chuẩn hóa giá trị trạng thái
+		function normalizeStatus(status) {
+			// Quy đổi giá trị trạng thái theo mong muốn
+			switch (status) {
+				case "Chờ xác nhận":
+					return "0";
+				case "Đã xác nhận thông tin":
+					return "1";
+				case "Đã bàn giao cho ĐVVC":
+					return "2";
+				case "Đã nhận được hàng":
+					return "3";
+				case "Đã hủy đơn":
+					return "4";
+				case "Hoàn trả":
+					return "6";
+				default:
+					return status;
+			}
+		}
+	</script>
+	<script>
+		$(document).ready(function () {
+			// Thêm sự kiện click cho liên kết "Đơn mua"
+			$('#show-orders').click(function (e) {
+				e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+
+				// Hiển thị tables-wrapper
+				$('.tables-wrapper').show();
+
+				$('.tables-wrapper1,.tables-wrapper2').hide();
+
+
+
+				// Ẩn edit-container
+				$('#edit-container').empty();
+			});
+
+			$("#searchVoucherBtn1").click(function (e) {
+				e.preventDefault(); // Prevent the default behavior of the link
+
+				// Show the tables-wrapper2 and hide other elements
+				$('.tables-wrapper2').show();
+				$('.tables-wrapper,.tables-wrapper1').hide();
+
+				// Clear any existing content in the edit-container
+				$('#edit-container').empty();
+			});
+
+
+			// Thêm sự kiện click cho liên kết "Thông tin"
+			$('#show-info').click(function (e) {
+				e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+
+				// Hiển thị tables-wrapper1
+				$('.tables-wrapper1').show();
+
+				// Ẩn tables-wrapper
+				$('.tables-wrapper,.tables-wrapper2').hide();
+
+				// Ẩn edit-container
+				$('#edit-container').empty();
+			});
+
+			// Thêm sự kiện click cho liên kết "Sửa thông tin"
+			$('a[href="#edit"]').click(function (e) {
+				e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+
+				// Ẩn tables-wrapper và tables-wrapper1
+				$('.tables-wrapper').hide();
+				$('.tables-wrapper1,.tables-wrapper2').hide();
+
+
+				// Sử dụng AJAX để lấy nội dung biểu mẫu chỉnh sửa
+				$.ajax({
+					url: '@Url.Action("EditCustomers", "Customers")', // Thay thế "ControllerName" bằng tên thực tế của bộ điều khiển của bạn
+					type: 'GET',
+					success: function (data) {
+						// Thay thế nội dung của một container bằng nội dung biểu mẫu chỉnh sửa đã lấy được
+						$('#edit-container').html(data);
+					},
+					error: function () {
+						console.log('Lỗi khi tải biểu mẫu chỉnh sửa.');
+					}
+				});
+			});
+			function editCustomer(element) {
+				var userId = $(element).closest('tr').data('userid');
+				console.log('Đã nhấp. ID Khách hàng:', userId);
+
+				// Đặt giá trị UserId vào trường ẩn
+				$('#CumstomerID').val(userId);
+
+				// Chuyển hướng đến trang EditCustomer
+				$('#register-form').submit();
+			}
+		});
+	</script>
+
+
+	//<!-- ======== main-wrapper end =========== -->
+	<!-- ========= All Javascript files linkup ======== -->
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/js/Chart.min.js"></script>
 	<script src="~/assets/js/dynamic-pie-chart.js"></script>

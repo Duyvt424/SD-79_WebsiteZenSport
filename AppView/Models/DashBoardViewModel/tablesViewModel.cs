@@ -6,13 +6,16 @@
 		public string BillCode { get; set; }
 		public int TotalShoes { get; set; }
 		public decimal Price { get; set; }
-		public decimal ShippngCost { get; set; }
-		public decimal PriceVoucher { get; set; }
+		public decimal TotalPrice { get; set; }
 		public Guid CustomerID { get; set; }
 		public string FullNameCus { get; set; }
 		public string PhoneNumber { get; set; }
+		public string NameProduct { get; set; }
+		public string Description { get; set; }
 		public DateTime CreateDate { get; set; }
 		public string PurchasePayMent { get; set; }
 		public int Status { get; set; }
+		public string? ImageUrl { get; set; }
+		public string? SizeName { get; set; }
 	}
 }

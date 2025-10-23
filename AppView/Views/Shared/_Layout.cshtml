@@ -2,6 +2,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
 	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+	var fullNameUser = HttpContextAccessor.HttpContext.Session.GetString("FullName");
 }
 
 <!DOCTYPE html>
@@ -140,7 +141,7 @@
 						 alt="">
 							<a style="font-size: 11px; font-weight: bold;"
 					   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
-								Hi: @Html.Raw(userName?.Replace("\"", ""))
+								Hi: @Html.Raw(fullNameUser?.Replace("\"", ""))
 							</a>
 						</div>
 						<div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">

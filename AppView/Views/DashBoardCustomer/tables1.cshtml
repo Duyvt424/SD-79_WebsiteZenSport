@@ -1,17 +1,13 @@
 ﻿@model List<AppView.Models.DashBoardViewModel.tablesViewModel>
-
 @{
 
 	Layout = null;
-	var stt = 1;
 }
-
 @inject IHttpContextAccessor HttpContextAccessor
 @{
 	var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
 	var fullName = HttpContextAccessor.HttpContext.Session.GetString("FullName");
 	var email = HttpContextAccessor.HttpContext.Session.GetString("Email");
-
 	var UserId = HttpContextAccessor.HttpContext.Session.GetString("UserId");
 	var Password = HttpContextAccessor.HttpContext.Session.GetString("Password");
 	var Sex = HttpContextAccessor.HttpContext.Session.GetString("Sex");
@@ -23,10 +19,8 @@
 	<meta charset="UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="shortcut icon" href="~/assets/images/favicon.svg" type="image/x-icon" />
-	<title>Quản lí đơn hàng</title>
-
-	<!-- ========== All CSS files linkup ========= -->
+	<title>Đơn mua</title>
+	<link rel="icon" type="image" href="~/image/logo1.png" />
 	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/assets/css/lineicons.css" />
 	<link rel="stylesheet" href="~/assets/css/materialdesignicons.min.css" />
@@ -44,7 +38,7 @@
 		}
 
 		.max-width {
-			max-width: 40%; /* Đặt chiều rộng tối đa của danh sách (tùy chỉnh theo nhu cầu của bạn) */
+			max-width: 40%;
 		}
 
 		.rounded-circle {
@@ -112,7 +106,7 @@
 
 		.custom-row {
 			display: flex;
-			justify-content: flex-start; /* Điều này sẽ giữ các thành phần bên trái */
+			justify-content: flex-start;
 			align-items: center;
 		}
 
@@ -126,16 +120,13 @@
 	</style>
 </head>
 <body>
-	<!-- ======== Preloader =========== -->
 	<div id="preloader">
 		<div class="spinner"></div>
 	</div>
-	<!-- ======== Preloader =========== -->
-	<!-- ======== sidebar-nav start =========== -->
 	<aside class="sidebar-nav-wrapper">
 		<div class="navbar-logo" style="text-align:center">
-			<a href="@Url.Action("index", "DashBoard")">
-				<img src="~/image/Screenshot_1.png" alt="logo" />
+			<a href="@Url.Action("index", "Home")">
+				<img src="~/image/anhlogo23.png" alt="logo" style="width:85%; height:55%;" />
 			</a>
 		</div>
 		<nav class="sidebar-nav">
@@ -225,16 +216,6 @@
 				</li>
 			</ul>
 		</nav>
-		<div class="promo-box">
-			<div class="promo-icon">
-				<img class="mx-auto" src="~/assets/images/logo/logo-icon-big.svg" alt="Logo">
-			</div>
-			<h3>Upgrade to PRO</h3>
-			<p>Improve your development process and start doing more with PlainAdmin PRO!</p>
-			<a href="https://plainadmin.com/pro" target="_blank" rel="nofollow" class="main-btn primary-btn btn-hover">
-				Upgrade to PRO
-			</a>
-		</div>
 	</aside>
 	<div class="overlay"></div>
 	<!-- ======== sidebar-nav end =========== -->
@@ -247,15 +228,9 @@
 					<div class="col-lg-5 col-md-5 col-6">
 						<div class="header-left d-flex align-items-center">
 							<div class="menu-toggle-btn mr-15">
-								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
+								<button id="menu-toggle" class="main-btn primary-btn btn-hover" style="background-color:black;">
 									<i class="lni lni-chevron-left me-2"></i> Menu
 								</button>
-							</div>
-							<div class="header-search d-none d-md-flex">
-								<form action="#">
-									<input type="text" placeholder="Search..." />
-									<button><i class="lni lni-search-alt"></i></button>
-								</form>
 							</div>
 						</div>
 					</div>
@@ -376,11 +351,10 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="/image/Screenshot_2.png" alt="Admin" style="height:100%;" />
+												<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar" style="height:100%;" />
 											</div>
 											<div>
-												<h6 class="fw-500">@Html.Raw(userName?.Replace("\"", ""))</h6>
-												<p>Khách hàng</p>
+												<h6 class="fw-500">@Html.Raw(fullName?.Replace("\"", ""))</h6>
 											</div>
 										</div>
 									</div>
@@ -389,7 +363,7 @@
 									<li>
 										<div class="author-info flex items-center !p-1">
 											<div class="image">
-												<img src="/image/Screenshot_2.png" alt="image">
+												<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar">
 											</div>
 											<div class="content">
 												<h4 class="text-sm">@Html.Raw(userName?.Replace("\"", ""))</h4>
@@ -613,34 +587,31 @@
 									var voucher = data[i];
 									console.log("Current Voucher:", voucher);
 									var voucherHtml = `
-																																																																	<li class="list-group-item d-flex justify-content-between align-items-center">
-																																																																		<div style="display: flex">
-																																																																			<img src="/image/voucher.jpg"
-																																																																				width="85"
-																																																																				alt="totoprayogo.com"
-																																																																				class="" />
-																																																																				<div style="margin-left: 10px ">
-																																																																				<p style="display:none">ID: ${voucher.voucherID}</p>
-																																																																				<p>Mã  ${voucher.voucherCode}  giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
-																																																																				<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																																																																				<p>Hạng: ${voucher.exclusiveright}</p>
-																																																																				<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																																																																				<p style="display:none">Total: ${voucher.Total}</p>
-																																																																				<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																																																																				<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																																						<li class="list-group-item d-flex justify-content-between align-items-center">
+																																																							<div style="display: flex">
+																																																								<img src="/image/voucher.jpg"
+																																																									width="85"
+																																																									alt="totoprayogo.com"
+																																																									class="" />
+																																																									<div style="margin-left: 10px ">
+																																																									<p style="display:none">ID: ${voucher.voucherID}</p>
+																																																									<p>Mã  ${voucher.voucherCode}  giảm  ${voucher.voucherValue}Đ trên hóa đơn  ${voucher.total}Đ</p>
+																																																									<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																																																									<p>Hạng: ${voucher.exclusiveright}</p>
+																																																									<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																																																									<p style="display:none">Total: ${voucher.Total}</p>
+																																																									<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																																																									<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																																																									<p style="display:none">Status: ${voucher.Status}</p>
+																																																									<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																																																									<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																																																									<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																																																									<p style="display:none">Type: ${voucher.Type}</p>
+																																																									<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																																																								</div>
+																																																							</div>
 
-																																																																				<p style="display:none">Status: ${voucher.Status}</p>
-																																																																				<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																																																																				<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																																																																				<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																																																																				<p style="display:none">Type: ${voucher.Type}</p>
-																																																																				<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-
-
-																																																																			</div>
-																																																																		</div>
-
-																																																																	</li>`;
+																																																						</li>`;
 
 									$("#voucherList").append(voucherHtml);
 								}
@@ -712,178 +683,92 @@
 					@Html.Raw(userName?.Replace("\"", ""))
 				</li>
 			</div>
-			@*
-			------------------*@
 
-			<div class="tables-wrapper">
-				<div class="custom-row">
-					<div class="custom-col">
-						<label class="custom-label" for="orderCode">Mã đơn hàng:</label>
-						<input type="text" id="orderCode" name="orderCode" oninput="findTables()">
-					</div>
-					<div class="custom-col">
-						<label class="custom-label" for="startDate">Từ ngày:</label>
-						<input type="date" id="startDate" name="startDate" oninput="filterByDateRange()">
-					</div>
-					
-					<div class="custom-col">
-						<label class="custom-label" for="endDate">Đến ngày:</label>
-						<input type="date" id="endDate" name="endDate" oninput="filterByDateRange()">
-					</div>
-		<div class="custom-col" style="margin-left: 910px;">
-    <label class="custom-label" for="orderStatus">Trạng thái đơn hàng:</label>
-    <select id="orderStatus" name="orderStatus" onchange="filterByStatus()">
-        <option value="-1">Tất cả</option>
-        <option value="0">Chờ xác nhận</option>
-        <option value="1">Đã xác nhận thông tin</option>
-        <option value="2">Đã bàn giao cho ĐVVC</option>
-        <option value="3">Đã nhận được hàng</option>
-        <option value="4">Đã hủy đơn</option>
-							<option value="6">Hoàn trả</option>
-    </select>
-</div>
-
-				</div>
-
-
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="card-style mb-30">
-							<div class="table-wrapper table-responsive">
-								<div class="title">
-									<h2>Danh sách đơn hàng</h2>
-								</div>
-								<table class="table">
-									<thead>
-										<tr>
-											<th>
-												<h6>STT</h6>
-											</th>
-											<th>
-												<h6 style="padding-left:5%;">Mã đơn hàng</h6>
-											</th>
-											<th>
-												<h6>Tổng số <br /> sản phẩm</h6>
-											</th>
-											<th>
-												<h6 style="padding-left:5%;">Tổng số tiền</h6>
-											</th>
-											<th>
-												<h6>Tên khách hàng</h6>
-											</th>
-											<th>
-												<h6>Số điện thoại</h6>
-											</th>
-											<th>
-												<h6>Thời gian đặt hàng</h6>
-											</th>
-											<th>
-												<h6>Phương thức thanh toán</h6>
-											</th>
-											<th>
-												<h6>Trạng thái đơn hàng</h6>
-											</th>
-											<th>
-												<h6>Hành động</h6>
-											</th>
-										</tr>
-										<!-- end table row-->
-									</thead>
-									<tbody>
-										@foreach (var bill in Model)
-										{
-
-											var trimmedBillName = new string((bill.FullNameCus ?? "").Where(char.IsLetterOrDigit).ToArray());
-											var trimmedFullName = new string((fullName ?? "").Where(char.IsLetterOrDigit).ToArray());
-											if (string.Equals(trimmedBillName, trimmedFullName, StringComparison.OrdinalIgnoreCase))
-
-											{
-												<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-													<td class="min-width">
-														<p>@stt</p>
-													</td>
-													<td class="min-width">
-														<p>@bill.BillCode</p>
-													</td>
-													<td class="min-width">
-														<p>@bill.TotalShoes</p>
-													</td>
-													<td class="min-width">
-														<p style="color:red;">@bill.Price.ToString("N0")đ</p>
-													</td>
-													<td class="min-width">
-														<p>@bill.FullNameCus</p>
-													</td>
-													<td class="min-width">
-														<p>@bill.PhoneNumber</p>
-													</td>
-													<td class="min-width">
-														<p class="date-column">@bill.CreateDate.ToString("HH:mm, dd/MM/yyyy")</p>
-													</td>
-													<td class="min-width">
-														<p class="main-btn secondary-btn-light rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">@bill.PurchasePayMent</p>
-													</td>
-													<td class="min-width">
-														@if (bill.Status == 0)
-														{
-															<span class="main-btn secondary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Chờ xác nhận</span>
-														}
-														else
-																if (bill.Status == 1)
-														{
-															<span class="main-btn primary-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã xác nhận thông tin</span>
-														}
-														else
-																if (bill.Status == 2)
-														{
-															<span class="main-btn warning-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã bàn giao cho ĐVVC</span>
-														}
-														else
-																if (bill.Status == 3)
-														{
-															<span class="main-btn info-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã nhận được hàng</span>
-														}
-														else
-																if (bill.Status == 4)
-														{
-															<span class="main-btn danger-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Đã hủy đơn</span>
-														}
-														else
-																if (bill.Status == 6)
-														{
-															<span class="main-btn light-btn rounded-full btn-hover" style="font-size:12px; padding:5px 10px; margin:2px;">Hoàn trả</span>
-														}
-													</td>
-													<td>
-														<div class="action">
-															<a href="@Url.Action("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID })" class="text-danger">
-																<i class="lni lni-eye"></i>
-															</a>
-														</div>
-													</td>
-												</tr>
-												stt++;
-
-
-											}
-										}
-									</tbody>
-								</table>
-								<!-- end table -->
+			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
+				<div class="custom-row d-flex justify-content-between align-items-center">
+					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
+						<div class="search" style="width:920%;">
+							<i class="fa fa-search"></i>
+							<input type="text" id="searchInput" class="form-control" name="billCode" placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên sản phẩm...">
+						</div>
+					</form>
+					<form method="get" action="@Url.Action("Filter")" style="margin-left:80%; margin-top:2%;">
+						<div>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									Trạng thái
+								</button>
+								<ul class="dropdown-menu" id="statusDropdown" style="cursor:pointer;">
+									<li><a class="dropdown-item" data-value="8">Tất cả</a></li>
+									<li><a class="dropdown-item" data-value="0">Chờ xác nhận</a></li>
+									<li><a class="dropdown-item" data-value="1">Đã xác nhận thông tin</a></li>
+									<li><a class="dropdown-item" data-value="2">Đang vận chuyển</a></li>
+									<li><a class="dropdown-item" data-value="3">Giao hàng thành công</a></li>
+									<li><a class="dropdown-item" data-value="6">Hoàn trả</a></li>
+									<li><a class="dropdown-item" data-value="4">Đã hủy</a></li>
+								</ul>
 							</div>
 						</div>
-						<!-- end card -->
-					</div>
-					<!-- end col -->
+					</form>
 				</div>
-				<!-- end row -->
+
+				<div class="title" style="margin-top:2%;">
+					<h2>Danh sách đơn hàng</h2>
+				</div>
+				@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
+				{
+					var bill = group.First();
+					<div id="resultContainer">
+						<div class="row" style="margin-top:1%;">
+							<div class="col-lg-12">
+								<div class="card-style mb-30">
+									<div class="table-wrapper table-responsive">
+										<table class="table">
+											<tbody>
+												@foreach (var item in group)
+												{
+													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+														<td class="min-width d-flex align-items-flex-start">
+															<div class="col-lg-2 col-md-12 mb-4 mb-lg-0">
+																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																	<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-100" alt="Image" />
+																	<a href="#!">
+																		<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+																	</a>
+																</div>
+															</div>
+															<div class="col-lg-9 col-md-6 mb-4 mb-lg-0" style="margin-left:3%;">
+																<p style="font-size:23px;"><strong>@item.NameProduct</strong></p>
+																<p>Phân loại hàng: @item.Description</p>
+																<p>X@(item.TotalShoes)</p>
+																<p style="font-size:15px; float:right;">@item.Price.ToString("N0")đ</p>
+																<p>Size:@item.SizeName</p>
+															</div>
+														</td>
+													</tr>
+												}
+												<tr>
+													<td>
+														<p style="font-size:20px; float:right; margin-right:5%;">
+															Thành tiền:
+															<strong style="color:red;">@bill.TotalPrice.ToString("N0")đ</strong>
+														</p>
+														<a href="@Url.Action("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID })" class="main-btn secondary-btn-light rounded-full btn-hover"
+													   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width: 15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+															Chi tiết
+														</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
 			</div>
-			<!-- ========== tables-wrapper end ========== -->
-			</div>
-			<!-- end container -->
 		</section>
-		<!-- ========== table components end ========== -->
-		<!-- ========== footer start =========== -->
 		<footer class="footer">
 			<div class="container-fluid">
 				<div class="row">
@@ -903,8 +788,142 @@
 		</footer>
 		<!-- ========== footer end =========== -->
 	</main>
+	<script>
+		$(document).ready(function () {
+			console.log("script loaded"); // kiểm tra script có chạy không
 
+			// Hàm gọi filter (ví dụ gọi lần đầu hoặc khi click)
+			function filterData() {
+				const selectedStatus = $("#statusDropdown a.selected").data("value");
+				console.log("filterData called, status=", selectedStatus);
 
+				$.ajax({
+					type: "GET",
+					url: '@Url.Action("Filter")', // nếu đây gây lỗi, thay bằng '/Bill/Filter'
+					data: { nameStatus: selectedStatus },
+					success: function (response) {
+						console.log("AJAX response:", response);
+						try {
+							renderBills(response);
+						} catch (err) {
+							console.error("renderBills error:", err);
+						}
+					},
+					error: function (error) {
+						console.error("AJAX Error:", error);
+					}
+				});
+			}
+
+			// gắn sự kiện dropdown (off trước để tránh gắn nhiều lần)
+			$("#statusDropdown a").off("click").on("click", function () {
+				$("#statusDropdown a").removeClass("selected");
+				$(this).addClass("selected");
+				filterData();
+			});
+
+			// gọi 1 lần khi load để hiển thị mặc định (nếu muốn)
+			// filterData();
+
+			// Hàm render (group nếu data flat)
+			function renderBills(data) {
+				const container = $("#resultContainer");
+				console.log("Rendering bills, container found:", container.length);
+
+				container.empty();
+				if (!data || data.length === 0) {
+					container.html("<p style='text-align:center; margin-top:20px;'>Không có hóa đơn nào.</p>");
+					return;
+				}
+
+				// Nếu server đã trả grouped (mỗi phần tử có .items), dùng trực tiếp
+				const isGrouped = Array.isArray(data) && data.length > 0 && Array.isArray(data[0].items);
+				let groups = [];
+
+				if (isGrouped) {
+					groups = data; // cấu trúc đã hợp lệ
+				} else {
+					// group flat array theo billID
+					const map = {};
+					data.forEach(item => {
+						const id = item.billID ?? item.BillID; // cố gắng hỗ trợ nhiều kiểu tên
+						if (!map[id]) map[id] = { billID: id, customerID: item.customerID ?? item.CustomerID, items: [], totalPrice: item.totalPrice ?? item.TotalPrice };
+						map[id].items.push(item);
+						// cập nhật tổng giá nếu server không cung cấp
+						if (!map[id].totalPrice) {
+							map[id].totalPrice = (map[id].totalPrice || 0) + (Number(item.totalPrice ?? item.price ?? item.Price ?? 0));
+						}
+					});
+					groups = Object.values(map);
+				}
+
+				// render mỗi nhóm
+				groups.forEach(group => {
+					// item đầu dùng làm nguồn thông tin chung
+					const first = Array.isArray(group.items) ? group.items[0] : group.items;
+					let itemsHtml = "";
+
+					(group.items || []).forEach(item => {
+						itemsHtml += `
+							<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+								<td class="min-width d-flex align-items-flex-start">
+									<div style="flex:0 0 150px; max-width:150px;">
+										<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+											<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+											<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+										</div>
+									</div>
+									<div style="flex:1; margin-left:16px;">
+										<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+										<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+										<p>X${item.totalShoes ?? item.TotalShoes}</p>
+										<p>Size: ${item.sizeName ?? item.SizeName}</p>
+										<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+									</div>
+								</td>
+							</tr>`;
+					});
+
+					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
+					const billId = group.billID ?? first.billID ?? first.BillID;
+					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
+
+					const html = `
+						<div class="row" style="margin-top:1%;">
+							<div class="col-lg-12">
+								<div class="card-style mb-30">
+									<div class="table-wrapper table-responsive">
+										<table class="table">
+											<tbody>
+												${itemsHtml}
+												<tr>
+													<td>
+														<p style="font-size:20px; float:right; margin-right:5%;">
+															Thành tiền: <strong style="color:red;">${total}đ</strong>
+														</p>
+														<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+														   class="main-btn secondary-btn-light rounded-full btn-hover"
+														   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+															Chi tiết
+														</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>`;
+
+					container.append(html);
+				});
+			}
+
+			function formatCurrency(value) {
+				return Number(value || 0).toLocaleString('vi-VN');
+			}
+		});
+	</script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 	<script>
@@ -980,49 +999,6 @@
 			}
 		}
 	</script>
-
-
-	<script>
-		function filterByDateRange() {
-			var startDateString = document.getElementById('startDate').value;
-			var endDateString = document.getElementById('endDate').value;
-
-			// Parse dates with Moment.js
-			var startDate = moment(startDateString, 'YYYY-MM-DD');
-			var endDate = moment(endDateString, 'YYYY-MM-DD');
-
-			console.log("Start Date:", startDate);
-			console.log("End Date:", endDate);
-
-			if (!startDate.isValid() || !endDate.isValid()) {
-				console.log("Invalid date format");
-				return;
-			}
-
-			$('.table tbody tr').each(function () {
-				var rowDateString = $(this).find('.date-column').text();
-				console.log("Row Date String:", rowDateString);
-
-				// Parse row date string into a valid Date object using Moment.js
-				var rowDate = moment(rowDateString, 'HH:mm, DD/MM/YYYY');
-
-				console.log("Row Date:", rowDate);
-
-				if (rowDate.isValid() && rowDate.isSameOrAfter(startDate) && rowDate.isSameOrBefore(endDate)) {
-					$(this).show();
-				} else {
-					$(this).hide();
-				}
-			});
-		}
-
-
-	</script>
-
-	
-
-
-	<!-- Thêm đoạn mã này vào cuối tệp CSHTML của bạn -->
 	<script>
 		$(document).ready(function () {
 			// Thêm sự kiện click cho liên kết "Đơn mua"
