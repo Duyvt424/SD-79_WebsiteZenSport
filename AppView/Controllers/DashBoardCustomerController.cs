@@ -58,8 +58,10 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult findTables(string billCode)
         {
-            var objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(sds => sds.ShoesDetails).ThenInclude(sd => sd.Product).Where(c => c.Bill.BillCode.Contains(billCode) || c.ShoesDetails_Size.ShoesDetails.Product.Name.Contains(billCode)).ToList();
-            var listBill = objBill.Select(c => new tablesViewModel
+            var objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(sds => sds.ShoesDetails).ThenInclude(sd => sd.Product)
+                .Where(c => c.Bill.BillCode.ToLower().Contains(billCode) || c.ShoesDetails_Size.ShoesDetails.Product.Name.ToLower().Contains(billCode)).Select(c => c.BillID).ToList();
+            var billUser = _dbContext.BillDetails.Where(c => objBill.Contains(c.BillID)); //Lấy ra tất cả BillDetails mà BillID của nó nằm trong danh sách objBill.
+            var listBill = billUser.Select(c => new tablesViewModel
             {
                 BillID = c.BillID,
                 CustomerID = c.Bill.CustomerID,
@@ -78,39 +80,20 @@ namespace AppView.Controllers
         }
 
         [HttpGet]
-        public IActionResult searchByDate(DateTime startDate, DateTime endDate)
-        {
-            var objBill = _repos.GetAll().Where(c => c.CreateDate >= startDate && c.CreateDate <= endDate).ToList();
-            var listBill = objBill.Select(c => new tablesViewModel
-            {
-                BillID = c.BillID,
-                BillCode = c.BillCode,
-                TotalShoes = _dbContext.BillDetails.Where(z => z.BillID == c.BillID).Sum(s => s.Quantity),
-                Price = c.TotalPriceAfterDiscount,
-                CustomerID = c.CustomerID,
-                FullNameCus = _dbContext.Customers.First(z => z.CumstomerID == c.CustomerID).FullName,
-                PhoneNumber = _dbContext.Customers.First(z => z.CumstomerID == c.CustomerID).PhoneNumber,
-                CreateDate = c.CreateDate,
-                PurchasePayMent = _dbContext.PurchaseMethods.First(z => z.PurchaseMethodID == c.PurchaseMethodID).MethodName,
-                Status = c.Status,
-            }).ToList();
-            return Json(listBill);
-        }
-
-        [HttpGet]
         public IActionResult Filter(int nameStatus)
         {
-            var objBill = _dbContext.BillDetails.ToList();
+            var objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(c => c.ShoesDetails).ThenInclude(c => c.Product).ToList();
             if (nameStatus != 8)
             {
-                objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(c => c.ShoesDetails).ThenInclude(c => c.Product).Where(c => c.Bill.Status == nameStatus).ToList();
+                objBill = _dbContext.BillDetails.Where(c => c.Bill.Status == nameStatus).ToList();
             }
             var listBill = objBill.Select(c => new tablesViewModel
             {
                 BillID = c.BillID,
                 CustomerID = c.Bill.CustomerID,
-                TotalShoes = _dbContext.BillDetails.Where(z => z.BillID == c.BillID).Sum(s => s.Quantity),
+                TotalShoes = c.Quantity,
                 Price = c.Price * c.Quantity,
+                TotalPrice = _dbContext.Bills.FirstOrDefault(b => b.BillID == c.BillID).TotalPriceAfterDiscount,
                 NameProduct = _dbContext.Products.FirstOrDefault(p => p.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                 Description = _dbContext.ShoesDetails.FirstOrDefault(p => p.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
                 ImageUrl = _dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,

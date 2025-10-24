@@ -715,10 +715,10 @@
 				<div class="title" style="margin-top:2%;">
 					<h2>Danh sách đơn hàng</h2>
 				</div>
-				@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
-				{
-					var bill = group.First();
-					<div id="resultContainer">
+				<div id="resultContainer">
+					@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
+					{
+						var bill = group.First();
 						<div class="row" style="margin-top:1%;">
 							<div class="col-lg-12">
 								<div class="card-style mb-30">
@@ -765,8 +765,8 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				}
+					}
+				</div>
 			</div>
 		</section>
 		<footer class="footer">
@@ -790,19 +790,14 @@
 	</main>
 	<script>
 		$(document).ready(function () {
-			console.log("script loaded"); // kiểm tra script có chạy không
-
-			// Hàm gọi filter (ví dụ gọi lần đầu hoặc khi click)
 			function filterData() {
 				const selectedStatus = $("#statusDropdown a.selected").data("value");
-				console.log("filterData called, status=", selectedStatus);
 
 				$.ajax({
 					type: "GET",
-					url: '@Url.Action("Filter")', // nếu đây gây lỗi, thay bằng '/Bill/Filter'
+					url: '@Url.Action("Filter")',
 					data: { nameStatus: selectedStatus },
 					success: function (response) {
-						console.log("AJAX response:", response);
 						try {
 							renderBills(response);
 						} catch (err) {
@@ -822,17 +817,12 @@
 				filterData();
 			});
 
-			// gọi 1 lần khi load để hiển thị mặc định (nếu muốn)
-			// filterData();
-
 			// Hàm render (group nếu data flat)
 			function renderBills(data) {
 				const container = $("#resultContainer");
-				console.log("Rendering bills, container found:", container.length);
-
 				container.empty();
 				if (!data || data.length === 0) {
-					container.html("<p style='text-align:center; margin-top:20px;'>Không có hóa đơn nào.</p>");
+					container.html("<p style='text-align:center; margin-top:30px;'>Không có hóa đơn nào.</p>");
 					return;
 				}
 
@@ -862,7 +852,6 @@
 					// item đầu dùng làm nguồn thông tin chung
 					const first = Array.isArray(group.items) ? group.items[0] : group.items;
 					let itemsHtml = "";
-
 					(group.items || []).forEach(item => {
 						itemsHtml += `
 							<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
@@ -883,11 +872,9 @@
 								</td>
 							</tr>`;
 					});
-
 					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
 					const billId = group.billID ?? first.billID ?? first.BillID;
 					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
-
 					const html = `
 						<div class="row" style="margin-top:1%;">
 							<div class="col-lg-12">
@@ -914,7 +901,6 @@
 								</div>
 							</div>
 						</div>`;
-
 					container.append(html);
 				});
 			}
@@ -926,79 +912,6 @@
 	</script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-	<script>
-		function findTables() {
-			var searchTerm = $('#orderCode').val().toLowerCase(); // Chuyển đổi giá trị tìm kiếm thành chữ thường
-
-			$('.bill-row').each(function () {
-				var billCode = $(this).find('td:nth-child(2)').text().toLowerCase(); // Lấy giá trị mã đơn hàng trong mỗi hàng
-
-				// Ẩn hoặc hiển thị hàng tùy thuộc vào việc có kết quả tìm kiếm hay không
-				if (billCode.includes(searchTerm)) {
-					$(this).show();
-				} else {
-					$(this).hide();
-				}
-			});
-		}
-
-		// Gọi hàm findTables mỗi khi có sự thay đổi trong trường nhập liệu mã đơn hàng
-		$('#orderCode').on('input', function () {
-			findTables();
-		});
-	</script>
-
-
-	<script>
-		function filterByStatus() {
-			var selectedStatus = $("#orderStatus").val().trim();
-			console.log("Selected Status:", selectedStatus);
-
-			// Lấy tất cả các dòng và lưu vào mảng
-			var rows = $("tbody tr");
-			console.log("Number of Rows:", rows.length);
-
-			// Lặp qua mảng và so sánh trạng thái
-			rows.each(function () {
-				var statusCell = $(this).find("td:eq(8)");
-
-				if (statusCell.length > 0) {
-					var rowStatus = statusCell.text().trim();
-					console.log("Row Status (Before):", rowStatus);
-
-					// Chuẩn hóa giá trị trước khi so sánh
-					var normalizedRowStatus = normalizeStatus(rowStatus);
-					console.log("Normalized Row Status:", normalizedRowStatus);
-
-					var shouldDisplay = selectedStatus === "-1" || normalizedRowStatus.includes(selectedStatus);
-					console.log("Should Display:", shouldDisplay);
-
-					$(this).toggle(shouldDisplay);
-				}
-			});
-		}
-
-		// Hàm để chuẩn hóa giá trị trạng thái
-		function normalizeStatus(status) {
-			// Quy đổi giá trị trạng thái theo mong muốn
-			switch (status) {
-				case "Chờ xác nhận":
-					return "0";
-				case "Đã xác nhận thông tin":
-					return "1";
-				case "Đã bàn giao cho ĐVVC":
-					return "2";
-				case "Đã nhận được hàng":
-					return "3";
-				case "Đã hủy đơn":
-					return "4";
-				case "Hoàn trả":
-					return "6";
-				default:
-					return status;
-			}
-		}
-	</script>
 	<script>
 		$(document).ready(function () {
 			// Thêm sự kiện click cho liên kết "Đơn mua"
@@ -1076,10 +989,6 @@
 			}
 		});
 	</script>
-
-
-	//<!-- ======== main-wrapper end =========== -->
-	<!-- ========= All Javascript files linkup ======== -->
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/js/Chart.min.js"></script>
 	<script src="~/assets/js/dynamic-pie-chart.js"></script>
