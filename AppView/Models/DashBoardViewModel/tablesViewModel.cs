@@ -16,6 +16,7 @@
 		public string PurchasePayMent { get; set; }
 		public int Status { get; set; }
 		public string? ImageUrl { get; set; }
+		public string? ImageUser { get; set; }
 		public string? SizeName { get; set; }
 	}
 }

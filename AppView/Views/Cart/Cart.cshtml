@@ -19,6 +19,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Your Page Title</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css" integrity="sha512-NXUhxhkDgZYOMjaIgd89zF2w51Mub53Ru3zCNp5LTlEzMbNNAjTjDbpURYGS5Mop2cU4b7re1nOIucsVlrx9fA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<style>
 		#apply-voucher-btn {
 			background-color: #4CAF50; /* Green background color */
@@ -328,7 +330,7 @@
 										<p class="text-start text-md-center">
 											@{
 												var priceItems = item.Price * item.Quantity;
-														<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
+															<span class="total-price ms-auto total-price-span" data-shoesdetailsid="@item.ShoesDetailsID" data-size="@item.Size">@priceItems.ToString("N0")đ</span>
 											}
 										</p>
 
@@ -760,7 +762,7 @@
 										<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
 										<label for="floatingInputEmail">Số điện thoại</label>
 									</div>
-									@if (Context.Session.GetInt32("IsEmailLogin") != 2)
+									@if (Context.Session.GetInt32("IsEmailLogin") == null)
 									{
 										<div class="form-floating mb-3">
 											<input type="email" class="form-control" name="email" placeholder="Email" required>
@@ -1378,171 +1380,230 @@
 													return formattedDate;
 												}
 
+												//case apply từ trang danh sách coupon
+												const voucherCodeUser = localStorage.getItem("selectedVoucherCode");
+												if (voucherCodeUser) {
+													// Sau khi lấy xong thì xóa luôn để tránh áp lại lần sau
+													localStorage.removeItem("selectedVoucherCode");
 
-												$("#apply-voucher-btn").off("click").on("click", function () {
-													var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
+													// Gọi API để kiểm tra voucher và áp dụng
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7036/api/Voucher/find-voucher",
+														data: { code: voucherCodeUser },
+														dataType: "json",
+														success: function (result) {
+															if (result && result.length > 0) {
+																const v = result[0];
 
-													if (selectedVoucherCode) {
-														$.ajax({
-															type: "GET",
-															url: "https://localhost:7036/api/Voucher/find-voucher",
-															data: { code: selectedVoucherCode },
-															dataType: 'json',
-															success: function (result) {
-																if (result && result.length > 0 && result[0]) {
-																	if (result[0].status == 0) {
-																		var startDate = new Date(result[0].dateCreated);
-																		var currentDate = new Date();
+																if (v.status !== 0) {
+																	alert("Voucher không còn hiệu lực hoặc đã ngừng hoạt động.");
+																	return;
+																}
 
-																		if (startDate > currentDate) {
-																			alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
-																		} else {
-																			if (result[0].voucherValue != null) {
-																				var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
-																				var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
-																				var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
+																const sanPhamPrice = parseFloat($("#totalPrice").text().replace(/[,.đ]/g, "")) || 0;
+																const priceShip = parseFloat($("#phivanchuyen").text().replace(/[,.đ]/g, "")) || 0;
+																const totalAll = sanPhamPrice + priceShip;
 
-																				var priceShipHTML = document.getElementById('phivanchuyen').textContent;
-																				var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
-																				var priceShip = parseFloat(regexPriceShipHTML);
+																if (totalAll < v.total) {
+																	alert("Đơn hàng chưa đạt điều kiện tối thiểu của voucher này.");
+																	return;
+																}
 
-																				var totalAll = parseFloat(sanphamPrice + priceShip);
+																const discount = parseFloat(v.voucherValue);
+																const newTotal = totalAll - discount;
 
-																				if (totalAll < result[0].total) {
-																					alert("Tổng giá trị đơn hàng chưa thoả mãn điều kiện");
-																				} else {
-																					var rankName = "@Model.RankName".trim();
-																					var exclusiveright = result[0].exclusiveright.trim();
+																// Cập nhật giao diện giỏ hàng
+																$("#code-voucher").text(v.voucherCode);
+																$("#giamgia").text(discount.toLocaleString('vi-VN') + "đ");
+																$("#total-price-payment").text(newTotal.toLocaleString('vi-VN') + "đ");
 
-																					function decodeEntities(encodedString) {
-																						var textArea = document.createElement('textarea');
-																						textArea.innerHTML = encodedString;
-																						return textArea.value;
-																					}
+																new Noty({
+																	type: 'success',
+																	text: "Voucher " + v.voucherCode + " đã được áp dụng thành công!",
+																	timeout: 2000,
+																	progressBar: true,
+																	closeWith: ['click', 'button'],
+																}).show();
+															} else {
+																alert("Không tìm thấy thông tin voucher.");
+															}
+														},
+														error: function (err) {
+															console.error("Lỗi khi áp dụng voucher:", err);
+														}
+													});
+												}
+											});
 
-																					var decodedRankName = decodeEntities(rankName);
-																					var decodedExclusiveright = decodeEntities(exclusiveright);
+											// đây là chọn mặc định ở trang cart
+											$("#apply-voucher-btn").off("click").on("click", function () {
+												var selectedVoucherCode = $("input[name='selectedVoucher']:checked").val();
 
-																					if (
-																						(decodedRankName === decodedExclusiveright && decodedExclusiveright === "Không") ||
-																						(decodedRankName === "Hạng vàng" && decodedExclusiveright === "Không") ||
-																						(decodedRankName === "Hạng bạc" && decodedExclusiveright === "Không") ||
-																						(decodedRankName === "Hạng kim cương" && decodedExclusiveright === "Không") ||
-																						(decodedRankName === decodedExclusiveright)
-																					) {
-																						var voucherDiscount = parseFloat(result[0].voucherValue);
-																						totalAll -= voucherDiscount;
+												if (selectedVoucherCode) {
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7036/api/Voucher/find-voucher",
+														data: { code: selectedVoucherCode },
+														dataType: 'json',
+														success: function (result) {
+															if (result && result.length > 0 && result[0]) {
+																if (result[0].status == 0) {
+																	var startDate = new Date(result[0].dateCreated);
+																	var currentDate = new Date();
 
-																						$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
-																						$("#code-voucher").text(result[0].voucherCode);
-																						$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
-
-																						alert("Áp dụng voucher thành công!");
-
-																						var idVoucher = $("#voucherId");
-																						idVoucher.val(result[0].voucherID);
-
-																					} else {
-																						alert("Bạn không đủ điều kiện để sử dụng voucher này.");
-																					}
-																				}
-																			} else {
-																				console.log("Lỗi: result[0].voucherValue không có giá trị.");
-																			}
-																		}
+																	if (startDate > currentDate) {
+																		alert("Voucher chưa có hiệu lực vì ngày bắt đầu chưa đến.");
 																	} else {
-																		alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
-																	}
-																} else {
-																	console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
-																}
-															},
-															error: function (error) {
-																console.log("Lỗi Ajax:", error);
-															}
-														});
-													} else {
-														alert("Vui lòng chọn một voucher để áp dụng.");
-													}
-												});
+																		if (result[0].voucherValue != null) {
+																			var sanPhamPriceHTML = document.getElementById('totalPrice').textContent;
+																			var regexSanPhamPriceHTML = sanPhamPriceHTML.replace(/[,.]/g, '');
+																			var sanphamPrice = parseFloat(regexSanPhamPriceHTML);
 
-												$("#searchVoucherBtn").click(function () {
-													var voucherCode = $("#voucherCodeInput").val();
-													var voucherList = $("#voucherList");
+																			var priceShipHTML = document.getElementById('phivanchuyen').textContent;
+																			var regexPriceShipHTML = priceShipHTML.replace(/[,.]/g, '');
+																			var priceShip = parseFloat(regexPriceShipHTML);
 
-													if (voucherCode) {
-														$.ajax({
-															type: "GET",
-															url: "https://localhost:7036/api/Voucher/find-voucher",
-															data: { code: voucherCode },
-															dataType: 'json',
-															success: function (result) {
-																voucherList.empty();
+																			var totalAll = parseFloat(sanphamPrice + priceShip);
 
-																if (result && result.length > 0) {
-																	result.forEach(function (voucher) {
-																		if (voucher.voucherCode === voucherCode) {
-																			var voucherHtml = `
-																		         <li class="list-group-item d-flex justify-content-between align-items-center">
-																		         	 <div style="display: flex">
-																		         			<img src="/image/voucher.jpg"
-																		         			width="85"
-																		         			alt="totoprayogo.com"
-																		         			class="" />
-																		         			<div style="margin-left: 10px">
-																		         			<p style="display:none">ID: ${voucher.voucherID}</p>
-																		         			<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue} đ trên hóa đơn  ${voucher.total} đ</p>
-																		         			<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
-																		         			<p>Hạng: ${voucher.exclusiveright}</p>
-																		         			<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
-																		         			<p style="display:none">Total: ${voucher.Total}</p>
-																		         			<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
-																		         			<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
-																		         			<p style="display:none">Status: ${voucher.Status}</p>
-																		         			<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
-																		         			<p style="display:none">IsDel: ${voucher.IsDel}</p>
-																		         			<p style="display:none">Create Date: ${voucher.CreateDate}</p>
-																		         			<p style="display:none">Type: ${voucher.Type}</p>
-																		         			<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
-																		         			<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
-																		         			</div>
-																		         		</div>
-																		         			<div style="margin-top: 25px">
-																		         <input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
-																		         </div>
-																		         </li>`;
+																			if (totalAll < result[0].total) {
+																				alert("Tổng giá trị đơn hàng chưa thoả mãn điều kiện");
+																			} else {
+																				var rankName = "@Model.RankName".trim();
+																				var exclusiveright = result[0].exclusiveright.trim();
 
-																			voucherList.append(voucherHtml);
+																				function decodeEntities(encodedString) {
+																					var textArea = document.createElement('textarea');
+																					textArea.innerHTML = encodedString;
+																					return textArea.value;
+																				}
+
+																				var decodedRankName = decodeEntities(rankName);
+																				var decodedExclusiveright = decodeEntities(exclusiveright);
+
+																				if (
+																					(decodedRankName === decodedExclusiveright && decodedExclusiveright === "Không") ||
+																					(decodedRankName === "Hạng vàng" && decodedExclusiveright === "Không") ||
+																					(decodedRankName === "Hạng bạc" && decodedExclusiveright === "Không") ||
+																					(decodedRankName === "Hạng kim cương" && decodedExclusiveright === "Không") ||
+																					(decodedRankName === decodedExclusiveright)
+																				) {
+																					var voucherDiscount = parseFloat(result[0].voucherValue);
+																					totalAll -= voucherDiscount;
+
+																					$("#total-price-payment").text(totalAll.toLocaleString('vi-VN') + "đ");
+																					$("#code-voucher").text(result[0].voucherCode);
+																					$("#giamgia").text(voucherDiscount.toLocaleString('vi-VN') + "đ");
+
+																					new Noty({
+																						type: 'success',
+																						text: "Voucher " + result[0].voucherCode + " đã được áp dụng thành công!",
+																						timeout: 2000,
+																						progressBar: true,
+																						closeWith: ['click', 'button'],
+																					}).show();
+
+																					var idVoucher = $("#voucherId");
+																					idVoucher.val(result[0].voucherID);
+
+																				} else {
+																					alert("Bạn không đủ điều kiện để sử dụng voucher này.");
+																				}
+																			}
+																		} else {
+																			console.log("Lỗi: result[0].voucherValue không có giá trị.");
 																		}
-																	});
-
-																	if (voucherList.children().length > 0) {
-																		alert("Đã tìm thấy mã voucher " + voucherCode);
-																		voucherList.show();
-
 																	}
 																} else {
+																	alert("Voucher không có hiệu lực do đã ngừng hoạt động.");
+																}
+															} else {
+																console.log("Lỗi: Dữ liệu từ máy chủ không hợp lệ.");
+															}
+														},
+														error: function (error) {
+															console.log("Lỗi Ajax:", error);
+														}
+													});
+												} else {
+													alert("Vui lòng chọn một voucher để áp dụng.");
+												}
+											});
 
-																	alert("Không tìm thấy voucher nào với mã " + voucherCode);
+											$("#searchVoucherBtn").click(function () {
+												var voucherCode = $("#voucherCodeInput").val();
+												var voucherList = $("#voucherList");
+
+												if (voucherCode) {
+													$.ajax({
+														type: "GET",
+														url: "https://localhost:7036/api/Voucher/find-voucher",
+														data: { code: voucherCode },
+														dataType: 'json',
+														success: function (result) {
+															voucherList.empty();
+
+															if (result && result.length > 0) {
+																result.forEach(function (voucher) {
+																	if (voucher.voucherCode === voucherCode) {
+																		var voucherHtml = `
+																	         <li class="list-group-item d-flex justify-content-between align-items-center">
+																	         	 <div style="display: flex">
+																	         			<img src="/image/voucher.jpg"
+																	         			width="85"
+																	         			alt="totoprayogo.com"
+																	         			class="" />
+																	         			<div style="margin-left: 10px">
+																	         			<p style="display:none">ID: ${voucher.voucherID}</p>
+																	         			<p>Mã ${voucher.voucherCode} giảm  ${voucher.voucherValue} đ trên hóa đơn  ${voucher.total} đ</p>
+																	         			<p>Ngày hết hạn: ${formatDate(voucher.expirationDate)}</p>
+																	         			<p>Hạng: ${voucher.exclusiveright}</p>
+																	         			<p style="display:none">Giá trị: ${voucher.VoucherValue}</p>
+																	         			<p style="display:none">Total: ${voucher.Total}</p>
+																	         			<p style="display:none">Max Usage: ${voucher.MaxUsage}</p>
+																	         			<p style="display:none">Remaining Usage: ${voucher.RemainingUsage}</p>
+																	         			<p style="display:none">Status: ${voucher.Status}</p>
+																	         			<p style="display:none">Ngày tạo: ${voucher.DateCreated}</p>
+																	         			<p style="display:none">IsDel: ${voucher.IsDel}</p>
+																	         			<p style="display:none">Create Date: ${voucher.CreateDate}</p>
+																	         			<p style="display:none">Type: ${voucher.Type}</p>
+																	         			<p style="display:none">Tên khách hàng: ${voucher.UserNameCustomer}</p>
+																	         			<p><a href="#" class="button-details" data-voucher-id="${voucher.voucherID}">Chi tiết</a></p>
+																	         			</div>
+																	         		</div>
+																	         			<div style="margin-top: 25px">
+																	         <input type="radio" style="width: 20px; height: 20px; margin-top: -40px;" name="selectedVoucher" value="${voucher.voucherCode}" />
+																	         </div>
+																	         </li>`;
+
+																		voucherList.append(voucherHtml);
+																	}
+																});
+
+																if (voucherList.children().length > 0) {
+																	alert("Đã tìm thấy mã voucher " + voucherCode);
+																	voucherList.show();
 
 																}
-															},
-															error: function (error) {
-																console.log("Lỗi Ajax:", error);
+															} else {
+
+																alert("Không tìm thấy voucher nào với mã " + voucherCode);
+
 															}
-														});
-													} else {
-														alert("Vui lòng nhập mã voucher để tìm kiếm.");
-													}
-												});
+														},
+														error: function (error) {
+															console.log("Lỗi Ajax:", error);
+														}
+													});
+												} else {
+													alert("Vui lòng nhập mã voucher để tìm kiếm.");
+												}
+											});
 
-
-
-												$("#voucherCodeInput").keypress(function (e) {
-													if (e.which === 13) { // Enter key
-														$("#searchVoucherBtn").click();
-													}
-												});
+											$("#voucherCodeInput").keypress(function (e) {
+												if (e.which === 13) { // Enter key
+													$("#searchVoucherBtn").click();
+												}
 											});
 										</script>
 									</div>

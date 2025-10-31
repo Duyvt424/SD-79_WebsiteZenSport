@@ -147,8 +147,7 @@ namespace AppView.Controllers
                 HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(loggedInUser.Password));
                 HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(loggedInUser.Sex));
                 HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(loggedInUser.PhoneNumber));
-                
-
+               
                 TempData["SignUpSuccess"] = "Đăng nhập thành công!";
                 return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }

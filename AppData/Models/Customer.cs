@@ -16,6 +16,7 @@ namespace AppData.Models
         public int Sex { get; set; }
         public string? ResetPassword { get; set; }//
         public string? PhoneNumber { get; set; }
+        public string? ImageUser { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
         public Guid? RankID { get; set; }

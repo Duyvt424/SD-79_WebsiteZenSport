@@ -23,6 +23,7 @@ namespace AppData.Configurations
             builder.Property(c => c.Sex).HasColumnType("int");
             builder.Property(c => c.PhoneNumber).HasColumnType("nvarchar(50)");
             builder.Property(c => c.ResetPassword).HasColumnType("nvarchar(60)");
+            builder.Property(c => c.ImageUser).HasColumnType("nvarchar(1000)").IsRequired(false);
             builder.Property(c => c.Status).HasColumnType("int");
             builder.Property(c => c.DateCreated).HasColumnType("Datetime");
             builder.HasOne(c => c.Rank).WithMany(c => c.Customers).HasForeignKey(c => c.RankID).IsRequired(false);

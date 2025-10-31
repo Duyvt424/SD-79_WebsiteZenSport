@@ -4,6 +4,7 @@ using AppData.Repositories;
 using AppView.Models.DashBoardViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace AppView.Controllers
 {
@@ -118,12 +119,43 @@ namespace AppView.Controllers
                 NameProduct = _dbContext.Products.FirstOrDefault(p => p.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                 Description = _dbContext.ShoesDetails.FirstOrDefault(p => p.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
                 ImageUrl = _dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
+                ImageUser = _dbContext.Customers.FirstOrDefault(u => u.CumstomerID == c.Bill.CustomerID).ImageUser,
                 CreateDate = _dbContext.Bills.FirstOrDefault(z => z.BillID == c.BillID).CreateDate,
                 PurchasePayMent = _dbContext.PurchaseMethods.First(z => z.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
                 Status = c.Status,
                 SizeName = _dbContext.Sizes.FirstOrDefault(s => s.SizeID == c.ShoesDetails_Size.SizeID).Name,
             }).ToList();
             return View(listBill);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> updateInformationUser(Guid inputUserID, [Bind(Prefix = "chooseFile")] IFormFile chooseFile, string inputUsername, string inputFullname, string phoneNumberUser, string emailUser, int sex, string inputPassword)
+        {
+            var userUpdate = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == inputUserID);
+            var httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Customer/update-customer?CumstomerID={userUpdate.CumstomerID}&FullName={inputFullname}&UserName={inputUsername}&Password={userUpdate.Password}&Email={emailUser}&Sex={sex}&ResetPassword=0000&PhoneNumber={phoneNumberUser}&Status={userUpdate.Status}&RankID={userUpdate.RankID}&DateCreated={userUpdate.DateCreated.ToString("yyyy-MM-ddTHH:mm:ss")}";
+            var response = await httpClient.PutAsync(apiUrl, null);
+            //update image
+            if (chooseFile != null && chooseFile.Length > 0)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image", chooseFile.FileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await chooseFile.CopyToAsync(stream);
+                }
+                userUpdate.ImageUser = chooseFile.FileName;
+                _dbContext.Customers.Update(userUpdate);
+                _dbContext.SaveChanges();
+            }
+            // cập nhật lại vào session
+            HttpContext.Session.SetString("UserId", JsonConvert.SerializeObject(userUpdate.CumstomerID.ToString()));
+            HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(inputUsername));
+            HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(inputFullname));
+            HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(emailUser));
+            //HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(userDb.Password));
+            HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(sex));
+            HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(phoneNumberUser));
+            return RedirectToAction("tables1");
         }
     }
 }
