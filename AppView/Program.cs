@@ -1,6 +1,7 @@
 using AppView.Controllers;
 using AppView.Hubs;
 using AppView.Middleware;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 
@@ -24,6 +25,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
     options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+	//get picture from profile
+	options.Scope.Add("profile");
+    options.ClaimActions.MapJsonKey("picture", "picture");
 });
 
 var app = builder.Build();

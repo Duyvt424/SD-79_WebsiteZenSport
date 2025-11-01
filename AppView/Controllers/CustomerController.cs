@@ -403,6 +403,7 @@ namespace AppView.Controllers
         public IActionResult LogOut()
         {
             HttpContext.Session.Remove("UserId");
+            HttpContext.Session.Remove("ImageUser");
             return RedirectToAction("Login");
         }
         public IActionResult ChangePassword()
@@ -453,6 +454,7 @@ namespace AppView.Controllers
             var fullName = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
             var givenName = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
             var emailAddress = result.Principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var imageUser = result.Principal.FindFirst("picture")?.Value;
             var userDb = _dbContext.Customers.FirstOrDefault(c => c.Email == emailAddress);
             var rank = _dbContext.Ranks.First(c => c.Name == "Không").RankID;
             if (userDb == null)
@@ -469,8 +471,23 @@ namespace AppView.Controllers
                     PhoneNumber = "",
                     Status = 2,
                     DateCreated = DateTime.Now,
-                    RankID = rank
+                    RankID = rank,
+                    ImageUser = ""
                 };
+                //lưu ảnh vào db
+                if (imageUser != null && imageUser.Length > 0)
+                {
+                    var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "image");
+                    // Tạo tên file ngẫu nhiên (tránh trùng)
+                    var fileName = $"{Guid.NewGuid()}.jpg";
+                    var filePath = Path.Combine(imageFolder, fileName);
+                    using (var httpClient = new HttpClient())
+                    {
+                        var imageBytes = await httpClient.GetByteArrayAsync(imageUser);
+                        await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+                    }
+                    User.ImageUser = fileName;
+                }
                 _dbContext.Customers.Add(User);
                 _dbContext.SaveChanges();
                 userDb = User;
@@ -482,6 +499,7 @@ namespace AppView.Controllers
             HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(userDb.Password));
             HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(userDb.Sex));
             HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(userDb.PhoneNumber));
+            HttpContext.Session.SetString("ImageUser", JsonConvert.SerializeObject(userDb.ImageUser));
             HttpContext.Session.SetInt32("IsEmailLogin", userDb.Status);
             return RedirectToAction("Index", "Home");
         }

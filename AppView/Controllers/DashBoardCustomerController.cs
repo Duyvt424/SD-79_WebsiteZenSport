@@ -59,8 +59,11 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult findTables(string billCode)
         {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var objCustomer = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == customerIdSession);
             var objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(sds => sds.ShoesDetails).ThenInclude(sd => sd.Product)
-                .Where(c => c.Bill.BillCode.ToLower().Contains(billCode) || c.ShoesDetails_Size.ShoesDetails.Product.Name.ToLower().Contains(billCode)).Select(c => c.BillID).ToList();
+                .Where(c => c.Bill.CustomerID == objCustomer.CumstomerID && (c.Bill.BillCode.ToLower().Contains(billCode) || c.ShoesDetails_Size.ShoesDetails.Product.Name.ToLower().Contains(billCode))).Select(c => c.BillID).ToList();
             var billUser = _dbContext.BillDetails.Where(c => objBill.Contains(c.BillID)); //Lấy ra tất cả BillDetails mà BillID của nó nằm trong danh sách objBill.
             var listBill = billUser.Select(c => new tablesViewModel
             {
@@ -72,6 +75,7 @@ namespace AppView.Controllers
                 NameProduct = _dbContext.Products.FirstOrDefault(p => p.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                 Description = _dbContext.ShoesDetails.FirstOrDefault(p => p.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
                 ImageUrl = _dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
+                ImageUser = objCustomer.ImageUser,
                 CreateDate = _dbContext.Bills.FirstOrDefault(z => z.BillID == c.BillID).CreateDate,
                 PurchasePayMent = _dbContext.PurchaseMethods.First(z => z.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
                 Status = c.Status,
@@ -83,10 +87,13 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult Filter(int nameStatus)
         {
-            var objBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(c => c.ShoesDetails).ThenInclude(c => c.Product).ToList();
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var objCustomer = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == customerIdSession);
+            var objBill = _dbContext.BillDetails.Include(c => c.Bill).ThenInclude(c => c.Customer).Include(c => c.ShoesDetails_Size).ThenInclude(c => c.ShoesDetails).ThenInclude(c => c.Product).Where(c => c.Bill.CustomerID == objCustomer.CumstomerID).ToList();
             if (nameStatus != 8)
             {
-                objBill = _dbContext.BillDetails.Where(c => c.Bill.Status == nameStatus).ToList();
+                objBill = _dbContext.BillDetails.Include(c => c.Bill).ThenInclude(c => c.Customer).Include(c => c.ShoesDetails_Size).ThenInclude(c => c.ShoesDetails).ThenInclude(c => c.Product).Where(c => c.Bill.Status == nameStatus && c.Bill.CustomerID == objCustomer.CumstomerID).ToList();
             }
             var listBill = objBill.Select(c => new tablesViewModel
             {
@@ -98,6 +105,7 @@ namespace AppView.Controllers
                 NameProduct = _dbContext.Products.FirstOrDefault(p => p.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                 Description = _dbContext.ShoesDetails.FirstOrDefault(p => p.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
                 ImageUrl = _dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
+                ImageUser = objCustomer.ImageUser,
                 CreateDate = _dbContext.Bills.FirstOrDefault(z => z.BillID == c.BillID).CreateDate,
                 PurchasePayMent = _dbContext.PurchaseMethods.First(z => z.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
                 Status = c.Status,
@@ -109,7 +117,10 @@ namespace AppView.Controllers
         [HttpGet]
         public IActionResult tables1()
         {
-            var listBill = _dbContext.BillDetails.Select(c => new tablesViewModel
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var objCustomer = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == customerIdSession);
+            var listBill = _dbContext.BillDetails.Include(c => c.Bill).Include(c => c.ShoesDetails_Size).ThenInclude(sds => sds.ShoesDetails).ThenInclude(sd => sd.Product).Where(c => c.Bill.CustomerID == objCustomer.CumstomerID).ToList().Select(c => new tablesViewModel
             {
                 BillID = c.BillID,
                 CustomerID = c.Bill.CustomerID,
@@ -119,7 +130,7 @@ namespace AppView.Controllers
                 NameProduct = _dbContext.Products.FirstOrDefault(p => p.ProductID == c.ShoesDetails_Size.ShoesDetails.ProductID).Name,
                 Description = _dbContext.ShoesDetails.FirstOrDefault(p => p.ShoesDetailsId == c.ShoesDetails_Size.ShoesDetailsId).Description,
                 ImageUrl = _dbContext.Images.FirstOrDefault(i => i.ShoesDetailsID == c.ShoesDetails_Size.ShoesDetailsId).Image1,
-                ImageUser = _dbContext.Customers.FirstOrDefault(u => u.CumstomerID == c.Bill.CustomerID).ImageUser,
+                ImageUser = objCustomer.ImageUser,
                 CreateDate = _dbContext.Bills.FirstOrDefault(z => z.BillID == c.BillID).CreateDate,
                 PurchasePayMent = _dbContext.PurchaseMethods.First(z => z.PurchaseMethodID == c.Bill.PurchaseMethodID).MethodName,
                 Status = c.Status,
@@ -155,6 +166,7 @@ namespace AppView.Controllers
             //HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(userDb.Password));
             HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(sex));
             HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(phoneNumberUser));
+            HttpContext.Session.SetString("ImageUser", JsonConvert.SerializeObject(userUpdate.ImageUser));
             return RedirectToAction("tables1");
         }
     }

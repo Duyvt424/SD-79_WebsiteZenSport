@@ -12,6 +12,7 @@
 	var Password = HttpContextAccessor.HttpContext.Session.GetString("Password");
 	var Sex = HttpContextAccessor.HttpContext.Session.GetString("Sex");
 	var PhoneNumber = HttpContextAccessor.HttpContext.Session.GetString("PhoneNumber");
+	var ImageUser = HttpContextAccessor.HttpContext.Session.GetString("ImageUser");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -664,7 +665,14 @@
 									<div class="profile-info">
 										<div class="info">
 											<div class="image">
-												<img src="/image/@Model.First().ImageUser" alt="Avatar" style="height:100%; object-fit:cover; object-position:center;" />
+												@if (ImageUser != null)
+												{
+													<img src="/image/@Html.Raw(ImageUser?.Replace("\"", ""))" alt="Avatar" style="height:100%; object-fit:cover; object-position:center;" />
+												}
+												else if (Model.Count >= 0)
+												{
+													<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar" style="height:100%; object-fit:cover; object-position:center;" />
+												}
 											</div>
 											<div>
 												<h6 class="fw-500">@Html.Raw(fullName?.Replace("\"", ""))</h6>
@@ -676,7 +684,14 @@
 									<li>
 										<div class="author-info flex items-center !p-1">
 											<div class="image">
-												<img src="/image/@Model.First().ImageUser" alt="Avatar">
+												@if (ImageUser != null)
+												{
+													<img src="/image/@Html.Raw(ImageUser?.Replace("\"", ""))" alt="Avatar">
+												}
+												else if (Model.Count >= 0)
+												{
+													<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar">
+												}
 											</div>
 											<div class="content">
 												<h4 class="text-sm">@Html.Raw(fullName?.Replace("\"", ""))</h4>
@@ -739,13 +754,13 @@
 											<div class="card-header">Ảnh hồ sơ</div>
 											<div class="card-body text-center">
 												<!-- Profile picture image-->
-												@if (Model.First().ImageUser == null)
+												@if (ImageUser != null)
+												{
+													<img class="img-account-profile rounded-circle mb-2" src="~/image/@Html.Raw(ImageUser?.Replace("\"", ""))" style="object-fit:cover; object-position: center; width:150px; height:150px;" alt="Image User">
+												}
+												else if (Model.Count >= 0)
 												{
 													<img class="img-account-profile rounded-circle mb-2" src="~/image/Screenshot_1.png" alt="Image User">
-												}
-												else
-												{
-													<img class="img-account-profile rounded-circle mb-2" src="/image/@Model.First().ImageUser" style="object-fit:cover; object-position:center; height:150px; width:150px;" alt="Image User">
 												}
 												<div class="file-upload">
 													<div class="file-select">
@@ -1125,58 +1140,64 @@
 				<div class="title" style="margin-top:2%;">
 					<h2>Danh sách đơn hàng</h2>
 				</div>
-				<div id="resultContainer">
-					@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
-					{
-						var bill = group.First();
-						<div class="row" style="margin-top:1%;">
-							<div class="col-lg-12">
-								<div class="card-style mb-30">
-									<div class="table-wrapper table-responsive">
-										<table class="table">
-											<tbody>
-												@foreach (var item in group)
-												{
-													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-														<td class="min-width d-flex align-items-flex-start">
-															<div class="col-lg-2 col-md-12 mb-4 mb-lg-0">
-																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-																	<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-100" alt="Image" />
-																	<a href="#!">
-																		<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
-																	</a>
+				@if (!Model.Any())
+				{
+					<p style='text-align:center; margin-top:30px;'>Không có hóa đơn nào.</p>
+				}
+				else{
+					<div id="resultContainer">
+						@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
+						{
+							var bill = group.First();
+							<div class="row" style="margin-top:1%;">
+								<div class="col-lg-12">
+									<div class="card-style mb-30">
+										<div class="table-wrapper table-responsive">
+											<table class="table">
+												<tbody>
+													@foreach (var item in group)
+													{
+														<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+															<td class="min-width d-flex align-items-flex-start">
+																<div class="col-lg-2 col-md-12 mb-4 mb-lg-0">
+																	<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																		<img src="@Url.Content("~/image/" + item.ImageUrl)" class="w-100" alt="Image" />
+																		<a href="#!">
+																			<div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+																		</a>
+																	</div>
 																</div>
-															</div>
-															<div class="col-lg-9 col-md-6 mb-4 mb-lg-0" style="margin-left:3%;">
-																<p style="font-size:23px;"><strong>@item.NameProduct</strong></p>
-																<p>Phân loại hàng: @item.Description</p>
-																<p>X@(item.TotalShoes)</p>
-																<p style="font-size:15px; float:right;">@item.Price.ToString("N0")đ</p>
-																<p>Size:@item.SizeName</p>
-															</div>
+																<div class="col-lg-9 col-md-6 mb-4 mb-lg-0" style="margin-left:3%;">
+																	<p style="font-size:23px;"><strong>@item.NameProduct</strong></p>
+																	<p>Phân loại hàng: @item.Description</p>
+																	<p>X@(item.TotalShoes)</p>
+																	<p style="font-size:15px; float:right;">@item.Price.ToString("N0")đ</p>
+																	<p>Size:@item.SizeName</p>
+																</div>
+															</td>
+														</tr>
+													}
+													<tr>
+														<td>
+															<p style="font-size:20px; float:right; margin-right:5%;">
+																Thành tiền:
+																<strong style="color:red;">@bill.TotalPrice.ToString("N0")đ</strong>
+															</p>
+															<a href="@Url.Action("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID })" class="main-btn secondary-btn-light rounded-full btn-hover"
+													   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width: 15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+																Chi tiết
+															</a>
 														</td>
 													</tr>
-												}
-												<tr>
-													<td>
-														<p style="font-size:20px; float:right; margin-right:5%;">
-															Thành tiền:
-															<strong style="color:red;">@bill.TotalPrice.ToString("N0")đ</strong>
-														</p>
-														<a href="@Url.Action("DetailsBill", "Bill", new { billID = bill.BillID, customerID = bill.CustomerID })" class="main-btn secondary-btn-light rounded-full btn-hover"
-													   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width: 15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
-															Chi tiết
-														</a>
-													</td>
-												</tr>
-											</tbody>
-										</table>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					}
-				</div>
+						}
+					</div>
+				}
 			</div>
 		</section>
 		<footer class="footer">
