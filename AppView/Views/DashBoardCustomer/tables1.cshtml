@@ -492,6 +492,12 @@
 						<li>
 							<a href="#" id="show-info"> Thông tin</a>
 						</li>
+						@if (Context.Session.GetInt32("IsEmailLogin") == null)
+						{
+							<li>
+								<a href="#" id="change-passworld"> Đổi mật khẩu</a>
+							</li>
+						}
 						<li>
 							<a href="#edit"> Địa chỉ</a>
 						</li>
@@ -801,12 +807,22 @@
 														<input class="form-control" name="phoneNumberUser" id="inputPhone" type="text" placeholder="Nhập vào số điện thoại" value="@Html.Raw(PhoneNumber?.Replace("\"", ""))" style="color: black;">
 													</div>
 													<!-- Form Group (birthday)-->
-													<div class="col-md-6">
-														<label class="small mb-1" for="inputEmailAddress">Email</label>
-														<input class="form-control" name="emailUser" id="inputEmailAddress" type="email" placeholder="Nhập vào địa chỉ email" value="@Html.Raw(email?.Replace("\"", ""))" style="color: black;">
-													</div>
+													@if (Context.Session.GetInt32("IsEmailLogin") != null)
+													{
+														<div class="col-md-6">
+															<label class="small mb-1" for="inputEmailAddress">Email</label>
+															<input class="form-control" name="emailUser" id="inputEmailAddress" type="email" placeholder="Nhập vào địa chỉ email" value="@Html.Raw(email?.Replace("\"", ""))" style="color: black;" disabled>
+														</div>
+													}
+													else
+													{
+														<div class="col-md-6">
+															<label class="small mb-1" for="inputEmailAddress">Email</label>
+															<input class="form-control" name="emailUser" id="inputEmailAddress" type="email" placeholder="Nhập vào địa chỉ email" value="@Html.Raw(email?.Replace("\"", ""))" style="color: black;">
+														</div>
+													}
 												</div>
-												@if (Context.Session.GetInt32("IsEmailLogin") != 2)
+												@if (Context.Session.GetInt32("IsEmailLogin") == null)
 												{
 													<div class=" mb-3">
 														<label class="small mb-1" for="inputFirstName">Mật khẩu</label>
@@ -1053,19 +1069,19 @@
 								for (var i = 0; i < data.length; i++) {
 									var voucher = data[i];
 									var voucherHtml = `
-																										<div class="coupon" >
-																											<div class="leftcp">
-																												<h1>${voucher.voucherCode}</h1>
-																											</div>
-																											<div class="centercp">
-																												<div>
-																													<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
-																													<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
-																													<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
-																													<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
-																												</div>
-																											</div>
-																										</div>`;
+														<div class="coupon" >
+															<div class="leftcp">
+																<h1>${voucher.voucherCode}</h1>
+															</div>
+															<div class="centercp">
+																<div>
+																	<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
+																	<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
+																	<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
+																	<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
+																</div>
+															</div>
+														</div>`;
 									$("#voucherList").append(voucherHtml);
 								}
 							},
@@ -1109,6 +1125,82 @@
 				</li>
 			</div>
 
+			<div class="tables-wrapper-changepass" style="display: none; margin-left:25%; margin-top:5%;">
+				<div class="row">
+					<div class="col-xl-8">
+						<!-- Account details card-->
+						<div class="card mb-4">
+							<div class="card-header" style="align-items:center; text-align:center;">Đổi mật khẩu</div>
+							<form asp-action="ChangePassword" id="form-changePass">
+								<div class="card-body">
+									<!-- Form Group (username)-->
+									<div class="mb-3" style="display:none;">
+										<label class="small mb-1" for="inputUsername">UserID</label>
+										<input class="form-control" name="inputUserID" id="inputUserID" type="text" value="@Html.Raw(UserId?.Replace("\"", ""))" style="color: black;">
+									</div>
+									<div class="mb-3">
+										<label class="small mb-1" for="inputUsername">Mật khẩu hiện tại</label>
+										<input class="form-control" name="passUser" id="oldPass" type="password" placeholder="Nhập vào mật khẩu hiện tại" value="@Html.Raw(Password?.Replace("\"", ""))" style="color: black;">
+									</div>
+									<!-- Form Row-->
+									<div class=" mb-3">
+										<label class="small mb-1" for="inputFirstName">Mật khẩu mới</label>
+										<input class="form-control" name="newPass" id="newPass" type="password" placeholder="Nhập vào mật khẩu mới" style="color: black;">
+									</div>
+									<div class=" mb-3">
+										<label class="small mb-1" for="inputFirstName">Nhập lại mật khẩu mới</label>
+										<input class="form-control" name="renewPass" id="renewPass" type="password" placeholder="Nhập lại mật khẩu mới" style="color: black;">
+									</div>
+									<button class="main-btn light-btn-outline btn-change-password" style="margin-left:42%;">Lưu</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script>
+				$('.btn-change-password').click(function (e) {
+					e.preventDefault();
+
+					var inputUserID = $('#inputUserID').val();
+					var passUser = $('#oldPass').val();
+					var newPass = $('#newPass').val();
+					var renewPass = $('#renewPass').val();
+
+					$.ajax({
+						url: '/DashBoardCustomer/ChangePassword',
+						type: 'POST',
+						data: {
+							inputUserID: inputUserID,
+							passUser: passUser,
+							newPass: newPass,
+							renewPass: renewPass
+						},
+						success: function (response) {
+							// Chọn loại Noty theo trạng thái thành công hay thất bại
+							var notyType = response.success ? 'success' : 'error';
+
+							new Noty({
+								type: notyType,
+								layout: 'topRight',
+								theme: 'metroui',
+								text: response.message,
+								timeout: 2000,
+								progressBar: true,
+								closeWith: ['click', 'button'],
+							}).show();
+
+							if (response.success) {
+								$('#form-changePass')[0].reset();
+							}
+						},
+						error: function () {
+							alert("Có lỗi xảy ra, vui lòng thử lại!");
+						}
+					});
+				});
+			</script>
+
 			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
 				<div class="custom-row d-flex justify-content-between align-items-center">
 					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
@@ -1144,7 +1236,8 @@
 				{
 					<p style='text-align:center; margin-top:30px;'>Không có hóa đơn nào.</p>
 				}
-				else{
+				else
+				{
 					<div id="resultContainer">
 						@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
 						{
@@ -1285,53 +1378,53 @@
 					let itemsHtml = "";
 					(group.items || []).forEach(item => {
 						itemsHtml += `
-																							<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-																								<td class="min-width d-flex align-items-flex-start">
-																									<div style="flex:0 0 150px; max-width:150px;">
-																										<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-																											<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
-																											<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
-																										</div>
-																									</div>
-																									<div style="flex:1; margin-left:16px;">
-																										<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
-																										<p>Phân loại hàng: ${item.description ?? item.Description}</p>
-																										<p>X${item.totalShoes ?? item.TotalShoes}</p>
-																										<p>Size: ${item.sizeName ?? item.SizeName}</p>
-																										<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
-																									</div>
-																								</td>
-																							</tr>`;
+																													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+																														<td class="min-width d-flex align-items-flex-start">
+																															<div style="flex:0 0 150px; max-width:150px;">
+																																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																																	<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+																																	<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+																																</div>
+																															</div>
+																															<div style="flex:1; margin-left:16px;">
+																																<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+																																<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+																																<p>X${item.totalShoes ?? item.TotalShoes}</p>
+																																<p>Size: ${item.sizeName ?? item.SizeName}</p>
+																																<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+																															</div>
+																														</td>
+																													</tr>`;
 					});
 					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
 					const billId = group.billID ?? first.billID ?? first.BillID;
 					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
 					const html = `
-																						<div class="row" style="margin-top:1%;">
-																							<div class="col-lg-12">
-																								<div class="card-style mb-30">
-																									<div class="table-wrapper table-responsive">
-																										<table class="table">
-																											<tbody>
-																												${itemsHtml}
-																												<tr>
-																													<td>
-																														<p style="font-size:20px; float:right; margin-right:5%;">
-																															Thành tiền: <strong style="color:red;">${total}đ</strong>
-																														</p>
-																														<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
-																														   class="main-btn secondary-btn-light rounded-full btn-hover"
-																														   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
-																															Chi tiết
-																														</a>
-																													</td>
-																												</tr>
-																											</tbody>
-																										</table>
-																									</div>
-																								</div>
-																							</div>
-																						</div>`;
+																												<div class="row" style="margin-top:1%;">
+																													<div class="col-lg-12">
+																														<div class="card-style mb-30">
+																															<div class="table-wrapper table-responsive">
+																																<table class="table">
+																																	<tbody>
+																																		${itemsHtml}
+																																		<tr>
+																																			<td>
+																																				<p style="font-size:20px; float:right; margin-right:5%;">
+																																					Thành tiền: <strong style="color:red;">${total}đ</strong>
+																																				</p>
+																																				<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+																																				   class="main-btn secondary-btn-light rounded-full btn-hover"
+																																				   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+																																					Chi tiết
+																																				</a>
+																																			</td>
+																																		</tr>
+																																	</tbody>
+																																</table>
+																															</div>
+																														</div>
+																													</div>
+																												</div>`;
 					container.append(html);
 				});
 			}
@@ -1381,6 +1474,20 @@
 
 				// Ẩn tables-wrapper
 				$('.tables-wrapper,.tables-wrapper2').hide();
+
+				// Ẩn edit-container
+				$('#edit-container').empty();
+			});
+
+			// Thêm sự kiện click cho liên kết "Change passworld"
+			$('#change-passworld').click(function (e) {
+				e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+
+				// Hiển thị tables-wrapper1
+				$('.tables-wrapper-changepass').show();
+
+				// Ẩn tables-wrapper
+				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper2').hide();
 
 				// Ẩn edit-container
 				$('#edit-container').empty();

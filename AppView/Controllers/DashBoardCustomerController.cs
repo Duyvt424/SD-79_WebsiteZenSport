@@ -163,11 +163,35 @@ namespace AppView.Controllers
             HttpContext.Session.SetString("UserName", JsonConvert.SerializeObject(inputUsername));
             HttpContext.Session.SetString("FullName", JsonConvert.SerializeObject(inputFullname));
             HttpContext.Session.SetString("Email", JsonConvert.SerializeObject(emailUser));
-            //HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(userDb.Password));
             HttpContext.Session.SetString("Sex", JsonConvert.SerializeObject(sex));
             HttpContext.Session.SetString("PhoneNumber", JsonConvert.SerializeObject(phoneNumberUser));
             HttpContext.Session.SetString("ImageUser", JsonConvert.SerializeObject(userUpdate.ImageUser));
             return RedirectToAction("tables1");
+        }
+
+        [HttpPost]
+        public IActionResult ChangePassword(Guid inputUserID, string passUser, string newPass, string renewPass)
+        {
+            var user = _dbContext.Customers.FirstOrDefault(c => c.CumstomerID == inputUserID);
+            if (user != null && user.Password == passUser)
+            {
+                if (newPass == renewPass)
+                {
+                    user.Password = newPass;
+                    _dbContext.Customers.Update(user);
+                    _dbContext.SaveChanges();
+                    HttpContext.Session.SetString("Password", JsonConvert.SerializeObject(user.Password));
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Mật khẩu mới không khớp, vui lòng nhập lại!" });
+                }
+            }
+            else
+            {
+                return Json(new { success = false, message = "Vui lòng nhập đúng mật khẩu!" });
+            }
+            return Json(new { success = true, message = "Đổi mật khẩu thành công!" });
         }
     }
 }

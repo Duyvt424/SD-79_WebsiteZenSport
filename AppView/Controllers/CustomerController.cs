@@ -403,7 +403,14 @@ namespace AppView.Controllers
         public IActionResult LogOut()
         {
             HttpContext.Session.Remove("UserId");
+            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("FullName");
+            HttpContext.Session.Remove("Email");
+            HttpContext.Session.Remove("Password");
+            HttpContext.Session.Remove("Sex");
+            HttpContext.Session.Remove("PhoneNumber");
             HttpContext.Session.Remove("ImageUser");
+            HttpContext.Session.Remove("IsEmailLogin");
             return RedirectToAction("Login");
         }
         public IActionResult ChangePassword()

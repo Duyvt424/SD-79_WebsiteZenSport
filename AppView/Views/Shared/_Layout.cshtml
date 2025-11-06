@@ -150,13 +150,6 @@
 						   class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">Introduce</a>
 							</div>
 						</div>
-						@if (Context.Session.GetInt32("IsEmailLogin") != 2)
-						{
-							<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="ChangePassword"
-				                class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
-								Edit Password
-							</a>
-						}
 						<a style="font-size: 11px; font-weight: bold;" asp-controller="Customer" asp-action="LogOut"
 				        class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-dark no-underline flex items-center">
 							Log Out
