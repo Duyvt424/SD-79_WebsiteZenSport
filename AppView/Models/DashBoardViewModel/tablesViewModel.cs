@@ -18,5 +18,5 @@
 		public string? ImageUrl { get; set; }
 		public string? ImageUser { get; set; }
 		public string? SizeName { get; set; }
-	}
+    }
 }

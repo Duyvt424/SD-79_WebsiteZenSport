@@ -30,7 +30,7 @@ namespace AppAPI.Controllers
         }
 
         [HttpPost("create-address")]
-        public string CreateAddress(string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost, int DistrictId, int WardCode, int ShippingMethodID, int Status, DateTime DateCreated, Guid CumstomerID)
+        public string CreateAddress(string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost, int DistrictId, int WardCode, int ShippingMethodID, int Status, DateTime DateCreated, Guid CumstomerID, string ReceiverName, string ReceiverPhone)
         {
             Address address = new Address();
             address.AddressID = Guid.NewGuid();
@@ -45,6 +45,8 @@ namespace AppAPI.Controllers
             address.ShippingMethodID = ShippingMethodID;
             address.Status = Status;
             address.DateCreated = DateCreated;
+            address.ReceiverName = ReceiverName;
+            address.ReceiverPhone = ReceiverPhone;
             address.CumstomerID = CumstomerID;
             if (_repos.AddItem(address))
             {
@@ -58,7 +60,7 @@ namespace AppAPI.Controllers
 
         // PUT api/<AddressController>/5
         [HttpPut("update-address")]
-        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost, int DistrictId, int WardCode, int ShippingMethodID, int Status, DateTime DateCreated, Guid CumstomerID)
+        public string UpdateAddress(Guid AddressID, string Street, string Commune, string District, string Province, bool IsDefaultAddress, decimal ShippingCost, int DistrictId, int WardCode, int ShippingMethodID, int Status, DateTime DateCreated, Guid CumstomerID, string ReceiverName, string ReceiverPhone)
         {
             var address = _repos.GetAll().First(c => c.AddressID == AddressID);
             address.Street = Street;
@@ -72,6 +74,8 @@ namespace AppAPI.Controllers
             address.ShippingMethodID = ShippingMethodID;
             address.Status = Status;
             address.DateCreated = DateCreated;
+            address.ReceiverName = ReceiverName;
+            address.ReceiverPhone = ReceiverPhone;
             address.CumstomerID = CumstomerID;
             if (_repos.EditItem(address))
             {

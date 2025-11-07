@@ -19,6 +19,8 @@ namespace AppData.Models
         public int WardCode { get; set; }
         public int ShippingMethodID { get; set; }
         public int Status { get; set; }
+        public string? ReceiverName { get; set; } // tên người nhận
+        public string? ReceiverPhone { get; set; } // sdt ng nhận
         public DateTime DateCreated { get; set; }
         public Guid CumstomerID { get; set; }
         public virtual Customer Customer { get; set; }

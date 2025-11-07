@@ -26,6 +26,8 @@ namespace AppData.Configurations
             builder.Property(c => c.ShippingMethodID).HasColumnType("int");
             builder.Property(c => c.Status).HasColumnType("int");
             builder.Property(c => c.DateCreated).HasColumnType("Datetime");
+            builder.Property(c => c.ReceiverName).HasColumnType("nvarchar(100)");
+            builder.Property(c => c.ReceiverPhone).HasColumnType("nvarchar(100)");
             builder.HasOne(c => c.Customer).WithMany(c => c.Addresses).HasForeignKey(c => c.CumstomerID);
         }
     }

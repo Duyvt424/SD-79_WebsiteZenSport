@@ -80,8 +80,8 @@ namespace AppView.Controllers
                         .Select(address => new AddressViewModel
                         {
                             AddressID = address.AddressID,
-                            FullNameCus = _dBContext.Customers.First(c => c.CumstomerID == customerId).FullName,
-                            PhoneNumber = _dBContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
+                            FullNameCus = address.ReceiverName,
+                            PhoneNumber = address.ReceiverPhone,
                             Street = address.Street,
                             Ward = address.Commune,
                             District = address.District,
@@ -564,8 +564,6 @@ namespace AppView.Controllers
             var emailGoogle = email != null ? email : userUpdate.Email;
             if (userUpdate != null)
             {
-                userUpdate.FullName = nameUser;
-                userUpdate.PhoneNumber = phoneNumber;
                 userUpdate.Email = emailGoogle;
                 _dBContext.Update(userUpdate);
                 _dBContext.SaveChanges();
@@ -579,7 +577,7 @@ namespace AppView.Controllers
             }
             _dBContext.SaveChanges();
             HttpClient httpClient = new HttpClient();
-            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}";
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={true}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerId}&ReceiverName={nameUser}&ReceiverPhone={phoneNumber}";
             var response = await httpClient.PostAsync(apiUrl, null);
             return RedirectToAction("Cart");
         }

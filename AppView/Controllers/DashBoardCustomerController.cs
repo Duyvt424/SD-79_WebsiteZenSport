@@ -1,6 +1,7 @@
 ﻿using AppData.IRepositories;
 using AppData.Models;
 using AppData.Repositories;
+using AppView.Models;
 using AppView.Models.DashBoardViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -136,7 +137,28 @@ namespace AppView.Controllers
                 Status = c.Status,
                 SizeName = _dbContext.Sizes.FirstOrDefault(s => s.SizeID == c.ShoesDetails_Size.SizeID).Name,
             }).ToList();
-            return View(listBill);
+            //For address
+            var AddressList = _dbContext.Addresses.Where(a => a.CumstomerID == objCustomer.CumstomerID).Select(address => new AddressViewModel
+            {
+                AddressID = address.AddressID,
+                FullNameCus = address.ReceiverName,
+                PhoneNumber = address.ReceiverPhone,
+                Street = address.Street,
+                Ward = address.Commune,
+                District = address.District,
+                Province = address.Province,
+                IsDefaultAddress = address.IsDefaultAddress,
+                ShippingCost = address.ShippingCost,
+                DistrictId = address.DistrictId,
+                WardCode = address.WardCode,
+                ShippingMethodID = address.ShippingMethodID
+            }).ToList();
+            CustomerDashboardViewModel customerDashboard = new CustomerDashboardViewModel()
+            {
+                BillList = listBill,
+                AddressList = AddressList
+            };
+            return View(customerDashboard);
         }
 
         [HttpPost]

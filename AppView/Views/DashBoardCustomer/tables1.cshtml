@@ -1,6 +1,5 @@
-﻿@model List<AppView.Models.DashBoardViewModel.tablesViewModel>
+﻿@model AppView.Models.DashBoardViewModel.CustomerDashboardViewModel
 @{
-
 	Layout = null;
 }
 @inject IHttpContextAccessor HttpContextAccessor
@@ -29,6 +28,7 @@
 	<link rel="stylesheet" href="~/assets/css/main.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css" integrity="sha512-NXUhxhkDgZYOMjaIgd89zF2w51Mub53Ru3zCNp5LTlEzMbNNAjTjDbpURYGS5Mop2cU4b7re1nOIucsVlrx9fA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css"/>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<style>
 		body {
@@ -427,6 +427,69 @@
 			white-space: nowrap;
 			width: 1px;
 		}
+
+		/*css address*/
+		.grid-container {
+			width: min(50rem, 100%);
+			margin-inline: auto;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+			gap: 2rem;
+		}
+
+		.card {
+			--grad: red, blue;
+			padding: 2.5rem;
+			background-image: linear-gradient(to bottom left, #e0e4e5, #f2f6f9);
+			border-radius: 2rem;
+			gap: 1.5rem;
+			display: grid;
+			grid-template: 'title icon' 'content content' 'bar bar' / 1fr auto;
+			font-family: system-ui, sans-serif;
+			color: #444447;
+			box-shadow: inset -2px 2px hsl(0 0 100% / 1), -20px 20px 40px hsl(0 0 0 / .25);
+			.title
+
+		{
+			font-size: 1.5rem;
+			grid-area: title;
+			align-self: end;
+			text-transform: uppercase;
+			font-weight: 500;
+			word-break: break-all;
+		}
+
+		.icon {
+			grid-area: icon;
+			font-size: 3rem;
+			
+		> i{
+			color: transparent;
+			background: linear-gradient(to right, var(--grad));
+			background-clip: text;
+		}
+
+		}
+		.content {
+			grid-area: content;
+			& > *:first-child
+
+		{
+			margin-top: 0rem
+		}
+
+		& > *:last-child {
+			margin-bottom: 0rem
+		}
+
+		}
+
+		&::after {
+			content: "";
+			grid-area: bar;
+			height: 2px;
+			background-image: linear-gradient(90deg, var(--grad));
+		}
 	</style>
 </head>
 <body>
@@ -499,7 +562,7 @@
 							</li>
 						}
 						<li>
-							<a href="#edit"> Địa chỉ</a>
+							<a href="#" id="change-address"> Địa chỉ</a>
 						</li>
 					</ul>
 				</li>
@@ -675,7 +738,7 @@
 												{
 													<img src="/image/@Html.Raw(ImageUser?.Replace("\"", ""))" alt="Avatar" style="height:100%; object-fit:cover; object-position:center;" />
 												}
-												else if (Model.Count >= 0)
+												else if (Model.BillList.Count >= 0)
 												{
 													<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar" style="height:100%; object-fit:cover; object-position:center;" />
 												}
@@ -694,7 +757,7 @@
 												{
 													<img src="/image/@Html.Raw(ImageUser?.Replace("\"", ""))" alt="Avatar">
 												}
-												else if (Model.Count >= 0)
+												else if (Model.BillList.Count >= 0)
 												{
 													<img src="/image/this-is-the-icon-for-the-profile-or-user-free-vector.jpg" alt="Avatar">
 												}
@@ -764,7 +827,7 @@
 												{
 													<img class="img-account-profile rounded-circle mb-2" src="~/image/@Html.Raw(ImageUser?.Replace("\"", ""))" style="object-fit:cover; object-position: center; width:150px; height:150px;" alt="Image User">
 												}
-												else if (Model.Count >= 0)
+												else if (Model.BillList.Count >= 0)
 												{
 													<img class="img-account-profile rounded-circle mb-2" src="~/image/Screenshot_1.png" alt="Image User">
 												}
@@ -1069,19 +1132,19 @@
 								for (var i = 0; i < data.length; i++) {
 									var voucher = data[i];
 									var voucherHtml = `
-														<div class="coupon" >
-															<div class="leftcp">
-																<h1>${voucher.voucherCode}</h1>
-															</div>
-															<div class="centercp">
-																<div>
-																	<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
-																	<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
-																	<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
-																	<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
-																</div>
-															</div>
-														</div>`;
+																		<div class="coupon" >
+																			<div class="leftcp">
+																				<h1>${voucher.voucherCode}</h1>
+																			</div>
+																			<div class="centercp">
+																				<div>
+																					<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
+																					<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
+																					<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
+																					<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
+																				</div>
+																			</div>
+																		</div>`;
 									$("#voucherList").append(voucherHtml);
 								}
 							},
@@ -1201,6 +1264,30 @@
 				});
 			</script>
 
+			<div class="tables-wrapper-changeAddress" style="display: none; margin-top:5%;">
+				@if (!Model.AddressList.Any())
+				{
+					<p style='text-align:center; margin-top:30px;'>Không có địa chỉ nào.</p>
+				}
+				else{
+					<div class="row">
+						<div class="grid-container">
+							@foreach (var address in Model.AddressList)
+							{
+								<div class="card">
+									<div class="title">@address.FullNameCus</div>
+									<div class="icon"><i class="fa-thin fa-location-dot"></i></div>
+									<div class="content">
+										<p>@address.PhoneNumber</p>
+										<p>@address.Street @address.Ward @address.District @address.Province</p>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				}
+			</div>
+
 			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
 				<div class="custom-row d-flex justify-content-between align-items-center">
 					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
@@ -1232,14 +1319,14 @@
 				<div class="title" style="margin-top:2%;">
 					<h2>Danh sách đơn hàng</h2>
 				</div>
-				@if (!Model.Any())
+				@if (!Model.BillList.Any())
 				{
 					<p style='text-align:center; margin-top:30px;'>Không có hóa đơn nào.</p>
 				}
 				else
 				{
 					<div id="resultContainer">
-						@foreach (var group in Model.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
+						@foreach (var group in Model.BillList.GroupBy(c => c.BillID).OrderByDescending(c => c.First().CreateDate))
 						{
 							var bill = group.First();
 							<div class="row" style="margin-top:1%;">
@@ -1378,53 +1465,53 @@
 					let itemsHtml = "";
 					(group.items || []).forEach(item => {
 						itemsHtml += `
-																													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-																														<td class="min-width d-flex align-items-flex-start">
-																															<div style="flex:0 0 150px; max-width:150px;">
-																																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-																																	<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
-																																	<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
-																																</div>
-																															</div>
-																															<div style="flex:1; margin-left:16px;">
-																																<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
-																																<p>Phân loại hàng: ${item.description ?? item.Description}</p>
-																																<p>X${item.totalShoes ?? item.TotalShoes}</p>
-																																<p>Size: ${item.sizeName ?? item.SizeName}</p>
-																																<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
-																															</div>
-																														</td>
-																													</tr>`;
+																															<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+																																<td class="min-width d-flex align-items-flex-start">
+																																	<div style="flex:0 0 150px; max-width:150px;">
+																																		<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																																			<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+																																			<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+																																		</div>
+																																	</div>
+																																	<div style="flex:1; margin-left:16px;">
+																																		<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+																																		<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+																																		<p>X${item.totalShoes ?? item.TotalShoes}</p>
+																																		<p>Size: ${item.sizeName ?? item.SizeName}</p>
+																																		<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+																																	</div>
+																																</td>
+																															</tr>`;
 					});
 					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
 					const billId = group.billID ?? first.billID ?? first.BillID;
 					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
 					const html = `
-																												<div class="row" style="margin-top:1%;">
-																													<div class="col-lg-12">
-																														<div class="card-style mb-30">
-																															<div class="table-wrapper table-responsive">
-																																<table class="table">
-																																	<tbody>
-																																		${itemsHtml}
-																																		<tr>
-																																			<td>
-																																				<p style="font-size:20px; float:right; margin-right:5%;">
-																																					Thành tiền: <strong style="color:red;">${total}đ</strong>
-																																				</p>
-																																				<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
-																																				   class="main-btn secondary-btn-light rounded-full btn-hover"
-																																				   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
-																																					Chi tiết
-																																				</a>
-																																			</td>
-																																		</tr>
-																																	</tbody>
-																																</table>
+																														<div class="row" style="margin-top:1%;">
+																															<div class="col-lg-12">
+																																<div class="card-style mb-30">
+																																	<div class="table-wrapper table-responsive">
+																																		<table class="table">
+																																			<tbody>
+																																				${itemsHtml}
+																																				<tr>
+																																					<td>
+																																						<p style="font-size:20px; float:right; margin-right:5%;">
+																																							Thành tiền: <strong style="color:red;">${total}đ</strong>
+																																						</p>
+																																						<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+																																						   class="main-btn secondary-btn-light rounded-full btn-hover"
+																																						   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+																																							Chi tiết
+																																						</a>
+																																					</td>
+																																				</tr>
+																																			</tbody>
+																																		</table>
+																																	</div>
+																																</div>
 																															</div>
-																														</div>
-																													</div>
-																												</div>`;
+																														</div>`;
 					container.append(html);
 				});
 			}
@@ -1488,6 +1575,20 @@
 
 				// Ẩn tables-wrapper
 				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper2').hide();
+
+				// Ẩn edit-container
+				$('#edit-container').empty();
+			});
+
+			// Thêm sự kiện click cho liên kết "Change address"
+			$('#change-address').click(function (e) {
+				e.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+
+				// Hiển thị tables-wrapper1
+				$('.tables-wrapper-changeAddress').show();
+
+				// Ẩn tables-wrapper
+				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper2,.tables-wrapper-changepass').hide();
 
 				// Ẩn edit-container
 				$('#edit-container').empty();

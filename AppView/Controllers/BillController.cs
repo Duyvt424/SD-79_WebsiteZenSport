@@ -306,8 +306,8 @@ namespace AppView.Controllers
                                 ShoesDetails_SizeID = c.ShoesDetails_SizeID,
                                 BillCode = objBill.BillCode,
                                 CustomerId = objBill.CustomerID,
-                                FullName = _dbContext.Customers.First(c => c.CumstomerID == customerId).FullName,
-                                PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerId).PhoneNumber,
+                                FullName = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == objBill.AddressID).ReceiverName,
+                                PhoneNumber = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == objBill.AddressID).ReceiverPhone,
                                 Email = _dbContext.Customers.First(c => c.CumstomerID == customerId).Email,
                                 ResetPass = _dbContext.Customers.First(c => c.CumstomerID == customerId).ResetPassword,
                                 StatusCustomer = _dbContext.Customers.First(c => c.CumstomerID == customerId).Status,
@@ -357,8 +357,8 @@ namespace AppView.Controllers
                                 AddressViewModels = _dbContext.Addresses.Where(c => c.CumstomerID == objBill.CustomerID).Select(a => new AddressViewModel
                                 {
                                     AddressID = a.AddressID,
-                                    FullNameCus = _dbContext.Customers.First(c => c.CumstomerID == objBill.CustomerID).FullName,
-                                    PhoneNumber = _dbContext.Customers.First(c => c.CumstomerID == customerID).PhoneNumber,
+                                    FullNameCus = a.ReceiverName,
+                                    PhoneNumber = a.ReceiverPhone,
                                     Street = a.Street,
                                     Ward = a.Commune,
                                     District = a.District,
