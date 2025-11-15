@@ -248,5 +248,17 @@ namespace AppView.Controllers
             _dbContext.SaveChanges();
             return Json(new { success = true, message = "Xóa địa chỉ thành công" });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAddressFromProfileUser(string nameUser, string phoneNumber, string provinceName, string districtName, string wardName, string street, decimal ShippingCost, int DistrictID, int WardCode, int ShippingMethodID)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+
+            HttpClient httpClient = new HttpClient();
+            string apiUrl = $"https://localhost:7036/api/Address/create-address?Street={street}&Commune={wardName}&District={districtName}&Province={provinceName}&IsDefaultAddress={false}&ShippingCost={ShippingCost}&DistrictId={DistrictID}&WardCode={WardCode}&ShippingMethodID={ShippingMethodID}&Status={0}&DateCreated={DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}&CumstomerID={customerIdSession}&ReceiverName={nameUser}&ReceiverPhone={phoneNumber}";
+            var response = await httpClient.PostAsync(apiUrl, null);
+            return Json(new { success = true, message = "Thêm địa chỉ thành công" });
+        }
     }
 }

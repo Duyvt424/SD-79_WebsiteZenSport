@@ -12,6 +12,7 @@
 	var Sex = HttpContextAccessor.HttpContext.Session.GetString("Sex");
 	var PhoneNumber = HttpContextAccessor.HttpContext.Session.GetString("PhoneNumber");
 	var ImageUser = HttpContextAccessor.HttpContext.Session.GetString("ImageUser");
+	var selectedShippingMethodID = 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -512,6 +513,137 @@
 				justify-content: center;
 				gap: 15px;
 			}
+
+		/*css add address*/
+		.modal-box {
+			font-family: 'Noto Sans', sans-serif;
+		}
+
+			.modal-box .show-modal {
+				color: #fff;
+				background-color: #ff773a;
+				font-size: 18px;
+				font-weight: 600;
+				text-transform: capitalize;
+				padding: 15px 30px;
+				margin: 80px auto 0;
+				border: none;
+				border-radius: 0;
+				box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+				outline: none;
+				display: block;
+				transition: all 0.3s ease 0s;
+			}
+
+				.modal-box .show-modal:hover,
+				.modal-box .show-modal:focus {
+					color: #fff;
+					background-color: #555;
+					outline: none;
+				}
+
+		.modal-backdrop.in {
+			opacity: 0.4;
+		}
+
+		.modal-box .modal-dialog {
+			width: 650px;
+			margin: 50px auto 0;
+		}
+
+		.modal.fade .modal-dialog {
+			transform: translateY(100px);
+		}
+
+		.modal.in .modal-dialog {
+			transform: translate(0);
+		}
+
+		.modal-box .modal-dialog .modal-content {
+			background: #fff;
+			border-radius: 0;
+			outline: 5px solid #fff;
+			outline-offset: 10px;
+		}
+
+			.modal-box .modal-dialog .modal-content .close {
+				color: #999;
+				font-size: 28px;
+				text-shadow: none;
+				line-height: 15px;
+				opacity: 1;
+				overflow: hidden;
+				position: absolute;
+				left: auto;
+				right: 15px;
+				top: 15px;
+				z-index: 1;
+				transition: all 0.3s;
+			}
+
+				.modal-box .modal-dialog .modal-content .close:hover {
+					color: #555;
+				}
+
+			.modal-box .modal-dialog .modal-content .modal-body {
+				padding: 40px !important;
+			}
+
+				.modal-box .modal-dialog .modal-content .modal-body .title {
+					color: #111;
+					font-size: 25px;
+					font-weight: 700;
+					text-transform: capitalize;
+					margin: 0 0 20px;
+				}
+
+				.modal-box .modal-dialog .modal-content .modal-body .description {
+					color: #999;
+					font-size: 17px;
+					font-weight: 500;
+					margin: 0 5px 25px;
+				}
+
+				.modal-box .modal-dialog .modal-content .modal-body .form-group {
+					margin: 0 0 25px;
+				}
+
+					.modal-box .modal-dialog .modal-content .modal-body .form-group label {
+						font-size: 16px;
+						font-weight: 500;
+					}
+
+					.modal-box .modal-dialog .modal-content .modal-body .form-group .form-control {
+						height: 50px;
+						border-radius: 0;
+						border-color: #777;
+					}
+
+						.modal-box .modal-dialog .modal-content .modal-body .form-group .form-control:focus {
+							box-shadow: none;
+							border-color: #ff773a;
+						}
+
+				.modal-box .modal-dialog .modal-content .modal-body .btn {
+					color: #fff;
+					background: #ff773a;
+					font-size: 18px;
+					font-weight: 600;
+					text-transform: capitalize;
+					letter-spacing: 1px;
+					padding: 14px 20px 13px;
+					border-radius: 5px;
+					transition: all 0.3s;
+				}
+
+					.modal-box .modal-dialog .modal-content .modal-body .btn:hover {
+						text-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+						box-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+					}
+
+					.modal-box .modal-dialog .modal-content .modal-body .btn:focus {
+						outline: none;
+					}
 	</style>
 </head>
 <body>
@@ -1154,19 +1286,19 @@
 								for (var i = 0; i < data.length; i++) {
 									var voucher = data[i];
 									var voucherHtml = `
-														<div class="coupon" >
-															<div class="leftcp">
-																<h1>${voucher.voucherCode}</h1>
-															</div>
-															<div class="centercp">
-																<div>
-																	<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
-																	<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
-																	<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
-																	<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
-																</div>
-															</div>
-														</div>`;
+																										<div class="coupon" >
+																											<div class="leftcp">
+																												<h1>${voucher.voucherCode}</h1>
+																											</div>
+																											<div class="centercp">
+																												<div>
+																													<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
+																													<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
+																													<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
+																													<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
+																												</div>
+																											</div>
+																										</div>`;
 									$("#voucherList").append(voucherHtml);
 								}
 							},
@@ -1328,7 +1460,8 @@
 										{
 											<button class="main-btn light-btn-outline btn-remove-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;" disabled>Xóa</button>
 										}
-										else{
+										else
+										{
 											<button class="main-btn light-btn-outline btn-remove-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;">Xóa</button>
 										}
 									</div>
@@ -1337,6 +1470,83 @@
 						</div>
 					</div>
 				}
+			</div>
+
+			@*Modal form nhập thêm địa chỉ*@
+			<div class="modal-box">
+				<div class="modal fade" id="modalAddAddress" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<button type="button" class="close quay-lai" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+							<div class="modal-body">
+								<h3 class="title">Thêm địa chỉ mới</h3>
+								<form method="post" action="@Url.Action("AddAddress", "Cart")">
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" name="nameUser" placeholder="Họ và tên" required>
+										<label for="floatingInputEmail">Họ và tên</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" name="phoneNumber" placeholder="Số điện thoại" required>
+										<label for="floatingInputEmail">Số điện thoại</label>
+									</div>
+									<div class="row mb-4">
+										<div class="col">
+											<div class="form-floating mb-3">
+												<select class="form-control" id="ListTinh" onchange="updateProvinceValue(this); fetchDistricts(this.value)">
+													<option value="" disabled selected>Chọn tỉnh / thành</option>
+												</select>
+												<label for="floatingInputEmail">Tỉnh/Thành Phố</label>
+											</div>
+											<input type="hidden" id="ProvinceName" name="provinceName" />
+										</div>
+										<div class="col">
+											<div class="form-floating mb-3">
+												<select class="form-control" id="ListQuanHuyen" onchange="updateDistrictValue(this); updateDistrictAndFetchWards()">
+													<option value="" disabled selected>Chọn quận / huyện</option>
+												</select>
+												<label for="floatingInputEmail">Quận/Huyện</label>
+											</div>
+											<input type="hidden" id="DistrictName" name="districtName" />
+										</div>
+										<div class="col">
+											<div class="form-floating mb-3">
+												<select class="form-control" id="ListPhuongXa" onchange="updateWardValue(this); calculateShippingFee(this.value, document.getElementById('ListQuanHuyen').value)">
+													<option value="" disabled selected>Chọn xã / phường</option>
+												</select>
+												<label for="floatingInputEmail">Xã/Phường</label>
+											</div>
+											<input type="hidden" id="WardName" name="wardName" />
+										</div>
+										<input style="display:none;" id="shippingCost" name="ShippingCost" />
+										<input style="display:none;" id="districtIDCus" name="DistrictID" />
+										<input style="display:none;" id="wardCodeCus" name="WardCode" />
+										<input style="display:none;" id="shippingMethodID" name="ShippingMethodID" />
+									</div>
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" name="street" placeholder="Địa chỉ" required>
+										<label for="floatingInputEmail">Địa chỉ cụ thể (Số nhà, đường):</label>
+									</div>
+									<button class="main-btn dark-btn-outline btn-hover btn-add-diachi" type="button" style="font-size:16px; padding:5px 10px; margin:2px;">
+										Thêm
+									</button>
+									<div style="padding-right: 300px; display:none;" id="shippingOptionsDiv">
+										<label class="radio-button" style="font-size: 14px; display: inline;">
+											<input type="radio" name="example-radio" value="option1">
+											<span class="radio"></span>
+										</label>
+
+										<label class="radio-button" style="font-size: 14px; display:none;">
+											<input type="radio" name="example-radio" value="option2">
+											<span class="radio"></span>
+										</label>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<script>
 				$(document).ready(function () {
@@ -1411,6 +1621,79 @@
 				});
 			</script>
 
+			@*script khởi tạo modal và gửi form*@
+			<script>
+				$(document).ready(function () {
+					$('.btn-add-address').click(function () {
+						$('#modalAddAddress').modal('show');
+					});
+				});
+
+				$(document).ready(function () {
+					$('.quay-lai').click(function () {
+						$('#modalAddAddress').modal('hide');
+					});
+				});
+
+				$(document).ready(function () {
+					// Bắt sự kiện click trên nút thêm
+					$('.btn-add-diachi').click(function (e) {
+						e.preventDefault();
+
+						// Lấy giá trị từ các trường input và gửi ajax
+						var nameUser = $('input[name="nameUser"]').val();
+						var phoneNumber = $('input[name="phoneNumber"]').val();
+						var provinceName = $('input[name="provinceName"]').val();
+						var districtName = $('input[name="districtName"]').val();
+						var wardName = $('input[name="wardName"]').val();
+						var street = $('input[name="street"]').val();
+						var shippingCostHTML = $('input[name="ShippingCost"]').val();
+						var shippingCost = parseFloat(shippingCostHTML);
+						var districtID = $('input[name="DistrictID"]').val();
+						var wardCode = $('input[name="WardCode"]').val();
+						var shippingMethodID = $('input[name="ShippingMethodID"]').val();
+
+						// Gửi dữ liệu lên server sử dụng Ajax
+						$.ajax({
+							url: '@Url.Action("AddAddressFromProfileUser", "DashBoardCustomer")',
+							type: 'POST',
+							data: {
+								nameUser: nameUser,
+								phoneNumber: phoneNumber,
+								provinceName: provinceName,
+								districtName: districtName,
+								wardName: wardName,
+								street: street,
+								ShippingCost: shippingCost,
+								DistrictID: districtID,
+								WardCode: wardCode,
+								ShippingMethodID: shippingMethodID
+							},
+							success: function (response) {
+								var notyType = response.success ? 'success' : 'error';
+
+								new Noty({
+									type: notyType,
+									layout: 'topRight',
+									theme: 'metroui',
+									text: response.message,
+									timeout: 1500,
+									progressBar: true,
+									closeWith: ['click', 'button'],
+									callbacks: {
+										afterClose: function () {
+											location.reload();
+										}
+									}
+								}).show();
+							},
+							error: function () {
+								alert("Có lỗi xảy ra, vui lòng thử lại!");
+							}
+						});
+					});
+				});
+			</script>
 			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
 				<div class="custom-row d-flex justify-content-between align-items-center">
 					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
@@ -1587,53 +1870,53 @@
 					let itemsHtml = "";
 					(group.items || []).forEach(item => {
 						itemsHtml += `
-																																											<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-																																												<td class="min-width d-flex align-items-flex-start">
-																																													<div style="flex:0 0 150px; max-width:150px;">
-																																														<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-																																															<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
-																																															<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
-																																														</div>
-																																													</div>
-																																													<div style="flex:1; margin-left:16px;">
-																																														<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
-																																														<p>Phân loại hàng: ${item.description ?? item.Description}</p>
-																																														<p>X${item.totalShoes ?? item.TotalShoes}</p>
-																																														<p>Size: ${item.sizeName ?? item.SizeName}</p>
-																																														<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
-																																													</div>
-																																												</td>
-																																											</tr>`;
+													<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+														<td class="min-width d-flex align-items-flex-start">
+															<div style="flex:0 0 150px; max-width:150px;">
+																<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																	<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+																	<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+																</div>
+															</div>
+															<div style="flex:1; margin-left:16px;">
+																<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+																<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+																<p>X${item.totalShoes ?? item.TotalShoes}</p>
+																<p>Size: ${item.sizeName ?? item.SizeName}</p>
+																<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+															</div>
+														</td>
+													</tr>`;
 					});
 					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
 					const billId = group.billID ?? first.billID ?? first.BillID;
 					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
 					const html = `
-																																										<div class="row" style="margin-top:1%;">
-																																											<div class="col-lg-12">
-																																												<div class="card-style mb-30">
-																																													<div class="table-wrapper table-responsive">
-																																														<table class="table">
-																																															<tbody>
-																																																${itemsHtml}
-																																																<tr>
-																																																	<td>
-																																																		<p style="font-size:20px; float:right; margin-right:5%;">
-																																																			Thành tiền: <strong style="color:red;">${total}đ</strong>
-																																																		</p>
-																																																		<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
-																																																		   class="main-btn secondary-btn-light rounded-full btn-hover"
-																																																		   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
-																																																			Chi tiết
-																																																		</a>
-																																																	</td>
-																																																</tr>
-																																															</tbody>
-																																														</table>
-																																													</div>
-																																												</div>
-																																											</div>
-																																										</div>`;
+												<div class="row" style="margin-top:1%;">
+													<div class="col-lg-12">
+														<div class="card-style mb-30">
+															<div class="table-wrapper table-responsive">
+																<table class="table">
+																	<tbody>
+																		${itemsHtml}
+																		<tr>
+																			<td>
+																				<p style="font-size:20px; float:right; margin-right:5%;">
+																					Thành tiền: <strong style="color:red;">${total}đ</strong>
+																				</p>
+																				<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+																				   class="main-btn secondary-btn-light rounded-full btn-hover"
+																				   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+																					Chi tiết
+																				</a>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>`;
 					container.append(html);
 				});
 			}
@@ -1749,6 +2032,189 @@
 				$('#register-form').submit();
 			}
 		});
+	</script>
+	@*script từ đây phục vụ add address*@
+	<script>
+		// lấy d/s tỉnh
+		function fetchProvinces() {
+			const apiUrl = "https://online-gateway.ghn.vn/shiip/public-api/master-data/province";
+			const token = "6092d580-fde7-11ed-a967-deea53ba3605";
+			const headers = {
+				"Content-Type": "application/json",
+				token: token
+			};
+			fetch(apiUrl, {
+				method: "GET",
+				headers: headers
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data && data.data) {
+						const provinces = data.data;
+
+						const selectElement = document.getElementById("ListTinh");
+
+						provinces.forEach(province => {
+							const option = document.createElement("option");
+							option.value = province.ProvinceID;
+							option.textContent = province.ProvinceName;
+							selectElement.appendChild(option);
+						});
+					}
+				})
+				.catch(error => {
+					console.error("Error fetching provinces:", error);
+				});
+		}
+		function updateProvinceValue(selectElement) {
+			const provinceName = selectElement.options[selectElement.selectedIndex].text;
+			document.getElementById("ProvinceName").value = provinceName;
+		}
+		fetchProvinces();
+	</script>
+	<script>
+		//lấy d/s huyện
+		function fetchDistricts(province_id) {
+			const districtSelect = document.getElementById('ListQuanHuyen');
+			districtSelect.innerHTML = '<option value="" disabled selected>Chọn quận / huyện</option>';
+			var districtID = document.getElementById('districtID');
+
+			const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${province_id}`;
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					data.data.forEach(district => {
+						const option = document.createElement('option');
+						option.value = district.DistrictID;
+						option.textContent = district.DistrictName;
+						districtSelect.appendChild(option);
+					});
+					districtSelect.dispatchEvent(new Event('change'));
+				})
+				.catch(error => console.log(error));
+		}
+		function updateDistrictValue(selectElement) {
+			const districtName = selectElement.options[selectElement.selectedIndex].text;
+			const districtId = selectElement.value;
+			document.getElementById("DistrictName").value = districtName;
+			document.getElementById("districtIDCus").value = districtId;
+		}
+		fetchDistricts();
+	</script>
+	<script>
+		function updateDistrictAndFetchWards() {
+			const selectedDistrict = document.getElementById('ListQuanHuyen').value;
+			fetchWards(selectedDistrict);
+			calculateShippingFee(document.getElementById('ListPhuongXa').value, selectedDistrict);
+		}
+	</script>
+	<script>
+		//lấy d/s xã
+		function fetchWards(district_id) {
+			const wardSelect = document.getElementById('ListPhuongXa');
+			wardSelect.innerHTML = '<option value="" disabled selected>Chọn xã / phường</option>';
+
+			const url = `https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${district_id}`;
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					data.data.forEach(ward => {
+						const option = document.createElement('option');
+						option.value = ward.WardCode;
+						option.textContent = ward.WardName;
+						wardSelect.appendChild(option);
+					});
+					wardSelect.dispatchEvent(new Event('change'));
+				})
+				.catch(error => console.log(error));
+		}
+		function updateWardValue(selectElement) {
+			const wardName = selectElement.options[selectElement.selectedIndex].text;
+			const wardCode = selectElement.value;
+			document.getElementById("WardName").value = wardName;
+			document.getElementById("wardCodeCus").value = wardCode;
+		}
+	</script>
+	<script>
+		// Hàm để cập nhật hình thức vận chuyển
+		function updateShippingOptions() {
+			// Lấy giá trị từ ListQuanHuyen
+			var listQuanHuyen = document.getElementById('ListQuanHuyen');
+			var selectedOption = listQuanHuyen.options[listQuanHuyen.selectedIndex];
+			var toDistrict = selectedOption.value;
+			var toHuyen = parseInt(toDistrict);
+			// Gọi API để cập nhật hình thức vận chuyển
+			fetch(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services?shop_id=4185066&from_district=3440&to_district=${toHuyen}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': '6092d580-fde7-11ed-a967-deea53ba3605'
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					var shippingMethods = data.data;
+					var shippingOptionsDiv = document.getElementById('shippingOptionsDiv');
+
+					// Cập nhật hình thức vận chuyển
+					var firstLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(1)');
+					firstLabel.innerHTML = 'Hình thức vận chuyển: ' + shippingMethods[0].short_name;
+					firstLabel.style.fontSize = '16px';
+					firstLabel.style.fontWeight = 'bold';
+					selectedShippingMethodID = shippingMethods[0].service_id;
+					// Ẩn dòng thứ hai
+					var secondLabel = shippingOptionsDiv.querySelector('.radio-button:nth-child(2)');
+					secondLabel.style.display = 'none';
+					shippingOptionsDiv.style.display = 'block';
+					document.getElementById("shippingMethodID").value = shippingMethods[0].service_id;
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+		// Sự kiện khi có sự thay đổi ở các textbox chọn địa chỉ hoặc khi trang web được tải lần đầu
+		document.getElementById('ListQuanHuyen').addEventListener('change', updateShippingOptions);
+		document.getElementById('ListPhuongXa').addEventListener('change', updateShippingOptions);
+	</script>
+	<script>
+		//tính phí vận chuyển
+		function calculateShippingFee(to_ward_code, to_district_id) {
+			const url = `https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee?service_id=${selectedShippingMethodID}&insurance_value=${1000000}&coupon&to_ward_code=${to_ward_code}&to_district_id=${to_district_id}&from_district_id=3440&weight=${500}&length=38&width=15&height=15`
+			const token = '6092d580-fde7-11ed-a967-deea53ba3605';
+			const shop_id = '4185066';
+
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'token': token,
+					'shop_id': shop_id
+				}
+			})
+				.then(response => response.json())
+				.then(data => {
+					// giá trị cho input
+					var shippingFee = data.data.total;
+					document.getElementById('shippingCost').value = shippingFee;
+				})
+				.catch(error => console.log(error));
+		}
 	</script>
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="~/assets/js/Chart.min.js"></script>
