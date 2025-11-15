@@ -28,7 +28,7 @@
 	<link rel="stylesheet" href="~/assets/css/main.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css" integrity="sha512-NXUhxhkDgZYOMjaIgd89zF2w51Mub53Ru3zCNp5LTlEzMbNNAjTjDbpURYGS5Mop2cU4b7re1nOIucsVlrx9fA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css"/>
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css" />
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<style>
 		body {
@@ -428,7 +428,7 @@
 			width: 1px;
 		}
 
-		/*css address*/
+		/* css address */
 		.grid-container {
 			width: min(50rem, 100%);
 			margin-inline: auto;
@@ -437,59 +437,81 @@
 			gap: 2rem;
 		}
 
-		.card {
+		.card-address {
 			--grad: red, blue;
-			padding: 2.5rem;
+			padding: 1.5rem;
 			background-image: linear-gradient(to bottom left, #e0e4e5, #f2f6f9);
 			border-radius: 2rem;
 			gap: 1.5rem;
 			display: grid;
-			grid-template: 'title icon' 'content content' 'bar bar' / 1fr auto;
+			grid-template-areas:
+				"title icon"
+				"content content"
+				"bar bar"
+				"actions actions";
+			grid-template-columns: 1fr auto;
 			font-family: system-ui, sans-serif;
 			color: #444447;
 			box-shadow: inset -2px 2px hsl(0 0 100% / 1), -20px 20px 40px hsl(0 0 0 / .25);
-			.title
-
-		{
-			font-size: 1.5rem;
-			grid-area: title;
-			align-self: end;
-			text-transform: uppercase;
-			font-weight: 500;
-			word-break: break-all;
 		}
 
-		.icon {
-			grid-area: icon;
-			font-size: 3rem;
-			
-		> i{
-			color: transparent;
-			background: linear-gradient(to right, var(--grad));
-			background-clip: text;
-		}
+			/* TITLE */
+			.card-address .title-address {
+				font-size: 1.5rem;
+				grid-area: title;
+				align-self: end;
+				text-transform: uppercase;
+				font-weight: 500;
+				word-break: break-word;
+			}
 
-		}
-		.content {
-			grid-area: content;
-			& > *:first-child
+			/* ICON */
+			.card-address .icon-address {
+				grid-area: icon;
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 1rem;
+			}
 
-		{
-			margin-top: 0rem
-		}
+				.card-address .icon-address > i {
+					font-size: 22px;
+					color: transparent;
+					background: linear-gradient(to right, var(--grad));
+					-webkit-background-clip: text;
+					background-clip: text;
+				}
 
-		& > *:last-child {
-			margin-bottom: 0rem
-		}
+			/* CONTENT */
+			.card-address .content-address {
+				grid-area: content;
+			}
 
-		}
+				.card-address .content-address p:first-child {
+					margin-top: 0;
+				}
 
-		&::after {
-			content: "";
-			grid-area: bar;
-			height: 2px;
-			background-image: linear-gradient(90deg, var(--grad));
-		}
+				.card-address .content-address p:last-child {
+					margin-bottom: 0;
+				}
+
+			/* AFTER (BAR) */
+			.card-address::after {
+				content: "";
+				grid-area: bar;
+				height: 2px;
+				width: 100%;
+				display: block;
+				background-image: linear-gradient(90deg, var(--grad));
+			}
+
+			/* ACTION BUTTONS */
+			.card-address .address-actions {
+				grid-area: actions;
+				display: flex;
+				justify-content: center;
+				gap: 15px;
+			}
 	</style>
 </head>
 <body>
@@ -1132,19 +1154,19 @@
 								for (var i = 0; i < data.length; i++) {
 									var voucher = data[i];
 									var voucherHtml = `
-																		<div class="coupon" >
-																			<div class="leftcp">
-																				<h1>${voucher.voucherCode}</h1>
-																			</div>
-																			<div class="centercp">
-																				<div>
-																					<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
-																					<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
-																					<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
-																					<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
-																				</div>
-																			</div>
-																		</div>`;
+														<div class="coupon" >
+															<div class="leftcp">
+																<h1>${voucher.voucherCode}</h1>
+															</div>
+															<div class="centercp">
+																<div>
+																	<h2>Giảm ${voucher.voucherValue.toLocaleString('vi-VN')}Đ</h2>
+																	<h3>Đơn tối thiểu ${voucher.total.toLocaleString('vi-VN')}Đ</h3>
+																	<small>Hạn đến ${formatDate(voucher.expirationDate)}</small><br>
+																	<a class="main-btn light-btn-outline btn-hover apply-voucher-btn" data-code="${voucher.voucherCode}" style="font-size:16px; padding:5px 10px; margin-top:8px; display:inline-block;">Dùng ngay</a>
+																</div>
+															</div>
+														</div>`;
 									$("#voucherList").append(voucherHtml);
 								}
 							},
@@ -1199,7 +1221,7 @@
 									<!-- Form Group (username)-->
 									<div class="mb-3" style="display:none;">
 										<label class="small mb-1" for="inputUsername">UserID</label>
-										<input class="form-control" name="inputUserID" id="inputUserID" type="text" value="@Html.Raw(UserId?.Replace("\"", ""))" style="color: black;">
+										<input class="form-control" name="inputUserIDPass" id="inputUserIDPass" type="text" value="@Html.Raw(UserId?.Replace("\"", ""))" style="color: black;">
 									</div>
 									<div class="mb-3">
 										<label class="small mb-1" for="inputUsername">Mật khẩu hiện tại</label>
@@ -1225,7 +1247,7 @@
 				$('.btn-change-password').click(function (e) {
 					e.preventDefault();
 
-					var inputUserID = $('#inputUserID').val();
+					var inputUserID = $('#inputUserIDPass').val();
 					var passUser = $('#oldPass').val();
 					var newPass = $('#newPass').val();
 					var renewPass = $('#renewPass').val();
@@ -1264,22 +1286,51 @@
 				});
 			</script>
 
-			<div class="tables-wrapper-changeAddress" style="display: none; margin-top:5%;">
+			<div class="tables-wrapper-changeAddress" style="display: none; margin-top:2%;">
 				@if (!Model.AddressList.Any())
 				{
 					<p style='text-align:center; margin-top:30px;'>Không có địa chỉ nào.</p>
 				}
-				else{
+				else
+				{
 					<div class="row">
-						<div class="grid-container">
-							@foreach (var address in Model.AddressList)
+						<div class="title" style="text-align:center;">
+							<h3>Địa chỉ của tôi</h3>
+							<button class="main-btn light-btn-outline btn-add-address" style="justify-items:center; margin-top:1%;">Thêm địa chỉ</button>
+						</div>
+						<div class="grid-container" style="margin-top:2%;">
+							@foreach (var address in Model.AddressList.Where(c => c.Status != 1).ToList())
 							{
-								<div class="card">
-									<div class="title">@address.FullNameCus</div>
-									<div class="icon"><i class="fa-thin fa-location-dot"></i></div>
-									<div class="content">
-										<p>@address.PhoneNumber</p>
-										<p>@address.Street @address.Ward @address.District @address.Province</p>
+								<div class="card-address">
+									<div class="address-header" style="display:flex; justify-content:space-between; align-items:center;">
+										<div class="title-address" style="font-size:17px;">@address.FullNameCus</div>
+										@if (address.IsDefaultAddress == true)
+										{
+											<div class="icon-address" style="display:flex; align-items:center; gap:6px; font-size:16px;"><i class="fa-thin fa-location-dot" style="font-size:24px;"></i><span>Mặc định</span></div>
+										}
+									</div>
+									<div class="content-address">
+										<p style="font-size:16px;">@address.PhoneNumber</p>
+										<p style="font-size:16px; font-family:sans-serif; word-spacing:1px;">@address.Street, @address.Ward, @address.District, @address.Province</p>
+									</div>
+									<div class="address-actions" style="display:flex; justify-content:center; gap:15px; height:35%;">
+										@if (address.IsDefaultAddress == true)
+										{
+											<button class="main-btn light-btn-outline btn-set-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;" disabled>Đặt làm mặc định</button>
+										}
+										else
+										{
+											<button class="main-btn light-btn-outline btn-set-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;">Đặt làm mặc định</button>
+										}
+										<button class="main-btn light-btn-outline btn-update-address" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;">Cập nhật</button>
+										@*Nếu người dùng chọn địa chỉ mặc định - không cho xóa*@
+										@if (address.IsDefaultAddress == true)
+										{
+											<button class="main-btn light-btn-outline btn-remove-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;" disabled>Xóa</button>
+										}
+										else{
+											<button class="main-btn light-btn-outline btn-remove-address" data-addressid="@address.AddressID" style="font-size:10px; width:18%; height:18%; background-color:black; color:white;">Xóa</button>
+										}
 									</div>
 								</div>
 							}
@@ -1287,16 +1338,87 @@
 					</div>
 				}
 			</div>
+			<script>
+				$(document).ready(function () {
+					$(document).on('click', '.btn-set-address', function (e) {
+						e.preventDefault();
+
+						const addressId = $(this).data("addressid");
+						if (!addressId) return;
+
+						$.ajax({
+							url: '/DashBoardCustomer/SetDefaultAddessProfile',
+							type: 'POST',
+							data: { AddressID: addressId },
+							success: function (response) {
+								var notyType = response.success ? 'success' : 'error';
+
+								new Noty({
+									type: notyType,
+									layout: 'topRight',
+									theme: 'metroui',
+									text: response.message,
+									timeout: 1500,
+									progressBar: true,
+									closeWith: ['click', 'button'],
+									callbacks: {
+										afterClose: function () {
+											location.reload();
+										}
+									}
+								}).show();
+							},
+							error: function () {
+								alert("Có lỗi xảy ra, vui lòng thử lại!");
+							}
+						});
+					});
+					//
+					//
+					$(document).on('click', '.btn-remove-address', function (e) {
+						e.preventDefault();
+
+						const addressId = $(this).data("addressid");
+						if (!addressId) return;
+
+						$.ajax({
+							url: '/DashBoardCustomer/RemoveAddressProfile',
+							type: 'POST',
+							data: { AddressID: addressId },
+							success: function (response) {
+								var notyType = response.success ? 'success' : 'error';
+
+								new Noty({
+									type: notyType,
+									layout: 'topRight',
+									theme: 'metroui',
+									text: response.message,
+									timeout: 1500,
+									progressBar: true,
+									closeWith: ['click', 'button'],
+									callbacks: {
+										afterClose: function () {
+											location.reload();
+										}
+									}
+								}).show();
+							},
+							error: function () {
+								alert("Có lỗi xảy ra, vui lòng thử lại!");
+							}
+						});
+					});
+				});
+			</script>
 
 			<div class="tables-wrapper" style="margin-left:7%; margin-right:7%;">
 				<div class="custom-row d-flex justify-content-between align-items-center">
 					<form method="get" id="searchForm" class="search-bar" style="flex: 1; max-width: 70%;" action="@Url.Action("findTables")">
 						<div class="search" style="width:920%;">
-							<i class="fa fa-search"></i>
 							<input type="text" id="searchInput" class="form-control" name="billCode" placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên sản phẩm...">
 						</div>
 					</form>
-					<form method="get" action="@Url.Action("Filter")" style="margin-left:80%; margin-top:2%;">
+					<form method="get" action="@Url.Action("Filter")" style="margin-left:80%;">
 						<div>
 							<div class="dropdown">
 								<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1465,53 +1587,53 @@
 					let itemsHtml = "";
 					(group.items || []).forEach(item => {
 						itemsHtml += `
-																															<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
-																																<td class="min-width d-flex align-items-flex-start">
-																																	<div style="flex:0 0 150px; max-width:150px;">
-																																		<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-																																			<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
-																																			<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
-																																		</div>
-																																	</div>
-																																	<div style="flex:1; margin-left:16px;">
-																																		<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
-																																		<p>Phân loại hàng: ${item.description ?? item.Description}</p>
-																																		<p>X${item.totalShoes ?? item.TotalShoes}</p>
-																																		<p>Size: ${item.sizeName ?? item.SizeName}</p>
-																																		<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
-																																	</div>
-																																</td>
-																															</tr>`;
+																																											<tr class="bill-row" style="margin-top:5%; margin-bottom:5%">
+																																												<td class="min-width d-flex align-items-flex-start">
+																																													<div style="flex:0 0 150px; max-width:150px;">
+																																														<div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+																																															<img src="/image/${item.imageUrl ?? item.ImageUrl}" class="w-100" alt="Image" />
+																																															<a href="#!"><div class="mask" style="background-color: rgba(251,251,251,0.2)"></div></a>
+																																														</div>
+																																													</div>
+																																													<div style="flex:1; margin-left:16px;">
+																																														<p style="font-size:23px;"><strong>${item.nameProduct ?? item.NameProduct}</strong></p>
+																																														<p>Phân loại hàng: ${item.description ?? item.Description}</p>
+																																														<p>X${item.totalShoes ?? item.TotalShoes}</p>
+																																														<p>Size: ${item.sizeName ?? item.SizeName}</p>
+																																														<p style="font-size:15px; float:right;">${formatCurrency(item.price ?? item.Price ?? item.totalPrice ?? 0)}đ</p>
+																																													</div>
+																																												</td>
+																																											</tr>`;
 					});
 					const total = formatCurrency(group.totalPrice ?? first.totalPrice ?? first.TotalPrice ?? 0);
 					const billId = group.billID ?? first.billID ?? first.BillID;
 					const customerId = group.customerID ?? first.customerID ?? first.CustomerID;
 					const html = `
-																														<div class="row" style="margin-top:1%;">
-																															<div class="col-lg-12">
-																																<div class="card-style mb-30">
-																																	<div class="table-wrapper table-responsive">
-																																		<table class="table">
-																																			<tbody>
-																																				${itemsHtml}
-																																				<tr>
-																																					<td>
-																																						<p style="font-size:20px; float:right; margin-right:5%;">
-																																							Thành tiền: <strong style="color:red;">${total}đ</strong>
-																																						</p>
-																																						<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
-																																						   class="main-btn secondary-btn-light rounded-full btn-hover"
-																																						   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
-																																							Chi tiết
-																																						</a>
-																																					</td>
-																																				</tr>
-																																			</tbody>
-																																		</table>
-																																	</div>
-																																</div>
-																															</div>
-																														</div>`;
+																																										<div class="row" style="margin-top:1%;">
+																																											<div class="col-lg-12">
+																																												<div class="card-style mb-30">
+																																													<div class="table-wrapper table-responsive">
+																																														<table class="table">
+																																															<tbody>
+																																																${itemsHtml}
+																																																<tr>
+																																																	<td>
+																																																		<p style="font-size:20px; float:right; margin-right:5%;">
+																																																			Thành tiền: <strong style="color:red;">${total}đ</strong>
+																																																		</p>
+																																																		<a href="/Bill/DetailsBill?billID=${billId}&customerID=${customerId}"
+																																																		   class="main-btn secondary-btn-light rounded-full btn-hover"
+																																																		   style="display:inline-block; border-radius:5px; margin-left:80%; margin-top:1%; background-color:white; border:1px solid gray; height:10%; width:15%; line-height:35px; color:black; font-size:15px; text-align:center; padding:5px 15px;">
+																																																			Chi tiết
+																																																		</a>
+																																																	</td>
+																																																</tr>
+																																															</tbody>
+																																														</table>
+																																													</div>
+																																												</div>
+																																											</div>
+																																										</div>`;
 					container.append(html);
 				});
 			}
@@ -1532,7 +1654,7 @@
 				// Hiển thị tables-wrapper
 				$('.tables-wrapper').show();
 
-				$('.tables-wrapper1,.tables-wrapper2').hide();
+				$('.tables-wrapper1,.tables-wrapper2,.tables-wrapper-changepass,.tables-wrapper-changeAddress').hide();
 
 
 
@@ -1545,7 +1667,7 @@
 
 				// Show the tables-wrapper2 and hide other elements
 				$('.tables-wrapper2').show();
-				$('.tables-wrapper,.tables-wrapper1').hide();
+				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper-changepass,.tables-wrapper-changeAddress').hide();
 
 				// Clear any existing content in the edit-container
 				$('#edit-container').empty();
@@ -1560,7 +1682,7 @@
 				$('.tables-wrapper1').show();
 
 				// Ẩn tables-wrapper
-				$('.tables-wrapper,.tables-wrapper2').hide();
+				$('.tables-wrapper,.tables-wrapper2,.tables-wrapper-changepass,.tables-wrapper-changeAddress').hide();
 
 				// Ẩn edit-container
 				$('#edit-container').empty();
@@ -1574,7 +1696,7 @@
 				$('.tables-wrapper-changepass').show();
 
 				// Ẩn tables-wrapper
-				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper2').hide();
+				$('.tables-wrapper,.tables-wrapper1,.tables-wrapper2,.tables-wrapper-changeAddress').hide();
 
 				// Ẩn edit-container
 				$('#edit-container').empty();

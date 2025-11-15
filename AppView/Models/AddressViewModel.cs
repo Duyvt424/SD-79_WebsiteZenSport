@@ -14,5 +14,6 @@
         public int DistrictId { get; set; }
         public decimal WardCode { get; set; }
         public int ShippingMethodID { get; set; }
+        public int Status { get; set; }
     }
 }

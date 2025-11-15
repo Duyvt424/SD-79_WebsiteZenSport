@@ -151,7 +151,8 @@ namespace AppView.Controllers
                 ShippingCost = address.ShippingCost,
                 DistrictId = address.DistrictId,
                 WardCode = address.WardCode,
-                ShippingMethodID = address.ShippingMethodID
+                ShippingMethodID = address.ShippingMethodID,
+                Status = address.Status
             }).ToList();
             CustomerDashboardViewModel customerDashboard = new CustomerDashboardViewModel()
             {
@@ -214,6 +215,38 @@ namespace AppView.Controllers
                 return Json(new { success = false, message = "Vui lòng nhập đúng mật khẩu!" });
             }
             return Json(new { success = true, message = "Đổi mật khẩu thành công!" });
+        }
+
+        [HttpPost]
+        public IActionResult SetDefaultAddessProfile(Guid AddressID)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var addressUser = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == AddressID && c.CumstomerID == customerIdSession);
+            //set địa chỉ cũ sang ko mặc định
+            var oldAddressUser = _dbContext.Addresses.FirstOrDefault(c => c.CumstomerID == customerIdSession && c.IsDefaultAddress == true);
+            if (oldAddressUser != null)
+            {
+                oldAddressUser.IsDefaultAddress = false;
+            }
+            // Đặt làm mặc định cho địa chỉ mới
+            addressUser.IsDefaultAddress = true;
+            _dbContext.SaveChanges();
+            return Json(new { success = true, message = "Đặt làm địa chỉ mặc định thành công" });
+        }
+
+        [HttpPost]
+        public IActionResult RemoveAddressProfile(Guid AddressID)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
+            var addressUser = _dbContext.Addresses.FirstOrDefault(c => c.AddressID == AddressID && c.CumstomerID == customerIdSession);
+            if (addressUser != null)
+            {
+                addressUser.Status = 1;
+            }
+            _dbContext.SaveChanges();
+            return Json(new { success = true, message = "Xóa địa chỉ thành công" });
         }
     }
 }
