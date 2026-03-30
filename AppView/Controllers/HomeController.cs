@@ -524,12 +524,12 @@ namespace AppView.Controllers
             var userIdString = HttpContext.Session.GetString("UserId");
             var customerIdSession = !string.IsNullOrEmpty(userIdString) ? JsonConvert.DeserializeObject<Guid>(userIdString) : Guid.Empty;
             var httpClient = new HttpClient();
-            string apiKey = "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";
-            var apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+            string apiKey = "@_@";
+            var apiUrl = "https://router.huggingface.co/v1/chat/completions";
 
             var payload = new
             {
-                model = "meta-llama/llama-4-maverick:free",
+                model = "meta-llama/Llama-3.1-8B-Instruct:novita",
                 messages = new[]
                 {
 					new { role = "user", content = prompt }
