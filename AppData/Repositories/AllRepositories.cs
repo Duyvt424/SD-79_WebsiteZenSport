@@ -53,6 +53,7 @@ namespace AppData.Repositories
         public IEnumerable<T> GetAll()
         {
             return dbSet.ToList();
+            //Kim
         }
 
         public bool RemoveItem(T item)
